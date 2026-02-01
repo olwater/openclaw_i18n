@@ -12,6 +12,7 @@ import {
   normalizeUsageDisplay,
   resolveResponseUsageMode,
 } from "../auto-reply/thinking.js";
+import { t } from "../i18n/index.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { formatRelativeTime } from "../utils/time-format.js";
 import { helpText, parseCommand } from "./commands.js";
@@ -68,7 +69,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
     try {
       const models = await client.listModels();
       if (models.length === 0) {
-        chatLog.addSystem("no models available");
+        chatLog.addSystem(t("no models available"));
         tui.requestRender();
         return;
       }
@@ -109,7 +110,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
   const openAgentSelector = async () => {
     await refreshAgents();
     if (state.agents.length === 0) {
-      chatLog.addSystem("no agents found");
+      chatLog.addSystem(t("no agents found"));
       tui.requestRender();
       return;
     }
@@ -193,13 +194,13 @@ export function createCommandHandlers(context: CommandHandlerContext) {
     const items = [
       {
         id: "tools",
-        label: "Tool output",
+        label: t("Tool output"),
         currentValue: state.toolsExpanded ? "expanded" : "collapsed",
         values: ["collapsed", "expanded"],
       },
       {
         id: "thinking",
-        label: "Show thinking",
+        label: t("Show thinking"),
         currentValue: state.showThinking ? "on" : "off",
         values: ["off", "on"],
       },
@@ -254,7 +255,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
             }
             break;
           }
-          chatLog.addSystem("status: unknown response");
+          chatLog.addSystem(t("status: unknown response"));
         } catch (err) {
           chatLog.addSystem(`status failed: ${String(err)}`);
         }
@@ -321,7 +322,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
         break;
       case "verbose":
         if (!args) {
-          chatLog.addSystem("usage: /verbose <on|off>");
+          chatLog.addSystem(t("usage: /verbose <on|off>"));
           break;
         }
         try {
@@ -337,7 +338,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
         break;
       case "reasoning":
         if (!args) {
-          chatLog.addSystem("usage: /reasoning <on|off>");
+          chatLog.addSystem(t("usage: /reasoning <on|off>"));
           break;
         }
         try {
@@ -354,7 +355,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
       case "usage": {
         const normalized = args ? normalizeUsageDisplay(args) : undefined;
         if (args && !normalized) {
-          chatLog.addSystem("usage: /usage <off|tokens|full>");
+          chatLog.addSystem(t("usage: /usage <off|tokens|full>"));
           break;
         }
         const currentRaw = state.sessionInfo.responseUsage;
@@ -375,11 +376,11 @@ export function createCommandHandlers(context: CommandHandlerContext) {
       }
       case "elevated":
         if (!args) {
-          chatLog.addSystem("usage: /elevated <on|off|ask|full>");
+          chatLog.addSystem(t("usage: /elevated <on|off|ask|full>"));
           break;
         }
         if (!["on", "off", "ask", "full"].includes(args)) {
-          chatLog.addSystem("usage: /elevated <on|off|ask|full>");
+          chatLog.addSystem(t("usage: /elevated <on|off|ask|full>"));
           break;
         }
         try {
@@ -395,7 +396,7 @@ export function createCommandHandlers(context: CommandHandlerContext) {
         break;
       case "activation":
         if (!args) {
-          chatLog.addSystem("usage: /activation <mention|always>");
+          chatLog.addSystem(t("usage: /activation <mention|always>"));
           break;
         }
         try {

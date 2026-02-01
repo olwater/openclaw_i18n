@@ -1,5 +1,6 @@
 import type { ProgressReporter } from "../../cli/progress.js";
 import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
+import { t } from "../../i18n/index.js";
 import { formatPortDiagnostics } from "../../infra/ports.js";
 import {
   type RestartSentinelPayload,
@@ -71,7 +72,7 @@ export async function appendStatusAllDiagnosis(params: {
   };
 
   lines.push("");
-  lines.push(muted("Gateway connection details:"));
+  lines.push(`${muted(t("Gateway connection details:"))}`);
   for (const line of redactSecrets(params.connectionDetailsForReport)
     .split("\n")
     .map((l) => l.trimEnd())) {
@@ -94,29 +95,29 @@ export async function appendStatusAllDiagnosis(params: {
       lines.push(`  ${muted(`… +${uniqueIssues.length - 12} more`)}`);
     }
   } else {
-    emitCheck("Config: read failed", "warn");
+    emitCheck(t("Config: read failed"), "warn");
   }
 
   if (params.remoteUrlMissing) {
     lines.push("");
-    emitCheck("Gateway remote mode misconfigured (gateway.remote.url missing)", "warn");
-    lines.push(`  ${muted("Fix: set gateway.remote.url, or set gateway.mode=local.")}`);
+    emitCheck(t("Gateway remote mode misconfigured (gateway.remote.url missing)"), "warn");
+    lines.push(`  ${muted(t("Fix: set gateway.remote.url, or set gateway.mode=local."))}`);
   }
 
   if (params.sentinel?.payload) {
-    emitCheck("Restart sentinel present", "warn");
+    emitCheck(t("Restart sentinel present"), "warn");
     lines.push(
       `  ${muted(`${summarizeRestartSentinel(params.sentinel.payload)} · ${formatAge(Date.now() - params.sentinel.payload.ts)}`)}`,
     );
   } else {
-    emitCheck("Restart sentinel: none", "ok");
+    emitCheck(t("Restart sentinel: none"), "ok");
   }
 
   const lastErrClean = params.lastErr?.trim() ?? "";
   const isTrivialLastErr = lastErrClean.length < 8 || lastErrClean === "}" || lastErrClean === "{";
   if (lastErrClean && !isTrivialLastErr) {
     lines.push("");
-    lines.push(muted("Gateway last log line:"));
+    lines.push(`${muted(t("Gateway last log line:"))}`);
     lines.push(`  ${muted(redactSecrets(lastErrClean))}`);
   }
 
@@ -144,7 +145,7 @@ export async function appendStatusAllDiagnosis(params: {
     }
     if (params.tailscale.ips.length > 0) {
       lines.push(
-        `  ${muted(`ips: ${params.tailscale.ips.slice(0, 3).join(", ")}${params.tailscale.ips.length > 3 ? "…" : ""}`)}`,
+        `  ${muted(`ips: ${params.tailscale.ips.slice(0, 3).join(t(", "))}${params.tailscale.ips.length > 3 ? "…" : ""}`)}`,
       );
     }
     if (params.tailscaleHttpsUrl) {
@@ -163,7 +164,7 @@ export async function appendStatusAllDiagnosis(params: {
     );
   }
 
-  params.progress.setLabel("Reading logs…");
+  params.progress.setLabel(t("Reading logs…"));
   const logPaths = (() => {
     try {
       return resolveGatewayLogPaths(process.env);
@@ -172,7 +173,7 @@ export async function appendStatusAllDiagnosis(params: {
     }
   })();
   if (logPaths) {
-    params.progress.setLabel("Reading logs…");
+    params.progress.setLabel(t("Reading logs…"));
     const [stderrTail, stdoutTail] = await Promise.all([
       readFileTailLines(logPaths.stderrPath, 40).catch(() => []),
       readFileTailLines(logPaths.stdoutPath, 40).catch(() => []),
@@ -190,58 +191,4 @@ export async function appendStatusAllDiagnosis(params: {
       }
     }
   }
-  params.progress.tick();
-
-  if (params.channelsStatus) {
-    emitCheck(
-      `Channel issues (${params.channelIssues.length || "none"})`,
-      params.channelIssues.length === 0 ? "ok" : "warn",
-    );
-    for (const issue of params.channelIssues.slice(0, 12)) {
-      const fixText = issue.fix ? ` · fix: ${issue.fix}` : "";
-      lines.push(
-        `  - ${issue.channel}[${issue.accountId}] ${issue.kind}: ${issue.message}${fixText}`,
-      );
-    }
-    if (params.channelIssues.length > 12) {
-      lines.push(`  ${muted(`… +${params.channelIssues.length - 12} more`)}`);
-    }
-  } else {
-    emitCheck(
-      `Channel issues skipped (gateway ${params.gatewayReachable ? "query failed" : "unreachable"})`,
-      "warn",
-    );
-  }
-
-  const healthErr = (() => {
-    if (!params.health || typeof params.health !== "object") {
-      return "";
-    }
-    const record = params.health as Record<string, unknown>;
-    if (!("error" in record)) {
-      return "";
-    }
-    const value = record.error;
-    if (!value) {
-      return "";
-    }
-    if (typeof value === "string") {
-      return value;
-    }
-    try {
-      return JSON.stringify(value, null, 2);
-    } catch {
-      return "[unserializable error]";
-    }
-  })();
-  if (healthErr) {
-    lines.push("");
-    lines.push(muted("Gateway health:"));
-    lines.push(`  ${muted(redactSecrets(healthErr))}`);
-  }
-
-  lines.push("");
-  lines.push(muted("Pasteable debug report. Auth tokens redacted."));
-  lines.push("Troubleshooting: https://docs.openclaw.ai/troubleshooting");
-  lines.push("");
 }

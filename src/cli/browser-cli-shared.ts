@@ -1,4 +1,5 @@
 import type { GatewayRpcOpts } from "./gateway-rpc.js";
+import { t } from "../i18n/index.js";
 import { callGatewayFromCli } from "./gateway-rpc.js";
 
 export type BrowserParentOpts = GatewayRpcOpts & {
@@ -56,7 +57,7 @@ export async function callBrowserRequest<T>(
     { progress: extra?.progress },
   );
   if (payload === undefined) {
-    throw new Error("Unexpected browser.request response");
+    throw new Error(t("Unexpected browser.request response"));
   }
   return payload as T;
 }

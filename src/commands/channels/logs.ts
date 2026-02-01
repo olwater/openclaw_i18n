@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import { listChannelPlugins } from "../../channels/plugins/index.js";
+import { t } from "../../i18n/index.js";
 import { getResolvedLoggerSettings } from "../../logging.js";
 import { parseLogLine } from "../../logging/parse-log-line.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
@@ -102,7 +103,7 @@ export async function channelsLogsCommand(
     runtime.log(theme.info(`Channel: ${channel}`));
   }
   if (lines.length === 0) {
-    runtime.log(theme.muted("No matching log lines."));
+    runtime.log(theme.muted(t("No matching log lines.")));
     return;
   }
   for (const line of lines) {

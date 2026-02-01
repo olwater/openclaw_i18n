@@ -10,6 +10,7 @@ import { resolveGatewayService } from "../daemon/service.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { normalizeControlUiBasePath } from "../gateway/control-ui-shared.js";
 import { probeGateway } from "../gateway/probe.js";
+import { t } from "../i18n/index.js";
 import { collectChannelStatusIssues } from "../infra/channels-status-issues.js";
 import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
 import { resolveOsSummary } from "../infra/os-summary.js";
@@ -36,14 +37,14 @@ export async function statusAllCommand(
   runtime: RuntimeEnv,
   opts?: { timeoutMs?: number },
 ): Promise<void> {
-  await withProgress({ label: "Scanning status --all…", total: 11 }, async (progress) => {
-    progress.setLabel("Loading config…");
+  await withProgress({ label: t("Scanning status --all…"), total: 11 }, async (progress) => {
+    progress.setLabel(t("Loading config…"));
     const cfg = loadConfig();
     const osSummary = resolveOsSummary();
     const snap = await readConfigFileSnapshot().catch(() => null);
     progress.tick();
 
-    progress.setLabel("Checking Tailscale…");
+    progress.setLabel(t("Checking Tailscale…"));
     const tailscaleMode = cfg.gateway?.tailscale?.mode ?? "off";
     const tailscale = await (async () => {
       try {
@@ -80,7 +81,7 @@ export async function statusAllCommand(
         : null;
     progress.tick();
 
-    progress.setLabel("Checking for updates…");
+    progress.setLabel(t("Checking for updates…"));
     const root = await resolveOpenClawPackageRoot({
       moduleUrl: import.meta.url,
       argv1: process.argv[1],
@@ -116,12 +117,12 @@ export async function statusAllCommand(
               tag ? `tag ${tag}` : null,
               shortSha ? `@ ${shortSha}` : null,
             ].filter(Boolean);
-            return parts.join(" · ");
+            return parts.join(t(" · "));
           })()
         : null;
     progress.tick();
 
-    progress.setLabel("Probing gateway…");
+    progress.setLabel(t("Probing gateway…"));
     const connection = buildGatewayConnectionDetails({ config: cfg });
     const isRemoteMode = cfg.gateway?.mode === "remote";
     const remoteUrlRaw =
@@ -165,7 +166,7 @@ export async function statusAllCommand(
     const gatewaySelf = pickGatewaySelfPresence(gatewayProbe?.presence ?? null);
     progress.tick();
 
-    progress.setLabel("Checking services…");
+    progress.setLabel(t("Checking services…"));
     const readServiceSummary = async (service: GatewayService) => {
       try {
         const [loaded, runtimeInfo, command] = await Promise.all([
@@ -189,10 +190,10 @@ export async function statusAllCommand(
     const nodeService = await readServiceSummary(resolveNodeService());
     progress.tick();
 
-    progress.setLabel("Scanning agents…");
+    progress.setLabel(t("Scanning agents…"));
     const agentStatus = await getAgentLocalStatuses(cfg);
     progress.tick();
-    progress.setLabel("Summarizing channels…");
+    progress.setLabel(t("Summarizing channels…"));
     const channels = await buildChannelsTable(cfg, { showSecrets: false });
     progress.tick();
 
@@ -201,14 +202,14 @@ export async function statusAllCommand(
         return connection.message;
       }
       const bindMode = cfg.gateway?.bind ?? "loopback";
-      const configPath = snap?.path?.trim() ? snap.path.trim() : "(unknown config path)";
+      const configPath = snap?.path?.trim() ? snap.path.trim() : t("(unknown config path)");
       return [
-        "Gateway mode: remote",
-        "Gateway target: (missing gateway.remote.url)",
+        t("Gateway mode: remote"),
+        t("Gateway target: (missing gateway.remote.url)"),
         `Config: ${configPath}`,
         `Bind: ${bindMode}`,
         `Local fallback (used for probes): ${connection.url}`,
-        "Fix: set gateway.remote.url, or set gateway.mode=local.",
+        t("Fix: set gateway.remote.url, or set gateway.mode=local."),
       ].join("\n");
     })();
 
@@ -220,14 +221,14 @@ export async function statusAllCommand(
         }
       : {};
 
-    progress.setLabel("Querying gateway…");
+    progress.setLabel(t("Querying gateway…"));
     const health = gatewayReachable
       ? await callGateway({
           method: "health",
           timeoutMs: Math.min(8000, opts?.timeoutMs ?? 10_000),
           ...callOverrides,
         }).catch((err) => ({ error: String(err) }))
-      : { error: gatewayProbe?.error ?? "gateway unreachable" };
+      : { error: gatewayProbe?.error ?? t("gateway unreachable") };
 
     const channelsStatus = gatewayReachable
       ? await callGateway({
@@ -240,7 +241,7 @@ export async function statusAllCommand(
     const channelIssues = channelsStatus ? collectChannelStatusIssues(channelsStatus) : [];
     progress.tick();
 
-    progress.setLabel("Checking local state…");
+    progress.setLabel(t("Checking local state…"));
     const sentinel = await readRestartSentinel().catch(() => null);
     const lastErr = await readLastGatewayErrorLine(process.env).catch(() => null);
     const port = resolveGatewayPort(cfg);
@@ -287,7 +288,7 @@ export async function statusAllCommand(
         }
         if (update.git.behind != null && update.git.ahead != null) {
           if (update.git.behind === 0 && update.git.ahead === 0) {
-            parts.push("up to date");
+            parts.push(t("up to date"));
           } else if (update.git.behind > 0 && update.git.ahead === 0) {
             parts.push(`behind ${update.git.behind}`);
           } else if (update.git.behind === 0 && update.git.ahead > 0) {
@@ -297,7 +298,7 @@ export async function statusAllCommand(
           }
         }
         if (update.git.fetchOk === false) {
-          parts.push("fetch failed");
+          parts.push(t("fetch failed"));
         }
 
         const latest = update.registry?.latestVersion;
@@ -311,19 +312,19 @@ export async function statusAllCommand(
             parts.push(`npm latest ${latest} (local newer)`);
           }
         } else if (update.registry?.error) {
-          parts.push("npm latest unknown");
+          parts.push(t("npm latest unknown"));
         }
 
         if (update.deps?.status === "ok") {
-          parts.push("deps ok");
+          parts.push(t("deps ok"));
         }
         if (update.deps?.status === "stale") {
-          parts.push("deps stale");
+          parts.push(t("deps stale"));
         }
         if (update.deps?.status === "missing") {
-          parts.push("deps missing");
+          parts.push(t("deps missing"));
         }
-        return parts.join(" · ");
+        return parts.join(t(" · "));
       }
       const parts: string[] = [];
       parts.push(update.packageManager !== "unknown" ? update.packageManager : "pkg");
@@ -338,18 +339,18 @@ export async function statusAllCommand(
           parts.push(`npm latest ${latest} (local newer)`);
         }
       } else if (update.registry?.error) {
-        parts.push("npm latest unknown");
+        parts.push(t("npm latest unknown"));
       }
       if (update.deps?.status === "ok") {
-        parts.push("deps ok");
+        parts.push(t("deps ok"));
       }
       if (update.deps?.status === "stale") {
-        parts.push("deps stale");
+        parts.push(t("deps stale"));
       }
       if (update.deps?.status === "missing") {
-        parts.push("deps missing");
+        parts.push(t("deps missing"));
       }
-      return parts.join(" · ");
+      return parts.join(t(" · "));
     })();
 
     const gatewayTarget = remoteUrlMissing ? `fallback ${connection.url}` : connection.url;
@@ -382,7 +383,7 @@ export async function statusAllCommand(
       { Item: "Node", Value: process.versions.node },
       {
         Item: "Config",
-        Value: snap?.path?.trim() ? snap.path.trim() : "(unknown config path)",
+        Value: snap?.path?.trim() ? snap.path.trim() : t("(unknown config path)"),
       },
       dashboard
         ? { Item: "Dashboard", Value: dashboard }
@@ -401,28 +402,28 @@ export async function statusAllCommand(
       { Item: "Update", Value: updateLine },
       {
         Item: "Gateway",
-        Value: `${gatewayMode}${remoteUrlMissing ? " (remote.url missing)" : ""} · ${gatewayTarget} (${connection.urlSource}) · ${gatewayStatus}${gatewayAuth}`,
+        Value: `${gatewayMode}${remoteUrlMissing ? t(" (remote.url missing)") : ""} · ${gatewayTarget} (${connection.urlSource}) · ${gatewayStatus}${gatewayAuth}`,
       },
-      { Item: "Security", Value: `Run: ${formatCliCommand("openclaw security audit --deep")}` },
+      { Item: "Security", Value: `Run: ${formatCliCommand(t("openclaw security audit --deep"))}` },
       gatewaySelfLine
-        ? { Item: "Gateway self", Value: gatewaySelfLine }
-        : { Item: "Gateway self", Value: "unknown" },
+        ? { Item: t("Gateway self"), Value: gatewaySelfLine }
+        : { Item: t("Gateway self"), Value: "unknown" },
       daemon
         ? {
-            Item: "Gateway service",
+            Item: t("Gateway service"),
             Value: !daemon.installed
               ? `${daemon.label} not installed`
-              : `${daemon.label} ${daemon.installed ? "installed · " : ""}${daemon.loadedText}${daemon.runtime?.status ? ` · ${daemon.runtime.status}` : ""}${daemon.runtime?.pid ? ` (pid ${daemon.runtime.pid})` : ""}`,
+              : `${daemon.label} ${daemon.installed ? t("installed · ") : ""}${daemon.loadedText}${daemon.runtime?.status ? ` · ${daemon.runtime.status}` : ""}${daemon.runtime?.pid ? ` (pid ${daemon.runtime.pid})` : ""}`,
           }
-        : { Item: "Gateway service", Value: "unknown" },
+        : { Item: t("Gateway service"), Value: "unknown" },
       nodeService
         ? {
-            Item: "Node service",
+            Item: t("Node service"),
             Value: !nodeService.installed
               ? `${nodeService.label} not installed`
-              : `${nodeService.label} ${nodeService.installed ? "installed · " : ""}${nodeService.loadedText}${nodeService.runtime?.status ? ` · ${nodeService.runtime.status}` : ""}${nodeService.runtime?.pid ? ` (pid ${nodeService.runtime.pid})` : ""}`,
+              : `${nodeService.label} ${nodeService.installed ? t("installed · ") : ""}${nodeService.loadedText}${nodeService.runtime?.status ? ` · ${nodeService.runtime.status}` : ""}${nodeService.runtime?.pid ? ` (pid ${nodeService.runtime.pid})` : ""}`,
           }
-        : { Item: "Node service", Value: "unknown" },
+        : { Item: t("Node service"), Value: "unknown" },
       {
         Item: "Agents",
         Value: `${agentStatus.agents.length} total · ${agentStatus.bootstrapPendingCount} bootstrapping · ${aliveAgents} active · ${agentStatus.totalSessions} sessions`,

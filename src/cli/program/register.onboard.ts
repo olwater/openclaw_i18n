@@ -8,6 +8,7 @@ import type {
   TailscaleMode,
 } from "../../commands/onboard-types.js";
 import { onboardCommand } from "../../commands/onboard.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
@@ -40,68 +41,72 @@ function resolveInstallDaemonFlag(
 export function registerOnboardCommand(program: Command) {
   program
     .command("onboard")
-    .description("Interactive wizard to set up the gateway, workspace, and skills")
+    .description(t("Interactive wizard to set up the gateway, workspace, and skills"))
     .addHelpText(
       "after",
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/onboard", "docs.openclaw.ai/cli/onboard")}\n`,
     )
-    .option("--workspace <dir>", "Agent workspace directory (default: ~/.openclaw/workspace)")
-    .option("--reset", "Reset config + credentials + sessions + workspace before running wizard")
-    .option("--non-interactive", "Run without prompts", false)
+    .option("--workspace <dir>", t("Agent workspace directory (default: ~/.openclaw/workspace)"))
+    .option("--reset", t("Reset config + credentials + sessions + workspace before running wizard"))
+    .option("--non-interactive", t("Run without prompts"), false)
     .option(
       "--accept-risk",
-      "Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)",
+      t(
+        "Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)",
+      ),
       false,
     )
-    .option("--flow <flow>", "Wizard flow: quickstart|advanced|manual")
-    .option("--mode <mode>", "Wizard mode: local|remote")
+    .option("--flow <flow>", t("Wizard flow: quickstart|advanced|manual"))
+    .option("--mode <mode>", t("Wizard mode: local|remote"))
     .option(
       "--auth-choice <choice>",
-      "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
+      t(
+        "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
+      ),
     )
     .option(
       "--token-provider <id>",
-      "Token provider id (non-interactive; used with --auth-choice token)",
+      t("Token provider id (non-interactive; used with --auth-choice token)"),
     )
-    .option("--token <token>", "Token value (non-interactive; used with --auth-choice token)")
+    .option("--token <token>", t("Token value (non-interactive; used with --auth-choice token)"))
     .option(
       "--token-profile-id <id>",
-      "Auth profile id (non-interactive; default: <provider>:manual)",
+      t("Auth profile id (non-interactive; default: <provider>:manual)"),
     )
-    .option("--token-expires-in <duration>", "Optional token expiry duration (e.g. 365d, 12h)")
-    .option("--anthropic-api-key <key>", "Anthropic API key")
-    .option("--openai-api-key <key>", "OpenAI API key")
-    .option("--openrouter-api-key <key>", "OpenRouter API key")
-    .option("--ai-gateway-api-key <key>", "Vercel AI Gateway API key")
-    .option("--moonshot-api-key <key>", "Moonshot API key")
-    .option("--kimi-code-api-key <key>", "Kimi Coding API key")
-    .option("--gemini-api-key <key>", "Gemini API key")
-    .option("--zai-api-key <key>", "Z.AI API key")
-    .option("--xiaomi-api-key <key>", "Xiaomi API key")
-    .option("--minimax-api-key <key>", "MiniMax API key")
-    .option("--synthetic-api-key <key>", "Synthetic API key")
-    .option("--venice-api-key <key>", "Venice API key")
-    .option("--opencode-zen-api-key <key>", "OpenCode Zen API key")
-    .option("--gateway-port <port>", "Gateway port")
-    .option("--gateway-bind <mode>", "Gateway bind: loopback|tailnet|lan|auto|custom")
-    .option("--gateway-auth <mode>", "Gateway auth: token|password")
-    .option("--gateway-token <token>", "Gateway token (token auth)")
-    .option("--gateway-password <password>", "Gateway password (password auth)")
-    .option("--remote-url <url>", "Remote Gateway WebSocket URL")
-    .option("--remote-token <token>", "Remote Gateway token (optional)")
-    .option("--tailscale <mode>", "Tailscale: off|serve|funnel")
-    .option("--tailscale-reset-on-exit", "Reset tailscale serve/funnel on exit")
-    .option("--install-daemon", "Install gateway service")
-    .option("--no-install-daemon", "Skip gateway service install")
-    .option("--skip-daemon", "Skip gateway service install")
-    .option("--daemon-runtime <runtime>", "Daemon runtime: node|bun")
-    .option("--skip-channels", "Skip channel setup")
-    .option("--skip-skills", "Skip skills setup")
-    .option("--skip-health", "Skip health check")
-    .option("--skip-ui", "Skip Control UI/TUI prompts")
-    .option("--node-manager <name>", "Node manager for skills: npm|pnpm|bun")
-    .option("--json", "Output JSON summary", false)
+    .option("--token-expires-in <duration>", t("Optional token expiry duration (e.g. 365d, 12h)"))
+    .option("--anthropic-api-key <key>", t("Anthropic API key"))
+    .option("--openai-api-key <key>", t("OpenAI API key"))
+    .option("--openrouter-api-key <key>", t("OpenRouter API key"))
+    .option("--ai-gateway-api-key <key>", t("Vercel AI Gateway API key"))
+    .option("--moonshot-api-key <key>", t("Moonshot API key"))
+    .option("--kimi-code-api-key <key>", t("Kimi Coding API key"))
+    .option("--gemini-api-key <key>", t("Gemini API key"))
+    .option("--zai-api-key <key>", t("Z.AI API key"))
+    .option("--xiaomi-api-key <key>", t("Xiaomi API key"))
+    .option("--minimax-api-key <key>", t("MiniMax API key"))
+    .option("--synthetic-api-key <key>", t("Synthetic API key"))
+    .option("--venice-api-key <key>", t("Venice API key"))
+    .option("--opencode-zen-api-key <key>", t("OpenCode Zen API key"))
+    .option("--gateway-port <port>", t("Gateway port"))
+    .option("--gateway-bind <mode>", t("Gateway bind: loopback|tailnet|lan|auto|custom"))
+    .option("--gateway-auth <mode>", t("Gateway auth: token|password"))
+    .option("--gateway-token <token>", t("Gateway token (token auth)"))
+    .option("--gateway-password <password>", t("Gateway password (password auth)"))
+    .option("--remote-url <url>", t("Remote Gateway WebSocket URL"))
+    .option("--remote-token <token>", t("Remote Gateway token (optional)"))
+    .option("--tailscale <mode>", t("Tailscale: off|serve|funnel"))
+    .option("--tailscale-reset-on-exit", t("Reset tailscale serve/funnel on exit"))
+    .option("--install-daemon", t("Install gateway service"))
+    .option("--no-install-daemon", t("Skip gateway service install"))
+    .option("--skip-daemon", t("Skip gateway service install"))
+    .option("--daemon-runtime <runtime>", t("Daemon runtime: node|bun"))
+    .option("--skip-channels", t("Skip channel setup"))
+    .option("--skip-skills", t("Skip skills setup"))
+    .option("--skip-health", t("Skip health check"))
+    .option("--skip-ui", t("Skip Control UI/TUI prompts"))
+    .option("--node-manager <name>", t("Node manager for skills: npm|pnpm|bun"))
+    .option("--json", t("Output JSON summary"), false)
     .action(async (opts, command) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         const installDaemon = resolveInstallDaemonFlag(command, {

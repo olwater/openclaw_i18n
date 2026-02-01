@@ -6,6 +6,7 @@ import { formatCliCommand } from "../cli/command-format.js";
 import { withProgress } from "../cli/progress.js";
 import { loadConfig } from "../config/config.js";
 import { callGateway, randomIdempotencyKey } from "../gateway/call.js";
+import { t } from "../i18n/index.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import {
   GATEWAY_CLIENT_MODES,
@@ -58,7 +59,7 @@ function parseTimeoutSeconds(opts: { cfg: ReturnType<typeof loadConfig>; timeout
       ? Number.parseInt(String(opts.timeout), 10)
       : (opts.cfg.agents?.defaults?.timeoutSeconds ?? 600);
   if (Number.isNaN(raw) || raw <= 0) {
-    throw new Error("--timeout must be a positive integer (seconds)");
+    throw new Error(t("--timeout must be a positive integer (seconds)"));
   }
   return raw;
 }
@@ -86,10 +87,10 @@ function formatPayloadForLog(payload: {
 export async function agentViaGatewayCommand(opts: AgentCliOpts, runtime: RuntimeEnv) {
   const body = (opts.message ?? "").trim();
   if (!body) {
-    throw new Error("Message (--message) is required");
+    throw new Error(t("Message (--message) is required"));
   }
   if (!opts.to && !opts.sessionId && !opts.agent) {
-    throw new Error("Pass --to <E.164>, --session-id, or --agent to choose a session");
+    throw new Error(t("Pass --to <E.164>, --session-id, or --agent to choose a session"));
   }
 
   const cfg = loadConfig();
@@ -99,7 +100,7 @@ export async function agentViaGatewayCommand(opts: AgentCliOpts, runtime: Runtim
     const knownAgents = listAgentIds(cfg);
     if (!knownAgents.includes(agentId)) {
       throw new Error(
-        `Unknown agent id "${agentIdRaw}". Use "${formatCliCommand("openclaw agents list")}" to see configured agents.`,
+        `Unknown agent id "${agentIdRaw}". Use "${formatCliCommand(t("openclaw agents list"))}" to see configured agents.`,
       );
     }
   }
@@ -118,7 +119,7 @@ export async function agentViaGatewayCommand(opts: AgentCliOpts, runtime: Runtim
 
   const response = await withProgress(
     {
-      label: "Waiting for agent reply…",
+      label: t("Waiting for agent reply…"),
       indeterminate: true,
       enabled: opts.json !== true,
     },

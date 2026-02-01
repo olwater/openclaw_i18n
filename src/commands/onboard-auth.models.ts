@@ -1,4 +1,5 @@
 import type { ModelDefinitionConfig } from "../config/types.js";
+import { t } from "../i18n/index.js";
 
 export const DEFAULT_MINIMAX_BASE_URL = "https://api.minimax.io/v1";
 export const MINIMAX_API_BASE_URL = "https://api.minimax.io/anthropic";
@@ -42,9 +43,9 @@ export const MOONSHOT_DEFAULT_COST = {
 };
 
 const MINIMAX_MODEL_CATALOG = {
-  "MiniMax-M2.1": { name: "MiniMax M2.1", reasoning: false },
+  "MiniMax-M2.1": { name: t("MiniMax M2.1"), reasoning: false },
   "MiniMax-M2.1-lightning": {
-    name: "MiniMax M2.1 Lightning",
+    name: t("MiniMax M2.1 Lightning"),
     reasoning: false,
   },
 } as const;
@@ -83,7 +84,7 @@ export function buildMinimaxApiModelDefinition(modelId: string): ModelDefinition
 export function buildMoonshotModelDefinition(): ModelDefinitionConfig {
   return {
     id: MOONSHOT_DEFAULT_MODEL_ID,
-    name: "Kimi K2 0905 Preview",
+    name: t("Kimi K2 0905 Preview"),
     reasoning: false,
     input: ["text"],
     cost: MOONSHOT_DEFAULT_COST,

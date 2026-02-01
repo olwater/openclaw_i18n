@@ -9,6 +9,7 @@ import {
   resolveStateDir,
 } from "../config/config.js";
 import { resolveGatewayService } from "../daemon/service.js";
+import { t } from "../i18n/index.js";
 import { stylePromptHint, stylePromptMessage, stylePromptTitle } from "../terminal/prompt-style.js";
 import {
   collectWorkspaceDirs,
@@ -60,7 +61,7 @@ async function stopGatewayIfRunning(runtime: RuntimeEnv) {
 export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
   const interactive = !opts.nonInteractive;
   if (!interactive && !opts.yes) {
-    runtime.error("Non-interactive mode requires --yes.");
+    runtime.error(t("Non-interactive mode requires --yes."));
     runtime.exit(1);
     return;
   }
@@ -68,33 +69,33 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
   let scope = opts.scope;
   if (!scope) {
     if (!interactive) {
-      runtime.error("Non-interactive mode requires --scope.");
+      runtime.error(t("Non-interactive mode requires --scope."));
       runtime.exit(1);
       return;
     }
     const selection = await selectStyled<ResetScope>({
-      message: "Reset scope",
+      message: t("Reset scope"),
       options: [
         {
           value: "config",
-          label: "Config only",
-          hint: "openclaw.json",
+          label: t("Config only"),
+          hint: t("openclaw.json"),
         },
         {
           value: "config+creds+sessions",
-          label: "Config + credentials + sessions",
-          hint: "keeps workspace + auth profiles",
+          label: t("Config + credentials + sessions"),
+          hint: t("keeps workspace + auth profiles"),
         },
         {
           value: "full",
-          label: "Full reset",
-          hint: "state dir + workspace",
+          label: t("Full reset"),
+          hint: t("state dir + workspace"),
         },
       ],
-      initialValue: "config+creds+sessions",
+      initialValue: t("config+creds+sessions"),
     });
     if (isCancel(selection)) {
-      cancel(stylePromptTitle("Reset cancelled.") ?? "Reset cancelled.");
+      cancel(stylePromptTitle(t("Reset cancelled.")) ?? t("Reset cancelled."));
       runtime.exit(0);
       return;
     }
@@ -102,7 +103,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
   }
 
   if (!["config", "config+creds+sessions", "full"].includes(scope)) {
-    runtime.error('Invalid --scope. Expected "config", "config+creds+sessions", or "full".');
+    runtime.error(t('Invalid --scope. Expected "config", "config+creds+sessions", or "full".'));
     runtime.exit(1);
     return;
   }
@@ -112,7 +113,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
       message: stylePromptMessage(`Proceed with ${scope} reset?`),
     });
     if (isCancel(ok) || !ok) {
-      cancel(stylePromptTitle("Reset cancelled.") ?? "Reset cancelled.");
+      cancel(stylePromptTitle(t("Reset cancelled.")) ?? t("Reset cancelled."));
       runtime.exit(0);
       return;
     }
@@ -129,7 +130,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
 
   if (scope !== "config") {
     if (dryRun) {
-      runtime.log("[dry-run] stop gateway service");
+      runtime.log(t("[dry-run] stop gateway service"));
     } else {
       await stopGatewayIfRunning(runtime);
     }
@@ -147,7 +148,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
     for (const dir of sessionDirs) {
       await removePath(dir, runtime, { dryRun, label: dir });
     }
-    runtime.log(`Next: ${formatCliCommand("openclaw onboard --install-daemon")}`);
+    runtime.log(`Next: ${formatCliCommand(t("openclaw onboard --install-daemon"))}`);
     return;
   }
 
@@ -162,7 +163,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
     for (const workspace of workspaceDirs) {
       await removePath(workspace, runtime, { dryRun, label: workspace });
     }
-    runtime.log(`Next: ${formatCliCommand("openclaw onboard --install-daemon")}`);
+    runtime.log(`Next: ${formatCliCommand(t("openclaw onboard --install-daemon"))}`);
     return;
   }
 }

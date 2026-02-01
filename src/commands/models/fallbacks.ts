@@ -2,6 +2,7 @@ import type { RuntimeEnv } from "../../runtime.js";
 import { buildModelAliasIndex, resolveModelRefFromString } from "../../agents/model-selection.js";
 import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
+import { t } from "../../i18n/index.js";
 import {
   DEFAULT_PROVIDER,
   ensureFlagCompatibility,
@@ -88,7 +89,7 @@ export async function modelsFallbacksAddCommand(modelRaw: string, runtime: Runti
   });
 
   logConfigUpdated(runtime);
-  runtime.log(`Fallbacks: ${(updated.agents?.defaults?.model?.fallbacks ?? []).join(", ")}`);
+  runtime.log(`Fallbacks: ${(updated.agents?.defaults?.model?.fallbacks ?? []).join(t(", "))}`);
 }
 
 export async function modelsFallbacksRemoveCommand(modelRaw: string, runtime: RuntimeEnv) {
@@ -136,7 +137,7 @@ export async function modelsFallbacksRemoveCommand(modelRaw: string, runtime: Ru
   });
 
   logConfigUpdated(runtime);
-  runtime.log(`Fallbacks: ${(updated.agents?.defaults?.model?.fallbacks ?? []).join(", ")}`);
+  runtime.log(`Fallbacks: ${(updated.agents?.defaults?.model?.fallbacks ?? []).join(t(", "))}`);
 }
 
 export async function modelsFallbacksClearCommand(runtime: RuntimeEnv) {
@@ -160,5 +161,5 @@ export async function modelsFallbacksClearCommand(runtime: RuntimeEnv) {
   });
 
   logConfigUpdated(runtime);
-  runtime.log("Fallback list cleared.");
+  runtime.log(t("Fallback list cleared."));
 }

@@ -6,6 +6,7 @@ import {
   type SkillStatusReport,
 } from "../agents/skills-status.js";
 import { loadConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { renderTable } from "../terminal/table.js";
@@ -36,15 +37,15 @@ function appendClawHubHint(output: string, json?: boolean): string {
 
 function formatSkillStatus(skill: SkillStatusEntry): string {
   if (skill.eligible) {
-    return theme.success("✓ ready");
+    return theme.success(t("✓ ready"));
   }
   if (skill.disabled) {
-    return theme.warn("⏸ disabled");
+    return theme.warn(t("⏸ disabled"));
   }
   if (skill.blockedByAllowlist) {
-    return theme.warn("🚫 blocked");
+    return theme.warn(t("🚫 blocked"));
   }
-  return theme.error("✗ missing");
+  return theme.error(t("✗ missing"));
 }
 
 function formatSkillName(skill: SkillStatusEntry): string {
@@ -55,21 +56,21 @@ function formatSkillName(skill: SkillStatusEntry): string {
 function formatSkillMissingSummary(skill: SkillStatusEntry): string {
   const missing: string[] = [];
   if (skill.missing.bins.length > 0) {
-    missing.push(`bins: ${skill.missing.bins.join(", ")}`);
+    missing.push(`bins: ${skill.missing.bins.join(t(", "))}`);
   }
   if (skill.missing.anyBins.length > 0) {
-    missing.push(`anyBins: ${skill.missing.anyBins.join(", ")}`);
+    missing.push(`anyBins: ${skill.missing.anyBins.join(t(", "))}`);
   }
   if (skill.missing.env.length > 0) {
-    missing.push(`env: ${skill.missing.env.join(", ")}`);
+    missing.push(`env: ${skill.missing.env.join(t(", "))}`);
   }
   if (skill.missing.config.length > 0) {
-    missing.push(`config: ${skill.missing.config.join(", ")}`);
+    missing.push(`config: ${skill.missing.config.join(t(", "))}`);
   }
   if (skill.missing.os.length > 0) {
-    missing.push(`os: ${skill.missing.os.join(", ")}`);
+    missing.push(`os: ${skill.missing.os.join(t(", "))}`);
   }
-  return missing.join("; ");
+  return missing.join(t("; "));
 }
 
 /**
@@ -100,8 +101,8 @@ export function formatSkillsList(report: SkillStatusReport, opts: SkillsListOpti
 
   if (skills.length === 0) {
     const message = opts.eligible
-      ? `No eligible skills found. Run \`${formatCliCommand("openclaw skills list")}\` to see all skills.`
-      : "No skills found.";
+      ? `No eligible skills found. Run \`${formatCliCommand(t("openclaw skills list"))}\` to see all skills.`
+      : t("No skills found.");
     return appendClawHubHint(message, opts.json);
   }
 
@@ -155,10 +156,10 @@ export function formatSkillInfo(
 
   if (!skill) {
     if (opts.json) {
-      return JSON.stringify({ error: "not found", skill: skillName }, null, 2);
+      return JSON.stringify({ error: t("not found"), skill: skillName }, null, 2);
     }
     return appendClawHubHint(
-      `Skill "${skillName}" not found. Run \`${formatCliCommand("openclaw skills list")}\` to see available skills.`,
+      `Skill "${skillName}" not found. Run \`${formatCliCommand(t("openclaw skills list"))}\` to see available skills.`,
       opts.json,
     );
   }
@@ -170,12 +171,12 @@ export function formatSkillInfo(
   const lines: string[] = [];
   const emoji = skill.emoji ?? "📦";
   const status = skill.eligible
-    ? theme.success("✓ Ready")
+    ? theme.success(t("✓ Ready"))
     : skill.disabled
-      ? theme.warn("⏸ Disabled")
+      ? theme.warn(t("⏸ Disabled"))
       : skill.blockedByAllowlist
-        ? theme.warn("🚫 Blocked by allowlist")
-        : theme.error("✗ Missing requirements");
+        ? theme.warn(t("🚫 Blocked by allowlist"))
+        : theme.error(t("✗ Missing requirements"));
 
   lines.push(`${emoji} ${theme.heading(skill.name)} ${status}`);
   lines.push("");
@@ -184,13 +185,13 @@ export function formatSkillInfo(
 
   // Details
   lines.push(theme.heading("Details:"));
-  lines.push(`${theme.muted("  Source:")} ${skill.source}`);
-  lines.push(`${theme.muted("  Path:")} ${shortenHomePath(skill.filePath)}`);
+  lines.push(`${theme.muted(t("  Source:"))} ${skill.source}`);
+  lines.push(`${theme.muted(t("  Path:"))} ${shortenHomePath(skill.filePath)}`);
   if (skill.homepage) {
-    lines.push(`${theme.muted("  Homepage:")} ${skill.homepage}`);
+    lines.push(`${theme.muted(t("  Homepage:"))} ${skill.homepage}`);
   }
   if (skill.primaryEnv) {
-    lines.push(`${theme.muted("  Primary env:")} ${skill.primaryEnv}`);
+    lines.push(`${theme.muted(t("  Primary env:"))} ${skill.primaryEnv}`);
   }
 
   // Requirements
@@ -209,7 +210,7 @@ export function formatSkillInfo(
         const missing = skill.missing.bins.includes(bin);
         return missing ? theme.error(`✗ ${bin}`) : theme.success(`✓ ${bin}`);
       });
-      lines.push(`${theme.muted("  Binaries:")} ${binsStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Binaries:"))} ${binsStatus.join(t(", "))}`);
     }
     if (skill.requirements.anyBins.length > 0) {
       const anyBinsMissing = skill.missing.anyBins.length > 0;
@@ -217,37 +218,37 @@ export function formatSkillInfo(
         const missing = anyBinsMissing;
         return missing ? theme.error(`✗ ${bin}`) : theme.success(`✓ ${bin}`);
       });
-      lines.push(`${theme.muted("  Any binaries:")} ${anyBinsStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Any binaries:"))} ${anyBinsStatus.join(t(", "))}`);
     }
     if (skill.requirements.env.length > 0) {
       const envStatus = skill.requirements.env.map((env) => {
         const missing = skill.missing.env.includes(env);
         return missing ? theme.error(`✗ ${env}`) : theme.success(`✓ ${env}`);
       });
-      lines.push(`${theme.muted("  Environment:")} ${envStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Environment:"))} ${envStatus.join(t(", "))}`);
     }
     if (skill.requirements.config.length > 0) {
       const configStatus = skill.requirements.config.map((cfg) => {
         const missing = skill.missing.config.includes(cfg);
         return missing ? theme.error(`✗ ${cfg}`) : theme.success(`✓ ${cfg}`);
       });
-      lines.push(`${theme.muted("  Config:")} ${configStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Config:"))} ${configStatus.join(t(", "))}`);
     }
     if (skill.requirements.os.length > 0) {
       const osStatus = skill.requirements.os.map((osName) => {
         const missing = skill.missing.os.includes(osName);
         return missing ? theme.error(`✗ ${osName}`) : theme.success(`✓ ${osName}`);
       });
-      lines.push(`${theme.muted("  OS:")} ${osStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  OS:"))} ${osStatus.join(t(", "))}`);
     }
   }
 
   // Install options
   if (skill.install.length > 0 && !skill.eligible) {
     lines.push("");
-    lines.push(theme.heading("Install options:"));
+    lines.push(theme.heading(t("Install options:")));
     for (const inst of skill.install) {
-      lines.push(`  ${theme.warn("→")} ${inst.label}`);
+      lines.push(`  ${theme.warn(t("→"))} ${inst.label}`);
     }
   }
 
@@ -290,17 +291,19 @@ export function formatSkillsCheck(report: SkillStatusReport, opts: SkillsCheckOp
   }
 
   const lines: string[] = [];
-  lines.push(theme.heading("Skills Status Check"));
+  lines.push(theme.heading(t("Skills Status Check")));
   lines.push("");
   lines.push(`${theme.muted("Total:")} ${report.skills.length}`);
   lines.push(`${theme.success("✓")} ${theme.muted("Eligible:")} ${eligible.length}`);
-  lines.push(`${theme.warn("⏸")} ${theme.muted("Disabled:")} ${disabled.length}`);
-  lines.push(`${theme.warn("🚫")} ${theme.muted("Blocked by allowlist:")} ${blocked.length}`);
-  lines.push(`${theme.error("✗")} ${theme.muted("Missing requirements:")} ${missingReqs.length}`);
+  lines.push(`${theme.warn(t("⏸"))} ${theme.muted("Disabled:")} ${disabled.length}`);
+  lines.push(`${theme.warn(t("🚫"))} ${theme.muted(t("Blocked by allowlist:"))} ${blocked.length}`);
+  lines.push(
+    `${theme.error(t("✗"))} ${theme.muted(t("Missing requirements:"))} ${missingReqs.length}`,
+  );
 
   if (eligible.length > 0) {
     lines.push("");
-    lines.push(theme.heading("Ready to use:"));
+    lines.push(theme.heading(t("Ready to use:")));
     for (const skill of eligible) {
       const emoji = skill.emoji ?? "📦";
       lines.push(`  ${emoji} ${skill.name}`);
@@ -309,26 +312,26 @@ export function formatSkillsCheck(report: SkillStatusReport, opts: SkillsCheckOp
 
   if (missingReqs.length > 0) {
     lines.push("");
-    lines.push(theme.heading("Missing requirements:"));
+    lines.push(theme.heading(t("Missing requirements:")));
     for (const skill of missingReqs) {
       const emoji = skill.emoji ?? "📦";
       const missing: string[] = [];
       if (skill.missing.bins.length > 0) {
-        missing.push(`bins: ${skill.missing.bins.join(", ")}`);
+        missing.push(`bins: ${skill.missing.bins.join(t(", "))}`);
       }
       if (skill.missing.anyBins.length > 0) {
-        missing.push(`anyBins: ${skill.missing.anyBins.join(", ")}`);
+        missing.push(`anyBins: ${skill.missing.anyBins.join(t(", "))}`);
       }
       if (skill.missing.env.length > 0) {
-        missing.push(`env: ${skill.missing.env.join(", ")}`);
+        missing.push(`env: ${skill.missing.env.join(t(", "))}`);
       }
       if (skill.missing.config.length > 0) {
-        missing.push(`config: ${skill.missing.config.join(", ")}`);
+        missing.push(`config: ${skill.missing.config.join(t(", "))}`);
       }
       if (skill.missing.os.length > 0) {
-        missing.push(`os: ${skill.missing.os.join(", ")}`);
+        missing.push(`os: ${skill.missing.os.join(t(", "))}`);
       }
-      lines.push(`  ${emoji} ${skill.name} ${theme.muted(`(${missing.join("; ")})`)}`);
+      lines.push(`  ${emoji} ${skill.name} ${theme.muted(`(${missing.join(t("; "))})`)}`);
     }
   }
 
@@ -341,7 +344,7 @@ export function formatSkillsCheck(report: SkillStatusReport, opts: SkillsCheckOp
 export function registerSkillsCli(program: Command) {
   const skills = program
     .command("skills")
-    .description("List and inspect available skills")
+    .description(t("List and inspect available skills"))
     .addHelpText(
       "after",
       () =>
@@ -350,10 +353,10 @@ export function registerSkillsCli(program: Command) {
 
   skills
     .command("list")
-    .description("List all available skills")
-    .option("--json", "Output as JSON", false)
-    .option("--eligible", "Show only eligible (ready to use) skills", false)
-    .option("-v, --verbose", "Show more details including missing requirements", false)
+    .description(t("List all available skills"))
+    .option("--json", t("Output as JSON"), false)
+    .option("--eligible", t("Show only eligible (ready to use) skills"), false)
+    .option("-v, --verbose", t("Show more details including missing requirements"), false)
     .action(async (opts) => {
       try {
         const config = loadConfig();
@@ -368,9 +371,9 @@ export function registerSkillsCli(program: Command) {
 
   skills
     .command("info")
-    .description("Show detailed information about a skill")
-    .argument("<name>", "Skill name")
-    .option("--json", "Output as JSON", false)
+    .description(t("Show detailed information about a skill"))
+    .argument("<name>", t("Skill name"))
+    .option("--json", t("Output as JSON"), false)
     .action(async (name, opts) => {
       try {
         const config = loadConfig();
@@ -385,8 +388,8 @@ export function registerSkillsCli(program: Command) {
 
   skills
     .command("check")
-    .description("Check which skills are ready vs missing requirements")
-    .option("--json", "Output as JSON", false)
+    .description(t("Check which skills are ready vs missing requirements"))
+    .option("--json", t("Output as JSON"), false)
     .action(async (opts) => {
       try {
         const config = loadConfig();

@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { loadConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { pickPrimaryTailnetIPv4, pickPrimaryTailnetIPv6 } from "../infra/tailnet.js";
 import { getWideAreaZonePath, resolveWideAreaDiscoveryDomain } from "../infra/widearea-dns.js";
 import { defaultRuntime } from "../runtime.js";
@@ -84,7 +85,7 @@ function detectBrewPrefix(): string {
   const out = run("brew", ["--prefix"]);
   const prefix = out.trim();
   if (!prefix) {
-    throw new Error("failed to resolve Homebrew prefix");
+    throw new Error(t("failed to resolve Homebrew prefix"));
   }
   return prefix;
 }
@@ -102,7 +103,7 @@ function ensureImportLine(corefilePath: string, importGlob: string): boolean {
 export function registerDnsCli(program: Command) {
   const dns = program
     .command("dns")
-    .description("DNS helpers for wide-area discovery (Tailscale + CoreDNS)")
+    .description(t("DNS helpers for wide-area discovery (Tailscale + CoreDNS)"))
     .addHelpText(
       "after",
       () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/dns", "docs.openclaw.ai/cli/dns")}\n`,
@@ -111,12 +112,12 @@ export function registerDnsCli(program: Command) {
   dns
     .command("setup")
     .description(
-      "Set up CoreDNS to serve your discovery domain for unicast DNS-SD (Wide-Area Bonjour)",
+      t("Set up CoreDNS to serve your discovery domain for unicast DNS-SD (Wide-Area Bonjour)"),
     )
-    .option("--domain <domain>", "Wide-area discovery domain (e.g. openclaw.internal)")
+    .option("--domain <domain>", t("Wide-area discovery domain (e.g. openclaw.internal)"))
     .option(
       "--apply",
-      "Install/update CoreDNS config and (re)start the service (requires sudo)",
+      t("Install/update CoreDNS config and (re)start the service (requires sudo)"),
       false,
     )
     .action(async (opts) => {
@@ -128,13 +129,13 @@ export function registerDnsCli(program: Command) {
       });
       if (!wideAreaDomain) {
         throw new Error(
-          "No wide-area domain configured. Set discovery.wideArea.domain or pass --domain.",
+          t("No wide-area domain configured. Set discovery.wideArea.domain or pass --domain."),
         );
       }
       const zonePath = getWideAreaZonePath(wideAreaDomain);
 
       const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-      defaultRuntime.log(theme.heading("DNS setup"));
+      defaultRuntime.log(theme.heading(t("DNS setup")));
       defaultRuntime.log(
         renderTable({
           width: tableWidth,
@@ -144,16 +145,16 @@ export function registerDnsCli(program: Command) {
           ],
           rows: [
             { Key: "Domain", Value: wideAreaDomain },
-            { Key: "Zone file", Value: zonePath },
+            { Key: t("Zone file"), Value: zonePath },
             {
-              Key: "Tailnet IP",
+              Key: t("Tailnet IP"),
               Value: `${tailnetIPv4 ?? "—"}${tailnetIPv6 ? ` (v6 ${tailnetIPv6})` : ""}`,
             },
           ],
         }).trimEnd(),
       );
       defaultRuntime.log("");
-      defaultRuntime.log(theme.heading("Recommended ~/.openclaw/openclaw.json:"));
+      defaultRuntime.log(theme.heading(t("Recommended ~/.openclaw/openclaw.json:")));
       defaultRuntime.log(
         JSON.stringify(
           {
@@ -165,9 +166,9 @@ export function registerDnsCli(program: Command) {
         ),
       );
       defaultRuntime.log("");
-      defaultRuntime.log(theme.heading("Tailscale admin (DNS → Nameservers):"));
+      defaultRuntime.log(theme.heading(t("Tailscale admin (DNS → Nameservers):")));
       defaultRuntime.log(
-        theme.muted(`- Add nameserver: ${tailnetIPv4 ?? "<this machine's tailnet IPv4>"}`),
+        theme.muted(`- Add nameserver: ${tailnetIPv4 ?? t("<this machine's tailnet IPv4>")}`),
       );
       defaultRuntime.log(
         theme.muted(`- Restrict to domain (Split DNS): ${wideAreaDomain.replace(/\.$/, "")}`),
@@ -175,15 +176,15 @@ export function registerDnsCli(program: Command) {
 
       if (!opts.apply) {
         defaultRuntime.log("");
-        defaultRuntime.log(theme.muted("Run with --apply to install CoreDNS and configure it."));
+        defaultRuntime.log(theme.muted(t("Run with --apply to install CoreDNS and configure it.")));
         return;
       }
 
       if (process.platform !== "darwin") {
-        throw new Error("dns setup is currently supported on macOS only");
+        throw new Error(t("dns setup is currently supported on macOS only"));
       }
       if (!tailnetIPv4 && !tailnetIPv6) {
-        throw new Error("no tailnet IP detected; ensure Tailscale is running on this machine");
+        throw new Error(t("no tailnet IP detected; ensure Tailscale is running on this machine"));
       }
 
       const prefix = detectBrewPrefix();
@@ -213,10 +214,10 @@ export function registerDnsCli(program: Command) {
         `${wideAreaDomain.replace(/\.$/, "")}:53 {`,
         `  bind ${bindArgs.join(" ")}`,
         `  file ${zonePath} {`,
-        `    reload 10s`,
-        `  }`,
-        `  errors`,
-        `  log`,
+        t("    reload 10s"),
+        t("  }"),
+        t("  errors"),
+        t("  log"),
         `}`,
         ``,
       ].join("\n");
@@ -231,11 +232,13 @@ export function registerDnsCli(program: Command) {
         const serial = `${y}${m}${d}01`;
 
         const zoneLines = [
-          `; created by openclaw dns setup (will be overwritten by the gateway when wide-area discovery is enabled)`,
+          t(
+            "; created by openclaw dns setup (will be overwritten by the gateway when wide-area discovery is enabled)",
+          ),
           `$ORIGIN ${wideAreaDomain}`,
-          `$TTL 60`,
+          t("$TTL 60"),
           `@ IN SOA ns1 hostmaster ${serial} 7200 3600 1209600 60`,
-          `@ IN NS ns1`,
+          t("@ IN NS ns1"),
           tailnetIPv4 ? `ns1 IN A ${tailnetIPv4}` : null,
           tailnetIPv6 ? `ns1 IN AAAA ${tailnetIPv6}` : null,
           ``,
@@ -245,7 +248,7 @@ export function registerDnsCli(program: Command) {
       }
 
       defaultRuntime.log("");
-      defaultRuntime.log(theme.heading("Starting CoreDNS (sudo)…"));
+      defaultRuntime.log(theme.heading(t("Starting CoreDNS (sudo)…")));
       run("sudo", ["brew", "services", "restart", "coredns"], {
         inherit: true,
       });
@@ -254,7 +257,9 @@ export function registerDnsCli(program: Command) {
         defaultRuntime.log("");
         defaultRuntime.log(
           theme.muted(
-            "Note: enable discovery.wideArea.enabled in ~/.openclaw/openclaw.json on the gateway and restart the gateway so it writes the DNS-SD zone.",
+            t(
+              "Note: enable discovery.wideArea.enabled in ~/.openclaw/openclaw.json on the gateway and restart the gateway so it writes the DNS-SD zone.",
+            ),
           ),
         );
       }

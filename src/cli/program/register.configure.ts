@@ -4,6 +4,7 @@ import {
   configureCommand,
   configureCommandWithSections,
 } from "../../commands/configure.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
@@ -12,7 +13,7 @@ import { runCommandWithRuntime } from "../cli-utils.js";
 export function registerConfigureCommand(program: Command) {
   program
     .command("configure")
-    .description("Interactive prompt to set up credentials, devices, and agent defaults")
+    .description(t("Interactive prompt to set up credentials, devices, and agent defaults"))
     .addHelpText(
       "after",
       () =>
@@ -20,7 +21,7 @@ export function registerConfigureCommand(program: Command) {
     )
     .option(
       "--section <section>",
-      `Configuration sections (repeatable). Options: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}`,
+      `Configuration sections (repeatable). Options: ${CONFIGURE_WIZARD_SECTIONS.join(t(", "))}`,
       (value: string, previous: string[]) => [...previous, value],
       [] as string[],
     )
@@ -39,7 +40,7 @@ export function registerConfigureCommand(program: Command) {
         const invalid = sections.filter((s) => !CONFIGURE_WIZARD_SECTIONS.includes(s as never));
         if (invalid.length > 0) {
           defaultRuntime.error(
-            `Invalid --section: ${invalid.join(", ")}. Expected one of: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}.`,
+            `Invalid --section: ${invalid.join(t(", "))}. Expected one of: ${CONFIGURE_WIZARD_SECTIONS.join(t(", "))}.`,
           );
           defaultRuntime.exit(1);
           return;

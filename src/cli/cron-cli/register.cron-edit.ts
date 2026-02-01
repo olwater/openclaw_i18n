@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { danger } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { sanitizeAgentId } from "../../routing/session-key.js";
 import { defaultRuntime } from "../../runtime.js";
 import { addGatewayClientOptions, callGatewayFromCli } from "../gateway-rpc.js";
@@ -25,54 +26,54 @@ export function registerCronEditCommand(cron: Command) {
   addGatewayClientOptions(
     cron
       .command("edit")
-      .description("Edit a cron job (patch fields)")
-      .argument("<id>", "Job id")
-      .option("--name <name>", "Set name")
-      .option("--description <text>", "Set description")
-      .option("--enable", "Enable job", false)
-      .option("--disable", "Disable job", false)
-      .option("--delete-after-run", "Delete one-shot job after it succeeds", false)
-      .option("--keep-after-run", "Keep one-shot job after it succeeds", false)
-      .option("--session <target>", "Session target (main|isolated)")
-      .option("--agent <id>", "Set agent id")
-      .option("--clear-agent", "Unset agent and use default", false)
-      .option("--wake <mode>", "Wake mode (now|next-heartbeat)")
-      .option("--at <when>", "Set one-shot time (ISO) or duration like 20m")
-      .option("--every <duration>", "Set interval duration like 10m")
-      .option("--cron <expr>", "Set cron expression")
-      .option("--tz <iana>", "Timezone for cron expressions (IANA)")
-      .option("--system-event <text>", "Set systemEvent payload")
-      .option("--message <text>", "Set agentTurn payload message")
-      .option("--thinking <level>", "Thinking level for agent jobs")
-      .option("--model <model>", "Model override for agent jobs")
-      .option("--timeout-seconds <n>", "Timeout seconds for agent jobs")
+      .description(t("Edit a cron job (patch fields)"))
+      .argument("<id>", t("Job id"))
+      .option("--name <name>", t("Set name"))
+      .option("--description <text>", t("Set description"))
+      .option("--enable", t("Enable job"), false)
+      .option("--disable", t("Disable job"), false)
+      .option("--delete-after-run", t("Delete one-shot job after it succeeds"), false)
+      .option("--keep-after-run", t("Keep one-shot job after it succeeds"), false)
+      .option("--session <target>", t("Session target (main|isolated)"))
+      .option("--agent <id>", t("Set agent id"))
+      .option("--clear-agent", t("Unset agent and use default"), false)
+      .option("--wake <mode>", t("Wake mode (now|next-heartbeat)"))
+      .option("--at <when>", t("Set one-shot time (ISO) or duration like 20m"))
+      .option("--every <duration>", t("Set interval duration like 10m"))
+      .option("--cron <expr>", t("Set cron expression"))
+      .option("--tz <iana>", t("Timezone for cron expressions (IANA)"))
+      .option("--system-event <text>", t("Set systemEvent payload"))
+      .option("--message <text>", t("Set agentTurn payload message"))
+      .option("--thinking <level>", t("Thinking level for agent jobs"))
+      .option("--model <model>", t("Model override for agent jobs"))
+      .option("--timeout-seconds <n>", t("Timeout seconds for agent jobs"))
       .option(
         "--deliver",
-        "Deliver agent output (required when using last-route delivery without --to)",
+        t("Deliver agent output (required when using last-route delivery without --to)"),
       )
-      .option("--no-deliver", "Disable delivery")
+      .option("--no-deliver", t("Disable delivery"))
       .option("--channel <channel>", `Delivery channel (${getCronChannelOptions()})`)
       .option(
         "--to <dest>",
-        "Delivery destination (E.164, Telegram chatId, or Discord channel/user)",
+        t("Delivery destination (E.164, Telegram chatId, or Discord channel/user)"),
       )
-      .option("--best-effort-deliver", "Do not fail job if delivery fails")
-      .option("--no-best-effort-deliver", "Fail job when delivery fails")
-      .option("--post-prefix <prefix>", "Prefix for summary system event")
+      .option("--best-effort-deliver", t("Do not fail job if delivery fails"))
+      .option("--no-best-effort-deliver", t("Fail job when delivery fails"))
+      .option("--post-prefix <prefix>", t("Prefix for summary system event"))
       .action(async (id, opts) => {
         try {
           if (opts.session === "main" && opts.message) {
             throw new Error(
-              "Main jobs cannot use --message; use --system-event or --session isolated.",
+              t("Main jobs cannot use --message; use --system-event or --session isolated."),
             );
           }
           if (opts.session === "isolated" && opts.systemEvent) {
             throw new Error(
-              "Isolated jobs cannot use --system-event; use --message or --session main.",
+              t("Isolated jobs cannot use --system-event; use --message or --session main."),
             );
           }
           if (opts.session === "main" && typeof opts.postPrefix === "string") {
-            throw new Error("--post-prefix only applies to isolated jobs.");
+            throw new Error(t("--post-prefix only applies to isolated jobs."));
           }
 
           const patch: Record<string, unknown> = {};
@@ -83,7 +84,7 @@ export function registerCronEditCommand(cron: Command) {
             patch.description = opts.description;
           }
           if (opts.enable && opts.disable) {
-            throw new Error("Choose --enable or --disable, not both");
+            throw new Error(t("Choose --enable or --disable, not both"));
           }
           if (opts.enable) {
             patch.enabled = true;
@@ -92,7 +93,7 @@ export function registerCronEditCommand(cron: Command) {
             patch.enabled = false;
           }
           if (opts.deleteAfterRun && opts.keepAfterRun) {
-            throw new Error("Choose --delete-after-run or --keep-after-run, not both");
+            throw new Error(t("Choose --delete-after-run or --keep-after-run, not both"));
           }
           if (opts.deleteAfterRun) {
             patch.deleteAfterRun = true;
@@ -107,7 +108,7 @@ export function registerCronEditCommand(cron: Command) {
             patch.wakeMode = opts.wake;
           }
           if (opts.agent && opts.clearAgent) {
-            throw new Error("Use --agent or --clear-agent, not both");
+            throw new Error(t("Use --agent or --clear-agent, not both"));
           }
           if (typeof opts.agent === "string" && opts.agent.trim()) {
             patch.agentId = sanitizeAgentId(opts.agent.trim());
@@ -118,18 +119,18 @@ export function registerCronEditCommand(cron: Command) {
 
           const scheduleChosen = [opts.at, opts.every, opts.cron].filter(Boolean).length;
           if (scheduleChosen > 1) {
-            throw new Error("Choose at most one schedule change");
+            throw new Error(t("Choose at most one schedule change"));
           }
           if (opts.at) {
             const atMs = parseAtMs(String(opts.at));
             if (!atMs) {
-              throw new Error("Invalid --at");
+              throw new Error(t("Invalid --at"));
             }
             patch.schedule = { kind: "at", atMs };
           } else if (opts.every) {
             const everyMs = parseDurationMs(String(opts.every));
             if (!everyMs) {
-              throw new Error("Invalid --every");
+              throw new Error(t("Invalid --every"));
             }
             patch.schedule = { kind: "every", everyMs };
           } else if (opts.cron) {
@@ -161,7 +162,7 @@ export function registerCronEditCommand(cron: Command) {
             typeof opts.to === "string" ||
             typeof opts.bestEffortDeliver === "boolean";
           if (hasSystemEventPatch && hasAgentTurnPatch) {
-            throw new Error("Choose at most one payload change");
+            throw new Error(t("Choose at most one payload change"));
           }
           if (hasSystemEventPatch) {
             patch.payload = {

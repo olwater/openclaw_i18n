@@ -4,6 +4,7 @@ import type { OnboardOptions } from "../onboard-types.js";
 import { formatCliCommand } from "../../cli/command-format.js";
 import { writeConfigFile } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
+import { t } from "../../i18n/index.js";
 import { applyWizardMetadata } from "../onboard-helpers.js";
 
 export async function runNonInteractiveOnboardingRemote(params: {
@@ -16,7 +17,7 @@ export async function runNonInteractiveOnboardingRemote(params: {
 
   const remoteUrl = opts.remoteUrl?.trim();
   if (!remoteUrl) {
-    runtime.error("Missing --remote-url for remote mode.");
+    runtime.error(t("Missing --remote-url for remote mode."));
     runtime.exit(1);
     return;
   }
@@ -47,7 +48,7 @@ export async function runNonInteractiveOnboardingRemote(params: {
     runtime.log(`Remote gateway: ${remoteUrl}`);
     runtime.log(`Auth: ${payload.auth}`);
     runtime.log(
-      `Tip: run \`${formatCliCommand("openclaw configure --section web")}\` to store your Brave API key for web_search. Docs: https://docs.openclaw.ai/tools/web`,
+      `Tip: run \`${formatCliCommand(t("openclaw configure --section web"))}\` to store your Brave API key for web_search. Docs: https://docs.openclaw.ai/tools/web`,
     );
   }
 }

@@ -2,6 +2,7 @@ import type { RuntimeEnv } from "../../runtime.js";
 import { buildModelAliasIndex, resolveModelRefFromString } from "../../agents/model-selection.js";
 import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
+import { t } from "../../i18n/index.js";
 import {
   DEFAULT_PROVIDER,
   ensureFlagCompatibility,
@@ -89,7 +90,7 @@ export async function modelsImageFallbacksAddCommand(modelRaw: string, runtime: 
 
   logConfigUpdated(runtime);
   runtime.log(
-    `Image fallbacks: ${(updated.agents?.defaults?.imageModel?.fallbacks ?? []).join(", ")}`,
+    `Image fallbacks: ${(updated.agents?.defaults?.imageModel?.fallbacks ?? []).join(t(", "))}`,
   );
 }
 
@@ -139,7 +140,7 @@ export async function modelsImageFallbacksRemoveCommand(modelRaw: string, runtim
 
   logConfigUpdated(runtime);
   runtime.log(
-    `Image fallbacks: ${(updated.agents?.defaults?.imageModel?.fallbacks ?? []).join(", ")}`,
+    `Image fallbacks: ${(updated.agents?.defaults?.imageModel?.fallbacks ?? []).join(t(", "))}`,
   );
 }
 
@@ -164,5 +165,5 @@ export async function modelsImageFallbacksClearCommand(runtime: RuntimeEnv) {
   });
 
   logConfigUpdated(runtime);
-  runtime.log("Image fallback list cleared.");
+  runtime.log(t("Image fallback list cleared."));
 }

@@ -7,10 +7,11 @@ import type {
 import chalk from "chalk";
 import { highlight, supportsLanguage } from "cli-highlight";
 import type { SearchableSelectListTheme } from "../components/searchable-select-list.js";
+import { t } from "../../i18n/index.js";
 import { createSyntaxTheme } from "./syntax-theme.js";
 
 const palette = {
-  text: "#E8E3D5",
+  text: t("#E8E3D5"),
   dim: "#7B7F87",
   accent: "#F6C453",
   accentSoft: "#F2A65A",
@@ -116,7 +117,7 @@ export const settingsListTheme: SettingsListTheme = {
     selected ? chalk.bold(fg(palette.accent)(text)) : fg(palette.text)(text),
   value: (text, selected) => (selected ? fg(palette.accentSoft)(text) : fg(palette.dim)(text)),
   description: (text) => fg(palette.systemText)(text),
-  cursor: fg(palette.accent)("→ "),
+  cursor: fg(palette.accent)(t("→ ")),
   hint: (text) => fg(palette.dim)(text),
 };
 

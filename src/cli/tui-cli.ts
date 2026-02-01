@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { theme } from "../terminal/theme.js";
@@ -8,16 +9,22 @@ import { parseTimeoutMs } from "./parse-timeout.js";
 export function registerTuiCli(program: Command) {
   program
     .command("tui")
-    .description("Open a terminal UI connected to the Gateway")
-    .option("--url <url>", "Gateway WebSocket URL (defaults to gateway.remote.url when configured)")
-    .option("--token <token>", "Gateway token (if required)")
-    .option("--password <password>", "Gateway password (if required)")
-    .option("--session <key>", 'Session key (default: "main", or "global" when scope is global)')
-    .option("--deliver", "Deliver assistant replies", false)
-    .option("--thinking <level>", "Thinking level override")
-    .option("--message <text>", "Send an initial message after connecting")
-    .option("--timeout-ms <ms>", "Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)")
-    .option("--history-limit <n>", "History entries to load", "200")
+    .description(t("Open a terminal UI connected to the Gateway"))
+    .option(
+      "--url <url>",
+      t("Gateway WebSocket URL (defaults to gateway.remote.url when configured)"),
+    )
+    .option("--token <token>", t("Gateway token (if required)"))
+    .option("--password <password>", t("Gateway password (if required)"))
+    .option("--session <key>", t('Session key (default: "main", or "global" when scope is global)'))
+    .option("--deliver", t("Deliver assistant replies"), false)
+    .option("--thinking <level>", t("Thinking level override"))
+    .option("--message <text>", t("Send an initial message after connecting"))
+    .option(
+      "--timeout-ms <ms>",
+      t("Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)"),
+    )
+    .option("--history-limit <n>", t("History entries to load"), "200")
     .addHelpText(
       "after",
       () => `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/tui", "docs.openclaw.ai/cli/tui")}\n`,

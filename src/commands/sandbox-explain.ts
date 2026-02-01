@@ -13,6 +13,7 @@ import {
   resolveMainSessionKey,
   resolveStorePath,
 } from "../config/sessions.js";
+import { t } from "../i18n/index.js";
 import {
   buildAgentMainSessionKey,
   normalizeAgentId,
@@ -276,7 +277,7 @@ export async function sandboxExplainCommand(
   const bool = (flag: boolean) => (flag ? ok("true") : err("false"));
 
   const lines: string[] = [];
-  lines.push(heading("Effective sandbox:"));
+  lines.push(heading(t("Effective sandbox:")));
   lines.push(`  ${key("agentId:")} ${value(payload.agentId)}`);
   lines.push(`  ${key("sessionKey:")} ${value(payload.sessionKey)}`);
   lines.push(`  ${key("mainSessionKey:")} ${value(payload.mainSessionKey)}`);
@@ -294,15 +295,15 @@ export async function sandboxExplainCommand(
     )} ${key("workspaceRoot:")} ${value(payload.sandbox.workspaceRoot)}`,
   );
   lines.push("");
-  lines.push(heading("Sandbox tool policy:"));
+  lines.push(heading(t("Sandbox tool policy:")));
   lines.push(
     `  ${key(`allow (${payload.sandbox.tools.sources.allow.source}):`)} ${value(
-      payload.sandbox.tools.allow.join(", ") || "(empty)",
+      payload.sandbox.tools.allow.join(t(", ")) || "(empty)",
     )}`,
   );
   lines.push(
     `  ${key(`deny  (${payload.sandbox.tools.sources.deny.source}):`)} ${value(
-      payload.sandbox.tools.deny.join(", ") || "(empty)",
+      payload.sandbox.tools.deny.join(t(", ")) || "(empty)",
     )}`,
   );
   lines.push("");
@@ -312,8 +313,8 @@ export async function sandboxExplainCommand(
   lines.push(`  ${key("allowedByConfig:")} ${bool(payload.elevated.allowedByConfig)}`);
   if (payload.elevated.failures.length > 0) {
     lines.push(
-      `  ${key("failing gates:")} ${warn(
-        payload.elevated.failures.map((f) => `${f.gate} (${f.key})`).join(", "),
+      `  ${key(t("failing gates:"))} ${warn(
+        payload.elevated.failures.map((f) => `${f.gate} (${f.key})`).join(t(", ")),
       )}`,
     );
   }

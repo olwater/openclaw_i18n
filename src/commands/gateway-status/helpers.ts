@@ -1,6 +1,7 @@
 import type { OpenClawConfig, ConfigFileSnapshot } from "../../config/types.js";
 import type { GatewayProbeResult } from "../../gateway/probe.js";
 import { resolveGatewayPort } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { pickPrimaryTailnetIPv4 } from "../../infra/tailnet.js";
 import { colorize, theme } from "../../terminal/theme.js";
 
@@ -276,14 +277,14 @@ export function buildNetworkHints(cfg: OpenClawConfig) {
 export function renderTargetHeader(target: GatewayStatusTarget, rich: boolean) {
   const kindLabel =
     target.kind === "localLoopback"
-      ? "Local loopback"
+      ? t("Local loopback")
       : target.kind === "sshTunnel"
-        ? "Remote over SSH"
+        ? t("Remote over SSH")
         : target.kind === "configRemote"
           ? target.active
-            ? "Remote (configured)"
-            : "Remote (configured, inactive)"
-          : "URL (explicit)";
+            ? t("Remote (configured)")
+            : t("Remote (configured, inactive)")
+          : t("URL (explicit)");
   return `${colorize(rich, theme.heading, kindLabel)} ${colorize(rich, theme.muted, target.url)}`;
 }
 
@@ -291,15 +292,15 @@ export function renderProbeSummaryLine(probe: GatewayProbeResult, rich: boolean)
   if (probe.ok) {
     const latency =
       typeof probe.connectLatencyMs === "number" ? `${probe.connectLatencyMs}ms` : "unknown";
-    return `${colorize(rich, theme.success, "Connect: ok")} (${latency}) · ${colorize(rich, theme.success, "RPC: ok")}`;
+    return `${colorize(rich, theme.success, t("Connect: ok"))} (${latency}) · ${colorize(rich, theme.success, t("RPC: ok"))}`;
   }
 
   const detail = probe.error ? ` - ${probe.error}` : "";
   if (probe.connectLatencyMs != null) {
     const latency =
       typeof probe.connectLatencyMs === "number" ? `${probe.connectLatencyMs}ms` : "unknown";
-    return `${colorize(rich, theme.success, "Connect: ok")} (${latency}) · ${colorize(rich, theme.error, "RPC: failed")}${detail}`;
+    return `${colorize(rich, theme.success, t("Connect: ok"))} (${latency}) · ${colorize(rich, theme.error, t("RPC: failed"))}${detail}`;
   }
 
-  return `${colorize(rich, theme.error, "Connect: failed")}${detail}`;
+  return `${colorize(rich, theme.error, t("Connect: failed"))}${detail}`;
 }

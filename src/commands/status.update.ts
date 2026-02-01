@@ -1,4 +1,5 @@
 import { formatCliCommand } from "../cli/command-format.js";
+import { t } from "../i18n/index.js";
 import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
 import {
   checkUpdateStatus,
@@ -65,8 +66,8 @@ export function formatUpdateAvailableHint(update: UpdateCheckResult): string | n
   if (availability.hasRegistryUpdate && availability.latestVersion) {
     details.push(`npm ${availability.latestVersion}`);
   }
-  const suffix = details.length > 0 ? ` (${details.join(" · ")})` : "";
-  return `Update available${suffix}. Run: ${formatCliCommand("openclaw update")}`;
+  const suffix = details.length > 0 ? ` (${details.join(t(" · "))})` : "";
+  return `Update available${suffix}. Run: ${formatCliCommand(t("openclaw update"))}`;
 }
 
 export function formatUpdateOneLiner(update: UpdateCheckResult): string {
@@ -82,7 +83,7 @@ export function formatUpdateOneLiner(update: UpdateCheckResult): string {
     }
     if (update.git.behind != null && update.git.ahead != null) {
       if (update.git.behind === 0 && update.git.ahead === 0) {
-        parts.push("up to date");
+        parts.push(t("up to date"));
       } else if (update.git.behind > 0 && update.git.ahead === 0) {
         parts.push(`behind ${update.git.behind}`);
       } else if (update.git.behind === 0 && update.git.ahead > 0) {
@@ -92,7 +93,7 @@ export function formatUpdateOneLiner(update: UpdateCheckResult): string {
       }
     }
     if (update.git.fetchOk === false) {
-      parts.push("fetch failed");
+      parts.push(t("fetch failed"));
     }
 
     if (update.registry?.latestVersion) {
@@ -105,7 +106,7 @@ export function formatUpdateOneLiner(update: UpdateCheckResult): string {
         parts.push(`npm latest ${update.registry.latestVersion} (local newer)`);
       }
     } else if (update.registry?.error) {
-      parts.push("npm latest unknown");
+      parts.push(t("npm latest unknown"));
     }
   } else {
     parts.push(update.packageManager !== "unknown" ? update.packageManager : "pkg");
@@ -119,20 +120,20 @@ export function formatUpdateOneLiner(update: UpdateCheckResult): string {
         parts.push(`npm latest ${update.registry.latestVersion} (local newer)`);
       }
     } else if (update.registry?.error) {
-      parts.push("npm latest unknown");
+      parts.push(t("npm latest unknown"));
     }
   }
 
   if (update.deps) {
     if (update.deps.status === "ok") {
-      parts.push("deps ok");
+      parts.push(t("deps ok"));
     }
     if (update.deps.status === "missing") {
-      parts.push("deps missing");
+      parts.push(t("deps missing"));
     }
     if (update.deps.status === "stale") {
-      parts.push("deps stale");
+      parts.push(t("deps stale"));
     }
   }
-  return `Update: ${parts.join(" · ")}`;
+  return `Update: ${parts.join(t(" · "))}`;
 }

@@ -1,5 +1,6 @@
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { resolveEnvApiKey } from "../agents/model-auth.js";
+import { t } from "../i18n/index.js";
 import {
   formatApiKeyPreview,
   normalizeApiKeyInput,
@@ -27,16 +28,16 @@ export async function applyAuthChoiceMiniMax(
     }
     await params.prompter.note(
       `Default model set to ${model} for agent "${params.agentId}".`,
-      "Model configured",
+      t("Model configured"),
     );
   };
   if (params.authChoice === "minimax-portal") {
     // Let user choose between Global/CN endpoints
     const endpoint = await params.prompter.select({
-      message: "Select MiniMax endpoint",
+      message: t("Select MiniMax endpoint"),
       options: [
-        { value: "oauth", label: "Global", hint: "OAuth for international users" },
-        { value: "oauth-cn", label: "CN", hint: "OAuth for users in China" },
+        { value: "oauth", label: t("Global"), hint: t("OAuth for international users") },
+        { value: "oauth-cn", label: t("CN"), hint: t("OAuth for users in China") },
       ],
     });
 
@@ -45,7 +46,7 @@ export async function applyAuthChoiceMiniMax(
       pluginId: "minimax-portal-auth",
       providerId: "minimax-portal",
       methodId: endpoint,
-      label: "MiniMax",
+      label: t("MiniMax"),
     });
   }
 
@@ -70,7 +71,7 @@ export async function applyAuthChoiceMiniMax(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter MiniMax API key",
+        message: t("Enter MiniMax API key"),
         validate: validateApiKeyInput,
       });
       await setMinimaxApiKey(normalizeApiKeyInput(String(key)), params.agentDir);

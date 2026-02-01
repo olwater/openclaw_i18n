@@ -3,6 +3,7 @@ import { resolveIsNixMode } from "../../config/paths.js";
 import { resolveGatewayService } from "../../daemon/service.js";
 import { renderSystemdUnavailableHints } from "../../daemon/systemd-hints.js";
 import { isSystemdUserServiceAvailable } from "../../daemon/systemd.js";
+import { t } from "../../i18n/index.js";
 import { isWSL } from "../../infra/wsl.js";
 import { defaultRuntime } from "../../runtime.js";
 import { buildDaemonServiceSnapshot, createNullWriter, emitDaemonActionJson } from "./response.js";
@@ -38,7 +39,7 @@ export async function runDaemonUninstall(opts: DaemonLifecycleOptions = {}) {
   };
 
   if (resolveIsNixMode(process.env)) {
-    fail("Nix mode detected; service uninstall is disabled.");
+    fail(t("Nix mode detected; service uninstall is disabled."));
     return;
   }
 
@@ -70,7 +71,7 @@ export async function runDaemonUninstall(opts: DaemonLifecycleOptions = {}) {
     loaded = false;
   }
   if (loaded) {
-    fail("Gateway service still loaded after uninstall.");
+    fail(t("Gateway service still loaded after uninstall."));
     return;
   }
   emit({

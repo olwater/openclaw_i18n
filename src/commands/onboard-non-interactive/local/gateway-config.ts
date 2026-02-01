@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { RuntimeEnv } from "../../../runtime.js";
 import type { OnboardOptions } from "../../onboard-types.js";
+import { t } from "../../../i18n/index.js";
 import { randomToken } from "../../onboard-helpers.js";
 
 export function applyNonInteractiveGatewayConfig(params: {
@@ -21,7 +22,7 @@ export function applyNonInteractiveGatewayConfig(params: {
 
   const hasGatewayPort = opts.gatewayPort !== undefined;
   if (hasGatewayPort && (!Number.isFinite(opts.gatewayPort) || (opts.gatewayPort ?? 0) <= 0)) {
-    runtime.error("Invalid --gateway-port");
+    runtime.error(t("Invalid --gateway-port"));
     runtime.exit(1);
     return null;
   }
@@ -30,7 +31,7 @@ export function applyNonInteractiveGatewayConfig(params: {
   let bind = opts.gatewayBind ?? "loopback";
   const authModeRaw = opts.gatewayAuth ?? "token";
   if (authModeRaw !== "token" && authModeRaw !== "password") {
-    runtime.error("Invalid --gateway-auth (use token|password).");
+    runtime.error(t("Invalid --gateway-auth (use token|password)."));
     runtime.exit(1);
     return null;
   }
@@ -71,7 +72,7 @@ export function applyNonInteractiveGatewayConfig(params: {
   if (authMode === "password") {
     const password = opts.gatewayPassword?.trim();
     if (!password) {
-      runtime.error("Missing --gateway-password for password auth.");
+      runtime.error(t("Missing --gateway-password for password auth."));
       runtime.exit(1);
       return null;
     }

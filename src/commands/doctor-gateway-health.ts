@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
+import { t } from "../i18n/index.js";
 import { collectChannelStatusIssues } from "../infra/channels-status-issues.js";
 import { note } from "../terminal/note.js";
 import { formatHealthCheckFailure } from "./health-format.js";
@@ -20,9 +21,9 @@ export async function checkGatewayHealth(params: {
     healthOk = true;
   } catch (err) {
     const message = String(err);
-    if (message.includes("gateway closed")) {
-      note("Gateway not running.", "Gateway");
-      note(gatewayDetails.message, "Gateway connection");
+    if (message.includes(t("gateway closed"))) {
+      note(t("Gateway not running."), "Gateway");
+      note(gatewayDetails.message, t("Gateway connection"));
     } else {
       params.runtime.error(formatHealthCheckFailure(err));
     }
@@ -46,7 +47,7 @@ export async function checkGatewayHealth(params: {
                 }`,
             )
             .join("\n"),
-          "Channel warnings",
+          t("Channel warnings"),
         );
       }
     } catch {

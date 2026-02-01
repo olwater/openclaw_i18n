@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { BrowserParentOpts } from "./browser-cli-shared.js";
 import { danger } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { theme } from "../terminal/theme.js";
@@ -19,9 +20,9 @@ import { formatHelpExamples } from "./help-format.js";
 export function registerBrowserCli(program: Command) {
   const browser = program
     .command("browser")
-    .description("Manage OpenClaw's dedicated browser (Chrome/Chromium)")
-    .option("--browser-profile <name>", "Browser profile name (default from config)")
-    .option("--json", "Output machine-readable JSON", false)
+    .description(t("Manage OpenClaw's dedicated browser (Chrome/Chromium)"))
+    .option("--browser-profile <name>", t("Browser profile name (default from config)"))
+    .option("--json", t("Output machine-readable JSON"), false)
     .addHelpText(
       "after",
       () =>
@@ -36,7 +37,7 @@ export function registerBrowserCli(program: Command) {
     .action(() => {
       browser.outputHelp();
       defaultRuntime.error(
-        danger(`Missing subcommand. Try: "${formatCliCommand("openclaw browser status")}"`),
+        danger(`Missing subcommand. Try: "${formatCliCommand(t("openclaw browser status"))}"`),
       );
       defaultRuntime.exit(1);
     });

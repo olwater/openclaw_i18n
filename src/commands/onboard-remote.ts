@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { GatewayBonjourBeacon } from "../infra/bonjour-discovery.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
+import { t } from "../i18n/index.js";
 import { discoverGatewayBeacons } from "../infra/bonjour-discovery.js";
 import { resolveWideAreaDiscoveryDomain } from "../infra/widearea-dns.js";
 import { detectBinary } from "./onboard-helpers.js";
@@ -15,7 +16,7 @@ function buildLabel(beacon: GatewayBonjourBeacon): string {
   const host = pickHost(beacon);
   const port = beacon.gatewayPort ?? beacon.port ?? 18789;
   const title = beacon.displayName ?? beacon.instanceName;
-  const hint = host ? `${host}:${port}` : "host unknown";
+  const hint = host ? `${host}:${port}` : t("host unknown");
   return `${title} (${hint})`;
 }
 
@@ -37,7 +38,7 @@ export async function promptRemoteGatewayConfig(
   const hasBonjourTool = (await detectBinary("dns-sd")) || (await detectBinary("avahi-browse"));
   const wantsDiscover = hasBonjourTool
     ? await prompter.confirm({
-        message: "Discover gateway on LAN (Bonjour)?",
+        message: t("Discover gateway on LAN (Bonjour)?"),
         initialValue: true,
       })
     : false;
@@ -45,10 +46,10 @@ export async function promptRemoteGatewayConfig(
   if (!hasBonjourTool) {
     await prompter.note(
       [
-        "Bonjour discovery requires dns-sd (macOS) or avahi-browse (Linux).",
-        "Docs: https://docs.openclaw.ai/gateway/discovery",
+        t("Bonjour discovery requires dns-sd (macOS) or avahi-browse (Linux)."),
+        t("Docs: https://docs.openclaw.ai/gateway/discovery"),
       ].join("\n"),
-      "Discovery",
+      t("Discovery"),
     );
   }
 
@@ -56,19 +57,19 @@ export async function promptRemoteGatewayConfig(
     const wideAreaDomain = resolveWideAreaDiscoveryDomain({
       configDomain: cfg.discovery?.wideArea?.domain,
     });
-    const spin = prompter.progress("Searching for gateways…");
+    const spin = prompter.progress(t("Searching for gateways…"));
     const beacons = await discoverGatewayBeacons({ timeoutMs: 2000, wideAreaDomain });
-    spin.stop(beacons.length > 0 ? `Found ${beacons.length} gateway(s)` : "No gateways found");
+    spin.stop(beacons.length > 0 ? `Found ${beacons.length} gateway(s)` : t("No gateways found"));
 
     if (beacons.length > 0) {
       const selection = await prompter.select({
-        message: "Select gateway",
+        message: t("Select gateway"),
         options: [
           ...beacons.map((beacon, index) => ({
             value: String(index),
             label: buildLabel(beacon),
           })),
-          { value: "manual", label: "Enter URL manually" },
+          { value: "manual", label: t("Enter URL manually") },
         ],
       });
       if (selection !== "manual") {
@@ -83,13 +84,13 @@ export async function promptRemoteGatewayConfig(
     const port = selectedBeacon.gatewayPort ?? 18789;
     if (host) {
       const mode = await prompter.select({
-        message: "Connection method",
+        message: t("Connection method"),
         options: [
           {
             value: "direct",
             label: `Direct gateway WS (${host}:${port})`,
           },
-          { value: "ssh", label: "SSH tunnel (loopback)" },
+          { value: "ssh", label: t("SSH tunnel (loopback)") },
         ],
       });
       if (mode === "direct") {
@@ -98,33 +99,33 @@ export async function promptRemoteGatewayConfig(
         suggestedUrl = DEFAULT_GATEWAY_URL;
         await prompter.note(
           [
-            "Start a tunnel before using the CLI:",
+            t("Start a tunnel before using the CLI:"),
             `ssh -N -L 18789:127.0.0.1:18789 <user>@${host}${
               selectedBeacon.sshPort ? ` -p ${selectedBeacon.sshPort}` : ""
             }`,
-            "Docs: https://docs.openclaw.ai/gateway/remote",
+            t("Docs: https://docs.openclaw.ai/gateway/remote"),
           ].join("\n"),
-          "SSH tunnel",
+          t("SSH tunnel"),
         );
       }
     }
   }
 
   const urlInput = await prompter.text({
-    message: "Gateway WebSocket URL",
+    message: t("Gateway WebSocket URL"),
     initialValue: suggestedUrl,
     validate: (value) =>
       String(value).trim().startsWith("ws://") || String(value).trim().startsWith("wss://")
         ? undefined
-        : "URL must start with ws:// or wss://",
+        : t("URL must start with ws:// or wss://"),
   });
   const url = ensureWsUrl(String(urlInput));
 
   const authChoice = await prompter.select({
-    message: "Gateway auth",
+    message: t("Gateway auth"),
     options: [
-      { value: "token", label: "Token (recommended)" },
-      { value: "off", label: "No auth" },
+      { value: "token", label: t("Token (recommended)") },
+      { value: "off", label: t("No auth") },
     ],
   });
 
@@ -132,7 +133,7 @@ export async function promptRemoteGatewayConfig(
   if (authChoice === "token") {
     token = String(
       await prompter.text({
-        message: "Gateway token",
+        message: t("Gateway token"),
         initialValue: token,
         validate: (value) => (value?.trim() ? undefined : "Required"),
       }),

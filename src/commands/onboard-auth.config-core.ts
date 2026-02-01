@@ -12,6 +12,7 @@ import {
   VENICE_DEFAULT_MODEL_REF,
   VENICE_MODEL_CATALOG,
 } from "../agents/venice-models.js";
+import { t } from "../i18n/index.js";
 import {
   OPENROUTER_DEFAULT_MODEL_REF,
   VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF,
@@ -77,7 +78,7 @@ export function applyVercelAiGatewayProviderConfig(cfg: OpenClawConfig): OpenCla
   const models = { ...cfg.agents?.defaults?.models };
   models[VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF] = {
     ...models[VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF],
-    alias: models[VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF]?.alias ?? "Vercel AI Gateway",
+    alias: models[VERCEL_AI_GATEWAY_DEFAULT_MODEL_REF]?.alias ?? t("Vercel AI Gateway"),
   };
 
   return {
@@ -140,7 +141,7 @@ export function applyMoonshotProviderConfig(cfg: OpenClawConfig): OpenClawConfig
   const models = { ...cfg.agents?.defaults?.models };
   models[MOONSHOT_DEFAULT_MODEL_REF] = {
     ...models[MOONSHOT_DEFAULT_MODEL_REF],
-    alias: models[MOONSHOT_DEFAULT_MODEL_REF]?.alias ?? "Kimi K2",
+    alias: models[MOONSHOT_DEFAULT_MODEL_REF]?.alias ?? t("Kimi K2"),
   };
 
   const providers = { ...cfg.models?.providers };
@@ -205,7 +206,7 @@ export function applyKimiCodeProviderConfig(cfg: OpenClawConfig): OpenClawConfig
   const models = { ...cfg.agents?.defaults?.models };
   models[KIMI_CODING_MODEL_REF] = {
     ...models[KIMI_CODING_MODEL_REF],
-    alias: models[KIMI_CODING_MODEL_REF]?.alias ?? "Kimi K2.5",
+    alias: models[KIMI_CODING_MODEL_REF]?.alias ?? t("Kimi K2.5"),
   };
 
   return {
@@ -246,7 +247,7 @@ export function applySyntheticProviderConfig(cfg: OpenClawConfig): OpenClawConfi
   const models = { ...cfg.agents?.defaults?.models };
   models[SYNTHETIC_DEFAULT_MODEL_REF] = {
     ...models[SYNTHETIC_DEFAULT_MODEL_REF],
-    alias: models[SYNTHETIC_DEFAULT_MODEL_REF]?.alias ?? "MiniMax M2.1",
+    alias: models[SYNTHETIC_DEFAULT_MODEL_REF]?.alias ?? t("MiniMax M2.1"),
   };
 
   const providers = { ...cfg.models?.providers };
@@ -390,7 +391,7 @@ export function applyVeniceProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
   const models = { ...cfg.agents?.defaults?.models };
   models[VENICE_DEFAULT_MODEL_REF] = {
     ...models[VENICE_DEFAULT_MODEL_REF],
-    alias: models[VENICE_DEFAULT_MODEL_REF]?.alias ?? "Llama 3.3 70B",
+    alias: models[VENICE_DEFAULT_MODEL_REF]?.alias ?? t("Llama 3.3 70B"),
   };
 
   const providers = { ...cfg.models?.providers };

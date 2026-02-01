@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { BrowserParentOpts } from "../browser-cli-shared.js";
 import { danger } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { callBrowserAct, requireRef, resolveBrowserActionContext } from "./shared.js";
 
@@ -10,12 +11,12 @@ export function registerBrowserElementCommands(
 ) {
   browser
     .command("click")
-    .description("Click an element by ref from snapshot")
+    .description(t("Click an element by ref from snapshot"))
     .argument("<ref>", "Ref id from snapshot")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
-    .option("--double", "Double click", false)
-    .option("--button <left|right|middle>", "Mouse button to use")
-    .option("--modifiers <list>", "Comma-separated modifiers (Shift,Alt,Meta)")
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
+    .option("--double", t("Double click"), false)
+    .option("--button <left|right|middle>", t("Mouse button to use"))
+    .option("--modifiers <list>", t("Comma-separated modifiers (Shift,Alt,Meta)"))
     .action(async (ref: string | undefined, opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       const refValue = requireRef(ref);
@@ -55,12 +56,12 @@ export function registerBrowserElementCommands(
 
   browser
     .command("type")
-    .description("Type into an element by ref from snapshot")
+    .description(t("Type into an element by ref from snapshot"))
     .argument("<ref>", "Ref id from snapshot")
-    .argument("<text>", "Text to type")
-    .option("--submit", "Press Enter after typing", false)
-    .option("--slowly", "Type slowly (human-like)", false)
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .argument("<text>", t("Text to type"))
+    .option("--submit", t("Press Enter after typing"), false)
+    .option("--slowly", t("Type slowly (human-like)"), false)
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (ref: string | undefined, text: string, opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       const refValue = requireRef(ref);
@@ -93,9 +94,9 @@ export function registerBrowserElementCommands(
 
   browser
     .command("press")
-    .description("Press a key")
-    .argument("<key>", "Key to press (e.g. Enter)")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .description(t("Press a key"))
+    .argument("<key>", t("Key to press (e.g. Enter)"))
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (key: string, opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       try {
@@ -117,9 +118,9 @@ export function registerBrowserElementCommands(
 
   browser
     .command("hover")
-    .description("Hover an element by ai ref")
+    .description(t("Hover an element by ai ref"))
     .argument("<ref>", "Ref id from snapshot")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (ref: string, opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       try {
@@ -141,10 +142,10 @@ export function registerBrowserElementCommands(
 
   browser
     .command("scrollintoview")
-    .description("Scroll an element into view by ref from snapshot")
+    .description(t("Scroll an element into view by ref from snapshot"))
     .argument("<ref>", "Ref id from snapshot")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
-    .option("--timeout-ms <ms>", "How long to wait for scroll (default: 20000)", (v: string) =>
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
+    .option("--timeout-ms <ms>", t("How long to wait for scroll (default: 20000)"), (v: string) =>
       Number(v),
     )
     .action(async (ref: string | undefined, opts, cmd) => {
@@ -178,10 +179,10 @@ export function registerBrowserElementCommands(
 
   browser
     .command("drag")
-    .description("Drag from one ref to another")
-    .argument("<startRef>", "Start ref id")
-    .argument("<endRef>", "End ref id")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .description(t("Drag from one ref to another"))
+    .argument("<startRef>", t("Start ref id"))
+    .argument("<endRef>", t("End ref id"))
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (startRef: string, endRef: string, opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       try {
@@ -208,10 +209,10 @@ export function registerBrowserElementCommands(
 
   browser
     .command("select")
-    .description("Select option(s) in a select element")
+    .description(t("Select option(s) in a select element"))
     .argument("<ref>", "Ref id from snapshot")
-    .argument("<values...>", "Option values to select")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .argument("<values...>", t("Option values to select"))
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (ref: string, values: string[], opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       try {
@@ -229,7 +230,7 @@ export function registerBrowserElementCommands(
           defaultRuntime.log(JSON.stringify(result, null, 2));
           return;
         }
-        defaultRuntime.log(`selected ${values.join(", ")}`);
+        defaultRuntime.log(`selected ${values.join(t(", "))}`);
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);

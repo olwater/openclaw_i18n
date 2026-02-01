@@ -1,3 +1,5 @@
+import { t } from "../i18n/index.js";
+
 export type WizardSelectOption<T = string> = {
   value: T;
   label: string;
@@ -45,7 +47,7 @@ export type WizardPrompter = {
 };
 
 export class WizardCancelledError extends Error {
-  constructor(message = "wizard cancelled") {
+  constructor(message = t("wizard cancelled")) {
     super(message);
     this.name = "WizardCancelledError";
   }

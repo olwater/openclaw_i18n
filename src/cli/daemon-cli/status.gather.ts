@@ -13,6 +13,7 @@ import { findExtraGatewayServices } from "../../daemon/inspect.js";
 import { auditGatewayServiceConfig } from "../../daemon/service-audit.js";
 import { resolveGatewayService } from "../../daemon/service.js";
 import { resolveGatewayBindHost } from "../../gateway/net.js";
+import { t } from "../../i18n/index.js";
 import {
   formatPortDiagnostics,
   inspectPortUsage,
@@ -167,7 +168,7 @@ export async function gatherDaemonStatus(
   const portFromArgs = parsePortFromArgs(command?.programArguments);
   const daemonPort = portFromArgs ?? resolveGatewayPort(daemonCfg, mergedDaemonEnv);
   const portSource: GatewayStatusSummary["portSource"] = portFromArgs
-    ? "service args"
+    ? t("service args")
     : "env/config";
 
   const bindMode = (daemonCfg.gateway?.bind ?? "loopback") as
@@ -185,9 +186,11 @@ export async function gatherDaemonStatus(
   const probeUrl = probeUrlOverride ?? `ws://${probeHost}:${daemonPort}`;
   const probeNote =
     !probeUrlOverride && bindMode === "lan"
-      ? "Local probe uses loopback (127.0.0.1). bind=lan listens on 0.0.0.0 (all interfaces); use a LAN IP for remote clients."
+      ? t(
+          "Local probe uses loopback (127.0.0.1). bind=lan listens on 0.0.0.0 (all interfaces); use a LAN IP for remote clients.",
+        )
       : !probeUrlOverride && bindMode === "loopback"
-        ? "Loopback-only gateway; only local clients can connect."
+        ? t("Loopback-only gateway; only local clients can connect.")
         : undefined;
 
   const cliPort = resolveGatewayPort(cliCfg, process.env);

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
 import * as path from "node:path";
+import { t } from "../i18n/index.js";
 import { resolveCliName } from "./cli-name.js";
 
 export type CameraFacing = "front" | "back";
@@ -43,7 +44,7 @@ export function parseCameraSnapPayload(value: unknown): CameraSnapPayload {
   const width = asNumber(obj.width);
   const height = asNumber(obj.height);
   if (!format || !base64 || width === undefined || height === undefined) {
-    throw new Error("invalid camera.snap payload");
+    throw new Error(t("invalid camera.snap payload"));
   }
   return { format, base64, width, height };
 }
@@ -55,7 +56,7 @@ export function parseCameraClipPayload(value: unknown): CameraClipPayload {
   const durationMs = asNumber(obj.durationMs);
   const hasAudio = asBoolean(obj.hasAudio);
   if (!format || !base64 || durationMs === undefined || hasAudio === undefined) {
-    throw new Error("invalid camera.clip payload");
+    throw new Error(t("invalid camera.clip payload"));
   }
   return { format, base64, durationMs, hasAudio };
 }

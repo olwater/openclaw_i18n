@@ -11,6 +11,7 @@ import { CONFIG_PATH } from "../config/config.js";
 import { resolveSessionTranscriptsDirForAgent } from "../config/sessions.js";
 import { callGateway } from "../gateway/call.js";
 import { normalizeControlUiBasePath } from "../gateway/control-ui-shared.js";
+import { t } from "../i18n/index.js";
 import { isSafeExecutableValue } from "../infra/exec-safety.js";
 import { pickPrimaryTailnetIPv4 } from "../infra/tailnet.js";
 import { isWSL } from "../infra/wsl.js";
@@ -28,7 +29,7 @@ import { VERSION } from "../version.js";
 
 export function guardCancel<T>(value: T | symbol, runtime: RuntimeEnv): T {
   if (isCancel(value)) {
-    cancel(stylePromptTitle("Setup cancelled.") ?? "Setup cancelled.");
+    cancel(stylePromptTitle(t("Setup cancelled.")) ?? t("Setup cancelled."));
     runtime.exit(0);
   }
   return value;
@@ -61,7 +62,7 @@ export function summarizeExistingConfig(config: OpenClawConfig): string {
   if (config.skills?.install?.nodeManager) {
     rows.push(shortenHomeInString(`skills.nodeManager: ${config.skills.install.nodeManager}`));
   }
-  return rows.length ? rows.join("\n") : "No key settings detected.";
+  return rows.length ? rows.join("\n") : t("No key settings detected.");
 }
 
 export function randomToken(): string {
@@ -82,7 +83,7 @@ export function printWizardHeader(runtime: RuntimeEnv) {
     "██░███░██░▀▀░██░▄▄▄██░█░█░██░█████░████░▀▀░██░█░█░██",
     "██░▀▀▀░██░█████░▀▀▀██░██▄░██░▀▀▄██░▀▀░█░██░██▄▀▄▀▄██",
     "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀",
-    "                  🦞 OPENCLAW 🦞                    ",
+    t("                  🦞 OPENCLAW 🦞                    "),
     " ",
   ].join("\n");
   runtime.log(header);
@@ -193,7 +194,7 @@ export function formatControlUiSshHint(params: {
   return [
     "No GUI detected. Open from your computer:",
     `ssh -N -L ${params.port}:127.0.0.1:${params.port} ${sshTarget}`,
-    "Then open:",
+    t("Then open:"),
     localUrl,
     authedUrl,
     "Docs:",
@@ -282,9 +283,9 @@ export function resolveNodeManagerOptions(): Array<{
   label: string;
 }> {
   return [
-    { value: "npm", label: "npm" },
-    { value: "pnpm", label: "pnpm" },
-    { value: "bun", label: "bun" },
+    { value: "npm", label: t("npm") },
+    { value: "pnpm", label: t("pnpm") },
+    { value: "bun", label: t("bun") },
   ];
 }
 
@@ -414,7 +415,7 @@ export async function waitForGatewayReachable(params: {
 }
 
 function summarizeError(err: unknown): string {
-  let raw = "unknown error";
+  let raw = t("unknown error");
   if (err instanceof Error) {
     raw = err.message || raw;
   } else if (typeof err === "string") {

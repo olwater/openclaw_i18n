@@ -18,6 +18,7 @@ import {
 } from "../hooks/install.js";
 import { recordHookInstall } from "../hooks/installs.js";
 import { loadWorkspaceHookEntries } from "../hooks/workspace.js";
+import { t } from "../i18n/index.js";
 import { resolveArchiveKind } from "../infra/archive.js";
 import { buildPluginStatusReport } from "../plugins/status.js";
 import { defaultRuntime } from "../runtime.js";
@@ -68,12 +69,12 @@ function buildHooksReport(config: OpenClawConfig): HookStatusReport {
 
 function formatHookStatus(hook: HookStatusEntry): string {
   if (hook.eligible) {
-    return theme.success("✓ ready");
+    return theme.success(t("✓ ready"));
   }
   if (hook.disabled) {
-    return theme.warn("⏸ disabled");
+    return theme.warn(t("⏸ disabled"));
   }
-  return theme.error("✗ missing");
+  return theme.error(t("✗ missing"));
 }
 
 function formatHookName(hook: HookStatusEntry): string {
@@ -91,21 +92,21 @@ function formatHookSource(hook: HookStatusEntry): string {
 function formatHookMissingSummary(hook: HookStatusEntry): string {
   const missing: string[] = [];
   if (hook.missing.bins.length > 0) {
-    missing.push(`bins: ${hook.missing.bins.join(", ")}`);
+    missing.push(`bins: ${hook.missing.bins.join(t(", "))}`);
   }
   if (hook.missing.anyBins.length > 0) {
-    missing.push(`anyBins: ${hook.missing.anyBins.join(", ")}`);
+    missing.push(`anyBins: ${hook.missing.anyBins.join(t(", "))}`);
   }
   if (hook.missing.env.length > 0) {
-    missing.push(`env: ${hook.missing.env.join(", ")}`);
+    missing.push(`env: ${hook.missing.env.join(t(", "))}`);
   }
   if (hook.missing.config.length > 0) {
-    missing.push(`config: ${hook.missing.config.join(", ")}`);
+    missing.push(`config: ${hook.missing.config.join(t(", "))}`);
   }
   if (hook.missing.os.length > 0) {
-    missing.push(`os: ${hook.missing.os.join(", ")}`);
+    missing.push(`os: ${hook.missing.os.join(t(", "))}`);
   }
-  return missing.join("; ");
+  return missing.join(t("; "));
 }
 
 async function readInstalledPackageVersion(dir: string): Promise<string | undefined> {
@@ -147,8 +148,8 @@ export function formatHooksList(report: HookStatusReport, opts: HooksListOptions
 
   if (hooks.length === 0) {
     const message = opts.eligible
-      ? `No eligible hooks found. Run \`${formatCliCommand("openclaw hooks list")}\` to see all hooks.`
-      : "No hooks found.";
+      ? `No eligible hooks found. Run \`${formatCliCommand(t("openclaw hooks list"))}\` to see all hooks.`
+      : t("No hooks found.");
     return message;
   }
 
@@ -201,9 +202,9 @@ export function formatHookInfo(
 
   if (!hook) {
     if (opts.json) {
-      return JSON.stringify({ error: "not found", hook: hookName }, null, 2);
+      return JSON.stringify({ error: t("not found"), hook: hookName }, null, 2);
     }
-    return `Hook "${hookName}" not found. Run \`${formatCliCommand("openclaw hooks list")}\` to see available hooks.`;
+    return `Hook "${hookName}" not found. Run \`${formatCliCommand(t("openclaw hooks list"))}\` to see available hooks.`;
   }
 
   if (opts.json) {
@@ -213,10 +214,10 @@ export function formatHookInfo(
   const lines: string[] = [];
   const emoji = hook.emoji ?? "🔗";
   const status = hook.eligible
-    ? theme.success("✓ Ready")
+    ? theme.success(t("✓ Ready"))
     : hook.disabled
-      ? theme.warn("⏸ Disabled")
-      : theme.error("✗ Missing requirements");
+      ? theme.warn(t("⏸ Disabled"))
+      : theme.error(t("✗ Missing requirements"));
 
   lines.push(`${emoji} ${theme.heading(hook.name)} ${status}`);
   lines.push("");
@@ -226,20 +227,20 @@ export function formatHookInfo(
   // Details
   lines.push(theme.heading("Details:"));
   if (hook.managedByPlugin) {
-    lines.push(`${theme.muted("  Source:")} ${hook.source} (${hook.pluginId ?? "unknown"})`);
+    lines.push(`${theme.muted(t("  Source:"))} ${hook.source} (${hook.pluginId ?? "unknown"})`);
   } else {
-    lines.push(`${theme.muted("  Source:")} ${hook.source}`);
+    lines.push(`${theme.muted(t("  Source:"))} ${hook.source}`);
   }
-  lines.push(`${theme.muted("  Path:")} ${shortenHomePath(hook.filePath)}`);
-  lines.push(`${theme.muted("  Handler:")} ${shortenHomePath(hook.handlerPath)}`);
+  lines.push(`${theme.muted(t("  Path:"))} ${shortenHomePath(hook.filePath)}`);
+  lines.push(`${theme.muted(t("  Handler:"))} ${shortenHomePath(hook.handlerPath)}`);
   if (hook.homepage) {
-    lines.push(`${theme.muted("  Homepage:")} ${hook.homepage}`);
+    lines.push(`${theme.muted(t("  Homepage:"))} ${hook.homepage}`);
   }
   if (hook.events.length > 0) {
-    lines.push(`${theme.muted("  Events:")} ${hook.events.join(", ")}`);
+    lines.push(`${theme.muted(t("  Events:"))} ${hook.events.join(t(", "))}`);
   }
   if (hook.managedByPlugin) {
-    lines.push(theme.muted("  Managed by plugin; enable/disable via hooks CLI not available."));
+    lines.push(theme.muted(t("  Managed by plugin; enable/disable via hooks CLI not available.")));
   }
 
   // Requirements
@@ -258,34 +259,34 @@ export function formatHookInfo(
         const missing = hook.missing.bins.includes(bin);
         return missing ? theme.error(`✗ ${bin}`) : theme.success(`✓ ${bin}`);
       });
-      lines.push(`${theme.muted("  Binaries:")} ${binsStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Binaries:"))} ${binsStatus.join(t(", "))}`);
     }
     if (hook.requirements.anyBins.length > 0) {
       const anyBinsStatus =
         hook.missing.anyBins.length > 0
-          ? theme.error(`✗ (any of: ${hook.requirements.anyBins.join(", ")})`)
-          : theme.success(`✓ (any of: ${hook.requirements.anyBins.join(", ")})`);
-      lines.push(`${theme.muted("  Any binary:")} ${anyBinsStatus}`);
+          ? theme.error(`✗ (any of: ${hook.requirements.anyBins.join(t(", "))})`)
+          : theme.success(`✓ (any of: ${hook.requirements.anyBins.join(t(", "))})`);
+      lines.push(`${theme.muted(t("  Any binary:"))} ${anyBinsStatus}`);
     }
     if (hook.requirements.env.length > 0) {
       const envStatus = hook.requirements.env.map((env) => {
         const missing = hook.missing.env.includes(env);
         return missing ? theme.error(`✗ ${env}`) : theme.success(`✓ ${env}`);
       });
-      lines.push(`${theme.muted("  Environment:")} ${envStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Environment:"))} ${envStatus.join(t(", "))}`);
     }
     if (hook.requirements.config.length > 0) {
       const configStatus = hook.configChecks.map((check) => {
         return check.satisfied ? theme.success(`✓ ${check.path}`) : theme.error(`✗ ${check.path}`);
       });
-      lines.push(`${theme.muted("  Config:")} ${configStatus.join(", ")}`);
+      lines.push(`${theme.muted(t("  Config:"))} ${configStatus.join(t(", "))}`);
     }
     if (hook.requirements.os.length > 0) {
       const osStatus =
         hook.missing.os.length > 0
-          ? theme.error(`✗ (${hook.requirements.os.join(", ")})`)
-          : theme.success(`✓ (${hook.requirements.os.join(", ")})`);
-      lines.push(`${theme.muted("  OS:")} ${osStatus}`);
+          ? theme.error(`✗ (${hook.requirements.os.join(t(", "))})`)
+          : theme.success(`✓ (${hook.requirements.os.join(t(", "))})`);
+      lines.push(`${theme.muted(t("  OS:"))} ${osStatus}`);
     }
   }
 
@@ -321,36 +322,36 @@ export function formatHooksCheck(report: HookStatusReport, opts: HooksCheckOptio
   const notEligible = report.hooks.filter((h) => !h.eligible);
 
   const lines: string[] = [];
-  lines.push(theme.heading("Hooks Status"));
+  lines.push(theme.heading(t("Hooks Status")));
   lines.push("");
-  lines.push(`${theme.muted("Total hooks:")} ${report.hooks.length}`);
+  lines.push(`${theme.muted(t("Total hooks:"))} ${report.hooks.length}`);
   lines.push(`${theme.success("Ready:")} ${eligible.length}`);
-  lines.push(`${theme.warn("Not ready:")} ${notEligible.length}`);
+  lines.push(`${theme.warn(t("Not ready:"))} ${notEligible.length}`);
 
   if (notEligible.length > 0) {
     lines.push("");
-    lines.push(theme.heading("Hooks not ready:"));
+    lines.push(theme.heading(t("Hooks not ready:")));
     for (const hook of notEligible) {
       const reasons = [];
       if (hook.disabled) {
         reasons.push("disabled");
       }
       if (hook.missing.bins.length > 0) {
-        reasons.push(`bins: ${hook.missing.bins.join(", ")}`);
+        reasons.push(`bins: ${hook.missing.bins.join(t(", "))}`);
       }
       if (hook.missing.anyBins.length > 0) {
-        reasons.push(`anyBins: ${hook.missing.anyBins.join(", ")}`);
+        reasons.push(`anyBins: ${hook.missing.anyBins.join(t(", "))}`);
       }
       if (hook.missing.env.length > 0) {
-        reasons.push(`env: ${hook.missing.env.join(", ")}`);
+        reasons.push(`env: ${hook.missing.env.join(t(", "))}`);
       }
       if (hook.missing.config.length > 0) {
-        reasons.push(`config: ${hook.missing.config.join(", ")}`);
+        reasons.push(`config: ${hook.missing.config.join(t(", "))}`);
       }
       if (hook.missing.os.length > 0) {
-        reasons.push(`os: ${hook.missing.os.join(", ")}`);
+        reasons.push(`os: ${hook.missing.os.join(t(", "))}`);
       }
-      lines.push(`  ${hook.emoji ?? "🔗"} ${hook.name} - ${reasons.join("; ")}`);
+      lines.push(`  ${hook.emoji ?? "🔗"} ${hook.name} - ${reasons.join(t("; "))}`);
     }
   }
 
@@ -430,14 +431,14 @@ export async function disableHook(hookName: string): Promise<void> {
 
   await writeConfigFile(nextConfig);
   defaultRuntime.log(
-    `${theme.warn("⏸")} Disabled hook: ${hook.emoji ?? "🔗"} ${theme.command(hookName)}`,
+    `${theme.warn(t("⏸"))} Disabled hook: ${hook.emoji ?? "🔗"} ${theme.command(hookName)}`,
   );
 }
 
 export function registerHooksCli(program: Command): void {
   const hooks = program
     .command("hooks")
-    .description("Manage internal agent hooks")
+    .description(t("Manage internal agent hooks"))
     .addHelpText(
       "after",
       () =>
@@ -446,10 +447,10 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("list")
-    .description("List all hooks")
-    .option("--eligible", "Show only eligible hooks", false)
-    .option("--json", "Output as JSON", false)
-    .option("-v, --verbose", "Show more details including missing requirements", false)
+    .description(t("List all hooks"))
+    .option("--eligible", t("Show only eligible hooks"), false)
+    .option("--json", t("Output as JSON"), false)
+    .option("-v, --verbose", t("Show more details including missing requirements"), false)
     .action(async (opts) => {
       try {
         const config = loadConfig();
@@ -457,16 +458,16 @@ export function registerHooksCli(program: Command): void {
         defaultRuntime.log(formatHooksList(report, opts));
       } catch (err) {
         defaultRuntime.error(
-          `${theme.error("Error:")} ${err instanceof Error ? err.message : String(err)}`,
+          `${theme.error(t("Error:"))} ${err instanceof Error ? err.message : String(err)}`,
         );
         process.exit(1);
       }
     });
 
   hooks
-    .command("info <name>")
-    .description("Show detailed information about a hook")
-    .option("--json", "Output as JSON", false)
+    .command(t("info <name>"))
+    .description(t("Show detailed information about a hook"))
+    .option("--json", t("Output as JSON"), false)
     .action(async (name, opts) => {
       try {
         const config = loadConfig();
@@ -474,7 +475,7 @@ export function registerHooksCli(program: Command): void {
         defaultRuntime.log(formatHookInfo(report, name, opts));
       } catch (err) {
         defaultRuntime.error(
-          `${theme.error("Error:")} ${err instanceof Error ? err.message : String(err)}`,
+          `${theme.error(t("Error:"))} ${err instanceof Error ? err.message : String(err)}`,
         );
         process.exit(1);
       }
@@ -482,8 +483,8 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("check")
-    .description("Check hooks eligibility status")
-    .option("--json", "Output as JSON", false)
+    .description(t("Check hooks eligibility status"))
+    .option("--json", t("Output as JSON"), false)
     .action(async (opts) => {
       try {
         const config = loadConfig();
@@ -491,35 +492,35 @@ export function registerHooksCli(program: Command): void {
         defaultRuntime.log(formatHooksCheck(report, opts));
       } catch (err) {
         defaultRuntime.error(
-          `${theme.error("Error:")} ${err instanceof Error ? err.message : String(err)}`,
+          `${theme.error(t("Error:"))} ${err instanceof Error ? err.message : String(err)}`,
         );
         process.exit(1);
       }
     });
 
   hooks
-    .command("enable <name>")
-    .description("Enable a hook")
+    .command(t("enable <name>"))
+    .description(t("Enable a hook"))
     .action(async (name) => {
       try {
         await enableHook(name);
       } catch (err) {
         defaultRuntime.error(
-          `${theme.error("Error:")} ${err instanceof Error ? err.message : String(err)}`,
+          `${theme.error(t("Error:"))} ${err instanceof Error ? err.message : String(err)}`,
         );
         process.exit(1);
       }
     });
 
   hooks
-    .command("disable <name>")
-    .description("Disable a hook")
+    .command(t("disable <name>"))
+    .description(t("Disable a hook"))
     .action(async (name) => {
       try {
         await disableHook(name);
       } catch (err) {
         defaultRuntime.error(
-          `${theme.error("Error:")} ${err instanceof Error ? err.message : String(err)}`,
+          `${theme.error(t("Error:"))} ${err instanceof Error ? err.message : String(err)}`,
         );
         process.exit(1);
       }
@@ -527,9 +528,9 @@ export function registerHooksCli(program: Command): void {
 
   hooks
     .command("install")
-    .description("Install a hook pack (path, archive, or npm spec)")
-    .argument("<path-or-spec>", "Path to a hook pack or npm package spec")
-    .option("-l, --link", "Link a local path instead of copying", false)
+    .description(t("Install a hook pack (path, archive, or npm spec)"))
+    .argument("<path-or-spec>", t("Path to a hook pack or npm package spec"))
+    .option("-l, --link", t("Link a local path instead of copying"), false)
     .action(async (raw: string, opts: { link?: boolean }) => {
       const resolved = resolveUserPath(raw);
       const cfg = loadConfig();
@@ -538,7 +539,7 @@ export function registerHooksCli(program: Command): void {
         if (opts.link) {
           const stat = fs.statSync(resolved);
           if (!stat.isDirectory()) {
-            defaultRuntime.error("Linked hook paths must be directories.");
+            defaultRuntime.error(t("Linked hook paths must be directories."));
             process.exit(1);
           }
 
@@ -595,7 +596,7 @@ export function registerHooksCli(program: Command): void {
 
           await writeConfigFile(next);
           defaultRuntime.log(`Linked hook path: ${shortenHomePath(resolved)}`);
-          defaultRuntime.log(`Restart the gateway to load hooks.`);
+          defaultRuntime.log(t("Restart the gateway to load hooks."));
           return;
         }
 
@@ -656,13 +657,13 @@ export function registerHooksCli(program: Command): void {
         });
 
         await writeConfigFile(next);
-        defaultRuntime.log(`Installed hooks: ${result.hooks.join(", ")}`);
-        defaultRuntime.log(`Restart the gateway to load hooks.`);
+        defaultRuntime.log(`Installed hooks: ${result.hooks.join(t(", "))}`);
+        defaultRuntime.log(t("Restart the gateway to load hooks."));
         return;
       }
 
       if (opts.link) {
-        defaultRuntime.error("`--link` requires a local path.");
+        defaultRuntime.error(t("`--link` requires a local path."));
         process.exit(1);
       }
 
@@ -733,23 +734,23 @@ export function registerHooksCli(program: Command): void {
         hooks: result.hooks,
       });
       await writeConfigFile(next);
-      defaultRuntime.log(`Installed hooks: ${result.hooks.join(", ")}`);
-      defaultRuntime.log(`Restart the gateway to load hooks.`);
+      defaultRuntime.log(`Installed hooks: ${result.hooks.join(t(", "))}`);
+      defaultRuntime.log(t("Restart the gateway to load hooks."));
     });
 
   hooks
     .command("update")
-    .description("Update installed hooks (npm installs only)")
-    .argument("[id]", "Hook pack id (omit with --all)")
-    .option("--all", "Update all tracked hooks", false)
-    .option("--dry-run", "Show what would change without writing", false)
+    .description(t("Update installed hooks (npm installs only)"))
+    .argument("[id]", t("Hook pack id (omit with --all)"))
+    .option("--all", t("Update all tracked hooks"), false)
+    .option("--dry-run", t("Show what would change without writing"), false)
     .action(async (id: string | undefined, opts: HooksUpdateOptions) => {
       const cfg = loadConfig();
       const installs = cfg.hooks?.internal?.installs ?? {};
       const targets = opts.all ? Object.keys(installs) : id ? [id] : [];
 
       if (targets.length === 0) {
-        defaultRuntime.error("Provide a hook id or use --all.");
+        defaultRuntime.error(t("Provide a hook id or use --all."));
         process.exit(1);
       }
 
@@ -836,7 +837,7 @@ export function registerHooksCli(program: Command): void {
 
       if (updatedCount > 0) {
         await writeConfigFile(nextCfg);
-        defaultRuntime.log("Restart the gateway to load hooks.");
+        defaultRuntime.log(t("Restart the gateway to load hooks."));
       }
     });
 
@@ -847,7 +848,7 @@ export function registerHooksCli(program: Command): void {
       defaultRuntime.log(formatHooksList(report, {}));
     } catch (err) {
       defaultRuntime.error(
-        `${theme.error("Error:")} ${err instanceof Error ? err.message : String(err)}`,
+        `${theme.error(t("Error:"))} ${err instanceof Error ? err.message : String(err)}`,
       );
       process.exit(1);
     }

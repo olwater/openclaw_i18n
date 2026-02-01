@@ -4,6 +4,7 @@ import type { NodesRpcOpts } from "./types.js";
 import { resolveAgentConfig, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import { loadConfig } from "../../config/config.js";
 import { randomIdempotencyKey } from "../../gateway/call.js";
+import { t } from "../../i18n/index.js";
 import {
   type ExecApprovalsFile,
   type ExecAsk,
@@ -135,12 +136,12 @@ export function registerNodesInvokeCommands(nodes: Command) {
   nodesCallOpts(
     nodes
       .command("invoke")
-      .description("Invoke a command on a paired node")
-      .requiredOption("--node <idOrNameOrIp>", "Node id, name, or IP")
-      .requiredOption("--command <command>", "Command (e.g. canvas.eval)")
-      .option("--params <json>", "JSON object string for params", "{}")
-      .option("--invoke-timeout <ms>", "Node invoke timeout in ms (default 15000)", "15000")
-      .option("--idempotency-key <key>", "Idempotency key (optional)")
+      .description(t("Invoke a command on a paired node"))
+      .requiredOption("--node <idOrNameOrIp>", t("Node id, name, or IP"))
+      .requiredOption("--command <command>", t("Command (e.g. canvas.eval)"))
+      .option("--params <json>", t("JSON object string for params"), "{}")
+      .option("--invoke-timeout <ms>", t("Node invoke timeout in ms (default 15000)"), "15000")
+      .option("--idempotency-key <key>", t("Idempotency key (optional)"))
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("invoke", async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
@@ -176,22 +177,22 @@ export function registerNodesInvokeCommands(nodes: Command) {
   nodesCallOpts(
     nodes
       .command("run")
-      .description("Run a shell command on a node (mac only)")
-      .option("--node <idOrNameOrIp>", "Node id, name, or IP")
-      .option("--cwd <path>", "Working directory")
+      .description(t("Run a shell command on a node (mac only)"))
+      .option("--node <idOrNameOrIp>", t("Node id, name, or IP"))
+      .option("--cwd <path>", t("Working directory"))
       .option(
         "--env <key=val>",
-        "Environment override (repeatable)",
+        t("Environment override (repeatable)"),
         (value: string, prev: string[] = []) => [...prev, value],
       )
-      .option("--raw <command>", "Run a raw shell command string (sh -lc / cmd.exe /c)")
-      .option("--agent <id>", "Agent id (default: configured default agent)")
-      .option("--ask <mode>", "Exec ask mode (off|on-miss|always)")
-      .option("--security <mode>", "Exec security mode (deny|allowlist|full)")
-      .option("--command-timeout <ms>", "Command timeout (ms)")
-      .option("--needs-screen-recording", "Require screen recording permission")
-      .option("--invoke-timeout <ms>", "Node invoke timeout in ms (default 30000)", "30000")
-      .argument("[command...]", "Command and args")
+      .option("--raw <command>", t("Run a raw shell command string (sh -lc / cmd.exe /c)"))
+      .option("--agent <id>", t("Agent id (default: configured default agent)"))
+      .option("--ask <mode>", t("Exec ask mode (off|on-miss|always)"))
+      .option("--security <mode>", t("Exec security mode (deny|allowlist|full)"))
+      .option("--command-timeout <ms>", t("Command timeout (ms)"))
+      .option("--needs-screen-recording", t("Require screen recording permission"))
+      .option("--invoke-timeout <ms>", t("Node invoke timeout in ms (default 30000)"), "30000")
+      .argument("[command...]", t("Command and args"))
       .action(async (command: string[], opts: NodesRunOpts) => {
         await runNodesCommand("run", async () => {
           const cfg = loadConfig();
@@ -199,15 +200,15 @@ export function registerNodesInvokeCommands(nodes: Command) {
           const execDefaults = resolveExecDefaults(cfg, agentId);
           const raw = typeof opts.raw === "string" ? opts.raw.trim() : "";
           if (raw && Array.isArray(command) && command.length > 0) {
-            throw new Error("use --raw or argv, not both");
+            throw new Error(t("use --raw or argv, not both"));
           }
           if (!raw && (!Array.isArray(command) || command.length === 0)) {
-            throw new Error("command required");
+            throw new Error(t("command required"));
           }
 
           const nodeQuery = String(opts.node ?? "").trim() || execDefaults?.node?.trim() || "";
           if (!nodeQuery) {
-            throw new Error("node required (set --node or tools.exec.node)");
+            throw new Error(t("node required (set --node or tools.exec.node)"));
           }
           const nodeId = await resolveNodeId(opts, nodeQuery);
 
@@ -233,12 +234,12 @@ export function registerNodesInvokeCommands(nodes: Command) {
           const configuredSecurity = normalizeExecSecurity(execDefaults?.security) ?? "allowlist";
           const requestedSecurity = normalizeExecSecurity(opts.security);
           if (opts.security && !requestedSecurity) {
-            throw new Error("invalid --security (use deny|allowlist|full)");
+            throw new Error(t("invalid --security (use deny|allowlist|full)"));
           }
           const configuredAsk = normalizeExecAsk(execDefaults?.ask) ?? "on-miss";
           const requestedAsk = normalizeExecAsk(opts.ask);
           if (opts.ask && !requestedAsk) {
-            throw new Error("invalid --ask (use off|on-miss|always)");
+            throw new Error(t("invalid --ask (use off|on-miss|always)"));
           }
           const security = minSecurity(configuredSecurity, requestedSecurity ?? configuredSecurity);
           const ask = maxAsk(configuredAsk, requestedAsk ?? configuredAsk);
@@ -253,7 +254,7 @@ export function registerNodesInvokeCommands(nodes: Command) {
               ? approvalsSnapshot.file
               : undefined;
           if (!approvalsFile || typeof approvalsFile !== "object") {
-            throw new Error("exec approvals unavailable");
+            throw new Error(t("exec approvals unavailable"));
           }
           const approvals = resolveExecApprovalsFromFile({
             file: approvalsFile as ExecApprovalsFile,
@@ -265,7 +266,7 @@ export function registerNodesInvokeCommands(nodes: Command) {
           const askFallback = approvals.agent.askFallback;
 
           if (hostSecurity === "deny") {
-            throw new Error("exec denied: host=node security=deny");
+            throw new Error(t("exec denied: host=node security=deny"));
           }
 
           const requiresAsk = hostAsk === "always" || hostAsk === "on-miss";
@@ -286,7 +287,7 @@ export function registerNodesInvokeCommands(nodes: Command) {
                 ? (decisionResult.decision ?? null)
                 : null;
             if (decision === "deny") {
-              throw new Error("exec denied: user denied");
+              throw new Error(t("exec denied: user denied"));
             }
             if (!decision) {
               if (askFallback === "full") {
@@ -295,7 +296,7 @@ export function registerNodesInvokeCommands(nodes: Command) {
               } else if (askFallback === "allowlist") {
                 // defer allowlist enforcement to node host
               } else {
-                throw new Error("exec denied: approval required (approval UI not available)");
+                throw new Error(t("exec denied: approval required (approval UI not available)"));
               }
             }
             if (decision === "allow-once") {
@@ -359,7 +360,7 @@ export function registerNodesInvokeCommands(nodes: Command) {
           }
           if (timedOut) {
             const { error } = getNodesTheme();
-            defaultRuntime.error(error("run timed out"));
+            defaultRuntime.error(error(t("run timed out")));
             defaultRuntime.exit(1);
             return;
           }

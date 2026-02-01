@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { sandboxExplainCommand } from "../commands/sandbox-explain.js";
 import { sandboxListCommand, sandboxRecreateCommand } from "../commands/sandbox.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { theme } from "../terminal/theme.js";
@@ -14,30 +15,33 @@ type CommandOptions = Record<string, unknown>;
 
 const SANDBOX_EXAMPLES = {
   main: [
-    ["openclaw sandbox list", "List all sandbox containers."],
-    ["openclaw sandbox list --browser", "List only browser containers."],
-    ["openclaw sandbox recreate --all", "Recreate all containers."],
-    ["openclaw sandbox recreate --session main", "Recreate a specific session."],
-    ["openclaw sandbox recreate --agent mybot", "Recreate agent containers."],
-    ["openclaw sandbox explain", "Explain effective sandbox config."],
+    [t("openclaw sandbox list"), t("List all sandbox containers.")],
+    [t("openclaw sandbox list --browser"), t("List only browser containers.")],
+    [t("openclaw sandbox recreate --all"), t("Recreate all containers.")],
+    [t("openclaw sandbox recreate --session main"), t("Recreate a specific session.")],
+    [t("openclaw sandbox recreate --agent mybot"), t("Recreate agent containers.")],
+    [t("openclaw sandbox explain"), t("Explain effective sandbox config.")],
   ],
   list: [
-    ["openclaw sandbox list", "List all sandbox containers."],
-    ["openclaw sandbox list --browser", "List only browser containers."],
-    ["openclaw sandbox list --json", "JSON output."],
+    [t("openclaw sandbox list"), t("List all sandbox containers.")],
+    [t("openclaw sandbox list --browser"), t("List only browser containers.")],
+    [t("openclaw sandbox list --json"), t("JSON output.")],
   ],
   recreate: [
-    ["openclaw sandbox recreate --all", "Recreate all containers."],
-    ["openclaw sandbox recreate --session main", "Recreate a specific session."],
-    ["openclaw sandbox recreate --agent mybot", "Recreate a specific agent (includes sub-agents)."],
-    ["openclaw sandbox recreate --browser --all", "Recreate only browser containers."],
-    ["openclaw sandbox recreate --all --force", "Skip confirmation."],
+    [t("openclaw sandbox recreate --all"), t("Recreate all containers.")],
+    [t("openclaw sandbox recreate --session main"), t("Recreate a specific session.")],
+    [
+      t("openclaw sandbox recreate --agent mybot"),
+      t("Recreate a specific agent (includes sub-agents)."),
+    ],
+    [t("openclaw sandbox recreate --browser --all"), t("Recreate only browser containers.")],
+    [t("openclaw sandbox recreate --all --force"), t("Skip confirmation.")],
   ],
   explain: [
-    ["openclaw sandbox explain", "Show effective sandbox config."],
-    ["openclaw sandbox explain --session agent:main:main", "Explain a specific session."],
-    ["openclaw sandbox explain --agent work", "Explain an agent sandbox."],
-    ["openclaw sandbox explain --json", "JSON output."],
+    [t("openclaw sandbox explain"), t("Show effective sandbox config.")],
+    [t("openclaw sandbox explain --session agent:main:main"), t("Explain a specific session.")],
+    [t("openclaw sandbox explain --agent work"), t("Explain an agent sandbox.")],
+    [t("openclaw sandbox explain --json"), t("JSON output.")],
   ],
 } as const;
 
@@ -59,7 +63,7 @@ function createRunner(
 export function registerSandboxCli(program: Command) {
   const sandbox = program
     .command("sandbox")
-    .description("Manage sandbox containers (Docker-based agent isolation)")
+    .description(t("Manage sandbox containers (Docker-based agent isolation)"))
     .addHelpText(
       "after",
       () => `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.main)}\n`,
@@ -77,14 +81,14 @@ export function registerSandboxCli(program: Command) {
 
   sandbox
     .command("list")
-    .description("List sandbox containers and their status")
-    .option("--json", "Output result as JSON", false)
-    .option("--browser", "List browser containers only", false)
+    .description(t("List sandbox containers and their status"))
+    .option("--json", t("Output result as JSON"), false)
+    .option("--browser", t("List browser containers only"), false)
     .addHelpText(
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.list)}\n\n${theme.heading(
-          "Output includes:",
+          t("Output includes:"),
         )}\n${theme.muted("- Container name and status (running/stopped)")}\n${theme.muted(
           "- Docker image and whether it matches current config",
         )}\n${theme.muted("- Age (time since creation)")}\n${theme.muted(
@@ -107,30 +111,34 @@ export function registerSandboxCli(program: Command) {
 
   sandbox
     .command("recreate")
-    .description("Remove containers to force recreation with updated config")
-    .option("--all", "Recreate all sandbox containers", false)
-    .option("--session <key>", "Recreate container for specific session")
-    .option("--agent <id>", "Recreate containers for specific agent")
-    .option("--browser", "Only recreate browser containers", false)
-    .option("--force", "Skip confirmation prompt", false)
+    .description(t("Remove containers to force recreation with updated config"))
+    .option("--all", t("Recreate all sandbox containers"), false)
+    .option("--session <key>", t("Recreate container for specific session"))
+    .option("--agent <id>", t("Recreate containers for specific agent"))
+    .option("--browser", t("Only recreate browser containers"), false)
+    .option("--force", t("Skip confirmation prompt"), false)
     .addHelpText(
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.recreate)}\n\n${theme.heading(
-          "Why use this?",
+          t("Why use this?"),
         )}\n${theme.muted(
-          "After updating Docker images or sandbox configuration, existing containers continue running with old settings.",
+          t(
+            "After updating Docker images or sandbox configuration, existing containers continue running with old settings.",
+          ),
         )}\n${theme.muted(
-          "This command removes them so they'll be recreated automatically with current config when next needed.",
-        )}\n\n${theme.heading("Filter options:")}\n${theme.muted(
-          "  --all          Remove all sandbox containers",
+          t(
+            "This command removes them so they'll be recreated automatically with current config when next needed.",
+          ),
+        )}\n\n${theme.heading(t("Filter options:"))}\n${theme.muted(
+          t("  --all          Remove all sandbox containers"),
         )}\n${theme.muted(
-          "  --session      Remove container for specific session key",
+          t("  --session      Remove container for specific session key"),
         )}\n${theme.muted(
-          "  --agent        Remove containers for agent (includes agent:id:* variants)",
+          t("  --agent        Remove containers for agent (includes agent:id:* variants)"),
         )}\n\n${theme.heading("Modifiers:")}\n${theme.muted(
-          "  --browser      Only affect browser containers (not regular sandbox)",
-        )}\n${theme.muted("  --force        Skip confirmation prompt")}`,
+          t("  --browser      Only affect browser containers (not regular sandbox)"),
+        )}\n${theme.muted(t("  --force        Skip confirmation prompt"))}`,
     )
     .action(
       createRunner((opts) =>
@@ -151,10 +159,10 @@ export function registerSandboxCli(program: Command) {
 
   sandbox
     .command("explain")
-    .description("Explain effective sandbox/tool policy for a session/agent")
-    .option("--session <key>", "Session key to inspect (defaults to agent main)")
-    .option("--agent <id>", "Agent id to inspect (defaults to derived agent)")
-    .option("--json", "Output result as JSON", false)
+    .description(t("Explain effective sandbox/tool policy for a session/agent"))
+    .option("--session <key>", t("Session key to inspect (defaults to agent main)"))
+    .option("--agent <id>", t("Agent id to inspect (defaults to derived agent)"))
+    .option("--json", t("Output result as JSON"), false)
     .addHelpText(
       "after",
       () => `\n${theme.heading("Examples:")}\n${formatHelpExamples(SANDBOX_EXAMPLES.explain)}\n`,

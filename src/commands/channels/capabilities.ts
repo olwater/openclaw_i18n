@@ -5,6 +5,7 @@ import { getChannelPlugin, listChannelPlugins } from "../../channels/plugins/ind
 import { fetchChannelPermissionsDiscord } from "../../discord/send.js";
 import { parseDiscordTarget } from "../../discord/targets.js";
 import { danger } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { fetchSlackScopes, type SlackScopesResult } from "../../slack/scopes.js";
 import { theme } from "../../terminal/theme.js";
@@ -56,13 +57,13 @@ type ChannelCapabilitiesReport = {
 const REQUIRED_DISCORD_PERMISSIONS = ["ViewChannel", "SendMessages"] as const;
 
 const TEAMS_GRAPH_PERMISSION_HINTS: Record<string, string> = {
-  "ChannelMessage.Read.All": "channel history",
-  "Chat.Read.All": "chat history",
-  "Channel.ReadBasic.All": "channel list",
-  "Team.ReadBasic.All": "team list",
-  "TeamsActivity.Read.All": "teams activity",
-  "Sites.Read.All": "files (SharePoint)",
-  "Files.Read.All": "files (OneDrive)",
+  "ChannelMessage.Read.All": t("channel history"),
+  "Chat.Read.All": t("chat history"),
+  "Channel.ReadBasic.All": t("channel list"),
+  "Team.ReadBasic.All": t("team list"),
+  "TeamsActivity.Read.All": t("teams activity"),
+  "Sites.Read.All": t("files (SharePoint)"),
+  "Files.Read.All": t("files (OneDrive)"),
 };
 
 function normalizeTimeout(raw: unknown, fallback = 10_000) {
@@ -255,20 +256,20 @@ function formatProbeLines(channelId: string, probe: unknown): string[] {
           return hint ? `${permission} (${hint})` : permission;
         };
         if (roles.length > 0) {
-          lines.push(`Graph roles: ${roles.map(formatPermission).join(", ")}`);
+          lines.push(`Graph roles: ${roles.map(formatPermission).join(t(", "))}`);
         }
         if (scopes.length > 0) {
-          lines.push(`Graph scopes: ${scopes.map(formatPermission).join(", ")}`);
+          lines.push(`Graph scopes: ${scopes.map(formatPermission).join(t(", "))}`);
         }
       } else if (graph.ok === true) {
-        lines.push("Graph: ok");
+        lines.push(t("Graph: ok"));
       }
     }
   }
 
   const ok = typeof probeObj.ok === "boolean" ? probeObj.ok : undefined;
   if (ok === true && lines.length === 0) {
-    lines.push("Probe: ok");
+    lines.push(t("Probe: ok"));
   }
   if (ok === false) {
     const error =
@@ -290,7 +291,7 @@ async function buildDiscordPermissions(params: {
     return {
       target,
       report: {
-        error: "Target looks like a DM user; pass channel:<id> to audit channel permissions.",
+        error: t("Target looks like a DM user; pass channel:<id> to audit channel permissions."),
       },
     };
   }
@@ -300,7 +301,7 @@ async function buildDiscordPermissions(params: {
       target,
       report: {
         channelId: target.channelId,
-        error: "Discord bot token missing for permission audit.",
+        error: t("Discord bot token missing for permission audit."),
       },
     };
   }
@@ -393,7 +394,7 @@ async function resolveChannelReports(params: {
       } else {
         scopeReports.push({
           tokenType: "bot",
-          result: { ok: false, error: "Slack bot token missing." },
+          result: { ok: false, error: t("Slack bot token missing.") },
         });
       }
       if (userToken) {
@@ -508,10 +509,10 @@ export async function channelsCapabilitiesCommand(
     lines.push(theme.heading(label));
     lines.push(`Support: ${formatSupport(report.support)}`);
     if (report.actions && report.actions.length > 0) {
-      lines.push(`Actions: ${report.actions.join(", ")}`);
+      lines.push(`Actions: ${report.actions.join(t(", "))}`);
     }
     if (report.configured === false || report.enabled === false) {
-      const configuredLabel = report.configured === false ? "not configured" : "configured";
+      const configuredLabel = report.configured === false ? t("not configured") : "configured";
       const enabledLabel = report.enabled === false ? "disabled" : "enabled";
       lines.push(`Status: ${configuredLabel}, ${enabledLabel}`);
     }
@@ -519,14 +520,14 @@ export async function channelsCapabilitiesCommand(
     if (probeLines.length > 0) {
       lines.push(...probeLines);
     } else if (report.configured && report.enabled) {
-      lines.push(theme.muted("Probe: unavailable"));
+      lines.push(theme.muted(t("Probe: unavailable")));
     }
     if (report.channel === "slack" && report.slackScopes) {
       for (const entry of report.slackScopes) {
         const source = entry.result.source ? ` (${entry.result.source})` : "";
-        const label = entry.tokenType === "user" ? "User scopes" : "Bot scopes";
+        const label = entry.tokenType === "user" ? t("User scopes") : t("Bot scopes");
         if (entry.result.ok && entry.result.scopes?.length) {
-          lines.push(`${label}${source}: ${entry.result.scopes.join(", ")}`);
+          lines.push(`${label}${source}: ${entry.result.scopes.join(t(", "))}`);
         } else if (entry.result.error) {
           lines.push(`${label}: ${theme.error(entry.result.error)}`);
         }
@@ -537,17 +538,19 @@ export async function channelsCapabilitiesCommand(
       if (perms.error) {
         lines.push(`Permissions: ${theme.error(perms.error)}`);
       } else {
-        const list = perms.permissions?.length ? perms.permissions.join(", ") : "none";
+        const list = perms.permissions?.length ? perms.permissions.join(t(", ")) : "none";
         const label = perms.channelId ? ` (${perms.channelId})` : "";
         lines.push(`Permissions${label}: ${list}`);
         if (perms.missingRequired && perms.missingRequired.length > 0) {
-          lines.push(`${theme.warn("Missing required:")} ${perms.missingRequired.join(", ")}`);
+          lines.push(
+            `${theme.warn(t("Missing required:"))} ${perms.missingRequired.join(t(", "))}`,
+          );
         } else {
-          lines.push(theme.success("Missing required: none"));
+          lines.push(theme.success(t("Missing required: none")));
         }
       }
     } else if (report.channel === "discord" && rawTarget && !report.channelPermissions) {
-      lines.push(theme.muted("Permissions: skipped (no target)."));
+      lines.push(theme.muted(t("Permissions: skipped (no target).")));
     }
     lines.push("");
   }

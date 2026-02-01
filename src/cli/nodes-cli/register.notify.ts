@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { NodesRpcOpts } from "./types.js";
 import { randomIdempotencyKey } from "../../gateway/call.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { getNodesTheme, runNodesCommand } from "./cli-utils.js";
 import { callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
@@ -9,21 +10,21 @@ export function registerNodesNotifyCommand(nodes: Command) {
   nodesCallOpts(
     nodes
       .command("notify")
-      .description("Send a local notification on a node (mac only)")
-      .requiredOption("--node <idOrNameOrIp>", "Node id, name, or IP")
-      .option("--title <text>", "Notification title")
-      .option("--body <text>", "Notification body")
-      .option("--sound <name>", "Notification sound")
-      .option("--priority <passive|active|timeSensitive>", "Notification priority")
-      .option("--delivery <system|overlay|auto>", "Delivery mode", "system")
-      .option("--invoke-timeout <ms>", "Node invoke timeout in ms (default 15000)", "15000")
+      .description(t("Send a local notification on a node (mac only)"))
+      .requiredOption("--node <idOrNameOrIp>", t("Node id, name, or IP"))
+      .option("--title <text>", t("Notification title"))
+      .option("--body <text>", t("Notification body"))
+      .option("--sound <name>", t("Notification sound"))
+      .option("--priority <passive|active|timeSensitive>", t("Notification priority"))
+      .option("--delivery <system|overlay|auto>", t("Delivery mode"), "system")
+      .option("--invoke-timeout <ms>", t("Node invoke timeout in ms (default 15000)"), "15000")
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("notify", async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
           const title = String(opts.title ?? "").trim();
           const body = String(opts.body ?? "").trim();
           if (!title && !body) {
-            throw new Error("missing --title or --body");
+            throw new Error(t("missing --title or --body"));
           }
           const invokeTimeout = opts.invokeTimeout
             ? Number.parseInt(String(opts.invokeTimeout), 10)
@@ -50,7 +51,7 @@ export function registerNodesNotifyCommand(nodes: Command) {
             return;
           }
           const { ok } = getNodesTheme();
-          defaultRuntime.log(ok("notify ok"));
+          defaultRuntime.log(ok(t("notify ok")));
         });
       }),
   );

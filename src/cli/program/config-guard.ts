@@ -1,6 +1,7 @@
 import type { RuntimeEnv } from "../../runtime.js";
 import { loadAndMaybeMigrateDoctorConfig } from "../../commands/doctor-config-flow.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { colorize, isRich, theme } from "../../terminal/theme.js";
 import { shortenHomePath } from "../../utils.js";
 import { formatCliCommand } from "../command-format.js";
@@ -62,19 +63,19 @@ export async function ensureConfigReady(params: {
   const heading = (value: string) => colorize(rich, theme.heading, value);
   const commandText = (value: string) => colorize(rich, theme.command, value);
 
-  params.runtime.error(heading("Config invalid"));
+  params.runtime.error(heading(t("Config invalid")));
   params.runtime.error(`${muted("File:")} ${muted(shortenHomePath(snapshot.path))}`);
   if (issues.length > 0) {
     params.runtime.error(muted("Problem:"));
     params.runtime.error(issues.map((issue) => `  ${error(issue)}`).join("\n"));
   }
   if (legacyIssues.length > 0) {
-    params.runtime.error(muted("Legacy config keys detected:"));
+    params.runtime.error(muted(t("Legacy config keys detected:")));
     params.runtime.error(legacyIssues.map((issue) => `  ${error(issue)}`).join("\n"));
   }
   params.runtime.error("");
   params.runtime.error(
-    `${muted("Run:")} ${commandText(formatCliCommand("openclaw doctor --fix"))}`,
+    `${muted("Run:")} ${commandText(formatCliCommand(t("openclaw doctor --fix")))}`,
   );
   if (!allowInvalid) {
     params.runtime.exit(1);

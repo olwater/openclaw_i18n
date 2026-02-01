@@ -10,6 +10,7 @@ import {
 import { upsertAuthProfile } from "../agents/auth-profiles.js";
 import { normalizeProviderId } from "../agents/model-selection.js";
 import { resolveDefaultAgentWorkspaceDir } from "../agents/workspace.js";
+import { t } from "../i18n/index.js";
 import { enablePluginInConfig } from "../plugins/enable.js";
 import { resolvePluginProviders } from "../plugins/providers.js";
 import { isRemoteEnvironment } from "./oauth-env.js";
@@ -180,18 +181,21 @@ export async function applyAuthChoicePluginProvider(
   if (result.defaultModel) {
     if (params.setDefaultModel) {
       nextConfig = applyDefaultModel(nextConfig, result.defaultModel);
-      await params.prompter.note(`Default model set to ${result.defaultModel}`, "Model configured");
+      await params.prompter.note(
+        `Default model set to ${result.defaultModel}`,
+        t("Model configured"),
+      );
     } else if (params.agentId) {
       agentModelOverride = result.defaultModel;
       await params.prompter.note(
         `Default model set to ${result.defaultModel} for agent "${params.agentId}".`,
-        "Model configured",
+        t("Model configured"),
       );
     }
   }
 
   if (result.notes && result.notes.length > 0) {
-    await params.prompter.note(result.notes.join("\n"), "Provider notes");
+    await params.prompter.note(result.notes.join("\n"), t("Provider notes"));
   }
 
   return { config: nextConfig, agentModelOverride };

@@ -11,6 +11,7 @@ import {
   normalizeProviderId,
   resolveConfiguredModelRef,
 } from "../agents/model-selection.js";
+import { t } from "../i18n/index.js";
 import { formatTokenK } from "./models/shared.js";
 
 const KEEP_VALUE = "__keep__";
@@ -88,9 +89,9 @@ async function promptManualModel(params: {
   initialValue?: string;
 }): Promise<PromptDefaultModelResult> {
   const modelInput = await params.prompter.text({
-    message: params.allowBlank ? "Default model (blank to keep)" : "Default model",
+    message: params.allowBlank ? t("Default model (blank to keep)") : t("Default model"),
     initialValue: params.initialValue,
-    placeholder: "provider/model",
+    placeholder: t("provider/model"),
     validate: params.allowBlank ? undefined : (value) => (value?.trim() ? undefined : "Required"),
   });
   const model = String(modelInput ?? "").trim();
@@ -161,9 +162,9 @@ export async function promptDefaultModel(
     !hasPreferredProvider && providers.length > 1 && models.length > PROVIDER_FILTER_THRESHOLD;
   if (shouldPromptProvider) {
     const selection = await params.prompter.select({
-      message: "Filter models by provider",
+      message: t("Filter models by provider"),
       options: [
-        { value: "*", label: "All providers" },
+        { value: "*", label: t("All providers") },
         ...providers.map((provider) => {
           const count = models.filter((entry) => entry.provider === provider).length;
           return {
@@ -209,7 +210,7 @@ export async function promptDefaultModel(
     });
   }
   if (includeManual) {
-    options.push({ value: MANUAL_VALUE, label: "Enter model manually" });
+    options.push({ value: MANUAL_VALUE, label: t("Enter model manually") });
   }
 
   const seen = new Set<string>();
@@ -240,15 +241,15 @@ export async function promptDefaultModel(
     }
     const aliases = aliasIndex.byKey.get(key);
     if (aliases?.length) {
-      hints.push(`alias: ${aliases.join(", ")}`);
+      hints.push(`alias: ${aliases.join(t(", "))}`);
     }
     if (!hasAuth(entry.provider)) {
-      hints.push("auth missing");
+      hints.push(t("auth missing"));
     }
     options.push({
       value: key,
       label: key,
-      hint: hints.length > 0 ? hints.join(" · ") : undefined,
+      hint: hints.length > 0 ? hints.join(t(" · ")) : undefined,
     });
     seen.add(key);
   };
@@ -261,7 +262,7 @@ export async function promptDefaultModel(
     options.push({
       value: configuredKey,
       label: configuredKey,
-      hint: "current (not in catalog)",
+      hint: t("current (not in catalog)"),
     });
   }
 
@@ -279,7 +280,7 @@ export async function promptDefaultModel(
   }
 
   const selection = await params.prompter.select({
-    message: params.message ?? "Default model",
+    message: params.message ?? t("Default model"),
     options,
     initialValue,
   });
@@ -329,9 +330,9 @@ export async function promptModelAllowlist(params: {
     const raw = await params.prompter.text({
       message:
         params.message ??
-        "Allowlist models (comma-separated provider/model; blank to keep current)",
-      initialValue: existingKeys.join(", "),
-      placeholder: "openai-codex/gpt-5.2, anthropic/claude-opus-4-5",
+        t("Allowlist models (comma-separated provider/model; blank to keep current)"),
+      initialValue: existingKeys.join(t(", ")),
+      placeholder: t("openai-codex/gpt-5.2, anthropic/claude-opus-4-5"),
     });
     const parsed = String(raw ?? "")
       .split(",")
@@ -389,15 +390,15 @@ export async function promptModelAllowlist(params: {
     }
     const aliases = aliasIndex.byKey.get(key);
     if (aliases?.length) {
-      hints.push(`alias: ${aliases.join(", ")}`);
+      hints.push(`alias: ${aliases.join(t(", "))}`);
     }
     if (!hasAuth(entry.provider)) {
-      hints.push("auth missing");
+      hints.push(t("auth missing"));
     }
     options.push({
       value: key,
       label: key,
-      hint: hints.length > 0 ? hints.join(" · ") : undefined,
+      hint: hints.length > 0 ? hints.join(t(" · ")) : undefined,
     });
     seen.add(key);
   };
@@ -418,7 +419,7 @@ export async function promptModelAllowlist(params: {
     options.push({
       value: key,
       label: key,
-      hint: allowedKeySet ? "allowed (not in catalog)" : "configured (not in catalog)",
+      hint: allowedKeySet ? t("allowed (not in catalog)") : t("configured (not in catalog)"),
     });
     seen.add(key);
   }
@@ -428,7 +429,7 @@ export async function promptModelAllowlist(params: {
   }
 
   const selection = await params.prompter.multiselect({
-    message: params.message ?? "Models in /model picker (multi-select)",
+    message: params.message ?? t("Models in /model picker (multi-select)"),
     options,
     initialValues: initialKeys.length > 0 ? initialKeys : undefined,
   });
@@ -440,7 +441,7 @@ export async function promptModelAllowlist(params: {
     return { models: [] };
   }
   const confirmClear = await params.prompter.confirm({
-    message: "Clear the model allowlist? (shows all models)",
+    message: t("Clear the model allowlist? (shows all models)"),
     initialValue: false,
   });
   if (!confirmClear) {

@@ -1,9 +1,11 @@
+import { t } from "../i18n/index.js";
+
 /**
  * Formatting utilities for sandbox CLI output
  */
 
 export function formatStatus(running: boolean): string {
-  return running ? "🟢 running" : "⚫ stopped";
+  return running ? t("🟢 running") : t("⚫ stopped");
 }
 
 export function formatSimpleStatus(running: boolean): string {
@@ -11,7 +13,7 @@ export function formatSimpleStatus(running: boolean): string {
 }
 
 export function formatImageMatch(matches: boolean): string {
-  return matches ? "✓" : "⚠️  mismatch";
+  return matches ? "✓" : t("⚠️  mismatch");
 }
 
 export function formatAge(ms: number): string {

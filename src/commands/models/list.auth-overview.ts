@@ -9,6 +9,7 @@ import {
   resolveProfileUnusableUntilForDisplay,
 } from "../../agents/auth-profiles.js";
 import { getCustomProviderApiKey, resolveEnvApiKey } from "../../agents/model-auth.js";
+import { t } from "../../i18n/index.js";
 import { shortenHomePath } from "../../utils.js";
 import { maskApiKey } from "./list.format.js";
 
@@ -74,7 +75,7 @@ export function resolveProviderAuthOverview(params: {
         envKey.source.includes("OAUTH_TOKEN") || envKey.source.toLowerCase().includes("oauth");
       return {
         kind: "env",
-        detail: isOAuthEnv ? "OAuth (env)" : maskApiKey(envKey.apiKey),
+        detail: isOAuthEnv ? t("OAuth (env)") : maskApiKey(envKey.apiKey),
       };
     }
     if (customKey) {
@@ -98,7 +99,7 @@ export function resolveProviderAuthOverview(params: {
           env: {
             value:
               envKey.source.includes("OAUTH_TOKEN") || envKey.source.toLowerCase().includes("oauth")
-                ? "OAuth (env)"
+                ? t("OAuth (env)")
                 : maskApiKey(envKey.apiKey),
             source: envKey.source,
           },

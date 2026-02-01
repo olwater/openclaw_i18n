@@ -1,4 +1,5 @@
 import type { SessionStatus } from "./status.types.js";
+import { t } from "../i18n/index.js";
 
 export const formatKTokens = (value: number) =>
   `${(value / 1000).toFixed(value >= 10_000 ? 0 : 1)}k`;
@@ -9,7 +10,7 @@ export const formatAge = (ms: number | null | undefined) => {
   }
   const minutes = Math.round(ms / 60_000);
   if (minutes < 1) {
-    return "just now";
+    return t("just now");
   }
   if (minutes < 60) {
     return `${minutes}m ago`;
@@ -72,9 +73,9 @@ export const formatDaemonRuntimeShort = (runtime?: {
   }
   const detail = runtime.detail?.replace(/\s+/g, " ").trim() || "";
   const noisyLaunchctlDetail =
-    runtime.missingUnit === true && detail.toLowerCase().includes("could not find service");
+    runtime.missingUnit === true && detail.toLowerCase().includes(t("could not find service"));
   if (detail && !noisyLaunchctlDetail) {
     details.push(detail);
   }
-  return details.length > 0 ? `${status} (${details.join(", ")})` : status;
+  return details.length > 0 ? `${status} (${details.join(t(", "))})` : status;
 };

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { setTimeout as delay } from "node:timers/promises";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
+import { t } from "../i18n/index.js";
 import { parseLogLine } from "../logging/parse-log-line.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { clearActiveProgressLine } from "../terminal/progress-line.js";
@@ -54,7 +55,7 @@ async function fetchLogs(
     { progress: showProgress },
   );
   if (!payload || typeof payload !== "object") {
-    throw new Error("Unexpected logs.tail response");
+    throw new Error(t("Unexpected logs.tail response"));
   }
   return payload as LogsTailPayload;
 }
@@ -150,8 +151,8 @@ function emitGatewayError(
   errorLine: (text: string) => boolean,
 ) {
   const details = buildGatewayConnectionDetails({ url: opts.url });
-  const message = "Gateway not reachable. Is it running and accessible?";
-  const hint = `Hint: run \`${formatCliCommand("openclaw doctor")}\`.`;
+  const message = t("Gateway not reachable. Is it running and accessible?");
+  const hint = `Hint: run \`${formatCliCommand(t("openclaw doctor"))}\`.`;
   const errorText = err instanceof Error ? err.message : String(err);
 
   if (mode === "json") {
@@ -184,14 +185,14 @@ function emitGatewayError(
 export function registerLogsCli(program: Command) {
   const logs = program
     .command("logs")
-    .description("Tail gateway file logs via RPC")
-    .option("--limit <n>", "Max lines to return", "200")
-    .option("--max-bytes <n>", "Max bytes to read", "250000")
-    .option("--follow", "Follow log output", false)
-    .option("--interval <ms>", "Polling interval in ms", "1000")
-    .option("--json", "Emit JSON log lines", false)
-    .option("--plain", "Plain text output (no ANSI styling)", false)
-    .option("--no-color", "Disable ANSI colors")
+    .description(t("Tail gateway file logs via RPC"))
+    .option("--limit <n>", t("Max lines to return"), "200")
+    .option("--max-bytes <n>", t("Max bytes to read"), "250000")
+    .option("--follow", t("Follow log output"), false)
+    .option("--interval <ms>", t("Polling interval in ms"), "1000")
+    .option("--json", t("Emit JSON log lines"), false)
+    .option("--plain", t("Plain text output (no ANSI styling)"), false)
+    .option("--no-color", t("Disable ANSI colors"))
     .addHelpText(
       "after",
       () =>
@@ -250,7 +251,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: "Log tail truncated (increase --max-bytes).",
+              message: t("Log tail truncated (increase --max-bytes)."),
             })
           ) {
             return;
@@ -260,7 +261,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: "Log cursor reset (file rotated).",
+              message: t("Log cursor reset (file rotated)."),
             })
           ) {
             return;
@@ -268,7 +269,7 @@ export function registerLogsCli(program: Command) {
         }
       } else {
         if (first && payload.file) {
-          const prefix = pretty ? colorize(rich, theme.muted, "Log file:") : "Log file:";
+          const prefix = pretty ? colorize(rich, theme.muted, t("Log file:")) : t("Log file:");
           if (!logLine(`${prefix} ${payload.file}`)) {
             return;
           }
@@ -286,12 +287,12 @@ export function registerLogsCli(program: Command) {
           }
         }
         if (payload.truncated) {
-          if (!errorLine("Log tail truncated (increase --max-bytes).")) {
+          if (!errorLine(t("Log tail truncated (increase --max-bytes)."))) {
             return;
           }
         }
         if (payload.reset) {
-          if (!errorLine("Log cursor reset (file rotated).")) {
+          if (!errorLine(t("Log cursor reset (file rotated)."))) {
             return;
           }
         }

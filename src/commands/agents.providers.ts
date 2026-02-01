@@ -7,6 +7,7 @@ import {
   listChannelPlugins,
   normalizeChannelId,
 } from "../channels/plugins/index.js";
+import { t } from "../i18n/index.js";
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
 
 type ProviderAccountStatus = {
@@ -39,7 +40,7 @@ function formatProviderState(entry: ProviderAccountStatus): string {
   if (entry.enabled === false && entry.state !== "disabled") {
     parts.push("disabled");
   }
-  return parts.join(", ");
+  return parts.join(t(", "));
 }
 
 export async function buildProviderStatusIndex(
@@ -72,10 +73,10 @@ export async function buildProviderStatusIndex(
         (typeof snapshot?.linked === "boolean"
           ? snapshot.linked
             ? "linked"
-            : "not linked"
+            : t("not linked")
           : resolvedConfigured
             ? "configured"
-            : "not configured");
+            : t("not configured"));
       const name = snapshot?.name ?? (account as { name?: string }).name;
       map.set(providerAccountKey(plugin.id, accountId), {
         provider: plugin.id,

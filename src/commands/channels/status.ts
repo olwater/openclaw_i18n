@@ -5,6 +5,7 @@ import { formatCliCommand } from "../../cli/command-format.js";
 import { withProgress } from "../../cli/progress.js";
 import { type OpenClawConfig, readConfigFileSnapshot } from "../../config/config.js";
 import { callGateway } from "../../gateway/call.js";
+import { t } from "../../i18n/index.js";
 import { formatAge } from "../../infra/channel-summary.js";
 import { collectChannelStatusIssues } from "../../infra/channels-status-issues.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
@@ -20,7 +21,7 @@ export type ChannelsStatusOptions = {
 
 export function formatGatewayChannelsStatusLines(payload: Record<string, unknown>): string[] {
   const lines: string[] = [];
-  lines.push(theme.success("Gateway reachable."));
+  lines.push(theme.success(t("Gateway reachable.")));
   const accountLines = (provider: ChatChannel, accounts: Array<Record<string, unknown>>) =>
     accounts.map((account) => {
       const bits: string[] = [];
@@ -28,10 +29,10 @@ export function formatGatewayChannelsStatusLines(payload: Record<string, unknown
         bits.push(account.enabled ? "enabled" : "disabled");
       }
       if (typeof account.configured === "boolean") {
-        bits.push(account.configured ? "configured" : "not configured");
+        bits.push(account.configured ? "configured" : t("not configured"));
       }
       if (typeof account.linked === "boolean") {
-        bits.push(account.linked ? "linked" : "not linked");
+        bits.push(account.linked ? "linked" : t("not linked"));
       }
       if (typeof account.running === "boolean") {
         bits.push(account.running ? "running" : "stopped");
@@ -106,11 +107,11 @@ export function formatGatewayChannelsStatusLines(payload: Record<string, unknown
       }
       const probe = account.probe as { ok?: boolean } | undefined;
       if (probe && typeof probe.ok === "boolean") {
-        bits.push(probe.ok ? "works" : "probe failed");
+        bits.push(probe.ok ? "works" : t("probe failed"));
       }
       const audit = account.audit as { ok?: boolean } | undefined;
       if (audit && typeof audit.ok === "boolean") {
-        bits.push(audit.ok ? "audit ok" : "audit failed");
+        bits.push(audit.ok ? t("audit ok") : t("audit failed"));
       }
       if (typeof account.lastError === "string" && account.lastError) {
         bits.push(`error:${account.lastError}`);
@@ -122,7 +123,7 @@ export function formatGatewayChannelsStatusLines(payload: Record<string, unknown
         accountId,
         name: name || undefined,
       });
-      return `- ${labelText}: ${bits.join(", ")}`;
+      return `- ${labelText}: ${bits.join(t(", "))}`;
     });
 
   const plugins = listChannelPlugins();
@@ -145,17 +146,17 @@ export function formatGatewayChannelsStatusLines(payload: Record<string, unknown
   lines.push("");
   const issues = collectChannelStatusIssues(payload);
   if (issues.length > 0) {
-    lines.push(theme.warn("Warnings:"));
+    lines.push(theme.warn(t("Warnings:")));
     for (const issue of issues) {
       lines.push(
         `- ${issue.channel} ${issue.accountId}: ${issue.message}${issue.fix ? ` (${issue.fix})` : ""}`,
       );
     }
-    lines.push(`- Run: ${formatCliCommand("openclaw doctor")}`);
+    lines.push(`- Run: ${formatCliCommand(t("openclaw doctor"))}`);
     lines.push("");
   }
   lines.push(
-    `Tip: ${formatDocsLink("/cli#status", "status --deep")} adds gateway health probes to status output (requires a reachable gateway).`,
+    `Tip: ${formatDocsLink("/cli#status", t("status --deep"))} adds gateway health probes to status output (requires a reachable gateway).`,
   );
   return lines;
 }
@@ -165,7 +166,7 @@ async function formatConfigChannelsStatusLines(
   meta: { path?: string; mode?: "local" | "remote" },
 ): Promise<string[]> {
   const lines: string[] = [];
-  lines.push(theme.warn("Gateway not reachable; showing config-only status."));
+  lines.push(theme.warn(t("Gateway not reachable; showing config-only status.")));
   if (meta.path) {
     lines.push(`Config: ${meta.path}`);
   }
@@ -183,10 +184,10 @@ async function formatConfigChannelsStatusLines(
         bits.push(account.enabled ? "enabled" : "disabled");
       }
       if (typeof account.configured === "boolean") {
-        bits.push(account.configured ? "configured" : "not configured");
+        bits.push(account.configured ? "configured" : t("not configured"));
       }
       if (typeof account.linked === "boolean") {
-        bits.push(account.linked ? "linked" : "not linked");
+        bits.push(account.linked ? "linked" : t("not linked"));
       }
       if (typeof account.mode === "string" && account.mode.length > 0) {
         bits.push(`mode:${account.mode}`);
@@ -210,7 +211,7 @@ async function formatConfigChannelsStatusLines(
         accountId,
         name: name || undefined,
       });
-      return `- ${labelText}: ${bits.join(", ")}`;
+      return `- ${labelText}: ${bits.join(t(", "))}`;
     });
 
   const plugins = listChannelPlugins();
@@ -235,7 +236,7 @@ async function formatConfigChannelsStatusLines(
 
   lines.push("");
   lines.push(
-    `Tip: ${formatDocsLink("/cli#status", "status --deep")} adds gateway health probes to status output (requires a reachable gateway).`,
+    `Tip: ${formatDocsLink("/cli#status", t("status --deep"))} adds gateway health probes to status output (requires a reachable gateway).`,
   );
   return lines;
 }
@@ -245,7 +246,9 @@ export async function channelsStatusCommand(
   runtime: RuntimeEnv = defaultRuntime,
 ) {
   const timeoutMs = Number(opts.timeout ?? 10_000);
-  const statusLabel = opts.probe ? "Checking channel status (probe)…" : "Checking channel status…";
+  const statusLabel = opts.probe
+    ? t("Checking channel status (probe)…")
+    : t("Checking channel status…");
   const shouldLogStatus = opts.json !== true && !process.stderr.isTTY;
   if (shouldLogStatus) {
     runtime.log(statusLabel);

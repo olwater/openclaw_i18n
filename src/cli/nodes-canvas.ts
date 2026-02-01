@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import * as os from "node:os";
 import * as path from "node:path";
+import { t } from "../i18n/index.js";
 import { resolveCliName } from "./cli-name.js";
 
 export type CanvasSnapshotPayload = {
@@ -21,7 +22,7 @@ export function parseCanvasSnapshotPayload(value: unknown): CanvasSnapshotPayloa
   const format = asString(obj.format);
   const base64 = asString(obj.base64);
   if (!format || !base64) {
-    throw new Error("invalid canvas.snapshot payload");
+    throw new Error(t("invalid canvas.snapshot payload"));
   }
   return { format, base64 };
 }

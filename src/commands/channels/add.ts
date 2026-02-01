@@ -4,6 +4,7 @@ import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/ag
 import { listChannelPluginCatalogEntries } from "../../channels/plugins/catalog.js";
 import { getChannelPlugin, normalizeChannelId } from "../../channels/plugins/index.js";
 import { writeConfigFile, type OpenClawConfig } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { createClackPrompter } from "../../wizard/clack-prompter.js";
@@ -92,7 +93,7 @@ export async function channelsAddCommand(
     const prompter = createClackPrompter();
     let selection: ChannelChoice[] = [];
     const accountIds: Partial<Record<ChannelChoice, string>> = {};
-    await prompter.intro("Channel setup");
+    await prompter.intro(t("Channel setup"));
     let nextConfig = await setupChannels(cfg, runtime, prompter, {
       allowDisable: false,
       allowSignalInstall: true,
@@ -105,12 +106,12 @@ export async function channelsAddCommand(
       },
     });
     if (selection.length === 0) {
-      await prompter.outro("No channels selected.");
+      await prompter.outro(t("No channels selected."));
       return;
     }
 
     const wantsNames = await prompter.confirm({
-      message: "Add display names for these accounts? (optional)",
+      message: t("Add display names for these accounts? (optional)"),
       initialValue: false,
     });
     if (wantsNames) {
@@ -138,7 +139,7 @@ export async function channelsAddCommand(
     }
 
     await writeConfigFile(nextConfig);
-    await prompter.outro("Channels updated.");
+    await prompter.outro(t("Channels updated."));
     return;
   }
 

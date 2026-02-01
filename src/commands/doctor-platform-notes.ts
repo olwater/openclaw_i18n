@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { OpenClawConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { note } from "../terminal/note.js";
 import { shortenHomePath } from "../utils.js";
 
@@ -30,7 +31,7 @@ export async function noteMacLaunchAgentOverrides() {
     "- To restore default behavior:",
     `  rm ${displayMarkerPath}`,
   ].filter((line): line is string => Boolean(line));
-  note(lines.join("\n"), "Gateway (macOS)");
+  note(lines.join("\n"), t("Gateway (macOS)"));
 }
 
 async function launchctlGetenv(name: string): Promise<string | undefined> {
@@ -86,7 +87,7 @@ export async function noteMacLaunchctlGatewayEnvOverrides(
           `- \`${key}\` is set; use \`OPENCLAW_${key.slice(key.indexOf("_") + 1)}\` instead.`,
       ),
     ];
-    (deps?.noteFn ?? note)(lines.join("\n"), "Gateway (macOS)");
+    (deps?.noteFn ?? note)(lines.join("\n"), t("Gateway (macOS)"));
   }
 
   const tokenEntries = [
@@ -118,7 +119,7 @@ export async function noteMacLaunchctlGatewayEnvOverrides(
     envPasswordKey ? `  launchctl unsetenv ${envPasswordKey}` : undefined,
   ].filter((line): line is string => Boolean(line));
 
-  (deps?.noteFn ?? note)(lines.join("\n"), "Gateway (macOS)");
+  (deps?.noteFn ?? note)(lines.join("\n"), t("Gateway (macOS)"));
 }
 
 export function noteDeprecatedLegacyEnvVars(

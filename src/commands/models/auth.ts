@@ -18,6 +18,7 @@ import { formatCliCommand } from "../../cli/command-format.js";
 import { parseDurationMs } from "../../cli/parse-duration.js";
 import { readConfigFileSnapshot, type OpenClawConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
+import { t } from "../../i18n/index.js";
 import { resolvePluginProviders } from "../../plugins/providers.js";
 import { stylePromptHint, stylePromptMessage } from "../../terminal/prompt-style.js";
 import { createClackPrompter } from "../../wizard/clack-prompter.js";
@@ -71,16 +72,16 @@ export async function modelsAuthSetupTokenCommand(
 ) {
   const provider = resolveTokenProvider(opts.provider ?? "anthropic");
   if (provider !== "anthropic") {
-    throw new Error("Only --provider anthropic is supported for setup-token.");
+    throw new Error(t("Only --provider anthropic is supported for setup-token."));
   }
 
   if (!process.stdin.isTTY) {
-    throw new Error("setup-token requires an interactive TTY.");
+    throw new Error(t("setup-token requires an interactive TTY."));
   }
 
   if (!opts.yes) {
     const proceed = await confirm({
-      message: "Have you run `claude setup-token` and copied the token?",
+      message: t("Have you run `claude setup-token` and copied the token?"),
       initialValue: true,
     });
     if (!proceed) {
@@ -89,7 +90,7 @@ export async function modelsAuthSetupTokenCommand(
   }
 
   const tokenInput = await text({
-    message: "Paste Anthropic setup-token",
+    message: t("Paste Anthropic setup-token"),
     validate: (value) => validateAnthropicSetupToken(String(value ?? "")),
   });
   const token = String(tokenInput).trim();
@@ -126,7 +127,7 @@ export async function modelsAuthPasteTokenCommand(
 ) {
   const rawProvider = opts.provider?.trim();
   if (!rawProvider) {
-    throw new Error("Missing --provider.");
+    throw new Error(t("Missing --provider."));
   }
   const provider = normalizeProviderId(rawProvider);
   const profileId = opts.profileId?.trim() || resolveDefaultTokenProfileId(provider);
@@ -160,10 +161,10 @@ export async function modelsAuthPasteTokenCommand(
 
 export async function modelsAuthAddCommand(_opts: Record<string, never>, runtime: RuntimeEnv) {
   const provider = (await select({
-    message: "Token provider",
+    message: t("Token provider"),
     options: [
-      { value: "anthropic", label: "anthropic" },
-      { value: "custom", label: "custom (type provider id)" },
+      { value: "anthropic", label: t("anthropic") },
+      { value: "custom", label: t("custom (type provider id)") },
     ],
   })) as TokenProvider | "custom";
 
@@ -172,7 +173,7 @@ export async function modelsAuthAddCommand(_opts: Record<string, never>, runtime
       ? normalizeProviderId(
           String(
             await text({
-              message: "Provider id",
+              message: t("Provider id"),
               validate: (value) => (value?.trim() ? undefined : "Required"),
             }),
           ),
@@ -180,18 +181,18 @@ export async function modelsAuthAddCommand(_opts: Record<string, never>, runtime
       : provider;
 
   const method = (await select({
-    message: "Token method",
+    message: t("Token method"),
     options: [
       ...(providerId === "anthropic"
         ? [
             {
               value: "setup-token",
-              label: "setup-token (claude)",
-              hint: "Paste a setup-token from `claude setup-token`",
+              label: t("setup-token (claude)"),
+              hint: t("Paste a setup-token from `claude setup-token`"),
             },
           ]
         : []),
-      { value: "paste", label: "paste token" },
+      { value: "paste", label: t("paste token") },
     ],
   })) as "setup-token" | "paste";
 
@@ -203,27 +204,27 @@ export async function modelsAuthAddCommand(_opts: Record<string, never>, runtime
   const profileIdDefault = resolveDefaultTokenProfileId(providerId);
   const profileId = String(
     await text({
-      message: "Profile id",
+      message: t("Profile id"),
       initialValue: profileIdDefault,
       validate: (value) => (value?.trim() ? undefined : "Required"),
     }),
   ).trim();
 
   const wantsExpiry = await confirm({
-    message: "Does this token expire?",
+    message: t("Does this token expire?"),
     initialValue: false,
   });
   const expiresIn = wantsExpiry
     ? String(
         await text({
-          message: "Expires in (duration)",
-          initialValue: "365d",
+          message: t("Expires in (duration)"),
+          initialValue: t("365d"),
           validate: (value) => {
             try {
               parseDurationMs(String(value ?? ""), { defaultUnit: "d" });
               return undefined;
             } catch {
-              return "Invalid duration (e.g. 365d, 12h, 30m)";
+              return t("Invalid duration (e.g. 365d, 12h, 30m)");
             }
           },
         }),
@@ -327,7 +328,7 @@ function credentialMode(credential: AuthProfileCredential): "api_key" | "oauth" 
 
 export async function modelsAuthLoginCommand(opts: LoginOptions, runtime: RuntimeEnv) {
   if (!process.stdin.isTTY) {
-    throw new Error("models auth login requires an interactive TTY.");
+    throw new Error(t("models auth login requires an interactive TTY."));
   }
 
   const snapshot = await readConfigFileSnapshot();
@@ -345,7 +346,7 @@ export async function modelsAuthLoginCommand(opts: LoginOptions, runtime: Runtim
   const providers = resolvePluginProviders({ config, workspaceDir });
   if (providers.length === 0) {
     throw new Error(
-      `No provider plugins found. Install one via \`${formatCliCommand("openclaw plugins install")}\`.`,
+      `No provider plugins found. Install one via \`${formatCliCommand(t("openclaw plugins install"))}\`.`,
     );
   }
 
@@ -354,7 +355,7 @@ export async function modelsAuthLoginCommand(opts: LoginOptions, runtime: Runtim
     resolveProviderMatch(providers, opts.provider) ??
     (await prompter
       .select({
-        message: "Select a provider",
+        message: t("Select a provider"),
         options: providers.map((provider) => ({
           value: provider.id,
           label: provider.label,
@@ -364,7 +365,7 @@ export async function modelsAuthLoginCommand(opts: LoginOptions, runtime: Runtim
       .then((id) => resolveProviderMatch(providers, String(id))));
 
   if (!selectedProvider) {
-    throw new Error("Unknown provider. Use --provider <id> to pick a provider plugin.");
+    throw new Error(t("Unknown provider. Use --provider <id> to pick a provider plugin."));
   }
 
   const chosenMethod =
@@ -383,7 +384,7 @@ export async function modelsAuthLoginCommand(opts: LoginOptions, runtime: Runtim
           .then((id) => selectedProvider.auth.find((method) => method.id === String(id))));
 
   if (!chosenMethod) {
-    throw new Error("Unknown auth method. Use --method <id> to select one.");
+    throw new Error(t("Unknown auth method. Use --method <id> to select one."));
   }
 
   const isRemote = isRemoteEnvironment();
@@ -442,6 +443,6 @@ export async function modelsAuthLoginCommand(opts: LoginOptions, runtime: Runtim
     );
   }
   if (result.notes && result.notes.length > 0) {
-    await prompter.note(result.notes.join("\n"), "Provider notes");
+    await prompter.note(result.notes.join("\n"), t("Provider notes"));
   }
 }

@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import type { NodesRpcOpts } from "./types.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { renderTable } from "../../terminal/table.js";
 import { shortenHomeInString } from "../../utils.js";
@@ -54,7 +55,7 @@ function formatNodeVersions(node: {
   if (ui) {
     parts.push(`ui ${formatVersionLabel(ui)}`);
   }
-  return parts.length > 0 ? parts.join(" · ") : null;
+  return parts.length > 0 ? parts.join(t(" · ")) : null;
 }
 
 function formatPathEnv(raw?: string): string | null {
@@ -99,13 +100,16 @@ export function registerNodesStatusCommands(nodes: Command) {
   nodesCallOpts(
     nodes
       .command("status")
-      .description("List known nodes with connection status and capabilities")
-      .option("--connected", "Only show connected nodes")
-      .option("--last-connected <duration>", "Only show nodes connected within duration (e.g. 24h)")
+      .description(t("List known nodes with connection status and capabilities"))
+      .option("--connected", t("Only show connected nodes"))
+      .option(
+        "--last-connected <duration>",
+        t("Only show nodes connected within duration (e.g. 24h)"),
+      )
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("status", async () => {
           const connectedOnly = Boolean(opts.connected);
-          const sinceMs = parseSinceMs(opts.lastConnected, "Invalid --last-connected");
+          const sinceMs = parseSinceMs(opts.lastConnected, t("Invalid --last-connected"));
           const result = await callGatewayCli("node.list", opts, {});
           const obj: Record<string, unknown> =
             typeof result === "object" && result !== null ? result : {};
@@ -172,7 +176,7 @@ export function registerNodesStatusCommands(nodes: Command) {
               pathEnv ? `path: ${pathEnv}` : null,
             ].filter(Boolean) as string[];
             const caps = Array.isArray(n.caps)
-              ? n.caps.map(String).filter(Boolean).toSorted().join(", ")
+              ? n.caps.map(String).filter(Boolean).toSorted().join(t(", "))
               : "?";
             const paired = n.paired ? ok("paired") : warn("unpaired");
             const connected = n.connected ? ok("connected") : muted("disconnected");
@@ -185,7 +189,7 @@ export function registerNodesStatusCommands(nodes: Command) {
               Node: name,
               ID: n.nodeId,
               IP: n.remoteIp ?? "",
-              Detail: detailParts.join(" · "),
+              Detail: detailParts.join(t(" · ")),
               Status: `${paired} · ${connected}${since}`,
               Caps: caps,
             };
@@ -212,8 +216,8 @@ export function registerNodesStatusCommands(nodes: Command) {
   nodesCallOpts(
     nodes
       .command("describe")
-      .description("Describe a node (capabilities + supported invoke commands)")
-      .requiredOption("--node <idOrNameOrIp>", "Node id, name, or IP")
+      .description(t("Describe a node (capabilities + supported invoke commands)"))
+      .requiredOption("--node <idOrNameOrIp>", t("Node id, name, or IP"))
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("describe", async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
@@ -265,7 +269,7 @@ export function registerNodesStatusCommands(nodes: Command) {
             versions ? { Field: "Version", Value: versions } : null,
             pathEnv ? { Field: "PATH", Value: pathEnv } : null,
             { Field: "Status", Value: status },
-            { Field: "Caps", Value: caps ? caps.join(", ") : "?" },
+            { Field: "Caps", Value: caps ? caps.join(t(", ")) : "?" },
           ].filter(Boolean) as Array<{ Field: string; Value: string }>;
 
           defaultRuntime.log(heading("Node"));
@@ -295,13 +299,16 @@ export function registerNodesStatusCommands(nodes: Command) {
   nodesCallOpts(
     nodes
       .command("list")
-      .description("List pending and paired nodes")
-      .option("--connected", "Only show connected nodes")
-      .option("--last-connected <duration>", "Only show nodes connected within duration (e.g. 24h)")
+      .description(t("List pending and paired nodes"))
+      .option("--connected", t("Only show connected nodes"))
+      .option(
+        "--last-connected <duration>",
+        t("Only show nodes connected within duration (e.g. 24h)"),
+      )
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("list", async () => {
           const connectedOnly = Boolean(opts.connected);
-          const sinceMs = parseSinceMs(opts.lastConnected, "Invalid --last-connected");
+          const sinceMs = parseSinceMs(opts.lastConnected, t("Invalid --last-connected"));
           const result = await callGatewayCli("node.pair.list", opts, {});
           const { pending, paired } = parsePairingList(result);
           const { heading, muted, warn } = getNodesTheme();
@@ -410,7 +417,7 @@ export function registerNodesStatusCommands(nodes: Command) {
                   { key: "Node", header: "Node", minWidth: 14, flex: true },
                   { key: "Id", header: "ID", minWidth: 10 },
                   { key: "IP", header: "IP", minWidth: 10 },
-                  { key: "LastConnect", header: "Last Connect", minWidth: 14 },
+                  { key: "LastConnect", header: t("Last Connect"), minWidth: 14 },
                 ],
                 rows: pairedRows,
               }).trimEnd(),

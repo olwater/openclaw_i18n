@@ -2,6 +2,7 @@ import type { TUI } from "@mariozechner/pi-tui";
 import type { ChatLog } from "./components/chat-log.js";
 import type { GatewayAgentsList, GatewayChatClient } from "./gateway-chat.js";
 import type { TuiOptions, TuiStateAccess } from "./tui-types.js";
+import { t } from "../i18n/index.js";
 import {
   normalizeAgentId,
   normalizeMainKey,
@@ -234,7 +235,7 @@ export function createSessionActions(context: SessionActionContext) {
 
   const abortActive = async () => {
     if (!state.activeChatRunId) {
-      chatLog.addSystem("no active run");
+      chatLog.addSystem(t("no active run"));
       tui.requestRender();
       return;
     }
@@ -246,7 +247,7 @@ export function createSessionActions(context: SessionActionContext) {
       setActivityStatus("aborted");
     } catch (err) {
       chatLog.addSystem(`abort failed: ${String(err)}`);
-      setActivityStatus("abort failed");
+      setActivityStatus(t("abort failed"));
     }
     tui.requestRender();
   };

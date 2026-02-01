@@ -7,6 +7,7 @@ import {
 } from "../../agents/auth-profiles.js";
 import { normalizeProviderId } from "../../agents/model-selection.js";
 import { loadConfig } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { shortenHomePath } from "../../utils.js";
 import { resolveKnownAgentId } from "./shared.js";
 
@@ -34,7 +35,7 @@ export async function modelsAuthOrderGetCommand(
 ) {
   const rawProvider = opts.provider?.trim();
   if (!rawProvider) {
-    throw new Error("Missing --provider.");
+    throw new Error(t("Missing --provider."));
   }
   const provider = normalizeProviderId(rawProvider);
 
@@ -65,7 +66,9 @@ export async function modelsAuthOrderGetCommand(
   runtime.log(`Agent: ${agentId}`);
   runtime.log(`Provider: ${provider}`);
   runtime.log(`Auth file: ${shortenHomePath(`${agentDir}/auth-profiles.json`)}`);
-  runtime.log(order.length > 0 ? `Order override: ${order.join(", ")}` : "Order override: (none)");
+  runtime.log(
+    order.length > 0 ? `Order override: ${order.join(t(", "))}` : t("Order override: (none)"),
+  );
 }
 
 export async function modelsAuthOrderClearCommand(
@@ -74,7 +77,7 @@ export async function modelsAuthOrderClearCommand(
 ) {
   const rawProvider = opts.provider?.trim();
   if (!rawProvider) {
-    throw new Error("Missing --provider.");
+    throw new Error(t("Missing --provider."));
   }
   const provider = normalizeProviderId(rawProvider);
 
@@ -86,12 +89,12 @@ export async function modelsAuthOrderClearCommand(
     order: null,
   });
   if (!updated) {
-    throw new Error("Failed to update auth-profiles.json (lock busy?).");
+    throw new Error(t("Failed to update auth-profiles.json (lock busy?)."));
   }
 
   runtime.log(`Agent: ${agentId}`);
   runtime.log(`Provider: ${provider}`);
-  runtime.log("Cleared per-agent order override.");
+  runtime.log(t("Cleared per-agent order override."));
 }
 
 export async function modelsAuthOrderSetCommand(
@@ -100,7 +103,7 @@ export async function modelsAuthOrderSetCommand(
 ) {
   const rawProvider = opts.provider?.trim();
   if (!rawProvider) {
-    throw new Error("Missing --provider.");
+    throw new Error(t("Missing --provider."));
   }
   const provider = normalizeProviderId(rawProvider);
 
@@ -113,7 +116,7 @@ export async function modelsAuthOrderSetCommand(
   const providerKey = normalizeProviderId(provider);
   const requested = (opts.order ?? []).map((entry) => String(entry).trim()).filter(Boolean);
   if (requested.length === 0) {
-    throw new Error("Missing profile ids. Provide one or more profile ids.");
+    throw new Error(t("Missing profile ids. Provide one or more profile ids."));
   }
 
   for (const profileId of requested) {
@@ -132,10 +135,10 @@ export async function modelsAuthOrderSetCommand(
     order: requested,
   });
   if (!updated) {
-    throw new Error("Failed to update auth-profiles.json (lock busy?).");
+    throw new Error(t("Failed to update auth-profiles.json (lock busy?)."));
   }
 
   runtime.log(`Agent: ${agentId}`);
   runtime.log(`Provider: ${provider}`);
-  runtime.log(`Order override: ${describeOrder(updated, provider).join(", ")}`);
+  runtime.log(`Order override: ${describeOrder(updated, provider).join(t(", "))}`);
 }

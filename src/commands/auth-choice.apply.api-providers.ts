@@ -1,6 +1,7 @@
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { ensureAuthProfileStore, resolveAuthProfileOrder } from "../agents/auth-profiles.js";
 import { resolveEnvApiKey } from "../agents/model-auth.js";
+import { t } from "../i18n/index.js";
 import {
   formatApiKeyPreview,
   normalizeApiKeyInput,
@@ -62,7 +63,7 @@ export async function applyAuthChoiceApiProviders(
     }
     await params.prompter.note(
       `Default model set to ${model} for agent "${params.agentId}".`,
-      "Model configured",
+      t("Model configured"),
     );
   };
 
@@ -146,7 +147,7 @@ export async function applyAuthChoiceApiProviders(
 
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter OpenRouter API key",
+        message: t("Enter OpenRouter API key"),
         validate: validateApiKeyInput,
       });
       await setOpenrouterApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -202,7 +203,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Vercel AI Gateway API key",
+        message: t("Enter Vercel AI Gateway API key"),
         validate: validateApiKeyInput,
       });
       await setVercelAiGatewayApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -250,7 +251,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Moonshot API key",
+        message: t("Enter Moonshot API key"),
         validate: validateApiKeyInput,
       });
       await setMoonshotApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -291,10 +292,10 @@ export async function applyAuthChoiceApiProviders(
     if (!hasCredential) {
       await params.prompter.note(
         [
-          "Kimi Coding uses a dedicated endpoint and API key.",
-          "Get your API key at: https://www.kimi.com/code/en",
+          t("Kimi Coding uses a dedicated endpoint and API key."),
+          t("Get your API key at: https://www.kimi.com/code/en"),
         ].join("\n"),
-        "Kimi Coding",
+        t("Kimi Coding"),
       );
     }
     const envKey = resolveEnvApiKey("kimi-coding");
@@ -310,7 +311,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Kimi Coding API key",
+        message: t("Enter Kimi Coding API key"),
         validate: validateApiKeyInput,
       });
       await setKimiCodingApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -358,7 +359,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Gemini API key",
+        message: t("Enter Gemini API key"),
         validate: validateApiKeyInput,
       });
       await setGeminiApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -374,7 +375,7 @@ export async function applyAuthChoiceApiProviders(
       if (applied.changed) {
         await params.prompter.note(
           `Default model set to ${GOOGLE_GEMINI_DEFAULT_MODEL}`,
-          "Model configured",
+          t("Model configured"),
         );
       }
     } else {
@@ -405,7 +406,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Z.AI API key",
+        message: t("Enter Z.AI API key"),
         validate: validateApiKeyInput,
       });
       await setZaiApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -468,7 +469,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Xiaomi API key",
+        message: t("Enter Xiaomi API key"),
         validate: validateApiKeyInput,
       });
       await setXiaomiApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -500,7 +501,7 @@ export async function applyAuthChoiceApiProviders(
       await setSyntheticApiKey(String(params.opts.token).trim(), params.agentDir);
     } else {
       const key = await params.prompter.text({
-        message: "Enter Synthetic API key",
+        message: t("Enter Synthetic API key"),
         validate: (value) => (value?.trim() ? undefined : "Required"),
       });
       await setSyntheticApiKey(String(key).trim(), params.agentDir);
@@ -538,11 +539,11 @@ export async function applyAuthChoiceApiProviders(
     if (!hasCredential) {
       await params.prompter.note(
         [
-          "Venice AI provides privacy-focused inference with uncensored models.",
-          "Get your API key at: https://venice.ai/settings/api",
-          "Supports 'private' (fully private) and 'anonymized' (proxy) modes.",
+          t("Venice AI provides privacy-focused inference with uncensored models."),
+          t("Get your API key at: https://venice.ai/settings/api"),
+          t("Supports 'private' (fully private) and 'anonymized' (proxy) modes."),
         ].join("\n"),
-        "Venice AI",
+        t("Venice AI"),
       );
     }
 
@@ -559,7 +560,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Venice AI API key",
+        message: t("Enter Venice AI API key"),
         validate: validateApiKeyInput,
       });
       await setVeniceApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
@@ -596,11 +597,11 @@ export async function applyAuthChoiceApiProviders(
     if (!hasCredential) {
       await params.prompter.note(
         [
-          "OpenCode Zen provides access to Claude, GPT, Gemini, and more models.",
-          "Get your API key at: https://opencode.ai/auth",
-          "Requires an active OpenCode Zen subscription.",
+          t("OpenCode Zen provides access to Claude, GPT, Gemini, and more models."),
+          t("Get your API key at: https://opencode.ai/auth"),
+          t("Requires an active OpenCode Zen subscription."),
         ].join("\n"),
-        "OpenCode Zen",
+        t("OpenCode Zen"),
       );
     }
     const envKey = resolveEnvApiKey("opencode");
@@ -616,7 +617,7 @@ export async function applyAuthChoiceApiProviders(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter OpenCode Zen API key",
+        message: t("Enter OpenCode Zen API key"),
         validate: validateApiKeyInput,
       });
       await setOpencodeZenApiKey(normalizeApiKeyInput(String(key)), params.agentDir);

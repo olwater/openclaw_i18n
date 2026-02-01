@@ -8,6 +8,7 @@ import {
   type SelectListTheme,
   truncateToWidth,
 } from "@mariozechner/pi-tui";
+import { t } from "../../i18n/index.js";
 import { visibleWidth } from "../../terminal/ansi.js";
 import { findWordBoundaryIndex, fuzzyFilterLower, prepareSearchItems } from "./fuzzy-filter.js";
 
@@ -163,7 +164,7 @@ export class SearchableSelectList implements Component {
     const lines: string[] = [];
 
     // Search input line
-    const promptText = "search: ";
+    const promptText = t("search: ");
     const prompt = this.theme.searchPrompt(promptText);
     const inputWidth = Math.max(1, width - visibleWidth(prompt));
     const inputLines = this.searchInput.render(inputWidth);
@@ -175,7 +176,7 @@ export class SearchableSelectList implements Component {
 
     // If no items match filter, show message
     if (this.filteredItems.length === 0) {
-      lines.push(this.theme.noMatch("  No matches"));
+      lines.push(this.theme.noMatch(t("  No matches")));
       return lines;
     }
 
@@ -214,7 +215,7 @@ export class SearchableSelectList implements Component {
     width: number,
     query: string,
   ): string {
-    const prefix = isSelected ? "→ " : "  ";
+    const prefix = isSelected ? t("→ ") : t("  ");
     const prefixWidth = prefix.length;
     const displayValue = this.getItemLabel(item);
 

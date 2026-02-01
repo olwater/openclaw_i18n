@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { BrowserFormField } from "../../browser/client-actions-core.js";
 import { danger } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { callBrowserRequest, type BrowserParentOpts } from "../browser-cli-shared.js";
 
@@ -39,7 +40,7 @@ export async function callBrowserAct<T = unknown>(params: {
 export function requireRef(ref: string | undefined) {
   const refValue = typeof ref === "string" ? ref.trim() : "";
   if (!refValue) {
-    defaultRuntime.error(danger("ref is required"));
+    defaultRuntime.error(danger(t("ref is required")));
     defaultRuntime.exit(1);
     return null;
   }
@@ -57,11 +58,11 @@ export async function readFields(opts: {
 }): Promise<BrowserFormField[]> {
   const payload = opts.fieldsFile ? await readFile(opts.fieldsFile) : (opts.fields ?? "");
   if (!payload.trim()) {
-    throw new Error("fields are required");
+    throw new Error(t("fields are required"));
   }
   const parsed = JSON.parse(payload) as unknown;
   if (!Array.isArray(parsed)) {
-    throw new Error("fields must be an array");
+    throw new Error(t("fields must be an array"));
   }
   return parsed.map((entry, index) => {
     if (!entry || typeof entry !== "object") {

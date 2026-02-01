@@ -15,6 +15,7 @@ import type {
 } from "./tui-types.js";
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { loadConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import {
   buildAgentMainSessionKey,
   normalizeAgentId,
@@ -495,7 +496,7 @@ export async function runTui(opts: TuiOptions) {
       reasoningLabel,
       tokens,
     ].filter(Boolean);
-    footer.setText(theme.dim(footerParts.join(" | ")));
+    footer.setText(theme.dim(footerParts.join(t(" | "))));
   };
 
   const { openOverlay, closeOverlay } = createOverlayHandlers(tui, editor);
@@ -574,7 +575,7 @@ export async function runTui(opts: TuiOptions) {
     const now = Date.now();
     if (editor.getText().trim().length > 0) {
       editor.setText("");
-      setActivityStatus("cleared input");
+      setActivityStatus(t("cleared input"));
       tui.requestRender();
       return;
     }
@@ -584,7 +585,7 @@ export async function runTui(opts: TuiOptions) {
       process.exit(0);
     }
     lastCtrlCAt = now;
-    setActivityStatus("press ctrl+c again to exit");
+    setActivityStatus(t("press ctrl+c again to exit"));
     tui.requestRender();
   };
   editor.onCtrlD = () => {
@@ -595,7 +596,7 @@ export async function runTui(opts: TuiOptions) {
   editor.onCtrlO = () => {
     toolsExpanded = !toolsExpanded;
     chatLog.setToolsExpanded(toolsExpanded);
-    setActivityStatus(toolsExpanded ? "tools expanded" : "tools collapsed");
+    setActivityStatus(toolsExpanded ? t("tools expanded") : t("tools collapsed"));
     tui.requestRender();
   };
   editor.onCtrlL = () => {
@@ -630,7 +631,7 @@ export async function runTui(opts: TuiOptions) {
       await refreshAgents();
       updateHeader();
       await loadHistory();
-      setConnectionStatus(reconnected ? "gateway reconnected" : "gateway connected", 4000);
+      setConnectionStatus(reconnected ? t("gateway reconnected") : t("gateway connected"), 4000);
       tui.requestRender();
       if (!autoMessageSent && autoMessage) {
         autoMessageSent = true;

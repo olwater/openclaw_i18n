@@ -1,3 +1,5 @@
+import { t } from "../i18n/index.js";
+
 type MinimalTheme = {
   dim: (s: string) => string;
   bold: (s: string) => string;
@@ -8,7 +10,7 @@ export const defaultWaitingPhrases = [
   "flibbertigibbeting",
   "kerfuffling",
   "dillydallying",
-  "twiddling thumbs",
+  t("twiddling thumbs"),
   "noodling",
   "bamboozling",
   "moseying",

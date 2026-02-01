@@ -1,10 +1,12 @@
+import { t } from "../../i18n/index.js";
+
 export const formatAge = (ms: number | null | undefined) => {
   if (!ms || ms < 0) {
     return "unknown";
   }
   const minutes = Math.round(ms / 60_000);
   if (minutes < 1) {
-    return "just now";
+    return t("just now");
   }
   if (minutes < 60) {
     return `${minutes}m ago`;
@@ -56,7 +58,7 @@ export function redactSecrets(text: string): string {
     /(\b(?:access[_-]?token|refresh[_-]?token|token|password|secret|api[_-]?key)\b\s*[:=]\s*)("?)([^"\\s]+)("?)/gi,
     "$1$2***$4",
   );
-  out = out.replace(/\bBearer\s+[A-Za-z0-9._-]+\b/g, "Bearer ***");
+  out = out.replace(/\bBearer\s+[A-Za-z0-9._-]+\b/g, t("Bearer ***"));
   out = out.replace(/\bsk-[A-Za-z0-9]{10,}\b/g, "sk-***");
   return out;
 }

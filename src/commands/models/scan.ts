@@ -5,6 +5,7 @@ import { type ModelScanResult, scanOpenRouterModels } from "../../agents/model-s
 import { withProgressTotals } from "../../cli/progress.js";
 import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
+import { t } from "../../i18n/index.js";
 import {
   stylePromptHint,
   stylePromptMessage,
@@ -91,15 +92,15 @@ function sortImageResults(results: ModelScanResult[]): ModelScanResult[] {
 }
 
 function buildScanHint(result: ModelScanResult): string {
-  const toolLabel = result.tool.ok ? `tool ${formatMs(result.tool.latencyMs)}` : "tool fail";
+  const toolLabel = result.tool.ok ? `tool ${formatMs(result.tool.latencyMs)}` : t("tool fail");
   const imageLabel = result.image.skipped
-    ? "img skip"
+    ? t("img skip")
     : result.image.ok
       ? `img ${formatMs(result.image.latencyMs)}`
-      : "img fail";
-  const ctxLabel = result.contextLength ? `ctx ${formatTokenK(result.contextLength)}` : "ctx ?";
+      : t("img fail");
+  const ctxLabel = result.contextLength ? `ctx ${formatTokenK(result.contextLength)}` : t("ctx ?");
   const paramLabel = result.inferredParamB ? `${result.inferredParamB}b` : null;
-  return [toolLabel, imageLabel, ctxLabel, paramLabel].filter(Boolean).join(" | ");
+  return [toolLabel, imageLabel, ctxLabel, paramLabel].filter(Boolean).join(t(" | "));
 }
 
 function printScanSummary(results: ModelScanResult[], runtime: RuntimeEnv) {
@@ -157,23 +158,23 @@ export async function modelsScanCommand(
 ) {
   const minParams = opts.minParams ? Number(opts.minParams) : undefined;
   if (minParams !== undefined && (!Number.isFinite(minParams) || minParams < 0)) {
-    throw new Error("--min-params must be >= 0");
+    throw new Error(t("--min-params must be >= 0"));
   }
   const maxAgeDays = opts.maxAgeDays ? Number(opts.maxAgeDays) : undefined;
   if (maxAgeDays !== undefined && (!Number.isFinite(maxAgeDays) || maxAgeDays < 0)) {
-    throw new Error("--max-age-days must be >= 0");
+    throw new Error(t("--max-age-days must be >= 0"));
   }
   const maxCandidates = opts.maxCandidates ? Number(opts.maxCandidates) : 6;
   if (!Number.isFinite(maxCandidates) || maxCandidates <= 0) {
-    throw new Error("--max-candidates must be > 0");
+    throw new Error(t("--max-candidates must be > 0"));
   }
   const timeout = opts.timeout ? Number(opts.timeout) : undefined;
   if (timeout !== undefined && (!Number.isFinite(timeout) || timeout <= 0)) {
-    throw new Error("--timeout must be > 0");
+    throw new Error(t("--timeout must be > 0"));
   }
   const concurrency = opts.concurrency ? Number(opts.concurrency) : undefined;
   if (concurrency !== undefined && (!Number.isFinite(concurrency) || concurrency <= 0)) {
-    throw new Error("--concurrency must be > 0");
+    throw new Error(t("--concurrency must be > 0"));
   }
 
   const cfg = loadConfig();
@@ -192,7 +193,7 @@ export async function modelsScanCommand(
   }
   const results = await withProgressTotals(
     {
-      label: "Scanning OpenRouter models...",
+      label: t("Scanning OpenRouter models..."),
       indeterminate: false,
       enabled: opts.json !== true,
     },
@@ -209,7 +210,7 @@ export async function modelsScanCommand(
           if (phase !== "probe") {
             return;
           }
-          const labelBase = probe ? "Probing models" : "Scanning models";
+          const labelBase = probe ? t("Probing models") : t("Scanning models");
           update({
             completed,
             total,
@@ -233,7 +234,7 @@ export async function modelsScanCommand(
 
   const toolOk = results.filter((entry) => entry.tool.ok);
   if (toolOk.length === 0) {
-    throw new Error("No tool-capable OpenRouter free models found.");
+    throw new Error(t("No tool-capable OpenRouter free models found."));
   }
 
   const sorted = sortScanResults(results);
@@ -261,7 +262,7 @@ export async function modelsScanCommand(
 
   if (canPrompt) {
     const selection = await multiselect({
-      message: "Select fallback models (ordered)",
+      message: t("Select fallback models (ordered)"),
       options: toolSorted.map((entry) => ({
         value: entry.modelRef,
         label: entry.modelRef,
@@ -271,14 +272,14 @@ export async function modelsScanCommand(
     });
 
     if (isCancel(selection)) {
-      cancel(stylePromptTitle("Model scan cancelled.") ?? "Model scan cancelled.");
+      cancel(stylePromptTitle(t("Model scan cancelled.")) ?? t("Model scan cancelled."));
       runtime.exit(0);
     }
 
     selected = selection;
     if (imageSorted.length > 0) {
       const imageSelection = await multiselect({
-        message: "Select image fallback models (ordered)",
+        message: t("Select image fallback models (ordered)"),
         options: imageSorted.map((entry) => ({
           value: entry.modelRef,
           label: entry.modelRef,
@@ -288,21 +289,21 @@ export async function modelsScanCommand(
       });
 
       if (isCancel(imageSelection)) {
-        cancel(stylePromptTitle("Model scan cancelled.") ?? "Model scan cancelled.");
+        cancel(stylePromptTitle(t("Model scan cancelled.")) ?? t("Model scan cancelled."));
         runtime.exit(0);
       }
 
       selectedImages = imageSelection;
     }
   } else if (!process.stdin.isTTY && !opts.yes && !noInput && !opts.json) {
-    throw new Error("Non-interactive scan: pass --yes to apply defaults.");
+    throw new Error(t("Non-interactive scan: pass --yes to apply defaults."));
   }
 
   if (selected.length === 0) {
-    throw new Error("No models selected for fallbacks.");
+    throw new Error(t("No models selected for fallbacks."));
   }
   if (opts.setImage && selectedImages.length === 0) {
-    throw new Error("No image-capable models selected for image model.");
+    throw new Error(t("No image-capable models selected for image model."));
   }
 
   const _updated = await updateConfig((cfg) => {
@@ -369,9 +370,9 @@ export async function modelsScanCommand(
   }
 
   logConfigUpdated(runtime);
-  runtime.log(`Fallbacks: ${selected.join(", ")}`);
+  runtime.log(`Fallbacks: ${selected.join(t(", "))}`);
   if (selectedImages.length > 0) {
-    runtime.log(`Image fallbacks: ${selectedImages.join(", ")}`);
+    runtime.log(`Image fallbacks: ${selectedImages.join(t(", "))}`);
   }
   if (opts.setDefault) {
     runtime.log(`Default model: ${selected[0]}`);

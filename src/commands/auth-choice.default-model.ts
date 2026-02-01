@@ -1,5 +1,6 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
+import { t } from "../i18n/index.js";
 
 export async function applyDefaultModelChoice(params: {
   config: OpenClawConfig;
@@ -14,7 +15,10 @@ export async function applyDefaultModelChoice(params: {
   if (params.setDefaultModel) {
     const next = params.applyDefaultConfig(params.config);
     if (params.noteDefault) {
-      await params.prompter.note(`Default model set to ${params.noteDefault}`, "Model configured");
+      await params.prompter.note(
+        `Default model set to ${params.noteDefault}`,
+        t("Model configured"),
+      );
     }
     return { config: next };
   }

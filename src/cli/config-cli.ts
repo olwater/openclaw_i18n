@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import JSON5 from "json5";
 import { readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
 import { danger, info } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { theme } from "../terminal/theme.js";
@@ -210,7 +211,7 @@ async function loadValidConfig() {
   for (const issue of snapshot.issues) {
     defaultRuntime.error(`- ${issue.path || "<root>"}: ${issue.message}`);
   }
-  defaultRuntime.error(`Run \`${formatCliCommand("openclaw doctor")}\` to repair, then retry.`);
+  defaultRuntime.error(`Run \`${formatCliCommand(t("openclaw doctor"))}\` to repair, then retry.`);
   defaultRuntime.exit(1);
   return snapshot;
 }
@@ -218,7 +219,7 @@ async function loadValidConfig() {
 export function registerConfigCli(program: Command) {
   const cmd = program
     .command("config")
-    .description("Config helpers (get/set/unset). Run without subcommand for the wizard.")
+    .description(t("Config helpers (get/set/unset). Run without subcommand for the wizard."))
     .addHelpText(
       "after",
       () =>
@@ -226,7 +227,7 @@ export function registerConfigCli(program: Command) {
     )
     .option(
       "--section <section>",
-      "Configure wizard sections (repeatable). Use with no subcommand.",
+      t("Configure wizard sections (repeatable). Use with no subcommand."),
       (value: string, previous: string[]) => [...previous, value],
       [] as string[],
     )
@@ -246,7 +247,7 @@ export function registerConfigCli(program: Command) {
       const invalid = sections.filter((s) => !CONFIGURE_WIZARD_SECTIONS.includes(s as never));
       if (invalid.length > 0) {
         defaultRuntime.error(
-          `Invalid --section: ${invalid.join(", ")}. Expected one of: ${CONFIGURE_WIZARD_SECTIONS.join(", ")}.`,
+          `Invalid --section: ${invalid.join(t(", "))}. Expected one of: ${CONFIGURE_WIZARD_SECTIONS.join(t(", "))}.`,
         );
         defaultRuntime.exit(1);
         return;
@@ -257,14 +258,14 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("get")
-    .description("Get a config value by dot path")
-    .argument("<path>", "Config path (dot or bracket notation)")
-    .option("--json", "Output JSON", false)
+    .description(t("Get a config value by dot path"))
+    .argument("<path>", t("Config path (dot or bracket notation)"))
+    .option("--json", t("Output JSON"), false)
     .action(async (path: string, opts) => {
       try {
         const parsedPath = parsePath(path);
         if (parsedPath.length === 0) {
-          throw new Error("Path is empty.");
+          throw new Error(t("Path is empty."));
         }
         const snapshot = await loadValidConfig();
         const res = getAtPath(snapshot.config, parsedPath);
@@ -294,15 +295,15 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("set")
-    .description("Set a config value by dot path")
-    .argument("<path>", "Config path (dot or bracket notation)")
-    .argument("<value>", "Value (JSON5 or raw string)")
-    .option("--json", "Parse value as JSON5 (required)", false)
+    .description(t("Set a config value by dot path"))
+    .argument("<path>", t("Config path (dot or bracket notation)"))
+    .argument("<value>", t("Value (JSON5 or raw string)"))
+    .option("--json", t("Parse value as JSON5 (required)"), false)
     .action(async (path: string, value: string, opts) => {
       try {
         const parsedPath = parsePath(path);
         if (parsedPath.length === 0) {
-          throw new Error("Path is empty.");
+          throw new Error(t("Path is empty."));
         }
         const parsedValue = parseValue(value, opts);
         const snapshot = await loadValidConfig();
@@ -318,13 +319,13 @@ export function registerConfigCli(program: Command) {
 
   cmd
     .command("unset")
-    .description("Remove a config value by dot path")
-    .argument("<path>", "Config path (dot or bracket notation)")
+    .description(t("Remove a config value by dot path"))
+    .argument("<path>", t("Config path (dot or bracket notation)"))
     .action(async (path: string) => {
       try {
         const parsedPath = parsePath(path);
         if (parsedPath.length === 0) {
-          throw new Error("Path is empty.");
+          throw new Error(t("Path is empty."));
         }
         const snapshot = await loadValidConfig();
         const next = snapshot.config as Record<string, unknown>;

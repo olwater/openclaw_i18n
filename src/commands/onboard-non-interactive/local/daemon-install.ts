@@ -3,6 +3,7 @@ import type { RuntimeEnv } from "../../../runtime.js";
 import type { OnboardOptions } from "../../onboard-types.js";
 import { resolveGatewayService } from "../../../daemon/service.js";
 import { isSystemdUserServiceAvailable } from "../../../daemon/systemd.js";
+import { t } from "../../../i18n/index.js";
 import { buildGatewayInstallPlan, gatewayInstallErrorHint } from "../../daemon-install-helpers.js";
 import { DEFAULT_GATEWAY_DAEMON_RUNTIME, isGatewayDaemonRuntime } from "../../daemon-runtime.js";
 import { ensureSystemdUserLingerNonInteractive } from "../../systemd-linger.js";
@@ -23,12 +24,12 @@ export async function installGatewayDaemonNonInteractive(params: {
   const systemdAvailable =
     process.platform === "linux" ? await isSystemdUserServiceAvailable() : true;
   if (process.platform === "linux" && !systemdAvailable) {
-    runtime.log("Systemd user services are unavailable; skipping service install.");
+    runtime.log(t("Systemd user services are unavailable; skipping service install."));
     return;
   }
 
   if (!isGatewayDaemonRuntime(daemonRuntimeRaw)) {
-    runtime.error("Invalid --daemon-runtime (use node or bun)");
+    runtime.error(t("Invalid --daemon-runtime (use node or bun)"));
     runtime.exit(1);
     return;
   }

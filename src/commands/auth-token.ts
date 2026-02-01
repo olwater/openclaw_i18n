@@ -1,4 +1,5 @@
 import { normalizeProviderId } from "../agents/model-selection.js";
+import { t } from "../i18n/index.js";
 
 export const ANTHROPIC_SETUP_TOKEN_PREFIX = "sk-ant-oat01-";
 export const ANTHROPIC_SETUP_TOKEN_MIN_LENGTH = 80;
@@ -32,7 +33,7 @@ export function validateAnthropicSetupToken(raw: string): string | undefined {
     return `Expected token starting with ${ANTHROPIC_SETUP_TOKEN_PREFIX}`;
   }
   if (trimmed.length < ANTHROPIC_SETUP_TOKEN_MIN_LENGTH) {
-    return "Token looks too short; paste the full setup-token";
+    return t("Token looks too short; paste the full setup-token");
   }
   return undefined;
 }

@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import type { RuntimeEnv } from "../runtime.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
+import { t } from "../i18n/index.js";
 import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
 import { runCommandWithTimeout } from "../process/exec.js";
 import { note } from "../terminal/note.js";
@@ -37,17 +38,17 @@ export async function maybeRepairUiProtocolFreshness(
       const uiSourcesPath = path.join(root, "ui/package.json");
       const uiSourcesExist = await fs.stat(uiSourcesPath).catch(() => null);
       if (!uiSourcesExist) {
-        note("Skipping UI build: ui/ sources not present.", "UI");
+        note(t("Skipping UI build: ui/ sources not present."), "UI");
         return;
       }
 
       const shouldRepair = await prompter.confirmRepair({
-        message: "Build Control UI assets now?",
+        message: t("Build Control UI assets now?"),
         initialValue: true,
       });
 
       if (shouldRepair) {
-        note("Building Control UI assets... (this may take a moment)", "UI");
+        note(t("Building Control UI assets... (this may take a moment)"), "UI");
         const uiScriptPath = path.join(root, "scripts/ui.js");
         const buildResult = await runCommandWithTimeout([process.execPath, uiScriptPath, "build"], {
           cwd: root,
@@ -55,7 +56,7 @@ export async function maybeRepairUiProtocolFreshness(
           env: { ...process.env, FORCE_COLOR: "1" },
         });
         if (buildResult.code === 0) {
-          note("UI build complete.", "UI");
+          note(t("UI build complete."), "UI");
         } else {
           const details = [
             `UI build failed (exit ${buildResult.code ?? "unknown"}).`,
@@ -96,11 +97,11 @@ export async function maybeRepairUiProtocolFreshness(
             .split("\n")
             .map((l) => `- ${l}`)
             .join("\n")}`,
-          "UI Freshness",
+          t("UI Freshness"),
         );
 
         const shouldRepair = await prompter.confirmAggressive({
-          message: "Rebuild UI now? (Detected protocol mismatch requiring update)",
+          message: t("Rebuild UI now? (Detected protocol mismatch requiring update)"),
           initialValue: true,
         });
 
@@ -108,11 +109,11 @@ export async function maybeRepairUiProtocolFreshness(
           const uiSourcesPath = path.join(root, "ui/package.json");
           const uiSourcesExist = await fs.stat(uiSourcesPath).catch(() => null);
           if (!uiSourcesExist) {
-            note("Skipping UI rebuild: ui/ sources not present.", "UI");
+            note(t("Skipping UI rebuild: ui/ sources not present."), "UI");
             return;
           }
 
-          note("Rebuilding stale UI assets... (this may take a moment)", "UI");
+          note(t("Rebuilding stale UI assets... (this may take a moment)"), "UI");
           // Use scripts/ui.js to build, assuming node is available as we are running in it.
           // We use the same node executable to run the script.
           const uiScriptPath = path.join(root, "scripts/ui.js");
@@ -125,7 +126,7 @@ export async function maybeRepairUiProtocolFreshness(
             },
           );
           if (buildResult.code === 0) {
-            note("UI rebuild complete.", "UI");
+            note(t("UI rebuild complete."), "UI");
           } else {
             const details = [
               `UI rebuild failed (exit ${buildResult.code ?? "unknown"}).`,

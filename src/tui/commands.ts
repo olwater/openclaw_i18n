@@ -2,6 +2,7 @@ import type { SlashCommand } from "@mariozechner/pi-tui";
 import type { OpenClawConfig } from "../config/types.js";
 import { listChatCommands, listChatCommandsForConfig } from "../auto-reply/commands-registry.js";
 import { formatThinkingLevels, listThinkingLevelLabels } from "../auto-reply/thinking.js";
+import { t } from "../i18n/index.js";
 
 const VERBOSE_LEVELS = ["on", "off"];
 const REASONING_LEVELS = ["on", "off"];
@@ -40,20 +41,20 @@ export function parseCommand(input: string): ParsedCommand {
 export function getSlashCommands(options: SlashCommandOptions = {}): SlashCommand[] {
   const thinkLevels = listThinkingLevelLabels(options.provider, options.model);
   const commands: SlashCommand[] = [
-    { name: "help", description: "Show slash command help" },
-    { name: "status", description: "Show gateway status summary" },
-    { name: "agent", description: "Switch agent (or open picker)" },
-    { name: "agents", description: "Open agent picker" },
-    { name: "session", description: "Switch session (or open picker)" },
-    { name: "sessions", description: "Open session picker" },
+    { name: "help", description: t("Show slash command help") },
+    { name: "status", description: t("Show gateway status summary") },
+    { name: "agent", description: t("Switch agent (or open picker)") },
+    { name: "agents", description: t("Open agent picker") },
+    { name: "session", description: t("Switch session (or open picker)") },
+    { name: "sessions", description: t("Open session picker") },
     {
       name: "model",
-      description: "Set model (or open picker)",
+      description: t("Set model (or open picker)"),
     },
-    { name: "models", description: "Open model picker" },
+    { name: "models", description: t("Open model picker") },
     {
       name: "think",
-      description: "Set thinking level",
+      description: t("Set thinking level"),
       getArgumentCompletions: (prefix) =>
         thinkLevels
           .filter((v) => v.startsWith(prefix.toLowerCase()))
@@ -61,7 +62,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     },
     {
       name: "verbose",
-      description: "Set verbose on/off",
+      description: t("Set verbose on/off"),
       getArgumentCompletions: (prefix) =>
         VERBOSE_LEVELS.filter((v) => v.startsWith(prefix.toLowerCase())).map((value) => ({
           value,
@@ -70,7 +71,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     },
     {
       name: "reasoning",
-      description: "Set reasoning on/off",
+      description: t("Set reasoning on/off"),
       getArgumentCompletions: (prefix) =>
         REASONING_LEVELS.filter((v) => v.startsWith(prefix.toLowerCase())).map((value) => ({
           value,
@@ -79,7 +80,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     },
     {
       name: "usage",
-      description: "Toggle per-response usage line",
+      description: t("Toggle per-response usage line"),
       getArgumentCompletions: (prefix) =>
         USAGE_FOOTER_LEVELS.filter((v) => v.startsWith(prefix.toLowerCase())).map((value) => ({
           value,
@@ -88,7 +89,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     },
     {
       name: "elevated",
-      description: "Set elevated on/off/ask/full",
+      description: t("Set elevated on/off/ask/full"),
       getArgumentCompletions: (prefix) =>
         ELEVATED_LEVELS.filter((v) => v.startsWith(prefix.toLowerCase())).map((value) => ({
           value,
@@ -97,7 +98,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     },
     {
       name: "elev",
-      description: "Alias for /elevated",
+      description: t("Alias for /elevated"),
       getArgumentCompletions: (prefix) =>
         ELEVATED_LEVELS.filter((v) => v.startsWith(prefix.toLowerCase())).map((value) => ({
           value,
@@ -106,19 +107,19 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
     },
     {
       name: "activation",
-      description: "Set group activation",
+      description: t("Set group activation"),
       getArgumentCompletions: (prefix) =>
         ACTIVATION_LEVELS.filter((v) => v.startsWith(prefix.toLowerCase())).map((value) => ({
           value,
           label: value,
         })),
     },
-    { name: "abort", description: "Abort active run" },
-    { name: "new", description: "Reset the session" },
-    { name: "reset", description: "Reset the session" },
-    { name: "settings", description: "Open settings" },
-    { name: "exit", description: "Exit the TUI" },
-    { name: "quit", description: "Exit the TUI" },
+    { name: "abort", description: t("Abort active run") },
+    { name: "new", description: t("Reset the session") },
+    { name: "reset", description: t("Reset the session") },
+    { name: "settings", description: t("Open settings") },
+    { name: "exit", description: t("Exit the TUI") },
+    { name: "quit", description: t("Exit the TUI") },
   ];
 
   const seen = new Set(commands.map((command) => command.name));
@@ -141,7 +142,7 @@ export function getSlashCommands(options: SlashCommandOptions = {}): SlashComman
 export function helpText(options: SlashCommandOptions = {}): string {
   const thinkLevels = formatThinkingLevels(options.provider, options.model, "|");
   return [
-    "Slash commands:",
+    t("Slash commands:"),
     "/help",
     "/commands",
     "/status",

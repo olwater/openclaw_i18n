@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import type { RuntimeEnv } from "../runtime.js";
+import { t } from "../i18n/index.js";
 import { runCommandWithTimeout } from "../process/exec.js";
 import { CONFIG_DIR } from "../utils.js";
 
@@ -71,7 +72,7 @@ async function downloadToFile(url: string, dest: string, maxRedirects = 5): Prom
       if (res.statusCode && res.statusCode >= 300 && res.statusCode < 400) {
         const location = res.headers.location;
         if (!location || maxRedirects <= 0) {
-          reject(new Error("Redirect loop or missing Location header"));
+          reject(new Error(t("Redirect loop or missing Location header")));
           return;
         }
         const redirectUrl = new URL(location, url).href;
@@ -114,7 +115,7 @@ export async function installSignalCli(runtime: RuntimeEnv): Promise<SignalInsta
   if (process.platform === "win32") {
     return {
       ok: false,
-      error: "Signal CLI auto-install is not supported on Windows yet.",
+      error: t("Signal CLI auto-install is not supported on Windows yet."),
     };
   }
 
@@ -143,7 +144,7 @@ export async function installSignalCli(runtime: RuntimeEnv): Promise<SignalInsta
   if (!assetName || !assetUrl) {
     return {
       ok: false,
-      error: "No compatible release asset found for this platform.",
+      error: t("No compatible release asset found for this platform."),
     };
   }
 

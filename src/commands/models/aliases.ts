@@ -1,6 +1,7 @@
 import type { RuntimeEnv } from "../../runtime.js";
 import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
+import { t } from "../../i18n/index.js";
 import {
   ensureFlagCompatibility,
   normalizeAlias,
@@ -113,6 +114,6 @@ export async function modelsAliasesRemoveCommand(aliasRaw: string, runtime: Runt
     !updated.agents?.defaults?.models ||
     Object.values(updated.agents.defaults.models).every((entry) => !entry?.alias?.trim())
   ) {
-    runtime.log("No aliases configured.");
+    runtime.log(t("No aliases configured."));
   }
 }

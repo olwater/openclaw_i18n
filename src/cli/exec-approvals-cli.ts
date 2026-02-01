@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import JSON5 from "json5";
 import fs from "node:fs/promises";
 import type { NodesRpcOpts } from "./nodes-cli/types.js";
+import { t } from "../i18n/index.js";
 import {
   readExecApprovalsSnapshot,
   saveExecApprovals,
@@ -154,7 +155,7 @@ function renderApprovalsSnapshot(snapshot: ExecApprovalsSnapshot, targetLabel: s
     { Field: "Hash", Value: snapshot.hash },
     { Field: "Version", Value: String(file.version ?? 1) },
     { Field: "Socket", Value: file.socket?.path ?? "default" },
-    { Field: "Defaults", Value: defaultsParts.length > 0 ? defaultsParts.join(", ") : "none" },
+    { Field: "Defaults", Value: defaultsParts.length > 0 ? defaultsParts.join(t(", ")) : "none" },
     { Field: "Agents", Value: String(Object.keys(agents).length) },
     { Field: "Allowlist", Value: String(allowlistRows.length) },
   ];
@@ -173,7 +174,7 @@ function renderApprovalsSnapshot(snapshot: ExecApprovalsSnapshot, targetLabel: s
 
   if (allowlistRows.length === 0) {
     defaultRuntime.log("");
-    defaultRuntime.log(muted("No allowlist entries."));
+    defaultRuntime.log(muted(t("No allowlist entries.")));
     return;
   }
 
@@ -186,7 +187,7 @@ function renderApprovalsSnapshot(snapshot: ExecApprovalsSnapshot, targetLabel: s
         { key: "Target", header: "Target", minWidth: 10 },
         { key: "Agent", header: "Agent", minWidth: 8 },
         { key: "Pattern", header: "Pattern", minWidth: 20, flex: true },
-        { key: "LastUsed", header: "Last Used", minWidth: 10 },
+        { key: "LastUsed", header: t("Last Used"), minWidth: 10 },
       ],
       rows: allowlistRows,
     }).trimEnd(),
@@ -240,7 +241,7 @@ export function registerExecApprovalsCli(program: Command) {
   const approvals = program
     .command("approvals")
     .alias("exec-approvals")
-    .description("Manage exec approvals (gateway or node host)")
+    .description(t("Manage exec approvals (gateway or node host)"))
     .addHelpText(
       "after",
       () =>
@@ -249,9 +250,9 @@ export function registerExecApprovalsCli(program: Command) {
 
   const getCmd = approvals
     .command("get")
-    .description("Fetch exec approvals snapshot")
-    .option("--node <node>", "Target node id/name/IP")
-    .option("--gateway", "Force gateway approvals", false)
+    .description(t("Fetch exec approvals snapshot"))
+    .option("--node <node>", t("Target node id/name/IP"))
+    .option("--gateway", t("Force gateway approvals"), false)
     .action(async (opts: ExecApprovalsCliOpts) => {
       try {
         const { snapshot, nodeId, source } = await loadSnapshotTarget(opts);
@@ -262,7 +263,7 @@ export function registerExecApprovalsCli(program: Command) {
 
         const muted = (text: string) => (isRich() ? theme.muted(text) : text);
         if (source === "local") {
-          defaultRuntime.log(muted("Showing local approvals."));
+          defaultRuntime.log(muted(t("Showing local approvals.")));
           defaultRuntime.log("");
         }
         const targetLabel = source === "local" ? "local" : nodeId ? `node:${nodeId}` : "gateway";
@@ -276,30 +277,30 @@ export function registerExecApprovalsCli(program: Command) {
 
   const setCmd = approvals
     .command("set")
-    .description("Replace exec approvals with a JSON file")
-    .option("--node <node>", "Target node id/name/IP")
-    .option("--gateway", "Force gateway approvals", false)
-    .option("--file <path>", "Path to JSON file to upload")
-    .option("--stdin", "Read JSON from stdin", false)
+    .description(t("Replace exec approvals with a JSON file"))
+    .option("--node <node>", t("Target node id/name/IP"))
+    .option("--gateway", t("Force gateway approvals"), false)
+    .option("--file <path>", t("Path to JSON file to upload"))
+    .option("--stdin", t("Read JSON from stdin"), false)
     .action(async (opts: ExecApprovalsCliOpts) => {
       try {
         if (!opts.file && !opts.stdin) {
-          defaultRuntime.error("Provide --file or --stdin.");
+          defaultRuntime.error(t("Provide --file or --stdin."));
           defaultRuntime.exit(1);
           return;
         }
         if (opts.file && opts.stdin) {
-          defaultRuntime.error("Use either --file or --stdin (not both).");
+          defaultRuntime.error(t("Use either --file or --stdin (not both)."));
           defaultRuntime.exit(1);
           return;
         }
         const { snapshot, nodeId, source } = await loadSnapshotTarget(opts);
         if (source === "local") {
-          defaultRuntime.log(theme.muted("Writing local approvals."));
+          defaultRuntime.log(theme.muted(t("Writing local approvals.")));
         }
         const targetLabel = source === "local" ? "local" : nodeId ? `node:${nodeId}` : "gateway";
         if (!snapshot.hash) {
-          defaultRuntime.error("Exec approvals hash missing; reload and retry.");
+          defaultRuntime.error(t("Exec approvals hash missing; reload and retry."));
           defaultRuntime.exit(1);
           return;
         }
@@ -332,46 +333,46 @@ export function registerExecApprovalsCli(program: Command) {
 
   const allowlist = approvals
     .command("allowlist")
-    .description("Edit the per-agent allowlist")
+    .description(t("Edit the per-agent allowlist"))
     .addHelpText(
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatExample(
-          'openclaw approvals allowlist add "~/Projects/**/bin/rg"',
-          "Allowlist a local binary pattern for the main agent.",
+          t('openclaw approvals allowlist add "~/Projects/**/bin/rg"'),
+          t("Allowlist a local binary pattern for the main agent."),
         )}\n${formatExample(
-          'openclaw approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"',
-          "Allowlist on a specific node/agent.",
+          t('openclaw approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"'),
+          t("Allowlist on a specific node/agent."),
         )}\n${formatExample(
-          'openclaw approvals allowlist add --agent "*" "/usr/bin/uname"',
-          "Allowlist for all agents (wildcard).",
+          t('openclaw approvals allowlist add --agent "*" "/usr/bin/uname"'),
+          t("Allowlist for all agents (wildcard)."),
         )}\n${formatExample(
-          'openclaw approvals allowlist remove "~/Projects/**/bin/rg"',
-          "Remove an allowlist pattern.",
+          t('openclaw approvals allowlist remove "~/Projects/**/bin/rg"'),
+          t("Remove an allowlist pattern."),
         )}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/approvals", "docs.openclaw.ai/cli/approvals")}\n`,
     );
 
   const allowlistAdd = allowlist
-    .command("add <pattern>")
-    .description("Add a glob pattern to an allowlist")
-    .option("--node <node>", "Target node id/name/IP")
-    .option("--gateway", "Force gateway approvals", false)
-    .option("--agent <id>", 'Agent id (defaults to "*")')
+    .command(t("add <pattern>"))
+    .description(t("Add a glob pattern to an allowlist"))
+    .option("--node <node>", t("Target node id/name/IP"))
+    .option("--gateway", t("Force gateway approvals"), false)
+    .option("--agent <id>", t('Agent id (defaults to "*")'))
     .action(async (pattern: string, opts: ExecApprovalsCliOpts) => {
       try {
         const trimmed = pattern.trim();
         if (!trimmed) {
-          defaultRuntime.error("Pattern required.");
+          defaultRuntime.error(t("Pattern required."));
           defaultRuntime.exit(1);
           return;
         }
         const { snapshot, nodeId, source } = await loadSnapshotTarget(opts);
         if (source === "local") {
-          defaultRuntime.log(theme.muted("Writing local approvals."));
+          defaultRuntime.log(theme.muted(t("Writing local approvals.")));
         }
         const targetLabel = source === "local" ? "local" : nodeId ? `node:${nodeId}` : "gateway";
         if (!snapshot.hash) {
-          defaultRuntime.error("Exec approvals hash missing; reload and retry.");
+          defaultRuntime.error(t("Exec approvals hash missing; reload and retry."));
           defaultRuntime.exit(1);
           return;
         }
@@ -381,7 +382,7 @@ export function registerExecApprovalsCli(program: Command) {
         const agent = ensureAgent(file, agentKey);
         const allowlistEntries = Array.isArray(agent.allowlist) ? agent.allowlist : [];
         if (allowlistEntries.some((entry) => normalizeAllowlistEntry(entry) === trimmed)) {
-          defaultRuntime.log("Already allowlisted.");
+          defaultRuntime.log(t("Already allowlisted."));
           return;
         }
         allowlistEntries.push({ pattern: trimmed, lastUsedAt: Date.now() });
@@ -405,26 +406,26 @@ export function registerExecApprovalsCli(program: Command) {
   nodesCallOpts(allowlistAdd);
 
   const allowlistRemove = allowlist
-    .command("remove <pattern>")
-    .description("Remove a glob pattern from an allowlist")
-    .option("--node <node>", "Target node id/name/IP")
-    .option("--gateway", "Force gateway approvals", false)
-    .option("--agent <id>", 'Agent id (defaults to "*")')
+    .command(t("remove <pattern>"))
+    .description(t("Remove a glob pattern from an allowlist"))
+    .option("--node <node>", t("Target node id/name/IP"))
+    .option("--gateway", t("Force gateway approvals"), false)
+    .option("--agent <id>", t('Agent id (defaults to "*")'))
     .action(async (pattern: string, opts: ExecApprovalsCliOpts) => {
       try {
         const trimmed = pattern.trim();
         if (!trimmed) {
-          defaultRuntime.error("Pattern required.");
+          defaultRuntime.error(t("Pattern required."));
           defaultRuntime.exit(1);
           return;
         }
         const { snapshot, nodeId, source } = await loadSnapshotTarget(opts);
         if (source === "local") {
-          defaultRuntime.log(theme.muted("Writing local approvals."));
+          defaultRuntime.log(theme.muted(t("Writing local approvals.")));
         }
         const targetLabel = source === "local" ? "local" : nodeId ? `node:${nodeId}` : "gateway";
         if (!snapshot.hash) {
-          defaultRuntime.error("Exec approvals hash missing; reload and retry.");
+          defaultRuntime.error(t("Exec approvals hash missing; reload and retry."));
           defaultRuntime.exit(1);
           return;
         }
@@ -437,7 +438,7 @@ export function registerExecApprovalsCli(program: Command) {
           (entry) => normalizeAllowlistEntry(entry) !== trimmed,
         );
         if (nextEntries.length === allowlistEntries.length) {
-          defaultRuntime.log("Pattern not found.");
+          defaultRuntime.log(t("Pattern not found."));
           return;
         }
         if (nextEntries.length === 0) {

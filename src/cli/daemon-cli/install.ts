@@ -7,6 +7,7 @@ import {
 import { loadConfig, resolveGatewayPort } from "../../config/config.js";
 import { resolveIsNixMode } from "../../config/paths.js";
 import { resolveGatewayService } from "../../daemon/service.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatCliCommand } from "../command-format.js";
 import { buildDaemonServiceSnapshot, createNullWriter, emitDaemonActionJson } from "./response.js";
@@ -45,24 +46,24 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
   };
 
   if (resolveIsNixMode(process.env)) {
-    fail("Nix mode detected; service install is disabled.");
+    fail(t("Nix mode detected; service install is disabled."));
     return;
   }
 
   const cfg = loadConfig();
   const portOverride = parsePort(opts.port);
   if (opts.port !== undefined && portOverride === null) {
-    fail("Invalid port");
+    fail(t("Invalid port"));
     return;
   }
   const port = portOverride ?? resolveGatewayPort(cfg);
   if (!Number.isFinite(port) || port <= 0) {
-    fail("Invalid port");
+    fail(t("Invalid port"));
     return;
   }
   const runtimeRaw = opts.runtime ? String(opts.runtime) : DEFAULT_GATEWAY_DAEMON_RUNTIME;
   if (!isGatewayDaemonRuntime(runtimeRaw)) {
-    fail('Invalid --runtime (use "node" or "bun")');
+    fail(t('Invalid --runtime (use "node" or "bun")'));
     return;
   }
 
@@ -86,7 +87,7 @@ export async function runDaemonInstall(opts: DaemonInstallOptions) {
       if (!json) {
         defaultRuntime.log(`Gateway service already ${service.loadedText}.`);
         defaultRuntime.log(
-          `Reinstall with: ${formatCliCommand("openclaw gateway install --force")}`,
+          `Reinstall with: ${formatCliCommand(t("openclaw gateway install --force"))}`,
         );
       }
       return;

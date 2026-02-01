@@ -1,4 +1,5 @@
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
+import { t } from "../i18n/index.js";
 import { applyAuthChoicePluginProvider } from "./auth-choice.apply.plugin-provider.js";
 
 export async function applyAuthChoiceCopilotProxy(
@@ -9,6 +10,6 @@ export async function applyAuthChoiceCopilotProxy(
     pluginId: "copilot-proxy",
     providerId: "copilot-proxy",
     methodId: "local",
-    label: "Copilot Proxy",
+    label: t("Copilot Proxy"),
   });
 }

@@ -2,6 +2,7 @@ import type { OpenClawConfig, GatewayAuthConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
 import { ensureAuthProfileStore } from "../agents/auth-profiles.js";
+import { t } from "../i18n/index.js";
 import { promptAuthChoiceGrouped } from "./auth-choice-prompt.js";
 import { applyAuthChoice, resolvePreferredProviderForAuthChoice } from "./auth-choice.js";
 import {
@@ -82,7 +83,7 @@ export async function promptAuthConfig(
     prompter,
     allowedKeys: anthropicOAuth ? ANTHROPIC_OAUTH_MODEL_KEYS : undefined,
     initialSelections: anthropicOAuth ? ["anthropic/claude-opus-4-5"] : undefined,
-    message: anthropicOAuth ? "Anthropic OAuth models" : undefined,
+    message: anthropicOAuth ? t("Anthropic OAuth models") : undefined,
   });
   if (allowlistSelection.models) {
     next = applyModelAllowlist(next, allowlistSelection.models);

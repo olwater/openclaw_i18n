@@ -11,6 +11,7 @@ import { ensureAuthProfileStore } from "../agents/auth-profiles.js";
 import { resolveAuthStorePath } from "../agents/auth-profiles/paths.js";
 import { writeConfigFile } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
+import { t } from "../i18n/index.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
 import { defaultRuntime } from "../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../utils.js";
@@ -65,7 +66,7 @@ export async function agentsAddCommand(
 
   if (nonInteractive && !workspaceFlag) {
     runtime.error(
-      "Non-interactive mode requires --workspace. Re-run without flags to use the wizard.",
+      t("Non-interactive mode requires --workspace. Re-run without flags to use the wizard."),
     );
     runtime.exit(1);
     return;
@@ -73,13 +74,13 @@ export async function agentsAddCommand(
 
   if (nonInteractive) {
     if (!nameInput) {
-      runtime.error("Agent name is required in non-interactive mode.");
+      runtime.error(t("Agent name is required in non-interactive mode."));
       runtime.exit(1);
       return;
     }
     if (!workspaceFlag) {
       runtime.error(
-        "Non-interactive mode requires --workspace. Re-run without flags to use the wizard.",
+        t("Non-interactive mode requires --workspace. Re-run without flags to use the wizard."),
       );
       runtime.exit(1);
       return;
@@ -163,7 +164,7 @@ export async function agentsAddCommand(
       if (bindingResult.conflicts.length > 0) {
         runtime.error(
           [
-            "Skipped bindings already claimed by another agent:",
+            t("Skipped bindings already claimed by another agent:"),
             ...bindingResult.conflicts.map(
               (conflict) =>
                 `- ${describeBinding(conflict.binding)} (agent=${conflict.existingAgentId})`,
@@ -177,11 +178,11 @@ export async function agentsAddCommand(
 
   const prompter = createClackPrompter();
   try {
-    await prompter.intro("Add OpenClaw agent");
+    await prompter.intro(t("Add OpenClaw agent"));
     const name =
       nameInput ??
       (await prompter.text({
-        message: "Agent name",
+        message: t("Agent name"),
         validate: (value) => {
           if (!value?.trim()) {
             return "Required";
@@ -197,7 +198,7 @@ export async function agentsAddCommand(
     const agentName = String(name).trim();
     const agentId = normalizeAgentId(agentName);
     if (agentName !== agentId) {
-      await prompter.note(`Normalized id to "${agentId}".`, "Agent id");
+      await prompter.note(`Normalized id to "${agentId}".`, t("Agent id"));
     }
 
     const existingAgent = listAgentEntries(cfg).find(
@@ -209,14 +210,14 @@ export async function agentsAddCommand(
         initialValue: false,
       });
       if (!shouldUpdate) {
-        await prompter.outro("No changes made.");
+        await prompter.outro(t("No changes made."));
         return;
       }
     }
 
     const workspaceDefault = resolveAgentWorkspaceDir(cfg, agentId);
     const workspaceInput = await prompter.text({
-      message: "Workspace directory",
+      message: t("Workspace directory"),
       initialValue: workspaceDefault,
       validate: (value) => (value?.trim() ? undefined : "Required"),
     });
@@ -248,13 +249,13 @@ export async function agentsAddCommand(
         if (shouldCopy) {
           await fs.mkdir(path.dirname(destAuthPath), { recursive: true });
           await fs.copyFile(sourceAuthPath, destAuthPath);
-          await prompter.note(`Copied auth profiles from "${defaultAgentId}".`, "Auth profiles");
+          await prompter.note(`Copied auth profiles from "${defaultAgentId}".`, t("Auth profiles"));
         }
       }
     }
 
     const wantsAuth = await prompter.confirm({
-      message: "Configure model/auth for this agent now?",
+      message: t("Configure model/auth for this agent now?"),
       initialValue: false,
     });
     if (wantsAuth) {
@@ -305,7 +306,7 @@ export async function agentsAddCommand(
 
     if (selection.length > 0) {
       const wantsBindings = await prompter.confirm({
-        message: "Route selected channels to this agent now? (bindings)",
+        message: t("Route selected channels to this agent now? (bindings)"),
         initialValue: false,
       });
       if (wantsBindings) {
@@ -320,22 +321,22 @@ export async function agentsAddCommand(
         if (result.conflicts.length > 0) {
           await prompter.note(
             [
-              "Skipped bindings already claimed by another agent:",
+              t("Skipped bindings already claimed by another agent:"),
               ...result.conflicts.map(
                 (conflict) =>
                   `- ${describeBinding(conflict.binding)} (agent=${conflict.existingAgentId})`,
               ),
             ].join("\n"),
-            "Routing bindings",
+            t("Routing bindings"),
           );
         }
       } else {
         await prompter.note(
           [
-            "Routing unchanged. Add bindings when you're ready.",
-            "Docs: https://docs.openclaw.ai/concepts/multi-agent",
+            t("Routing unchanged. Add bindings when you're ready."),
+            t("Docs: https://docs.openclaw.ai/concepts/multi-agent"),
           ].join("\n"),
-          "Routing",
+          t("Routing"),
         );
       }
     }

@@ -1,13 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { DEFAULT_AGENTS_FILENAME } from "../agents/workspace.js";
+import { t } from "../i18n/index.js";
 import { shortenHomePath } from "../utils.js";
 
 export const MEMORY_SYSTEM_PROMPT = [
-  "Memory system not found in workspace.",
-  "Paste this into your agent:",
+  t("Memory system not found in workspace."),
+  t("Paste this into your agent:"),
   "",
-  "Install the memory system by applying:",
+  t("Install the memory system by applying:"),
   "https://github.com/openclaw/openclaw/commit/9ffea23f31ca1df5183b25668f8f814bee0fb34e",
   "https://github.com/openclaw/openclaw/commit/7d1fee70e76f2f634f1b41fca927ee663914183a",
 ].join("\n");
@@ -52,9 +53,9 @@ export function detectLegacyWorkspaceDirs(params: {
 
 export function formatLegacyWorkspaceWarning(detection: LegacyWorkspaceDetection): string {
   return [
-    "Extra workspace directories detected (may contain old agent files):",
+    t("Extra workspace directories detected (may contain old agent files):"),
     ...detection.legacyDirs.map((dir) => `- ${shortenHomePath(dir)}`),
     `Active workspace: ${shortenHomePath(detection.activeWorkspace)}`,
-    "If unused, archive or move to Trash.",
+    t("If unused, archive or move to Trash."),
   ].join("\n");
 }

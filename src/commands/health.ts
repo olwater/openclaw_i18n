@@ -9,6 +9,7 @@ import { loadConfig } from "../config/config.js";
 import { loadSessionStore, resolveStorePath } from "../config/sessions.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { info } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
@@ -74,7 +75,7 @@ const DEFAULT_TIMEOUT_MS = 10_000;
 
 const debugHealth = (...args: unknown[]) => {
   if (isTruthyEnvValue(process.env.OPENCLAW_DEBUG_HEALTH)) {
-    console.warn("[health:debug]", ...args);
+    console.warn(t("[health:debug]"), ...args);
   }
 };
 
@@ -86,11 +87,11 @@ const formatDurationParts = (ms: number): string => {
     return `${Math.max(0, Math.round(ms))}ms`;
   }
   const units: Array<{ label: string; size: number }> = [
-    { label: "w", size: 7 * 24 * 60 * 60 * 1000 },
-    { label: "d", size: 24 * 60 * 60 * 1000 },
-    { label: "h", size: 60 * 60 * 1000 },
-    { label: "m", size: 60 * 1000 },
-    { label: "s", size: 1000 },
+    { label: t("w"), size: 7 * 24 * 60 * 60 * 1000 },
+    { label: t("d"), size: 24 * 60 * 60 * 1000 },
+    { label: t("h"), size: 60 * 60 * 1000 },
+    { label: t("m"), size: 60 * 1000 },
+    { label: t("s"), size: 1000 },
   ];
   let remaining = Math.max(0, Math.floor(ms));
   const parts: string[] = [];
@@ -201,7 +202,7 @@ const formatProbeLine = (probe: unknown, opts: { botUsernames?: string[] } = {})
   if (ok) {
     let label = "ok";
     if (usernames.size > 0) {
-      label += ` (@${Array.from(usernames).join(", @")})`;
+      label += ` (@${Array.from(usernames).join(t(", @"))})`;
     }
     if (elapsedMs != null) {
       label += ` (${elapsedMs}ms)`;
@@ -273,11 +274,11 @@ function styleHealthChannelLine(line: string): string {
   if (normalized.startsWith("configured")) {
     return applyPrefix("configured", theme.success);
   }
-  if (normalized.startsWith("not linked")) {
-    return applyPrefix("not linked", theme.warn);
+  if (normalized.startsWith(t("not linked"))) {
+    return applyPrefix(t("not linked"), theme.warn);
   }
-  if (normalized.startsWith("not configured")) {
-    return applyPrefix("not configured", theme.muted);
+  if (normalized.startsWith(t("not configured"))) {
+    return applyPrefix(t("not configured"), theme.muted);
   }
   if (normalized.startsWith("unknown")) {
     return applyPrefix("unknown", theme.warn);
@@ -363,7 +364,7 @@ export const formatHealthChannelLines = (
     }
 
     if (accountTimings.length > 0) {
-      lines.push(`${label}: ok (${accountTimings.join(", ")})`);
+      lines.push(`${label}: ok (${accountTimings.join(t(", "))})`);
       continue;
     }
 
@@ -567,7 +568,7 @@ export async function healthCommand(
   // Always query the running gateway; do not open a direct Baileys socket here.
   const summary = await withProgress(
     {
-      label: "Checking gateway health…",
+      label: t("Checking gateway health…"),
       indeterminate: true,
       enabled: opts.json !== true,
     },
@@ -588,7 +589,7 @@ export async function healthCommand(
     const debugEnabled = isTruthyEnvValue(process.env.OPENCLAW_DEBUG_HEALTH);
     if (opts.verbose) {
       const details = buildGatewayConnectionDetails({ config: cfg });
-      runtime.log(info("Gateway connection:"));
+      runtime.log(info(t("Gateway connection:")));
       for (const line of details.message.split("\n")) {
         runtime.log(`  ${line}`);
       }
@@ -612,7 +613,7 @@ export async function healthCommand(
       : resolvedAgents.filter((agent) => agent.agentId === defaultAgentId);
     const channelBindings = buildChannelAccountBindings(cfg);
     if (debugEnabled) {
-      runtime.log(info("[debug] local channel accounts"));
+      runtime.log(info(t("[debug] local channel accounts")));
       for (const plugin of listChannelPlugins()) {
         const accountIds = plugin.config.listAccountIds(cfg);
         const defaultAccountId = resolveChannelDefaultAccountId({
@@ -621,7 +622,7 @@ export async function healthCommand(
           accountIds,
         });
         runtime.log(
-          `  ${plugin.id}: accounts=${accountIds.join(", ") || "(none)"} default=${defaultAccountId}`,
+          `  ${plugin.id}: accounts=${accountIds.join(t(", ")) || "(none)"} default=${defaultAccountId}`,
         );
         for (const accountId of accountIds) {
           const account = plugin.config.resolveAccount(cfg, accountId);
@@ -636,23 +637,23 @@ export async function healthCommand(
           );
         }
       }
-      runtime.log(info("[debug] bindings map"));
+      runtime.log(info(t("[debug] bindings map")));
       for (const [channelId, byAgent] of channelBindings.entries()) {
         const entries = Array.from(byAgent.entries()).map(
-          ([agentId, ids]) => `${agentId}=[${ids.join(", ")}]`,
+          ([agentId, ids]) => `${agentId}=[${ids.join(t(", "))}]`,
         );
         runtime.log(`  ${channelId}: ${entries.join(" ")}`);
       }
-      runtime.log(info("[debug] gateway channel probes"));
+      runtime.log(info(t("[debug] gateway channel probes")));
       for (const [channelId, channelSummary] of Object.entries(summary.channels ?? {})) {
         const accounts = channelSummary.accounts ?? {};
         const probes = Object.entries(accounts).map(([accountId, accountSummary]) => {
           const probe = asRecord(accountSummary.probe);
           const bot = probe ? asRecord(probe.bot) : null;
           const username = bot && typeof bot.username === "string" ? bot.username : null;
-          return `${accountId}=${username ?? "(no bot)"}`;
+          return `${accountId}=${username ?? t("(no bot)")}`;
         });
-        runtime.log(`  ${channelId}: ${probes.join(", ") || "(none)"}`);
+        runtime.log(`  ${channelId}: ${probes.join(t(", ")) || "(none)"}`);
       }
     }
     const channelAccountFallbacks = Object.fromEntries(
@@ -740,7 +741,7 @@ export async function healthCommand(
       const agentLabels = resolvedAgents.map((agent) =>
         agent.isDefault ? `${agent.agentId} (default)` : agent.agentId,
       );
-      runtime.log(info(`Agents: ${agentLabels.join(", ")}`));
+      runtime.log(info(`Agents: ${agentLabels.join(t(", "))}`));
     }
     const heartbeatParts = displayAgents
       .map((agent) => {
@@ -750,7 +751,7 @@ export async function healthCommand(
       })
       .filter(Boolean);
     if (heartbeatParts.length > 0) {
-      runtime.log(info(`Heartbeat interval: ${heartbeatParts.join(", ")}`));
+      runtime.log(info(`Heartbeat interval: ${heartbeatParts.join(t(", "))}`));
     }
     if (displayAgents.length === 0) {
       runtime.log(
@@ -759,7 +760,7 @@ export async function healthCommand(
       if (summary.sessions.recent.length > 0) {
         for (const r of summary.sessions.recent) {
           runtime.log(
-            `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : "no activity"})`,
+            `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : t("no activity")})`,
           );
         }
       }
@@ -773,7 +774,7 @@ export async function healthCommand(
         if (agent.sessions.recent.length > 0) {
           for (const r of agent.sessions.recent) {
             runtime.log(
-              `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : "no activity"})`,
+              `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : t("no activity")})`,
             );
           }
         }

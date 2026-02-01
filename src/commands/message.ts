@@ -7,6 +7,7 @@ import {
 import { createOutboundSendDeps, type CliDeps } from "../cli/outbound-send-deps.js";
 import { withProgress } from "../cli/progress.js";
 import { loadConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { runMessageAction } from "../infra/outbound/message-action-runner.js";
 import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../utils/message-channel.js";
 import { buildMessageCliJson, formatMessageCliText } from "./message-format.js";
@@ -48,7 +49,7 @@ export async function messageCommand(
   const result = needsSpinner
     ? await withProgress(
         {
-          label: action === "poll" ? "Sending poll..." : "Sending...",
+          label: action === "poll" ? t("Sending poll...") : "Sending...",
           indeterminate: true,
           enabled: true,
         },

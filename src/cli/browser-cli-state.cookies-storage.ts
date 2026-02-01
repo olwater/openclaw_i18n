@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { danger } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { callBrowserRequest, type BrowserParentOpts } from "./browser-cli-shared.js";
 
@@ -7,10 +8,10 @@ export function registerBrowserCookiesAndStorageCommands(
   browser: Command,
   parentOpts: (cmd: Command) => BrowserParentOpts,
 ) {
-  const cookies = browser.command("cookies").description("Read/write cookies");
+  const cookies = browser.command("cookies").description(t("Read/write cookies"));
 
   cookies
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -40,11 +41,11 @@ export function registerBrowserCookiesAndStorageCommands(
 
   cookies
     .command("set")
-    .description("Set a cookie (requires --url or domain+path)")
-    .argument("<name>", "Cookie name")
-    .argument("<value>", "Cookie value")
-    .requiredOption("--url <url>", "Cookie URL scope (recommended)")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .description(t("Set a cookie (requires --url or domain+path)"))
+    .argument("<name>", t("Cookie name"))
+    .argument("<value>", t("Cookie value"))
+    .requiredOption("--url <url>", t("Cookie URL scope (recommended)"))
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (name: string, value: string, opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -75,8 +76,8 @@ export function registerBrowserCookiesAndStorageCommands(
 
   cookies
     .command("clear")
-    .description("Clear all cookies")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
+    .description(t("Clear all cookies"))
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .action(async (opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -97,14 +98,16 @@ export function registerBrowserCookiesAndStorageCommands(
           defaultRuntime.log(JSON.stringify(result, null, 2));
           return;
         }
-        defaultRuntime.log("cookies cleared");
+        defaultRuntime.log(t("cookies cleared"));
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
       }
     });
 
-  const storage = browser.command("storage").description("Read/write localStorage/sessionStorage");
+  const storage = browser
+    .command("storage")
+    .description(t("Read/write localStorage/sessionStorage"));
 
   function registerStorageKind(kind: "local" | "session") {
     const cmd = storage.command(kind).description(`${kind}Storage commands`);
@@ -112,8 +115,8 @@ export function registerBrowserCookiesAndStorageCommands(
     cmd
       .command("get")
       .description(`Get ${kind}Storage (all keys or one key)`)
-      .argument("[key]", "Key (optional)")
-      .option("--target-id <id>", "CDP target id (or unique prefix)")
+      .argument("[key]", t("Key (optional)"))
+      .option("--target-id <id>", t("CDP target id (or unique prefix)"))
       .action(async (key: string | undefined, opts, cmd2) => {
         const parent = parentOpts(cmd2);
         const profile = parent?.browserProfile;
@@ -147,7 +150,7 @@ export function registerBrowserCookiesAndStorageCommands(
       .description(`Set a ${kind}Storage key`)
       .argument("<key>", "Key")
       .argument("<value>", "Value")
-      .option("--target-id <id>", "CDP target id (or unique prefix)")
+      .option("--target-id <id>", t("CDP target id (or unique prefix)"))
       .action(async (key: string, value: string, opts, cmd2) => {
         const parent = parentOpts(cmd2);
         const profile = parent?.browserProfile;
@@ -180,7 +183,7 @@ export function registerBrowserCookiesAndStorageCommands(
     cmd
       .command("clear")
       .description(`Clear all ${kind}Storage keys`)
-      .option("--target-id <id>", "CDP target id (or unique prefix)")
+      .option("--target-id <id>", t("CDP target id (or unique prefix)"))
       .action(async (opts, cmd2) => {
         const parent = parentOpts(cmd2);
         const profile = parent?.browserProfile;

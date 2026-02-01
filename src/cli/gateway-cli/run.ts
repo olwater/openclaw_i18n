@@ -12,6 +12,7 @@ import { resolveGatewayAuth } from "../../gateway/auth.js";
 import { startGatewayServer } from "../../gateway/server.js";
 import { setGatewayWsLogStyle } from "../../gateway/ws-logging.js";
 import { setVerbose } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { GatewayLockError } from "../../infra/gateway-lock.js";
 import { formatPortDiagnostics, inspectPortUsage } from "../../infra/ports.js";
 import { setConsoleSubsystemFilter, setConsoleTimestampPrefix } from "../../logging/console.js";
@@ -55,7 +56,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
   const isDevProfile = process.env.OPENCLAW_PROFILE?.trim().toLowerCase() === "dev";
   const devMode = Boolean(opts.dev) || isDevProfile;
   if (opts.reset && !devMode) {
-    defaultRuntime.error("Use --reset with --dev.");
+    defaultRuntime.error(t("Use --reset with --dev."));
     defaultRuntime.exit(1);
     return;
   }
@@ -75,7 +76,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
     wsLogRaw !== "compact" &&
     wsLogRaw !== "full"
   ) {
-    defaultRuntime.error('Invalid --ws-log (use "auto", "full", "compact")');
+    defaultRuntime.error(t('Invalid --ws-log (use "auto", "full", "compact")'));
     defaultRuntime.exit(1);
   }
   setGatewayWsLogStyle(wsLogStyle);
@@ -95,12 +96,12 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
   const cfg = loadConfig();
   const portOverride = parsePort(opts.port);
   if (opts.port !== undefined && portOverride === null) {
-    defaultRuntime.error("Invalid port");
+    defaultRuntime.error(t("Invalid port"));
     defaultRuntime.exit(1);
   }
   const port = portOverride ?? resolveGatewayPort(cfg);
   if (!Number.isFinite(port) || port <= 0) {
-    defaultRuntime.error("Invalid port");
+    defaultRuntime.error(t("Invalid port"));
     defaultRuntime.exit(1);
   }
   if (opts.force) {
@@ -141,7 +142,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
   const authMode: GatewayAuthMode | null =
     authModeRaw === "token" || authModeRaw === "password" ? authModeRaw : null;
   if (authModeRaw && !authMode) {
-    defaultRuntime.error('Invalid --auth (use "token" or "password")');
+    defaultRuntime.error(t('Invalid --auth (use "token" or "password")'));
     defaultRuntime.exit(1);
     return;
   }
@@ -151,7 +152,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
       ? tailscaleRaw
       : null;
   if (tailscaleRaw && !tailscaleMode) {
-    defaultRuntime.error('Invalid --tailscale (use "off", "serve", or "funnel")');
+    defaultRuntime.error(t('Invalid --tailscale (use "off", "serve", or "funnel")'));
     defaultRuntime.exit(1);
     return;
   }
@@ -164,7 +165,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
   if (!opts.allowUnconfigured && mode !== "local") {
     if (!configExists) {
       defaultRuntime.error(
-        `Missing config. Run \`${formatCliCommand("openclaw setup")}\` or set gateway.mode=local (or pass --allow-unconfigured).`,
+        `Missing config. Run \`${formatCliCommand(t("openclaw setup"))}\` or set gateway.mode=local (or pass --allow-unconfigured).`,
       );
     } else {
       defaultRuntime.error(
@@ -184,7 +185,9 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
       ? bindRaw
       : null;
   if (!bind) {
-    defaultRuntime.error('Invalid --bind (use "loopback", "lan", "tailnet", "auto", or "custom")');
+    defaultRuntime.error(
+      t('Invalid --bind (use "loopback", "lan", "tailnet", "auto", or "custom")'),
+    );
     defaultRuntime.exit(1);
     return;
   }
@@ -210,18 +213,18 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
     (resolvedAuthMode === "token" && hasToken) || (resolvedAuthMode === "password" && hasPassword);
   const authHints: string[] = [];
   if (miskeys.hasGatewayToken) {
-    authHints.push('Found "gateway.token" in config. Use "gateway.auth.token" instead.');
+    authHints.push(t('Found "gateway.token" in config. Use "gateway.auth.token" instead.'));
   }
   if (miskeys.hasRemoteToken) {
     authHints.push(
-      '"gateway.remote.token" is for remote CLI calls; it does not enable local gateway auth.',
+      t('"gateway.remote.token" is for remote CLI calls; it does not enable local gateway auth.'),
     );
   }
   if (resolvedAuthMode === "token" && !hasToken && !resolvedAuth.allowTailscale) {
     defaultRuntime.error(
       [
-        "Gateway auth is set to token, but no token is configured.",
-        "Set gateway.auth.token (or OPENCLAW_GATEWAY_TOKEN), or pass --token.",
+        t("Gateway auth is set to token, but no token is configured."),
+        t("Set gateway.auth.token (or OPENCLAW_GATEWAY_TOKEN), or pass --token."),
         ...authHints,
       ]
         .filter(Boolean)
@@ -233,8 +236,8 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
   if (resolvedAuthMode === "password" && !hasPassword) {
     defaultRuntime.error(
       [
-        "Gateway auth is set to password, but no password is configured.",
-        "Set gateway.auth.password (or OPENCLAW_GATEWAY_PASSWORD), or pass --password.",
+        t("Gateway auth is set to password, but no password is configured."),
+        t("Set gateway.auth.password (or OPENCLAW_GATEWAY_PASSWORD), or pass --password."),
         ...authHints,
       ]
         .filter(Boolean)
@@ -247,7 +250,9 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
     defaultRuntime.error(
       [
         `Refusing to bind gateway to ${bind} without auth.`,
-        "Set gateway.auth.token/password (or OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD) or pass --token/--password.",
+        t(
+          "Set gateway.auth.token/password (or OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD) or pass --token/--password.",
+        ),
         ...authHints,
       ]
         .filter(Boolean)
@@ -287,7 +292,7 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
     ) {
       const errMessage = describeUnknownError(err);
       defaultRuntime.error(
-        `Gateway failed to start: ${errMessage}\nIf the gateway is supervised, stop it with: ${formatCliCommand("openclaw gateway stop")}`,
+        `Gateway failed to start: ${errMessage}\nIf the gateway is supervised, stop it with: ${formatCliCommand(t("openclaw gateway stop"))}`,
       );
       try {
         const diagnostics = await inspectPortUsage(port);
@@ -310,45 +315,49 @@ async function runGatewayCommand(opts: GatewayRunOpts) {
 
 export function addGatewayRunCommand(cmd: Command): Command {
   return cmd
-    .option("--port <port>", "Port for the gateway WebSocket")
+    .option("--port <port>", t("Port for the gateway WebSocket"))
     .option(
       "--bind <mode>",
-      'Bind mode ("loopback"|"lan"|"tailnet"|"auto"|"custom"). Defaults to config gateway.bind (or loopback).',
+      t(
+        'Bind mode ("loopback"|"lan"|"tailnet"|"auto"|"custom"). Defaults to config gateway.bind (or loopback).',
+      ),
     )
     .option(
       "--token <token>",
-      "Shared token required in connect.params.auth.token (default: OPENCLAW_GATEWAY_TOKEN env if set)",
+      t(
+        "Shared token required in connect.params.auth.token (default: OPENCLAW_GATEWAY_TOKEN env if set)",
+      ),
     )
-    .option("--auth <mode>", 'Gateway auth mode ("token"|"password")')
-    .option("--password <password>", "Password for auth mode=password")
-    .option("--tailscale <mode>", 'Tailscale exposure mode ("off"|"serve"|"funnel")')
+    .option("--auth <mode>", t('Gateway auth mode ("token"|"password")'))
+    .option("--password <password>", t("Password for auth mode=password"))
+    .option("--tailscale <mode>", t('Tailscale exposure mode ("off"|"serve"|"funnel")'))
     .option(
       "--tailscale-reset-on-exit",
-      "Reset Tailscale serve/funnel configuration on shutdown",
+      t("Reset Tailscale serve/funnel configuration on shutdown"),
       false,
     )
     .option(
       "--allow-unconfigured",
-      "Allow gateway start without gateway.mode=local in config",
+      t("Allow gateway start without gateway.mode=local in config"),
       false,
     )
-    .option("--dev", "Create a dev config + workspace if missing (no BOOTSTRAP.md)", false)
+    .option("--dev", t("Create a dev config + workspace if missing (no BOOTSTRAP.md)"), false)
     .option(
       "--reset",
-      "Reset dev config + credentials + sessions + workspace (requires --dev)",
+      t("Reset dev config + credentials + sessions + workspace (requires --dev)"),
       false,
     )
-    .option("--force", "Kill any existing listener on the target port before starting", false)
-    .option("--verbose", "Verbose logging to stdout/stderr", false)
+    .option("--force", t("Kill any existing listener on the target port before starting"), false)
+    .option("--verbose", t("Verbose logging to stdout/stderr"), false)
     .option(
       "--claude-cli-logs",
-      "Only show claude-cli logs in the console (includes stdout/stderr)",
+      t("Only show claude-cli logs in the console (includes stdout/stderr)"),
       false,
     )
-    .option("--ws-log <style>", 'WebSocket log style ("auto"|"full"|"compact")', "auto")
-    .option("--compact", 'Alias for "--ws-log compact"', false)
-    .option("--raw-stream", "Log raw model stream events to jsonl", false)
-    .option("--raw-stream-path <path>", "Raw stream jsonl path")
+    .option("--ws-log <style>", t('WebSocket log style ("auto"|"full"|"compact")'), "auto")
+    .option("--compact", t('Alias for "--ws-log compact"'), false)
+    .option("--raw-stream", t("Log raw model stream events to jsonl"), false)
+    .option("--raw-stream-path <path>", t("Raw stream jsonl path"))
     .action(async (opts) => {
       await runGatewayCommand(opts);
     });

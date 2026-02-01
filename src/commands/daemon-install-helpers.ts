@@ -10,6 +10,7 @@ import {
   resolveSystemNodeInfo,
 } from "../daemon/runtime-paths.js";
 import { buildServiceEnvironment } from "../daemon/service-env.js";
+import { t } from "../i18n/index.js";
 
 type WarnFn = (message: string, title?: string) => void;
 
@@ -53,7 +54,7 @@ export async function buildGatewayInstallPlan(params: {
     const systemNode = await resolveSystemNodeInfo({ env: params.env });
     const warning = renderSystemNodeWarning(systemNode, programArguments[0]);
     if (warning) {
-      params.warn?.(warning, "Gateway runtime");
+      params.warn?.(warning, t("Gateway runtime"));
     }
   }
   const serviceEnvironment = buildServiceEnvironment({
@@ -79,5 +80,5 @@ export async function buildGatewayInstallPlan(params: {
 export function gatewayInstallErrorHint(platform = process.platform): string {
   return platform === "win32"
     ? "Tip: rerun from an elevated PowerShell (Start → type PowerShell → right-click → Run as administrator) or skip service install."
-    : `Tip: rerun \`${formatCliCommand("openclaw gateway install")}\` after fixing the error.`;
+    : `Tip: rerun \`${formatCliCommand(t("openclaw gateway install"))}\` after fixing the error.`;
 }

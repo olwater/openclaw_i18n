@@ -1,6 +1,7 @@
 import { loginOpenAICodex } from "@mariozechner/pi-ai";
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { resolveEnvApiKey } from "../agents/model-auth.js";
+import { t } from "../i18n/index.js";
 import { upsertSharedEnvVar } from "../infra/env-file.js";
 import {
   formatApiKeyPreview,
@@ -41,7 +42,7 @@ export async function applyAuthChoiceOpenAI(
         }
         await params.prompter.note(
           `Copied OPENAI_API_KEY to ${result.path} for launchd compatibility.`,
-          "OpenAI API key",
+          t("OpenAI API key"),
         );
         return { config: params.config };
       }
@@ -52,7 +53,7 @@ export async function applyAuthChoiceOpenAI(
       key = params.opts.token;
     } else {
       key = await params.prompter.text({
-        message: "Enter OpenAI API key",
+        message: t("Enter OpenAI API key"),
         validate: validateApiKeyInput,
       });
     }
@@ -65,7 +66,7 @@ export async function applyAuthChoiceOpenAI(
     process.env.OPENAI_API_KEY = trimmed;
     await params.prompter.note(
       `Saved OPENAI_API_KEY to ${result.path} for launchd compatibility.`,
-      "OpenAI API key",
+      t("OpenAI API key"),
     );
     return { config: params.config };
   }
@@ -79,7 +80,7 @@ export async function applyAuthChoiceOpenAI(
       }
       await params.prompter.note(
         `Default model set to ${model} for agent "${params.agentId}".`,
-        "Model configured",
+        t("Model configured"),
       );
     };
 
@@ -87,18 +88,18 @@ export async function applyAuthChoiceOpenAI(
     await params.prompter.note(
       isRemote
         ? [
-            "You are running in a remote/VPS environment.",
-            "A URL will be shown for you to open in your LOCAL browser.",
-            "After signing in, paste the redirect URL back here.",
+            t("You are running in a remote/VPS environment."),
+            t("A URL will be shown for you to open in your LOCAL browser."),
+            t("After signing in, paste the redirect URL back here."),
           ].join("\n")
         : [
-            "Browser will open for OpenAI authentication.",
-            "If the callback doesn't auto-complete, paste the redirect URL.",
-            "OpenAI OAuth uses localhost:1455 for the callback.",
+            t("Browser will open for OpenAI authentication."),
+            t("If the callback doesn't auto-complete, paste the redirect URL."),
+            t("OpenAI OAuth uses localhost:1455 for the callback."),
           ].join("\n"),
-      "OpenAI Codex OAuth",
+      t("OpenAI Codex OAuth"),
     );
-    const spin = params.prompter.progress("Starting OAuth flow…");
+    const spin = params.prompter.progress(t("Starting OAuth flow…"));
     try {
       const { onAuth, onPrompt } = createVpsAwareOAuthHandlers({
         isRemote,
@@ -106,7 +107,7 @@ export async function applyAuthChoiceOpenAI(
         runtime: params.runtime,
         spin,
         openUrl,
-        localBrowserMessage: "Complete sign-in in browser…",
+        localBrowserMessage: t("Complete sign-in in browser…"),
       });
 
       const creds = await loginOpenAICodex({
@@ -114,7 +115,7 @@ export async function applyAuthChoiceOpenAI(
         onPrompt,
         onProgress: (msg) => spin.update(msg),
       });
-      spin.stop("OpenAI OAuth complete");
+      spin.stop(t("OpenAI OAuth complete"));
       if (creds) {
         await writeOAuthCredentials("openai-codex", creds, params.agentDir);
         nextConfig = applyAuthProfileConfig(nextConfig, {
@@ -128,7 +129,7 @@ export async function applyAuthChoiceOpenAI(
           if (applied.changed) {
             await params.prompter.note(
               `Default model set to ${OPENAI_CODEX_DEFAULT_MODEL}`,
-              "Model configured",
+              t("Model configured"),
             );
           }
         } else {
@@ -137,11 +138,11 @@ export async function applyAuthChoiceOpenAI(
         }
       }
     } catch (err) {
-      spin.stop("OpenAI OAuth failed");
+      spin.stop(t("OpenAI OAuth failed"));
       params.runtime.error(String(err));
       await params.prompter.note(
-        "Trouble with OAuth? See https://docs.openclaw.ai/start/faq",
-        "OAuth help",
+        t("Trouble with OAuth? See https://docs.openclaw.ai/start/faq"),
+        t("OAuth help"),
       );
     }
     return { config: nextConfig, agentModelOverride };

@@ -1,4 +1,5 @@
 import { formatRawAssistantErrorForUi } from "../agents/pi-embedded-helpers.js";
+import { t } from "../i18n/index.js";
 import { formatTokenCount } from "../utils/usage-format.js";
 
 export function resolveFinalAssistantText(params: {
@@ -13,7 +14,7 @@ export function resolveFinalAssistantText(params: {
   if (streamedText.trim()) {
     return streamedText;
   }
-  return "(no output)";
+  return t("(no output)");
 }
 
 export function composeThinkingAndContent(params: {
@@ -179,7 +180,7 @@ export function isCommandMessage(message: unknown): boolean {
 
 export function formatTokens(total?: number | null, context?: number | null) {
   if (total == null && context == null) {
-    return "tokens ?";
+    return t("tokens ?");
   }
   const totalLabel = total == null ? "?" : formatTokenCount(total);
   if (context == null) {
@@ -204,7 +205,7 @@ export function formatContextUsageLine(params: {
   const remainingLabel =
     typeof params.remaining === "number" ? `${formatTokenCount(params.remaining)} left` : null;
   const pctLabel = pct !== null ? `${pct}%` : null;
-  const extra = [remainingLabel, pctLabel].filter(Boolean).join(", ");
+  const extra = [remainingLabel, pctLabel].filter(Boolean).join(t(", "));
   return `tokens ${totalLabel}/${ctxLabel}${extra ? ` (${extra})` : ""}`;
 }
 

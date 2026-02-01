@@ -8,6 +8,7 @@ import type {
 import type { OpenClawConfig } from "../../config/config.js";
 import { resolveChannelDefaultAccountId } from "../../channels/plugins/helpers.js";
 import { listChannelPlugins } from "../../channels/plugins/index.js";
+import { t } from "../../i18n/index.js";
 import { formatAge } from "./format.js";
 
 export type ChannelRow = {
@@ -275,7 +276,7 @@ function summarizeTokenConfig(params: {
     }
 
     if (ready.length === 0) {
-      return { state: "setup", detail: "no tokens (need bot+app)" };
+      return { state: "setup", detail: t("no tokens (need bot+app)") };
     }
 
     const botSources = summarizeSources(ready.map((a) => a.snapshot.botTokenSource ?? "none"));
@@ -303,7 +304,7 @@ function summarizeTokenConfig(params: {
     return typeof rec.token === "string" ? Boolean(rec.token.trim()) : false;
   });
   if (ready.length === 0) {
-    return { state: "setup", detail: "no token" };
+    return { state: "setup", detail: t("no token") };
   }
 
   const sources = summarizeSources(ready.map((a) => a.snapshot.tokenSource));
@@ -434,7 +435,7 @@ export async function buildChannelsTable(
       }
 
       if (link.linked !== null) {
-        const base = link.linked ? "linked" : "not linked";
+        const base = link.linked ? "linked" : t("not linked");
         const extra: string[] = [];
         if (link.linked && link.selfE164) {
           extra.push(link.selfE164);
@@ -445,7 +446,7 @@ export async function buildChannelsTable(
         if (accounts.length > 1 || plugin.meta.forceAccountBinding) {
           extra.push(`accounts ${accounts.length || 1}`);
         }
-        return extra.length > 0 ? `${base} · ${extra.join(" · ")}` : base;
+        return extra.length > 0 ? `${base} · ${extra.join(t(" · "))}` : base;
       }
 
       if (tokenSummary.detail) {
@@ -464,7 +465,7 @@ export async function buildChannelsTable(
         defaultEntry && plugin.config.unconfiguredReason
           ? plugin.config.unconfiguredReason(defaultEntry.account, cfg)
           : null;
-      return reason ?? "not configured";
+      return reason ?? t("not configured");
     })();
 
     rows.push({
@@ -487,7 +488,7 @@ export async function buildChannelsTable(
               name: entry.snapshot.name,
             }),
             Status: entry.enabled ? "OK" : "WARN",
-            Notes: notes.join(" · "),
+            Notes: notes.join(t(" · ")),
           };
         }),
       });
