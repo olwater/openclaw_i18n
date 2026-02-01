@@ -15,7 +15,7 @@ const LOCALE_EN_PATH = path.resolve(PROJECT_ROOT, "src/i18n/locales/en_US.ts");
 const TARGET_DIRS = ["src/wizard", "src/tui", "src/cli", "src/commands"];
 
 // Keys to ignore (common technical strings)
-const IGNORED_STRINGS = new Set(["", " ", "\n", "\t", "utf-8", "utf8"]);
+const IGNORED_STRINGS = new Set(["", " ", "\n", "\t", "utf-8", "utf8", "global", "main"]);
 
 const MODULE_DESCRIPTIONS: Record<string, { en: string; zh: string }> = {
   "src/wizard/onboarding.ts": { en: "User onboarding wizard flow", zh: "用户首次安装引导流程" },
@@ -128,7 +128,9 @@ function shouldTranslate(node: Node): boolean {
   if (Node.isPropertyAssignment(parent)) {
       const name = parent.getName();
       // Common UI properties
-      if (["message", "placeholder", "initialValue", "text", "title", "desc", "label", "hint"].includes(name)) return true;
+      // DANGER: initialValue is often a literal type! 
+      // We skip it here to avoid logic breakage.
+      if (["message", "placeholder", "text", "title", "desc", "label", "hint"].includes(name)) return true;
   }
   
   // 4. Heuristic: Natural Language
@@ -138,7 +140,6 @@ function shouldTranslate(node: Node): boolean {
       if (text.startsWith("-")) return false;
       // Exclude paths starting with / or ./
       if (text.startsWith("/") || text.startsWith("./") || text.startsWith("../")) return false;
-      // Exclude simple snake_case or camelCase without spaces (already checked includes space)
       
       // Check for code-like patterns
       if (text.includes("import ") || text.includes("export ") || text.includes("from ")) return false;
@@ -149,8 +150,8 @@ function shouldTranslate(node: Node): boolean {
   return false;
 }
 
-// Map: FilePath -> Array of { key: string, value: string }
-const translations = new Map<string, Map<string, string>>();
+// Global Map: Key -> Set of FilePaths where it appears
+const globalTranslations = new Map<string, Set<string>>();
 
 async function main() {
   const project = new Project({
@@ -177,14 +178,18 @@ async function main() {
 
         file.forEachDescendant(node => {
           if (Node.isStringLiteral(node) || Node.isNoSubstitutionTemplateLiteral(node)) {
+            const text = node.getLiteralText();
             if (shouldTranslate(node)) {
-                replacements.push({ node, text: node.getLiteralText() });
-            } else if (isTCallArgument(node)) {
-                const text = node.getLiteralText();
-                if (!translations.has(relativePath)) {
-                    translations.set(relativePath, new Map());
+                replacements.push({ node, text });
+                if (!globalTranslations.has(text)) {
+                    globalTranslations.set(text, new Set());
                 }
-                translations.get(relativePath)!.set(text, text);
+                globalTranslations.get(text)!.add(relativePath);
+            } else if (isTCallArgument(node)) {
+                if (!globalTranslations.has(text)) {
+                    globalTranslations.set(text, new Set());
+                }
+                globalTranslations.get(text)!.add(relativePath);
             }
           }
         });
@@ -216,20 +221,12 @@ async function main() {
                     moduleSpecifier: `${relativeImportPath}/index.js`
                 });
             }
-
-            if (!translations.has(relativePath)) {
-                translations.set(relativePath, new Map());
-            }
-            const fileTranslations = translations.get(relativePath)!;
             
             for (const { node, text } of replacements) {
-                const key = text;
-                if (key.includes("${")) continue; 
-
-                fileTranslations.set(key, key);
+                if (text.includes("${")) continue; 
                 
-                const escapedText = key.replace(/"/g, '\\"');
-                node.replaceWithText(`t("${escapedText}")`);
+                // Use as any to prevent literal type mismatches
+                node.replaceWithText(`t(${JSON.stringify(text)}) as any`);
                 modified = true;
             }
         }
@@ -247,33 +244,51 @@ async function main() {
   const existingZh = await loadExistingTranslations(LOCALE_ZH_PATH);
   const existingEn = await loadExistingTranslations(LOCALE_EN_PATH);
 
-  generateLocaleFile(LOCALE_ZH_PATH, translations, true, existingZh);
-  generateLocaleFile(LOCALE_EN_PATH, translations, false, existingEn);
+  generateLocaleFile(LOCALE_ZH_PATH, globalTranslations, true, existingZh);
+  generateLocaleFile(LOCALE_EN_PATH, globalTranslations, false, existingEn);
 }
 
 async function loadExistingTranslations(path: string): Promise<Record<string, string>> {
     if (!fs.existsSync(path)) return {};
     try {
-        const fileUrl = "file://" + path;
-        const module = await import(fileUrl);
-        return module.default || {};
+        const content = fs.readFileSync(path, 'utf8');
+        // Simple regex to extract keys and values from the TS file
+        // This is safer than importing if the file has syntax errors
+        const matches = content.matchAll(/"((?:\\.|[^"])*)":\s*"((?:\\.|[^"])*)"/g);
+        const result: Record<string, string> = {};
+        for (const match of matches) {
+            const key = match[1].replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
+            const val = match[2].replace(/\\"/g, '"').replace(/\\n/g, '\n').replace(/\\\\/g, '\\');
+            result[key] = val;
+        }
+        return result;
     } catch (e) {
-        console.warn(`Failed to load existing translations from ${path}:`, e);
+        console.warn(`Failed to parse existing translations from ${path}:`, e);
         return {};
     }
 }
 
-function generateLocaleFile(outputPath: string, data: Map<string, Map<string, string>>, isZh: boolean, existing: Record<string, string>) {
+function generateLocaleFile(outputPath: string, data: Map<string, Set<string>>, isZh: boolean, existing: Record<string, string>) {
     let content = `// =====================================================================================\n`;
     content += `// Auto-generated by scripts/auto-i18n.ts\n`;
     content += `// =====================================================================================\n\n`;
     content += `export default {\n`;
 
-    const files = Array.from(data.keys()).sort();
+    // Group keys by their primary file for better organization
+    const fileToKeys = new Map<string, string[]>();
+    for (const [key, files] of data.entries()) {
+        const primaryFile = Array.from(files)[0];
+        if (!fileToKeys.has(primaryFile)) {
+            fileToKeys.set(primaryFile, []);
+        }
+        fileToKeys.get(primaryFile)!.push(key);
+    }
 
-    for (const file of files) {
-        const keys = data.get(file)!;
-        if (keys.size === 0) continue;
+    const sortedFiles = Array.from(fileToKeys.keys()).sort();
+
+    for (const file of sortedFiles) {
+        const keys = fileToKeys.get(file)!.sort();
+        if (keys.length === 0) continue;
 
         const moduleLabel = isZh ? "模块" : "Module";
         const descLabel = isZh ? "功能" : "Description";
@@ -288,18 +303,15 @@ function generateLocaleFile(outputPath: string, data: Map<string, Map<string, st
         
         content += `  // =====================================================================================\n`;
         
-        const sortedKeys = Array.from(keys.keys()).sort();
-        for (const key of sortedKeys) {
-            const escapedKey = key.replace(/"/g, '\\"').replace(/\n/g, "\\n");
-            
+        for (const key of keys) {
             let val = existing[key];
-            if (!val) {
+            if (!val || val.startsWith("[TODO]")) {
                 val = isZh ? `[TODO] ${key}` : key;
             }
             
-            const escapedVal = val.replace(/"/g, '\\"').replace(/\n/g, "\\n");
-            
-            content += `  "${escapedKey}": "${escapedVal}",\n`;
+            // Use JSON.stringify for absolute safety with quotes and escapes
+            const line = `  ${JSON.stringify(key)}: ${JSON.stringify(val)},`;
+            content += line + "\n";
         }
         content += `\n`;
     }

@@ -90,14 +90,17 @@ async function promptInstallChoice(params: {
       ]
     : [];
   const options: Array<{ value: InstallChoice; label: string; hint?: string }> = [
-    { value: "npm", label: `Download from npm (${entry.install.npmSpec})` },
+    {
+      value: "npm",
+      label: t("Download from npm ({spec})").replace("{spec}", entry.install.npmSpec),
+    },
     ...localOptions,
     { value: "skip", label: t("Skip for now") },
   ];
   const initialValue: InstallChoice =
     defaultChoice === "local" && !localPath ? "npm" : defaultChoice;
   return await prompter.select<InstallChoice>({
-    message: `Install ${entry.meta.label} plugin?`,
+    message: t("Install {label} plugin?").replace("{label}", entry.meta.label),
     options,
     initialValue,
   });
@@ -180,13 +183,15 @@ export async function ensureOnboardingPluginInstalled(params: {
   }
 
   await prompter.note(
-    `Failed to install ${entry.install.npmSpec}: ${result.error}`,
+    t("Failed to install {spec}: {error}")
+      .replace("{spec}", entry.install.npmSpec)
+      .replace("{error}", result.error),
     t("Plugin install"),
   );
 
   if (localPath) {
     const fallback = await prompter.confirm({
-      message: `Use local plugin path instead? (${localPath})`,
+      message: t("Use local plugin path instead? ({path})").replace("{path}", localPath),
       initialValue: true,
     });
     if (fallback) {
@@ -196,7 +201,7 @@ export async function ensureOnboardingPluginInstalled(params: {
     }
   }
 
-  runtime.error?.(`Plugin install failed: ${result.error}`);
+  runtime.error?.(t("Plugin install failed: {error}").replace("{error}", result.error));
   return { cfg: next, installed: false };
 }
 

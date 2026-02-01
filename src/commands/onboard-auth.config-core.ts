@@ -31,7 +31,7 @@ export function applyZaiConfig(cfg: OpenClawConfig): OpenClawConfig {
   const models = { ...cfg.agents?.defaults?.models };
   models[ZAI_DEFAULT_MODEL_REF] = {
     ...models[ZAI_DEFAULT_MODEL_REF],
-    alias: models[ZAI_DEFAULT_MODEL_REF]?.alias ?? "GLM",
+    alias: models[ZAI_DEFAULT_MODEL_REF]?.alias ?? t("GLM"),
   };
 
   const existingModel = cfg.agents?.defaults?.model;
@@ -59,7 +59,7 @@ export function applyOpenrouterProviderConfig(cfg: OpenClawConfig): OpenClawConf
   const models = { ...cfg.agents?.defaults?.models };
   models[OPENROUTER_DEFAULT_MODEL_REF] = {
     ...models[OPENROUTER_DEFAULT_MODEL_REF],
-    alias: models[OPENROUTER_DEFAULT_MODEL_REF]?.alias ?? "OpenRouter",
+    alias: models[OPENROUTER_DEFAULT_MODEL_REF]?.alias ?? t("OpenRouter"),
   };
 
   return {
@@ -316,7 +316,7 @@ export function applyXiaomiProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
   const models = { ...cfg.agents?.defaults?.models };
   models[XIAOMI_DEFAULT_MODEL_REF] = {
     ...models[XIAOMI_DEFAULT_MODEL_REF],
-    alias: models[XIAOMI_DEFAULT_MODEL_REF]?.alias ?? "Xiaomi",
+    alias: models[XIAOMI_DEFAULT_MODEL_REF]?.alias ?? t("Xiaomi"),
   };
 
   const providers = { ...cfg.models?.providers };

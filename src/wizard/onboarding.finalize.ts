@@ -190,7 +190,10 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
         );
       }
       if (installError) {
-        await prompter.note(`Gateway service install failed: ${installError}`, t("Gateway"));
+        await prompter.note(
+          t("Gateway service install failed: {error}").replace("{error}", installError),
+          t("Gateway"),
+        );
         await prompter.note(gatewayInstallErrorHint(), t("Gateway"));
       }
     }
@@ -236,9 +239,9 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
   await prompter.note(
     [
       t("Add nodes for extra features:"),
-      "- macOS app (system + notifications)",
-      "- iOS app (camera/canvas)",
-      "- Android app (camera/canvas)",
+      t("- macOS app (system + notifications)"),
+      t("- iOS app (camera/canvas)"),
+      t("- Android app (camera/canvas)"),
     ].join("\n"),
     t("Optional apps"),
   );
@@ -263,7 +266,10 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
   });
   const gatewayStatusLine = gatewayProbe.ok
     ? t("Gateway: reachable")
-    : `Gateway: not detected${gatewayProbe.detail ? ` (${gatewayProbe.detail})` : ""}`;
+    : t("Gateway: not detected{detail}").replace(
+        "{detail}",
+        gatewayProbe.detail ? ` (${gatewayProbe.detail})` : "",
+      );
   const bootstrapPath = path.join(
     resolveUserPath(options.workspaceDir),
     DEFAULT_BOOTSTRAP_FILENAME,
@@ -275,9 +281,9 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
 
   await prompter.note(
     [
-      `Web UI: ${links.httpUrl}`,
-      tokenParam ? `Web UI (with token): ${authedUrl}` : undefined,
-      `Gateway WS: ${links.wsUrl}`,
+      `${t("Web UI")}: ${links.httpUrl}`,
+      tokenParam ? `${t("Web UI (with token)")}: ${authedUrl}` : undefined,
+      `${t("Gateway WS")}: ${links.wsUrl}`,
       gatewayStatusLine,
       t("Docs: https://docs.openclaw.ai/web/control-ui"),
     ]
@@ -314,15 +320,15 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
       t("Token"),
     );
 
-    hatchChoice = await prompter.select({
+    hatchChoice = (await prompter.select({
       message: t("How do you want to hatch your bot?"),
       options: [
         { value: "tui", label: t("Hatch in TUI (recommended)") },
         { value: "web", label: t("Open the Web UI") },
         { value: "later", label: t("Do this later") },
       ],
-      initialValue: t("tui"),
-    });
+      initialValue: "tui",
+    })) as any;
 
     if (hatchChoice === "tui") {
       await runTui({
@@ -338,9 +344,10 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
       }
       if (seededInBackground) {
         await prompter.note(
-          `Web UI seeded in the background. Open later with: ${formatCliCommand(
-            t("openclaw dashboard --no-open"),
-          )}`,
+          t("Web UI seeded in the background. Open later with: {command}").replace(
+            "{command}",
+            formatCliCommand("openclaw dashboard --no-open"),
+          ),
           t("Web UI"),
         );
       }
@@ -364,7 +371,7 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
       }
       await prompter.note(
         [
-          `Dashboard link (with token): ${authedUrl}`,
+          t("Dashboard link (with token): {url}").replace("{url}", authedUrl),
           controlUiOpened
             ? t("Opened in your browser. Keep that tab to control OpenClaw.")
             : t("Copy/paste this URL in a browser on this machine to control OpenClaw."),
@@ -376,7 +383,10 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
       );
     } else {
       await prompter.note(
-        `When you're ready: ${formatCliCommand(t("openclaw dashboard --no-open"))}`,
+        t("When you're ready: {command}").replace(
+          "{command}",
+          formatCliCommand("openclaw dashboard --no-open"),
+        ),
         t("Later"),
       );
     }
@@ -425,7 +435,7 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
 
     await prompter.note(
       [
-        `Dashboard link (with token): ${authedUrl}`,
+        t("Dashboard link (with token): {url}").replace("{url}", authedUrl),
         controlUiOpened
           ? t("Opened in your browser. Keep that tab to control OpenClaw.")
           : t("Copy/paste this URL in a browser on this machine to control OpenClaw."),
@@ -454,12 +464,15 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
           t("If you want your agent to be able to search the web, you’ll need an API key."),
           "",
           t(
-            "OpenClaw uses Brave Search for the `web_search` tool. Without a Brave Search API key, web search won’t work.",
-          ),
+            "OpenClaw uses Brave Search for the {tool} tool. Without a Brave Search API key, web search won’t work.",
+          ).replace("{tool}", "`web_search`"),
           "",
           t("Set it up interactively:"),
-          `- Run: ${formatCliCommand(t("openclaw configure --section web"))}`,
-          "- Enable web_search and paste your Brave Search API key",
+          t("- Run: {command}").replace(
+            "{command}",
+            formatCliCommand("openclaw configure --section web"),
+          ),
+          t("- Enable web_search and paste your Brave Search API key"),
           "",
           t("Alternative: set BRAVE_API_KEY in the Gateway environment (no config changes)."),
           t("Docs: https://docs.openclaw.ai/tools/web"),

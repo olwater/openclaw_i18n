@@ -72,7 +72,11 @@ export async function setupInternalHooks(
 
   await prompter.note(
     [
-      `Enabled ${selected.length} hook${selected.length > 1 ? "s" : ""}: ${selected.join(t(", "))}`,
+      selected.length === 1
+        ? t("Enabled 1 hook: {hooks}").replace("{hooks}", selected[0])
+        : t("Enabled {count} hooks: {hooks}")
+            .replace("{count}", String(selected.length))
+            .replace("{hooks}", selected.join(t(", "))),
       "",
       t("You can manage hooks later with:"),
       `  ${formatCliCommand(t("openclaw hooks list"))}`,

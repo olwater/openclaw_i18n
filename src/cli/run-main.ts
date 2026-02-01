@@ -41,6 +41,11 @@ export async function runCli(argv: string[] = process.argv) {
   // Capture all console output into structured logs while keeping stdout/stderr behavior.
   enableConsoleCapture();
 
+  // Pre-load config to establish locale before any CLI strings are evaluated.
+  // This ensures that static t() calls in command definitions use the correct language.
+  const { loadConfig } = await import("../config/config.js");
+  const config = loadConfig();
+
   const { buildProgram } = await import("./program.js");
   const program = buildProgram();
 
@@ -65,8 +70,7 @@ export async function runCli(argv: string[] = process.argv) {
   if (!shouldSkipPluginRegistration) {
     // Register plugin CLI commands before parsing
     const { registerPluginCliCommands } = await import("../plugins/cli.js");
-    const { loadConfig } = await import("../config/config.js");
-    registerPluginCliCommands(program, loadConfig());
+    registerPluginCliCommands(program, config);
   }
 
   await program.parseAsync(parseArgv);

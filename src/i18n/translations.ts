@@ -17,7 +17,17 @@ export const translations: TranslationSet = {
   zh_CN,
 };
 
+let currentLocale: Locale | undefined;
+
+/** Set the active locale globally. */
+export function setLocale(locale: Locale): void {
+  currentLocale = locale;
+}
+
 export function getLocale(): Locale {
+  if (currentLocale) {
+    return currentLocale;
+  }
   const envLocale = process.env.LANG || process.env.LC_ALL || process.env.LC_MESSAGES;
   if (envLocale?.includes("zh_CN")) {
     return "zh_CN";

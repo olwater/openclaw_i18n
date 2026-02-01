@@ -73,16 +73,16 @@ export async function buildProviderStatusIndex(
         (typeof snapshot?.linked === "boolean"
           ? snapshot.linked
             ? "linked"
-            : t("not linked")
+            : (t("not linked") as any)
           : resolvedConfigured
             ? "configured"
-            : t("not configured"));
+            : (t("not configured") as any));
       const name = snapshot?.name ?? (account as { name?: string }).name;
       map.set(providerAccountKey(plugin.id, accountId), {
         provider: plugin.id,
         accountId,
         name,
-        state,
+        state: state as any,
         enabled,
         configured,
       });

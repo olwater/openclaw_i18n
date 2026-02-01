@@ -1,6 +1,7 @@
 import type { OAuthCredentials } from "@mariozechner/pi-ai";
 import { resolveOpenClawAgentDir } from "../agents/agent-paths.js";
 import { upsertAuthProfile } from "../agents/auth-profiles.js";
+import { t } from "../i18n/index.js";
 
 const resolveAuthAgentDir = (agentDir?: string) => agentDir ?? resolveOpenClawAgentDir();
 
@@ -10,7 +11,7 @@ export async function writeOAuthCredentials(
   agentDir?: string,
 ): Promise<void> {
   const email =
-    typeof creds.email === "string" && creds.email.trim() ? creds.email.trim() : "default";
+    typeof creds.email === "string" && creds.email.trim() ? creds.email.trim() : t("default");
   upsertAuthProfile({
     profileId: `${provider}:${email}`,
     credential: {

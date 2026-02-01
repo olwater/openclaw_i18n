@@ -1,3 +1,5 @@
+import { t } from "../../i18n/index.js";
+
 const A2UI_ACTION_KEYS = [
   "beginRendering",
   "surfaceUpdate",
@@ -63,7 +65,7 @@ export function validateA2UIJsonl(jsonl: string) {
     const actionKeys = A2UI_ACTION_KEYS.filter((key) => key in record);
     if (actionKeys.length !== 1) {
       errors.push(
-        `line ${idx + 1}: expected exactly one action key (${A2UI_ACTION_KEYS.join(", ")})`,
+        `line ${idx + 1}: expected exactly one action key (${A2UI_ACTION_KEYS.join(t(", ") as any)})`,
       );
       return;
     }
@@ -75,13 +77,13 @@ export function validateA2UIJsonl(jsonl: string) {
   });
 
   if (messageCount === 0) {
-    errors.push("no JSONL messages found");
+    errors.push(t("no JSONL messages found") as any);
   }
   if (sawV08 && sawV09) {
-    errors.push("mixed A2UI v0.8 and v0.9 messages in one file");
+    errors.push(t("mixed A2UI v0.8 and v0.9 messages in one file") as any);
   }
   if (errors.length > 0) {
-    throw new Error(`Invalid A2UI JSONL:\n- ${errors.join("\n- ")}`);
+    throw new Error(`Invalid A2UI JSONL:\n- ${errors.join(t("\n- ") as any)}`);
   }
 
   const version: A2UIVersion = sawV09 ? "v0.9" : "v0.8";

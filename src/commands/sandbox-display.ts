@@ -5,6 +5,7 @@
 import type { SandboxBrowserInfo, SandboxContainerInfo } from "../agents/sandbox.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import { t } from "../i18n/index.js";
 import {
   formatAge,
   formatImageMatch,
@@ -34,8 +35,8 @@ export function displayContainers(containers: SandboxContainerInfo[], runtime: R
   displayItems(
     containers,
     {
-      emptyMessage: "No sandbox containers found.",
-      title: "📦 Sandbox Containers:",
+      emptyMessage: t("No sandbox containers found.") as any,
+      title: t("📦 Sandbox Containers:") as any,
       renderItem: (container, rt) => {
         rt.log(`  ${container.containerName}`);
         rt.log(`    Status:  ${formatStatus(container.running)}`);
@@ -54,8 +55,8 @@ export function displayBrowsers(browsers: SandboxBrowserInfo[], runtime: Runtime
   displayItems(
     browsers,
     {
-      emptyMessage: "No sandbox browser containers found.",
-      title: "🌐 Sandbox Browser Containers:",
+      emptyMessage: t("No sandbox browser containers found.") as any,
+      title: t("🌐 Sandbox Browser Containers:") as any,
       renderItem: (browser, rt) => {
         rt.log(`  ${browser.containerName}`);
         rt.log(`    Status:  ${formatStatus(browser.running)}`);
@@ -90,7 +91,7 @@ export function displaySummary(
   if (mismatchCount > 0) {
     runtime.log(`\n⚠️  ${mismatchCount} container(s) with image mismatch detected.`);
     runtime.log(
-      `   Run '${formatCliCommand("openclaw sandbox recreate --all")}' to update all containers.`,
+      `   Run '${formatCliCommand(t("openclaw sandbox recreate --all") as any)}' to update all containers.`,
     );
   }
 }
@@ -100,17 +101,17 @@ export function displayRecreatePreview(
   browsers: SandboxBrowserInfo[],
   runtime: RuntimeEnv,
 ): void {
-  runtime.log("\nContainers to be recreated:\n");
+  runtime.log(t("\nContainers to be recreated:\n") as any);
 
   if (containers.length > 0) {
-    runtime.log("📦 Sandbox Containers:");
+    runtime.log(t("📦 Sandbox Containers:") as any);
     for (const container of containers) {
       runtime.log(`  - ${container.containerName} (${formatSimpleStatus(container.running)})`);
     }
   }
 
   if (browsers.length > 0) {
-    runtime.log("\n🌐 Browser Containers:");
+    runtime.log(t("\n🌐 Browser Containers:") as any);
     for (const browser of browsers) {
       runtime.log(`  - ${browser.containerName} (${formatSimpleStatus(browser.running)})`);
     }
@@ -127,6 +128,8 @@ export function displayRecreateResult(
   runtime.log(`\nDone: ${result.successCount} removed, ${result.failCount} failed`);
 
   if (result.successCount > 0) {
-    runtime.log("\nContainers will be automatically recreated when the agent is next used.");
+    runtime.log(
+      t("\nContainers will be automatically recreated when the agent is next used.") as any,
+    );
   }
 }

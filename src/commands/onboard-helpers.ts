@@ -39,28 +39,44 @@ export function summarizeExistingConfig(config: OpenClawConfig): string {
   const rows: string[] = [];
   const defaults = config.agents?.defaults;
   if (defaults?.workspace) {
-    rows.push(shortenHomeInString(`workspace: ${defaults.workspace}`));
+    rows.push(
+      shortenHomeInString(t("workspace: {workspace}").replace("{workspace}", defaults.workspace)),
+    );
   }
   if (defaults?.model) {
     const model = typeof defaults.model === "string" ? defaults.model : defaults.model.primary;
     if (model) {
-      rows.push(shortenHomeInString(`model: ${model}`));
+      rows.push(shortenHomeInString(t("model: {model}").replace("{model}", model)));
     }
   }
   if (config.gateway?.mode) {
-    rows.push(shortenHomeInString(`gateway.mode: ${config.gateway.mode}`));
+    rows.push(
+      shortenHomeInString(t("gateway.mode: {mode}").replace("{mode}", config.gateway.mode)),
+    );
   }
   if (typeof config.gateway?.port === "number") {
-    rows.push(shortenHomeInString(`gateway.port: ${config.gateway.port}`));
+    rows.push(
+      shortenHomeInString(t("gateway.port: {port}").replace("{port}", String(config.gateway.port))),
+    );
   }
   if (config.gateway?.bind) {
-    rows.push(shortenHomeInString(`gateway.bind: ${config.gateway.bind}`));
+    rows.push(
+      shortenHomeInString(t("gateway.bind: {bind}").replace("{bind}", config.gateway.bind)),
+    );
   }
   if (config.gateway?.remote?.url) {
-    rows.push(shortenHomeInString(`gateway.remote.url: ${config.gateway.remote.url}`));
+    rows.push(
+      shortenHomeInString(
+        t("gateway.remote.url: {url}").replace("{url}", config.gateway.remote.url),
+      ),
+    );
   }
   if (config.skills?.install?.nodeManager) {
-    rows.push(shortenHomeInString(`skills.nodeManager: ${config.skills.install.nodeManager}`));
+    rows.push(
+      shortenHomeInString(
+        t("skills.nodeManager: {manager}").replace("{manager}", config.skills.install.nodeManager),
+      ),
+    );
   }
   return rows.length ? rows.join("\n") : t("No key settings detected.");
 }
@@ -192,7 +208,7 @@ export function formatControlUiSshHint(params: {
   const authedUrl = params.token ? `${localUrl}${tokenParam}` : undefined;
   const sshTarget = resolveSshTargetHint();
   return [
-    "No GUI detected. Open from your computer:",
+    t("No GUI detected. Open from your computer:"),
     `ssh -N -L ${params.port}:127.0.0.1:${params.port} ${sshTarget}`,
     t("Then open:"),
     localUrl,
@@ -272,10 +288,10 @@ export async function ensureWorkspaceAndSessions(
     dir: workspaceDir,
     ensureBootstrapFiles: !options?.skipBootstrap,
   });
-  runtime.log(`Workspace OK: ${shortenHomePath(ws.dir)}`);
+  runtime.log(t("Workspace OK: {path}").replace("{path}", shortenHomePath(ws.dir)));
   const sessionsDir = resolveSessionTranscriptsDirForAgent(options?.agentId);
   await fs.mkdir(sessionsDir, { recursive: true });
-  runtime.log(`Sessions OK: ${shortenHomePath(sessionsDir)}`);
+  runtime.log(t("Sessions OK: {path}").replace("{path}", shortenHomePath(sessionsDir)));
 }
 
 export function resolveNodeManagerOptions(): Array<{
@@ -300,9 +316,14 @@ export async function moveToTrash(pathname: string, runtime: RuntimeEnv): Promis
   }
   try {
     await runCommandWithTimeout(["trash", pathname], { timeoutMs: 5000 });
-    runtime.log(`Moved to Trash: ${shortenHomePath(pathname)}`);
+    runtime.log(t("Moved to Trash: {path}").replace("{path}", shortenHomePath(pathname)));
   } catch {
-    runtime.log(`Failed to move to Trash (manual delete): ${shortenHomePath(pathname)}`);
+    runtime.log(
+      t("Failed to move to Trash (manual delete): {path}").replace(
+        "{path}",
+        shortenHomePath(pathname),
+      ),
+    );
   }
 }
 

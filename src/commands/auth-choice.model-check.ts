@@ -51,7 +51,9 @@ export async function warnIfModelConfigLooksOff(
     );
     if (!known) {
       warnings.push(
-        `Model not found: ${ref.provider}/${ref.model}. Update agents.defaults.model or run /models list.`,
+        t("Model not found: {provider}/{model}. Update agents.defaults.model or run /models list.")
+          .replace("{provider}", ref.provider)
+          .replace("{model}", ref.model),
       );
     }
   }
@@ -62,7 +64,9 @@ export async function warnIfModelConfigLooksOff(
   const customKey = getCustomProviderApiKey(config, ref.provider);
   if (!hasProfile && !envKey && !customKey) {
     warnings.push(
-      `No auth configured for provider "${ref.provider}". The agent may fail until credentials are added.`,
+      t(
+        'No auth configured for provider "{provider}". The agent may fail until credentials are added.',
+      ).replace("{provider}", ref.provider),
     );
   }
 
@@ -70,7 +74,9 @@ export async function warnIfModelConfigLooksOff(
     const hasCodex = listProfilesForProvider(store, "openai-codex").length > 0;
     if (hasCodex) {
       warnings.push(
-        `Detected OpenAI Codex OAuth. Consider setting agents.defaults.model to ${OPENAI_CODEX_DEFAULT_MODEL}.`,
+        t(
+          "Detected OpenAI Codex OAuth. Consider setting agents.defaults.model to {model}.",
+        ).replace("{model}", OPENAI_CODEX_DEFAULT_MODEL),
       );
     }
   }

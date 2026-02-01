@@ -16,7 +16,7 @@ export async function applyDefaultModelChoice(params: {
     const next = params.applyDefaultConfig(params.config);
     if (params.noteDefault) {
       await params.prompter.note(
-        `Default model set to ${params.noteDefault}`,
+        t("Default model set to {model}").replace("{model}", params.noteDefault),
         t("Model configured"),
       );
     }

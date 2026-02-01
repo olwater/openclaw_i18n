@@ -170,7 +170,8 @@ export async function promptDefaultModel(
           return {
             value: provider,
             label: provider,
-            hint: `${count} model${count === 1 ? "" : "s"}`,
+            hint:
+              count === 1 ? t("1 model") : t("{count} models").replace("{count}", String(count)),
           };
         }),
       ],
@@ -203,14 +204,20 @@ export async function promptDefaultModel(
     options.push({
       value: KEEP_VALUE,
       label: configuredRaw
-        ? `Keep current (${configuredRaw})`
-        : `Keep current (default: ${resolvedKey})`,
+        ? t("Keep current ({model})").replace("{model}", configuredRaw)
+        : t("Keep current (default: {model})").replace("{model}", resolvedKey),
       hint:
-        configuredRaw && configuredRaw !== resolvedKey ? `resolves to ${resolvedKey}` : undefined,
+        configuredRaw && configuredRaw !== resolvedKey
+          ? t("resolves to {model}").replace("{model}", resolvedKey)
+          : undefined,
     });
   }
   if (includeManual) {
-    options.push({ value: MANUAL_VALUE, label: t("Enter model manually") });
+    options.push({
+      value: MANUAL_VALUE,
+      label: t("Enter model manually"),
+      hint: t("manually specify provider and model ID"),
+    });
   }
 
   const seen = new Set<string>();
@@ -234,14 +241,14 @@ export async function promptDefaultModel(
       hints.push(entry.name);
     }
     if (entry.contextWindow) {
-      hints.push(`ctx ${formatTokenK(entry.contextWindow)}`);
+      hints.push(`${t("ctx")} ${formatTokenK(entry.contextWindow)}`);
     }
     if (entry.reasoning) {
-      hints.push("reasoning");
+      hints.push(t("reasoning"));
     }
     const aliases = aliasIndex.byKey.get(key);
     if (aliases?.length) {
-      hints.push(`alias: ${aliases.join(t(", "))}`);
+      hints.push(`${t("alias")}: ${aliases.join(t(", "))}`);
     }
     if (!hasAuth(entry.provider)) {
       hints.push(t("auth missing"));
@@ -383,14 +390,14 @@ export async function promptModelAllowlist(params: {
       hints.push(entry.name);
     }
     if (entry.contextWindow) {
-      hints.push(`ctx ${formatTokenK(entry.contextWindow)}`);
+      hints.push(`${t("ctx")} ${formatTokenK(entry.contextWindow)}`);
     }
     if (entry.reasoning) {
-      hints.push("reasoning");
+      hints.push(t("reasoning"));
     }
     const aliases = aliasIndex.byKey.get(key);
     if (aliases?.length) {
-      hints.push(`alias: ${aliases.join(t(", "))}`);
+      hints.push(`${t("alias")}: ${aliases.join(t(", "))}`);
     }
     if (!hasAuth(entry.provider)) {
       hints.push(t("auth missing"));

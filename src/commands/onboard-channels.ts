@@ -75,11 +75,11 @@ async function promptConfiguredAction(params: {
     ...(supportsDelete ? [deleteOption] : []),
     skipOption,
   ];
-  return await prompter.select({
-    message: `${label} already configured. What do you want to do?`,
+  return (await prompter.select({
+    message: t("{label} already configured. What do you want to do?").replace("{label}", label),
     options,
-    initialValue: t("update"),
-  });
+    initialValue: "update",
+  })) as unknown as ConfiguredChannelAction;
 }
 
 async function promptRemovalAccountId(params: {
@@ -99,7 +99,7 @@ async function promptRemovalAccountId(params: {
     return defaultAccountId;
   }
   const selected = await prompter.select({
-    message: `${label} account`,
+    message: t("{label} account").replace("{label}", label),
     options: accountIds.map((accountId) => ({
       value: accountId,
       label: formatAccountLabel(accountId),
@@ -138,7 +138,9 @@ async function collectChannelStatus(params: {
       return {
         channel: meta.id,
         configured,
-        statusLines: [`${meta.label}: ${statusLabel}`],
+        statusLines: [
+          t("{label}: {status}").replace("{label}", meta.label).replace("{status}", statusLabel),
+        ],
         selectionHint: configured ? t("configured · plugin disabled") : t("not configured"),
         quickstartScore: 0,
       };
@@ -146,7 +148,11 @@ async function collectChannelStatus(params: {
   const catalogStatuses = catalogEntries.map((entry) => ({
     channel: entry.id,
     configured: false,
-    statusLines: [`${entry.meta.label}: install plugin to enable`],
+    statusLines: [
+      t("{label}: {status}")
+        .replace("{label}", entry.meta.label)
+        .replace("{status}", t("install plugin to enable")),
+    ],
     selectionHint: t("plugin · install"),
     quickstartScore: 0,
   }));
@@ -193,12 +199,15 @@ async function noteChannelPrimer(
   await prompter.note(
     [
       t("DM security: default is pairing; unknown DMs get a pairing code."),
-      `Approve with: ${formatCliCommand(t("openclaw pairing approve <channel> <code>"))}`,
+      t("Approve with: {command}").replace(
+        "{command}",
+        formatCliCommand(t("openclaw pairing approve <channel> <code>")),
+      ),
       t('Public DMs require dmPolicy="open" + allowFrom=["*"].'),
       t(
         'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
       ),
-      `Docs: ${formatDocsLink("/start/pairing", "start/pairing")}`,
+      t("Docs: {link}").replace("{link}", formatDocsLink("/start/pairing", "start/pairing")),
       "",
       ...channelLines,
     ].join("\n"),
@@ -248,18 +257,25 @@ async function maybeConfigureDmPolicies(params: {
     await prompter.note(
       [
         t("Default: pairing (unknown DMs get a pairing code)."),
-        `Approve: ${formatCliCommand(`openclaw pairing approve ${policy.channel} <code>`)}`,
-        `Allowlist DMs: ${policy.policyKey}="allowlist" + ${policy.allowFromKey} entries.`,
-        `Public DMs: ${policy.policyKey}="open" + ${policy.allowFromKey} includes "*".`,
+        t("Approve: {command}").replace(
+          "{command}",
+          formatCliCommand(`openclaw pairing approve ${policy.channel} <code>`),
+        ),
+        t('Allowlist DMs: {policyKey}="allowlist" + {allowFromKey} entries.')
+          .replace("{policyKey}", policy.policyKey)
+          .replace("{allowFromKey}", policy.allowFromKey),
+        t('Public DMs: {policyKey}="open" + {allowFromKey} includes "*".')
+          .replace("{policyKey}", policy.policyKey)
+          .replace("{allowFromKey}", policy.allowFromKey),
         t(
           'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
         ),
-        `Docs: ${formatDocsLink("/start/pairing", "start/pairing")}`,
+        t("Docs: {link}").replace("{link}", formatDocsLink("/start/pairing", "start/pairing")),
       ].join("\n"),
-      `${policy.label} DM access`,
+      t("{label} DM access").replace("{label}", policy.label),
     );
     return (await prompter.select({
-      message: `${policy.label} DM policy`,
+      message: t("{label} DM policy").replace("{label}", policy.label),
       options: [
         { value: "pairing", label: t("Pairing (recommended)") },
         { value: "allowlist", label: t("Allowlist (specific users only)") },
@@ -388,7 +404,7 @@ export async function setupChannels(
     ) {
       enabled = (next.channels as Record<string, { enabled?: boolean }>)[channel]?.enabled;
     }
-    return enabled === false ? "disabled" : undefined;
+    return enabled === false ? t("disabled") : undefined;
   };
 
   const buildSelectionOptions = (
@@ -457,7 +473,9 @@ export async function setupChannels(
     next = result.config;
     if (!result.enabled) {
       await prompter.note(
-        `Cannot enable ${channel}: ${result.reason ?? t("plugin disabled")}.`,
+        t("Cannot enable {channel}: {reason}.")
+          .replace("{channel}", channel)
+          .replace("{reason}", result.reason ?? t("plugin disabled")),
         t("Channel setup"),
       );
       return false;
@@ -469,7 +487,10 @@ export async function setupChannels(
       workspaceDir,
     });
     if (!getChannelPlugin(channel)) {
-      await prompter.note(`${channel} plugin not available.`, t("Channel setup"));
+      await prompter.note(
+        t("{channel} plugin not available.").replace("{channel}", channel),
+        t("Channel setup"),
+      );
       return false;
     }
     await refreshStatus(channel);
@@ -479,7 +500,10 @@ export async function setupChannels(
   const configureChannel = async (channel: ChannelChoice) => {
     const adapter = getChannelOnboardingAdapter(channel);
     if (!adapter) {
-      await prompter.note(`${channel} does not support onboarding yet.`, t("Channel setup"));
+      await prompter.note(
+        t("{channel} does not support onboarding yet.").replace("{channel}", channel),
+        t("Channel setup"),
+      );
       return;
     }
     const result = await adapter.configure({
@@ -526,7 +550,7 @@ export async function setupChannels(
 
     if (action === "delete" && !supportsDelete) {
       await prompter.note(
-        `${label} does not support deleting config entries.`,
+        t("{label} does not support deleting config entries.").replace("{label}", label),
         t("Remove channel"),
       );
       return;
@@ -551,7 +575,9 @@ export async function setupChannels(
 
     if (action === "delete") {
       const confirmed = await prompter.confirm({
-        message: `Delete ${label} account "${accountLabel}"?`,
+        message: t('Delete {label} account "{account}"?')
+          .replace("{label}", label)
+          .replace("{account}", accountLabel),
         initialValue: false,
       });
       if (!confirmed) {

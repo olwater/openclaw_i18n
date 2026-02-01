@@ -111,7 +111,7 @@ function formatTokenSummary(tokens: DeviceTokenSummary[] | undefined) {
     return "none";
   }
   const parts = tokens
-    .map((t) => `${t.role}${t.revokedAtMs ? t(" (revoked)") : ""}`)
+    .map((tok) => `${tok.role}${tok.revokedAtMs ? t(" (revoked)") : ""}`)
     .toSorted((a, b) => a.localeCompare(b));
   return parts.join(t(", "));
 }

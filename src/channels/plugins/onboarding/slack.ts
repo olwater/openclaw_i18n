@@ -2,6 +2,7 @@ import type { OpenClawConfig } from "../../../config/config.js";
 import type { DmPolicy } from "../../../config/types.js";
 import type { WizardPrompter } from "../../../wizard/prompts.js";
 import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onboarding-types.js";
+import { t } from "../../../i18n/translations.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import {
   listSlackAccountIds,
@@ -41,7 +42,7 @@ function buildSlackManifest(botName: string) {
   const manifest = {
     display_information: {
       name: safeName,
-      description: `${safeName} connector for OpenClaw`,
+      description: t("{name} connector for OpenClaw").replace("{name}", safeName),
     },
     features: {
       bot_user: {
@@ -55,7 +56,7 @@ function buildSlackManifest(botName: string) {
       slash_commands: [
         {
           command: "/openclaw",
-          description: "Send a message to OpenClaw",
+          description: t("Send a message to OpenClaw"),
           should_escape: false,
         },
       ],
@@ -109,18 +110,18 @@ async function noteSlackTokenHelp(prompter: WizardPrompter, botName: string): Pr
   const manifest = buildSlackManifest(botName);
   await prompter.note(
     [
-      "1) Slack API → Create App → From scratch",
-      "2) Add Socket Mode + enable it to get the app-level token (xapp-...)",
-      "3) OAuth & Permissions → install app to workspace (xoxb- bot token)",
-      "4) Enable Event Subscriptions (socket) for message events",
-      "5) App Home → enable the Messages tab for DMs",
-      "Tip: set SLACK_BOT_TOKEN + SLACK_APP_TOKEN in your env.",
-      `Docs: ${formatDocsLink("/slack", "slack")}`,
+      t("1) Slack API → Create App → From scratch"),
+      t("2) Add Socket Mode + enable it to get the app-level token (xapp-..."),
+      t("3) OAuth & Permissions → install app to workspace (xoxb- bot token)"),
+      t("4) Enable Event Subscriptions (socket) for message events"),
+      t("5) App Home → enable the Messages tab for DMs"),
+      t("Tip: set SLACK_BOT_TOKEN + SLACK_APP_TOKEN in your env."),
+      t("Docs: {link}").replace("{link}", formatDocsLink("/slack", "slack")),
       "",
-      "Manifest (JSON):",
+      t("Manifest (JSON):"),
       manifest,
     ].join("\n"),
-    "Slack socket mode tokens",
+    t("Slack socket mode tokens"),
   );
 }
 
@@ -239,14 +240,14 @@ async function promptSlackAllowFrom(params: {
   const existing = params.cfg.channels?.slack?.dm?.allowFrom ?? [];
   await params.prompter.note(
     [
-      "Allowlist Slack DMs by username (we resolve to user ids).",
-      "Examples:",
+      t("Allowlist Slack DMs by username (we resolve to user ids)."),
+      t("Examples:"),
       "- U12345678",
       "- @alice",
-      "Multiple entries: comma-separated.",
-      `Docs: ${formatDocsLink("/slack", "slack")}`,
+      t("Multiple entries: comma-separated."),
+      t("Docs: {link}").replace("{link}", formatDocsLink("/slack", "slack")),
     ].join("\n"),
-    "Slack allowlist",
+    t("Slack allowlist"),
   );
   const parseInputs = (value: string) => parseSlackAllowFromInput(value);
   const parseId = (value: string) => {
@@ -267,18 +268,18 @@ async function promptSlackAllowFrom(params: {
 
   while (true) {
     const entry = await params.prompter.text({
-      message: "Slack allowFrom (usernames or ids)",
+      message: t("Slack allowFrom (usernames or ids)"),
       placeholder: "@alice, U12345678",
       initialValue: existing[0] ? String(existing[0]) : undefined,
-      validate: (value) => (String(value ?? "").trim() ? undefined : "Required"),
+      validate: (value) => (String(value ?? "").trim() ? undefined : t("Required")),
     });
     const parts = parseInputs(String(entry));
     if (!token) {
       const ids = parts.map(parseId).filter(Boolean) as string[];
       if (ids.length !== parts.length) {
         await params.prompter.note(
-          "Slack token missing; use user ids (or mention form) only.",
-          "Slack allowlist",
+          t("Slack token missing; use user ids (or mention form) only."),
+          t("Slack allowlist"),
         );
         continue;
       }
@@ -293,14 +294,20 @@ async function promptSlackAllowFrom(params: {
       entries: parts,
     }).catch(() => null);
     if (!results) {
-      await params.prompter.note("Failed to resolve usernames. Try again.", "Slack allowlist");
+      await params.prompter.note(
+        t("Failed to resolve usernames. Try again."),
+        t("Slack allowlist"),
+      );
       continue;
     }
     const unresolved = results.filter((res) => !res.resolved || !res.id);
     if (unresolved.length > 0) {
       await params.prompter.note(
-        `Could not resolve: ${unresolved.map((res) => res.input).join(", ")}`,
-        "Slack allowlist",
+        t("Could not resolve: {users}").replace(
+          "{users}",
+          unresolved.map((res) => res.input).join(", "),
+        ),
+        t("Slack allowlist"),
       );
       continue;
     }
@@ -330,8 +337,10 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
     return {
       channel,
       configured,
-      statusLines: [`Slack: ${configured ? "configured" : "needs tokens"}`],
-      selectionHint: configured ? "configured" : "needs tokens",
+      statusLines: [
+        t("Slack: {status}").replace("{status}", configured ? t("configured") : t("needs tokens")),
+      ],
+      selectionHint: configured ? t("configured") : t("needs tokens"),
       quickstartScore: configured ? 2 : 1,
     };
   },
@@ -343,7 +352,7 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
       slackAccountId = await promptAccountId({
         cfg,
         prompter,
-        label: "Slack",
+        label: t("Slack"),
         currentId: slackAccountId,
         listAccountIds: listSlackAccountIds,
         defaultAccountId: defaultSlackAccountId,
@@ -369,7 +378,7 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
     let appToken: string | null = null;
     const slackBotName = String(
       await prompter.text({
-        message: "Slack bot display name (used for manifest)",
+        message: t("Slack bot display name (used for manifest)"),
         initialValue: "OpenClaw",
       }),
     ).trim();
@@ -378,7 +387,7 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
     }
     if (canUseEnv && (!resolvedAccount.config.botToken || !resolvedAccount.config.appToken)) {
       const keepEnv = await prompter.confirm({
-        message: "SLACK_BOT_TOKEN + SLACK_APP_TOKEN detected. Use env vars?",
+        message: t("SLACK_BOT_TOKEN + SLACK_APP_TOKEN detected. Use env vars?"),
         initialValue: true,
       });
       if (keepEnv) {
@@ -392,47 +401,47 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
       } else {
         botToken = String(
           await prompter.text({
-            message: "Enter Slack bot token (xoxb-...)",
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            message: t("Enter Slack bot token (xoxb-...)"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           }),
         ).trim();
         appToken = String(
           await prompter.text({
-            message: "Enter Slack app token (xapp-...)",
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            message: t("Enter Slack app token (xapp-...)"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           }),
         ).trim();
       }
     } else if (hasConfigTokens) {
       const keep = await prompter.confirm({
-        message: "Slack tokens already configured. Keep them?",
+        message: t("Slack tokens already configured. Keep them?"),
         initialValue: true,
       });
       if (!keep) {
         botToken = String(
           await prompter.text({
-            message: "Enter Slack bot token (xoxb-...)",
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            message: t("Enter Slack bot token (xoxb-...)"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           }),
         ).trim();
         appToken = String(
           await prompter.text({
-            message: "Enter Slack app token (xapp-...)",
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            message: t("Enter Slack app token (xapp-...)"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           }),
         ).trim();
       }
     } else {
       botToken = String(
         await prompter.text({
-          message: "Enter Slack bot token (xoxb-...)",
-          validate: (value) => (value?.trim() ? undefined : "Required"),
+          message: t("Enter Slack bot token (xoxb-...)"),
+          validate: (value) => (value?.trim() ? undefined : t("Required")),
         }),
       ).trim();
       appToken = String(
         await prompter.text({
-          message: "Enter Slack app token (xapp-...)",
-          validate: (value) => (value?.trim() ? undefined : "Required"),
+          message: t("Enter Slack app token (xapp-...)"),
+          validate: (value) => (value?.trim() ? undefined : t("Required")),
         }),
       ).trim();
     }
@@ -476,7 +485,7 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
 
     const accessConfig = await promptChannelAccessConfig({
       prompter,
-      label: "Slack channels",
+      label: t("Slack channels"),
       currentPolicy: resolvedAccount.config.groupPolicy ?? "allowlist",
       currentEntries: Object.entries(resolvedAccount.config.channels ?? {})
         .filter(([, value]) => value?.allow !== false && value?.enabled !== false)
@@ -509,20 +518,28 @@ export const slackOnboardingAdapter: ChannelOnboardingAdapter = {
             if (resolvedKeys.length > 0 || unresolved.length > 0) {
               await prompter.note(
                 [
-                  resolvedKeys.length > 0 ? `Resolved: ${resolvedKeys.join(", ")}` : undefined,
+                  resolvedKeys.length > 0
+                    ? t("Resolved: {ids}").replace("{ids}", resolvedKeys.join(", "))
+                    : undefined,
                   unresolved.length > 0
-                    ? `Unresolved (kept as typed): ${unresolved.join(", ")}`
+                    ? t("Unresolved (kept as typed): {inputs}").replace(
+                        "{inputs}",
+                        unresolved.join(", "),
+                      )
                     : undefined,
                 ]
                   .filter(Boolean)
                   .join("\n"),
-                "Slack channels",
+                t("Slack channels"),
               );
             }
           } catch (err) {
             await prompter.note(
-              `Channel lookup failed; keeping entries as typed. ${String(err)}`,
-              "Slack channels",
+              t("Channel lookup failed; keeping entries as typed. {err}").replace(
+                "{err}",
+                String(err),
+              ),
+              t("Slack channels"),
             );
           }
         }

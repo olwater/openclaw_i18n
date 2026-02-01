@@ -1,5 +1,6 @@
 import path from "node:path";
 import type { OpenClawConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { CONFIG_DIR } from "../utils.js";
 import {
   hasBinary,
@@ -254,7 +255,7 @@ function buildSkillStatus(
 
   return {
     name: entry.skill.name,
-    description: entry.skill.description,
+    description: t(entry.skill.description),
     source: entry.skill.source,
     filePath: entry.skill.filePath,
     baseDir: entry.skill.baseDir,

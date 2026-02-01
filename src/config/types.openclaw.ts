@@ -31,6 +31,8 @@ export type OpenClawConfig = {
     /** ISO timestamp when this config was last written. */
     lastTouchedAt?: string;
   };
+  /** Preferred UI language. Defaults to system LANG. */
+  locale?: "en_US" | "zh_CN";
   auth?: AuthConfig;
   env?: {
     /** Opt-in: import missing secrets from a login shell environment (exec `$SHELL -l -c 'env -0'`). */

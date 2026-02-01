@@ -1,3 +1,5 @@
+import { t } from "../i18n/index.js";
+
 const DEFAULT_KEY_PREVIEW = { head: 4, tail: 4 };
 
 export function normalizeApiKeyInput(raw: string): string {
@@ -24,7 +26,7 @@ export function normalizeApiKeyInput(raw: string): string {
 }
 
 export const validateApiKeyInput = (value: string) =>
-  normalizeApiKeyInput(value).length > 0 ? undefined : "Required";
+  normalizeApiKeyInput(value).length > 0 ? undefined : t("Required");
 
 export function formatApiKeyPreview(
   raw: string,

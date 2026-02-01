@@ -5,11 +5,12 @@ import { resolveWorkspaceTemplateDir } from "../../agents/workspace-templates.js
 import { resolveDefaultAgentWorkspaceDir } from "../../agents/workspace.js";
 import { handleReset } from "../../commands/onboard-helpers.js";
 import { createConfigIO, writeConfigFile } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../../utils.js";
 
 const DEV_IDENTITY_NAME = "C3-PO";
-const DEV_IDENTITY_THEME = "protocol droid";
+const DEV_IDENTITY_THEME = t("protocol droid") as any;
 const DEV_IDENTITY_EMOJI = "🤖";
 const DEV_AGENT_WORKSPACE_SUFFIX = "dev";
 
@@ -60,15 +61,17 @@ async function ensureDevWorkspace(dir: string) {
   const [agents, soul, tools, identity, user] = await Promise.all([
     loadDevTemplate(
       "AGENTS.dev.md",
-      `# AGENTS.md - OpenClaw Dev Workspace\n\nDefault dev workspace for openclaw gateway --dev.\n`,
+      t(
+        "# AGENTS.md - OpenClaw Dev Workspace\n\nDefault dev workspace for openclaw gateway --dev.\n",
+      ) as any,
     ),
     loadDevTemplate(
       "SOUL.dev.md",
-      `# SOUL.md - Dev Persona\n\nProtocol droid for debugging and operations.\n`,
+      t("# SOUL.md - Dev Persona\n\nProtocol droid for debugging and operations.\n") as any,
     ),
     loadDevTemplate(
       "TOOLS.dev.md",
-      `# TOOLS.md - User Tool Notes (editable)\n\nAdd your local tool notes here.\n`,
+      t("# TOOLS.md - User Tool Notes (editable)\n\nAdd your local tool notes here.\n") as any,
     ),
     loadDevTemplate(
       "IDENTITY.dev.md",
@@ -76,7 +79,7 @@ async function ensureDevWorkspace(dir: string) {
     ),
     loadDevTemplate(
       "USER.dev.md",
-      `# USER.md - User Profile\n\n- Name:\n- Preferred address:\n- Notes:\n`,
+      t("# USER.md - User Profile\n\n- Name:\n- Preferred address:\n- Notes:\n") as any,
     ),
   ]);
 

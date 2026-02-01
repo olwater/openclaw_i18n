@@ -168,7 +168,7 @@ export async function gatherDaemonStatus(
   const portFromArgs = parsePortFromArgs(command?.programArguments);
   const daemonPort = portFromArgs ?? resolveGatewayPort(daemonCfg, mergedDaemonEnv);
   const portSource: GatewayStatusSummary["portSource"] = portFromArgs
-    ? t("service args")
+    ? (t("service args") as any as any)
     : "env/config";
 
   const bindMode = (daemonCfg.gateway?.bind ?? "loopback") as
