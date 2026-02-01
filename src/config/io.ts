@@ -4,6 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { OpenClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
+import { setLocale } from "../i18n/index.js";
 import {
   loadShellEnvFallback,
   resolveShellEnvFallbackTimeoutMs,
@@ -283,6 +284,9 @@ export function createConfigIO(overrides: ConfigIoDeps = {}) {
         ),
       );
       normalizeConfigPaths(cfg);
+      if (cfg.locale) {
+        setLocale(cfg.locale);
+      }
 
       const duplicates = findDuplicateAgentDirs(cfg, {
         env: deps.env,

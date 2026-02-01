@@ -3,6 +3,7 @@ import type { DmPolicy } from "../../../config/types.js";
 import type { WizardPrompter } from "../../../wizard/prompts.js";
 import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onboarding-types.js";
 import { formatCliCommand } from "../../../cli/command-format.js";
+import { t } from "../../../i18n/index.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import {
   listTelegramAccountIds,
@@ -33,27 +34,30 @@ function setTelegramDmPolicy(cfg: OpenClawConfig, dmPolicy: DmPolicy) {
 async function noteTelegramTokenHelp(prompter: WizardPrompter): Promise<void> {
   await prompter.note(
     [
-      "1) Open Telegram and chat with @BotFather",
-      "2) Run /newbot (or /mybots)",
-      "3) Copy the token (looks like 123456:ABC...)",
-      "Tip: you can also set TELEGRAM_BOT_TOKEN in your env.",
-      `Docs: ${formatDocsLink("/telegram")}`,
-      "Website: https://openclaw.ai",
+      t("1) Open Telegram and chat with @BotFather"),
+      t("2) Run /newbot (or /mybots)"),
+      t("3) Copy the token (looks like 123456:ABC...)"),
+      t("Tip: you can also set TELEGRAM_BOT_TOKEN in your env."),
+      t("Docs: {link}").replace("{link}", formatDocsLink("/telegram")),
+      t("Website: {link}").replace("{link}", "https://openclaw.ai"),
     ].join("\n"),
-    "Telegram bot token",
+    t("Telegram bot token"),
   );
 }
 
 async function noteTelegramUserIdHelp(prompter: WizardPrompter): Promise<void> {
   await prompter.note(
     [
-      `1) DM your bot, then read from.id in \`${formatCliCommand("openclaw logs --follow")}\` (safest)`,
-      "2) Or call https://api.telegram.org/bot<bot_token>/getUpdates and read message.from.id",
-      "3) Third-party: DM @userinfobot or @getidsbot",
-      `Docs: ${formatDocsLink("/telegram")}`,
-      "Website: https://openclaw.ai",
+      t("1) DM your bot, then read from.id in {command} (safest)").replace(
+        "{command}",
+        formatCliCommand("openclaw logs --follow"),
+      ),
+      t("2) Or call https://api.telegram.org/bot<bot_token>/getUpdates and read message.from.id"),
+      t("3) Third-party: DM @userinfobot or @getidsbot"),
+      t("Docs: {link}").replace("{link}", formatDocsLink("/telegram")),
+      t("Website: {link}").replace("{link}", "https://openclaw.ai"),
     ].join("\n"),
-    "Telegram user id",
+    t("Telegram user id"),
   );
 }
 
@@ -69,7 +73,10 @@ async function promptTelegramAllowFrom(params: {
 
   const token = resolved.token;
   if (!token) {
-    await prompter.note("Telegram token missing; username lookup is unavailable.", "Telegram");
+    await prompter.note(
+      t("Telegram token missing; username lookup is unavailable."),
+      t("Telegram"),
+    );
   }
 
   const resolveTelegramUserId = async (raw: string): Promise<string | null> => {
@@ -115,18 +122,21 @@ async function promptTelegramAllowFrom(params: {
   let resolvedIds: string[] = [];
   while (resolvedIds.length === 0) {
     const entry = await prompter.text({
-      message: "Telegram allowFrom (username or user id)",
+      message: t("Telegram allowFrom (username or user id)"),
       placeholder: "@username",
       initialValue: existingAllowFrom[0] ? String(existingAllowFrom[0]) : undefined,
-      validate: (value) => (String(value ?? "").trim() ? undefined : "Required"),
+      validate: (value) => (String(value ?? "").trim() ? undefined : t("Required")),
     });
     const parts = parseInput(String(entry));
     const results = await Promise.all(parts.map((part) => resolveTelegramUserId(part)));
     const unresolved = parts.filter((_, idx) => !results[idx]);
     if (unresolved.length > 0) {
       await prompter.note(
-        `Could not resolve: ${unresolved.join(", ")}. Use @username or numeric id.`,
-        "Telegram allowlist",
+        t("Could not resolve: {unresolved}. Use @username or numeric id.").replace(
+          "{unresolved}",
+          unresolved.join(", "),
+        ),
+        t("Telegram allowlist"),
       );
       continue;
     }
@@ -210,8 +220,15 @@ export const telegramOnboardingAdapter: ChannelOnboardingAdapter = {
     return {
       channel,
       configured,
-      statusLines: [`Telegram: ${configured ? "configured" : "needs token"}`],
-      selectionHint: configured ? "recommended · configured" : "recommended · newcomer-friendly",
+      statusLines: [
+        t("Telegram: {status}").replace(
+          "{status}",
+          configured ? t("configured") : t("needs token"),
+        ),
+      ],
+      selectionHint: configured
+        ? t("recommended · configured")
+        : t("recommended · newcomer-friendly"),
       quickstartScore: configured ? 1 : 10,
     };
   },
@@ -256,7 +273,7 @@ export const telegramOnboardingAdapter: ChannelOnboardingAdapter = {
     }
     if (canUseEnv && !resolvedAccount.config.botToken) {
       const keepEnv = await prompter.confirm({
-        message: "TELEGRAM_BOT_TOKEN detected. Use env var?",
+        message: t("TELEGRAM_BOT_TOKEN detected. Use env var?"),
         initialValue: true,
       });
       if (keepEnv) {
@@ -273,29 +290,29 @@ export const telegramOnboardingAdapter: ChannelOnboardingAdapter = {
       } else {
         token = String(
           await prompter.text({
-            message: "Enter Telegram bot token",
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            message: t("Enter Telegram bot token"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           }),
         ).trim();
       }
     } else if (hasConfigToken) {
       const keep = await prompter.confirm({
-        message: "Telegram token already configured. Keep it?",
+        message: t("Telegram token already configured. Keep it?"),
         initialValue: true,
       });
       if (!keep) {
         token = String(
           await prompter.text({
-            message: "Enter Telegram bot token",
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            message: t("Enter Telegram bot token"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           }),
         ).trim();
       }
     } else {
       token = String(
         await prompter.text({
-          message: "Enter Telegram bot token",
-          validate: (value) => (value?.trim() ? undefined : "Required"),
+          message: t("Enter Telegram bot token"),
+          validate: (value) => (value?.trim() ? undefined : t("Required")),
         }),
       ).trim();
     }

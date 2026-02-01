@@ -22,7 +22,7 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (opts.nonInteractive && (authChoice === "claude-cli" || authChoice === "codex-cli")) {
     runtime.error(
       [
-        `Auth choice "${authChoice}" is deprecated.`,
+        t('Auth choice "{authChoice}" is deprecated.').replace("{authChoice}", authChoice),
         t('Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".'),
       ].join("\n"),
     );
@@ -46,7 +46,7 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
       [
         t("Non-interactive onboarding requires explicit risk acknowledgement."),
         t("Read: https://docs.openclaw.ai/security"),
-        `Re-run with: ${formatCliCommand(t("openclaw onboard --non-interactive --accept-risk ..."))}`,
+        `${t("Re-run with:")} ${formatCliCommand(t("openclaw onboard --non-interactive --accept-risk ..."))}`,
       ].join("\n"),
     );
     runtime.exit(1);

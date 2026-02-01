@@ -1,4 +1,5 @@
 import type { WizardPrompter } from "../../../wizard/prompts.js";
+import { t } from "../../../i18n/translations.js";
 
 export type ChannelAccessPolicy = "allowlist" | "open" | "disabled";
 
@@ -24,17 +25,17 @@ export async function promptChannelAccessPolicy(params: {
   allowDisabled?: boolean;
 }): Promise<ChannelAccessPolicy> {
   const options: Array<{ value: ChannelAccessPolicy; label: string }> = [
-    { value: "allowlist", label: "Allowlist (recommended)" },
+    { value: "allowlist", label: t("Allowlist (recommended)") },
   ];
   if (params.allowOpen !== false) {
-    options.push({ value: "open", label: "Open (allow all channels)" });
+    options.push({ value: "open", label: t("Open (allow all channels)") });
   }
   if (params.allowDisabled !== false) {
-    options.push({ value: "disabled", label: "Disabled (block all channels)" });
+    options.push({ value: "disabled", label: t("Disabled (block all channels)") });
   }
   const initialValue = params.currentPolicy ?? "allowlist";
   return await params.prompter.select({
-    message: `${params.label} access`,
+    message: t("{label} access").replace("{label}", params.label),
     options,
     initialValue,
   });
@@ -51,7 +52,7 @@ export async function promptChannelAllowlist(params: {
       ? formatAllowlistEntries(params.currentEntries)
       : undefined;
   const raw = await params.prompter.text({
-    message: `${params.label} allowlist (comma-separated)`,
+    message: t("{label} allowlist (comma-separated)").replace("{label}", params.label),
     placeholder: params.placeholder,
     initialValue,
   });
@@ -73,8 +74,8 @@ export async function promptChannelAccessConfig(params: {
   const shouldPrompt = params.defaultPrompt ?? !hasEntries;
   const wants = await params.prompter.confirm({
     message: params.updatePrompt
-      ? `Update ${params.label} access?`
-      : `Configure ${params.label} access?`,
+      ? t("Update {label} access?").replace("{label}", params.label)
+      : t("Configure {label} access?").replace("{label}", params.label),
     initialValue: shouldPrompt,
   });
   if (!wants) {

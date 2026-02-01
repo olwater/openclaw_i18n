@@ -24,7 +24,7 @@ function formatSkillHint(skill: {
   const installLabel = skill.install[0]?.label?.trim();
   const combined = desc && installLabel ? `${desc} — ${installLabel}` : desc || installLabel;
   if (!combined) {
-    return "install";
+    return t("install");
   }
   const maxLen = 90;
   return combined.length > maxLen ? `${combined.slice(0, maxLen - 1)}…` : combined;
@@ -65,9 +65,9 @@ export async function setupSkills(
 
   await prompter.note(
     [
-      `Eligible: ${eligible.length}`,
-      `Missing requirements: ${missing.length}`,
-      `Blocked by allowlist: ${blocked.length}`,
+      `${t("Eligible")}: ${eligible.length}`,
+      `${t("Missing requirements")}: ${missing.length}`,
+      `${t("Blocked by allowlist")}: ${blocked.length}`,
     ].join("\n"),
     t("Skills status"),
   );
@@ -84,7 +84,7 @@ export async function setupSkills(
     await prompter.note(
       [
         t("Many skill dependencies are shipped via Homebrew."),
-        "Without brew, you'll need to build from source or download releases manually.",
+        t("Without brew, you'll need to build from source or download releases manually."),
       ].join("\n"),
       t("Homebrew recommended"),
     );
@@ -95,7 +95,7 @@ export async function setupSkills(
     if (showBrewInstall) {
       await prompter.note(
         [
-          "Run:",
+          t("Run:"),
           '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
         ].join("\n"),
         t("Homebrew install"),
@@ -149,7 +149,7 @@ export async function setupSkills(
       if (!installId) {
         continue;
       }
-      const spin = prompter.progress(`Installing ${name}…`);
+      const spin = prompter.progress(t("Installing {name}…").replace("{name}", name));
       const result = await installSkill({
         workspaceDir,
         skillName: target.name,
@@ -187,7 +187,9 @@ export async function setupSkills(
       continue;
     }
     const wantsKey = await prompter.confirm({
-      message: `Set ${skill.primaryEnv} for ${skill.name}?`,
+      message: t("Set {env} for {skill}?")
+        .replace("{env}", skill.primaryEnv)
+        .replace("{skill}", skill.name),
       initialValue: false,
     });
     if (!wantsKey) {
@@ -195,8 +197,8 @@ export async function setupSkills(
     }
     const apiKey = String(
       await prompter.text({
-        message: `Enter ${skill.primaryEnv}`,
-        validate: (value) => (value?.trim() ? undefined : "Required"),
+        message: t("Enter {env}").replace("{env}", skill.primaryEnv),
+        validate: (value) => (value?.trim() ? undefined : t("Required")),
       }),
     );
     next = upsertSkillEntry(next, skill.skillKey, { apiKey: apiKey.trim() });

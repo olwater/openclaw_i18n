@@ -21,7 +21,7 @@ export function applyMinimaxProviderConfig(cfg: OpenClawConfig): OpenClawConfig 
   };
   models["lmstudio/minimax-m2.1-gs32"] = {
     ...models["lmstudio/minimax-m2.1-gs32"],
-    alias: models["lmstudio/minimax-m2.1-gs32"]?.alias ?? "Minimax",
+    alias: models["lmstudio/minimax-m2.1-gs32"]?.alias ?? t("Minimax"),
   };
 
   const providers = { ...cfg.models?.providers };
@@ -66,7 +66,7 @@ export function applyMinimaxHostedProviderConfig(
   const models = { ...cfg.agents?.defaults?.models };
   models[MINIMAX_HOSTED_MODEL_REF] = {
     ...models[MINIMAX_HOSTED_MODEL_REF],
-    alias: models[MINIMAX_HOSTED_MODEL_REF]?.alias ?? "Minimax",
+    alias: models[MINIMAX_HOSTED_MODEL_REF]?.alias ?? t("Minimax"),
   };
 
   const providers = { ...cfg.models?.providers };
@@ -174,7 +174,7 @@ export function applyMinimaxApiProviderConfig(
   const models = { ...cfg.agents?.defaults?.models };
   models[`minimax/${modelId}`] = {
     ...models[`minimax/${modelId}`],
-    alias: "Minimax",
+    alias: t("Minimax"),
   };
 
   return {

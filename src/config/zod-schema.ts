@@ -96,6 +96,7 @@ export const OpenClawSchema = z
       })
       .strict()
       .optional(),
+    locale: z.union([z.literal("en_US"), z.literal("zh_CN")]).optional(),
     env: z
       .object({
         shellEnv: z

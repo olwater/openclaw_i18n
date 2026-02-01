@@ -5,6 +5,7 @@ import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onb
 import { formatCliCommand } from "../../../cli/command-format.js";
 import { detectBinary } from "../../../commands/onboard-helpers.js";
 import { installSignalCli } from "../../../commands/signal-install.js";
+import { t } from "../../../i18n/translations.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import {
   listSignalAccountIds,
@@ -92,23 +93,23 @@ async function promptSignalAllowFrom(params: {
   const existing = resolved.config.allowFrom ?? [];
   await params.prompter.note(
     [
-      "Allowlist Signal DMs by sender id.",
-      "Examples:",
+      t("Allowlist Signal DMs by sender id."),
+      t("Examples:"),
       "- +15555550123",
       "- uuid:123e4567-e89b-12d3-a456-426614174000",
-      "Multiple entries: comma-separated.",
-      `Docs: ${formatDocsLink("/signal", "signal")}`,
+      t("Multiple entries: comma-separated."),
+      t("Docs: {link}").replace("{link}", formatDocsLink("/signal", "signal")),
     ].join("\n"),
-    "Signal allowlist",
+    t("Signal allowlist"),
   );
   const entry = await params.prompter.text({
-    message: "Signal allowFrom (E.164 or uuid)",
+    message: t("Signal allowFrom (E.164 or uuid)"),
     placeholder: "+15555550123, uuid:123e4567-e89b-12d3-a456-426614174000",
     initialValue: existing[0] ? String(existing[0]) : undefined,
     validate: (value) => {
       const raw = String(value ?? "").trim();
       if (!raw) {
-        return "Required";
+        return t("Required");
       }
       const parts = parseSignalAllowFromInput(raw);
       for (const part of parts) {
@@ -117,7 +118,7 @@ async function promptSignalAllowFrom(params: {
         }
         if (part.toLowerCase().startsWith("uuid:")) {
           if (!part.slice("uuid:".length).trim()) {
-            return "Invalid uuid entry";
+            return t("Invalid uuid entry");
           }
           continue;
         }
@@ -125,7 +126,7 @@ async function promptSignalAllowFrom(params: {
           continue;
         }
         if (!normalizeE164(part)) {
-          return `Invalid entry: ${part}`;
+          return t("Invalid entry: {part}").replace("{part}", part);
         }
       }
       return undefined;
@@ -172,10 +173,12 @@ export const signalOnboardingAdapter: ChannelOnboardingAdapter = {
       channel,
       configured,
       statusLines: [
-        `Signal: ${configured ? "configured" : "needs setup"}`,
-        `signal-cli: ${signalCliDetected ? "found" : "missing"} (${signalCliPath})`,
+        t("Signal: {status}").replace("{status}", configured ? t("configured") : t("needs setup")),
+        t("signal-cli: {status} ({path})")
+          .replace("{status}", signalCliDetected ? t("found") : t("missing"))
+          .replace("{path}", signalCliPath),
       ],
-      selectionHint: signalCliDetected ? "signal-cli found" : "signal-cli missing",
+      selectionHint: signalCliDetected ? t("signal-cli found") : t("signal-cli missing"),
       quickstartScore: signalCliDetected ? 1 : 0,
     };
   },
@@ -214,8 +217,8 @@ export const signalOnboardingAdapter: ChannelOnboardingAdapter = {
     if (options?.allowSignalInstall) {
       const wantsInstall = await prompter.confirm({
         message: cliDetected
-          ? "signal-cli detected. Reinstall/update now?"
-          : "signal-cli not found. Install now?",
+          ? t("signal-cli detected. Reinstall/update now?")
+          : t("signal-cli not found. Install now?"),
         initialValue: !cliDetected,
       });
       if (wantsInstall) {
@@ -224,27 +227,33 @@ export const signalOnboardingAdapter: ChannelOnboardingAdapter = {
           if (result.ok && result.cliPath) {
             cliDetected = true;
             resolvedCliPath = result.cliPath;
-            await prompter.note(`Installed signal-cli at ${result.cliPath}`, "Signal");
+            await prompter.note(
+              t("Installed signal-cli at {path}").replace("{path}", result.cliPath),
+              t("Signal"),
+            );
           } else if (!result.ok) {
-            await prompter.note(result.error ?? "signal-cli install failed.", "Signal");
+            await prompter.note(result.error ?? t("signal-cli install failed."), t("Signal"));
           }
         } catch (err) {
-          await prompter.note(`signal-cli install failed: ${String(err)}`, "Signal");
+          await prompter.note(
+            t("signal-cli install failed: {err}").replace("{err}", String(err)),
+            t("Signal"),
+          );
         }
       }
     }
 
     if (!cliDetected) {
       await prompter.note(
-        "signal-cli not found. Install it, then rerun this step or set channels.signal.cliPath.",
-        "Signal",
+        t("signal-cli not found. Install it, then rerun this step or set channels.signal.cliPath."),
+        t("Signal"),
       );
     }
 
     let account = accountConfig.account ?? "";
     if (account) {
       const keep = await prompter.confirm({
-        message: `Signal account set (${account}). Keep it?`,
+        message: t("Signal account set ({account}). Keep it?").replace("{account}", account),
         initialValue: true,
       });
       if (!keep) {
@@ -255,8 +264,8 @@ export const signalOnboardingAdapter: ChannelOnboardingAdapter = {
     if (!account) {
       account = String(
         await prompter.text({
-          message: "Signal bot number (E.164)",
-          validate: (value) => (value?.trim() ? undefined : "Required"),
+          message: t("Signal bot number (E.164)"),
+          validate: (value) => (value?.trim() ? undefined : t("Required")),
         }),
       ).trim();
     }
@@ -300,12 +309,15 @@ export const signalOnboardingAdapter: ChannelOnboardingAdapter = {
 
     await prompter.note(
       [
-        'Link device with: signal-cli link -n "OpenClaw"',
-        "Scan QR in Signal → Linked Devices",
-        `Then run: ${formatCliCommand("openclaw gateway call channels.status --params '{\"probe\":true}'")}`,
-        `Docs: ${formatDocsLink("/signal", "signal")}`,
+        t('Link device with: signal-cli link -n "OpenClaw"'),
+        t("Scan QR in Signal → Linked Devices"),
+        t("Then run: {cmd}").replace(
+          "{cmd}",
+          formatCliCommand("openclaw gateway call channels.status --params '{\"probe\":true}'"),
+        ),
+        t("Docs: {link}").replace("{link}", formatDocsLink("/signal", "signal")),
       ].join("\n"),
-      "Signal next steps",
+      t("Signal next steps"),
     );
 
     return { cfg: next, accountId: signalAccountId };

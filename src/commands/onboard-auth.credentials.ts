@@ -12,7 +12,7 @@ export async function writeOAuthCredentials(
   agentDir?: string,
 ): Promise<void> {
   const email =
-    typeof creds.email === "string" && creds.email.trim() ? creds.email.trim() : "default";
+    typeof creds.email === "string" && creds.email.trim() ? creds.email.trim() : t("default");
   upsertAuthProfile({
     profileId: `${provider}:${email}`,
     credential: {

@@ -68,7 +68,9 @@ export async function applyAuthChoiceApiProviders(
       return;
     }
     await params.prompter.note(
-      `Default model set to ${model} for agent "${params.agentId}".`,
+      t('Default model set to {model} for agent "{agentId}".')
+        .replace("{model}", model)
+        .replace("{agentId}", params.agentId),
       t("Model configured"),
     );
   };
@@ -143,7 +145,10 @@ export async function applyAuthChoiceApiProviders(
       const envKey = resolveEnvApiKey("openrouter");
       if (envKey) {
         const useExisting = await params.prompter.confirm({
-          message: `Use existing OPENROUTER_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+          message: t("Use existing {key} ({source}, {preview})?")
+            .replace("{key}", "OPENROUTER_API_KEY")
+            .replace("{source}", envKey.source)
+            .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
           initialValue: true,
         });
         if (useExisting) {
@@ -201,7 +206,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("vercel-ai-gateway");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing AI_GATEWAY_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "AI_GATEWAY_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -348,7 +356,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("moonshot");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing MOONSHOT_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "MOONSHOT_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -455,7 +466,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("kimi-coding");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing KIMI_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "KIMI_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -503,7 +517,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("google");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing GEMINI_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "GEMINI_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -528,7 +545,7 @@ export async function applyAuthChoiceApiProviders(
       nextConfig = applied.next;
       if (applied.changed) {
         await params.prompter.note(
-          `Default model set to ${GOOGLE_GEMINI_DEFAULT_MODEL}`,
+          t("Default model set to {model}").replace("{model}", GOOGLE_GEMINI_DEFAULT_MODEL),
           t("Model configured"),
         );
       }
@@ -550,7 +567,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("zai");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing ZAI_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "ZAI_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -586,7 +606,8 @@ export async function applyAuthChoiceApiProviders(
                 ...config.agents?.defaults?.models,
                 [ZAI_DEFAULT_MODEL_REF]: {
                   ...config.agents?.defaults?.models?.[ZAI_DEFAULT_MODEL_REF],
-                  alias: config.agents?.defaults?.models?.[ZAI_DEFAULT_MODEL_REF]?.alias ?? "GLM",
+                  alias:
+                    config.agents?.defaults?.models?.[ZAI_DEFAULT_MODEL_REF]?.alias ?? t("GLM"),
                 },
               },
             },
@@ -613,7 +634,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("xiaomi");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing XIAOMI_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "XIAOMI_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -656,7 +680,7 @@ export async function applyAuthChoiceApiProviders(
     } else {
       const key = await params.prompter.text({
         message: t("Enter Synthetic API key"),
-        validate: (value) => (value?.trim() ? undefined : "Required"),
+        validate: (value) => (value?.trim() ? undefined : t("Required")),
       });
       await setSyntheticApiKey(String(key).trim(), params.agentDir);
     }
@@ -704,7 +728,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("venice");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing VENICE_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "VENICE_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {
@@ -761,7 +788,10 @@ export async function applyAuthChoiceApiProviders(
     const envKey = resolveEnvApiKey("opencode");
     if (envKey) {
       const useExisting = await params.prompter.confirm({
-        message: `Use existing OPENCODE_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
+        message: t("Use existing {key} ({source}, {preview})?")
+          .replace("{key}", "OPENCODE_API_KEY")
+          .replace("{source}", envKey.source)
+          .replace("{preview}", formatApiKeyPreview(envKey.apiKey)),
         initialValue: true,
       });
       if (useExisting) {

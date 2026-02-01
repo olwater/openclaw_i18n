@@ -70,8 +70,11 @@ async function requireRiskAcknowledgement(params: {
       t("- Use the strongest available model for any bot with tools or untrusted inboxes."),
       "",
       t("Run regularly:"),
-      t("openclaw security audit --deep"),
-      t("openclaw security audit --fix"),
+      t("- Run: {command}").replace(
+        "{command}",
+        formatCliCommand("openclaw security audit --deep"),
+      ),
+      t("- Run: {command}").replace("{command}", formatCliCommand("openclaw security audit --fix")),
       "",
       t("Must read: https://docs.openclaw.ai/gateway/security"),
     ].join("\n"),
@@ -104,7 +107,9 @@ export async function runOnboardingWizard(
     if (snapshot.issues.length > 0) {
       await prompter.note(
         [
-          ...snapshot.issues.map((iss) => `- ${iss.path}: ${iss.message}`),
+          ...snapshot.issues.map((iss) =>
+            t("- {path}: {message}").replace("{path}", iss.path).replace("{message}", iss.message),
+          ),
           "",
           t("Docs: https://docs.openclaw.ai/gateway/configuration"),
         ].join("\n"),
@@ -112,7 +117,10 @@ export async function runOnboardingWizard(
       );
     }
     await prompter.outro(
-      `Config invalid. Run \`${formatCliCommand(t("openclaw doctor"))}\` to repair it, then re-run onboarding.`,
+      t("Config invalid. Run {command} to repair it, then re-run onboarding.").replace(
+        "{command}",
+        `\`${formatCliCommand(t("openclaw doctor"))}\``,
+      ),
     );
     runtime.exit(1);
     return;
@@ -146,7 +154,7 @@ export async function runOnboardingWizard(
         { value: "quickstart", label: t("QuickStart"), hint: quickstartHint },
         { value: "advanced", label: t("Manual"), hint: manualHint },
       ],
-      initialValue: t("quickstart") as any,
+      initialValue: "quickstart",
     }));
 
   if (opts.mode === "remote" && flow === "quickstart") {
@@ -320,8 +328,8 @@ export async function runOnboardingWizard(
               value: "local",
               label: t("Local gateway (this machine)"),
               hint: localProbe.ok
-                ? `Gateway reachable (${localUrl})`
-                : `No gateway detected (${localUrl})`,
+                ? t("Gateway reachable ({url})").replace("{url}", localUrl)
+                : t("No gateway detected ({url})").replace("{url}", localUrl),
             },
             {
               value: "remote",
@@ -329,8 +337,8 @@ export async function runOnboardingWizard(
               hint: !remoteUrl
                 ? t("No remote URL configured yet")
                 : remoteProbe?.ok
-                  ? `Gateway reachable (${remoteUrl})`
-                  : `Configured but unreachable (${remoteUrl})`,
+                  ? t("Gateway reachable ({url})").replace("{url}", remoteUrl)
+                  : t("Configured but unreachable ({url})").replace("{url}", remoteUrl),
             },
           ],
         })) as OnboardMode));

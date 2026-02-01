@@ -105,7 +105,7 @@ export async function configureGatewayForOnboarding(
             },
             { value: "password", label: t("Password") },
           ],
-          initialValue: t("token"),
+          initialValue: "token",
         })) as GatewayAuthChoice);
 
   const tailscaleMode: GatewayWizardSettings["tailscaleMode"] =
@@ -148,9 +148,11 @@ export async function configureGatewayForOnboarding(
   let tailscaleResetOnExit = flow === "quickstart" ? quickstartGateway.tailscaleResetOnExit : false;
   if (tailscaleMode !== "off" && flow !== "quickstart") {
     await prompter.note(
-      ["Docs:", "https://docs.openclaw.ai/gateway/tailscale", "https://docs.openclaw.ai/web"].join(
-        "\n",
-      ),
+      [
+        t("Docs:"),
+        "https://docs.openclaw.ai/gateway/tailscale",
+        "https://docs.openclaw.ai/web",
+      ].join("\n"),
       t("Tailscale"),
     );
     tailscaleResetOnExit = Boolean(
@@ -198,7 +200,7 @@ export async function configureGatewayForOnboarding(
         ? quickstartGateway.password
         : await prompter.text({
             message: t("Gateway password"),
-            validate: (value) => (value?.trim() ? undefined : "Required"),
+            validate: (value) => (value?.trim() ? undefined : t("Required")),
           });
     nextConfig = {
       ...nextConfig,

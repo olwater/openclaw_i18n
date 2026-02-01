@@ -230,7 +230,7 @@ export async function usesSlowDynamicCompletion(
 export function registerCompletionCli(program: Command) {
   program
     .command("completion")
-    .description("Generate shell completion script")
+    .description(t("Generate shell completion script") as any)
     .addOption(
       new Option("-s, --shell <shell>", "Shell to generate completion for (default: zsh)").choices(
         COMPLETION_SHELLS,
@@ -374,7 +374,7 @@ _${rootCmd}_root_completion() {
   case $state in
     (args)
       case $line[1] in
-        ${program.commands.map((cmd) => `(${cmd.name()}) _${rootCmd}_${cmd.name().replace(/-/g, "_")} ;;`).join("\n        ")}
+        ${program.commands.map((cmd) => `(${cmd.name()}) _${rootCmd}_${cmd.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as any)}
       esac
       ;;
   esac
@@ -404,7 +404,7 @@ function generateZshArgs(cmd: Command): string {
       }
       return `"${name}[${desc}]"`;
     })
-    .join(" \\\n    ");
+    .join(t(" \\\n    ") as any);
 }
 
 function generateZshSubcmdList(cmd: Command): string {
@@ -446,7 +446,7 @@ ${funcName}() {
   case $state in
     (args)
       case $line[1] in
-        ${subCommands.map((sub) => `(${sub.name()}) ${funcName}_${sub.name().replace(/-/g, "_")} ;;`).join("\n        ")}
+        ${subCommands.map((sub) => `(${sub.name()}) ${funcName}_${sub.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as any)}
       esac
       ;;
   esac
@@ -482,7 +482,7 @@ _${rootCmd}_completion() {
     opts="${program.commands.map((c) => c.name()).join(" ")} ${program.options.map((o) => o.flags.split(" ")[0]).join(" ")}"
     
     case "\${prev}" in
-      ${program.commands.map((cmd) => generateBashSubcommand(cmd)).join("\n      ")}
+      ${program.commands.map((cmd) => generateBashSubcommand(cmd)).join(t("\n      ") as any)}
     esac
 
     if [[ \${cur} == -* ]] ; then
