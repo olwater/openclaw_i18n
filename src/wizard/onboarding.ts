@@ -65,10 +65,10 @@ async function requireRiskAcknowledgement(params: {
       t("Ask someone experienced to help before enabling tools or exposing it to the internet."),
       "",
       t("Recommended baseline:"),
-      "- Pairing/allowlists + mention gating.",
-      "- Sandbox + least-privilege tools.",
-      "- Keep secrets out of the agent’s reachable filesystem.",
-      "- Use the strongest available model for any bot with tools or untrusted inboxes.",
+      t("- Pairing/allowlists + mention gating."),
+      t("- Sandbox + least-privilege tools."),
+      t("- Keep secrets out of the agent’s reachable filesystem."),
+      t("- Use the strongest available model for any bot with tools or untrusted inboxes."),
       "",
       t("Run regularly:"),
       t("openclaw security audit --deep"),
@@ -119,7 +119,10 @@ export async function runOnboardingWizard(
     return;
   }
 
-  const quickstartHint = `Configure details later via ${formatCliCommand(t("openclaw configure"))}.`;
+  const quickstartHint = t("Configure details later via %s.").replace(
+    "%s",
+    formatCliCommand("openclaw configure"),
+  );
   const manualHint = t("Configure port, network, Tailscale, and auth options.");
   const explicitFlowRaw = opts.flow?.trim();
   const normalizedExplicitFlow = explicitFlowRaw === "manual" ? "advanced" : explicitFlowRaw;
@@ -144,7 +147,7 @@ export async function runOnboardingWizard(
         { value: "quickstart", label: t("QuickStart"), hint: quickstartHint },
         { value: "advanced", label: t("Manual"), hint: manualHint },
       ],
-      initialValue: t("quickstart"),
+      initialValue: t("quickstart") as any,
     }));
 
   if (opts.mode === "remote" && flow === "quickstart") {
@@ -245,7 +248,7 @@ export async function runOnboardingWizard(
         return t("Loopback (127.0.0.1)");
       }
       if (value === "lan") {
-        return "LAN";
+        return t("LAN");
       }
       if (value === "custom") {
         return t("Custom IP");
@@ -253,37 +256,37 @@ export async function runOnboardingWizard(
       if (value === "tailnet") {
         return t("Tailnet (Tailscale IP)");
       }
-      return "Auto";
+      return t("Auto");
     };
     const formatAuth = (value: GatewayAuthChoice) => {
       if (value === "token") {
         return t("Token (default)");
       }
-      return "Password";
+      return t("Password");
     };
     const formatTailscale = (value: "off" | "serve" | "funnel") => {
       if (value === "off") {
-        return "Off";
+        return t("Off");
       }
       if (value === "serve") {
-        return "Serve";
+        return t("Serve");
       }
-      return "Funnel";
+      return t("Funnel");
     };
     const quickstartLines = quickstartGateway.hasExisting
       ? [
           t("Keeping your current gateway settings:"),
-          `Gateway port: ${quickstartGateway.port}`,
-          `Gateway bind: ${formatBind(quickstartGateway.bind)}`,
+          `${t("Gateway port")}: ${quickstartGateway.port}`,
+          `${t("Gateway bind")}: ${formatBind(quickstartGateway.bind)}`,
           ...(quickstartGateway.bind === "custom" && quickstartGateway.customBindHost
-            ? [`Gateway custom IP: ${quickstartGateway.customBindHost}`]
+            ? [`${t("Gateway custom IP")}: ${quickstartGateway.customBindHost}`]
             : []),
-          `Gateway auth: ${formatAuth(quickstartGateway.authMode)}`,
-          `Tailscale exposure: ${formatTailscale(quickstartGateway.tailscaleMode)}`,
+          `${t("Gateway auth")}: ${formatAuth(quickstartGateway.authMode)}`,
+          `${t("Tailscale exposure")}: ${formatTailscale(quickstartGateway.tailscaleMode)}`,
           t("Direct to chat channels."),
         ]
       : [
-          `Gateway port: ${DEFAULT_GATEWAY_PORT}`,
+          `${t("Gateway port")}: ${DEFAULT_GATEWAY_PORT}`,
           t("Gateway bind: Loopback (127.0.0.1)"),
           t("Gateway auth: Token (default)"),
           t("Tailscale exposure: Off"),
