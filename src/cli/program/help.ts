@@ -41,7 +41,9 @@ export function configureProgramHelp(program: Command, ctx: ProgramContext) {
   program
     .name(CLI_NAME)
     .description("")
-    .version(ctx.programVersion)
+    .version(ctx.programVersion, "-V, --version", t("output the version number"))
+    .helpOption("-h, --help", t("display help for command"))
+    .helpCommand("help [command]", t("display help for command"))
     .option(
       "--dev",
       t(
@@ -65,9 +67,9 @@ export function configureProgramHelp(program: Command, ctx: ProgramContext) {
   program.configureOutput({
     writeOut: (str) => {
       const colored = str
-        .replace(/^Usage:/gm, theme.heading("Usage:"))
-        .replace(/^Options:/gm, theme.heading("Options:"))
-        .replace(/^Commands:/gm, theme.heading("Commands:"));
+        .replace(/^Usage:/gm, theme.heading(t("Usage:")))
+        .replace(/^Options:/gm, theme.heading(t("Options:")))
+        .replace(/^Commands:/gm, theme.heading(t("Commands:")));
       process.stdout.write(colored);
     },
     writeErr: (str) => process.stderr.write(str),
