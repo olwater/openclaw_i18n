@@ -2667,12 +2667,14 @@ export default {
   // =====================================================================================
   "  https://tailscale.com/download/mac": "  https://tailscale.com/download/mac",
   "192.168.1.100": "192.168.1.100",
+  Auto: "自动",
   "Auto (Loopback → LAN)": "自动 (环回 → LAN)",
   "Bind to 0.0.0.0 - accessible from anywhere on your network":
     "绑定到 0.0.0.0 - 可从网络中的任何位置访问",
   "Bind to 127.0.0.1 - secure, local-only access": "绑定到 127.0.0.1 - 安全，仅限本地访问",
   "Bind to your Tailscale IP only (100.x.x.x)": "仅绑定到你的 Tailscale IP (100.x.x.x)",
   "Custom IP": "自定义 IP",
+  "Gateway custom IP": "Gateway 自定义 IP",
   "Custom IP address": "自定义 IP 地址",
   "Ensure Tailscale is installed from:": "确保 Tailscale 已安装，下载地址:",
   Funnel: "Funnel (公网暴露)",
@@ -2686,6 +2688,7 @@ export default {
   "Invalid IPv4 address (each octet must be 0-255)": "无效的 IPv4 地址 (每个字节必须在 0-255 之间)",
   "Invalid port": "无效端口",
   "LAN (All interfaces)": "LAN (所有接口)",
+  LAN: "LAN",
   "Loopback (Local only)": "环回 (仅本地)",
   "No Tailscale exposure": "不进行 Tailscale 暴露",
   Off: "关闭",
@@ -3847,6 +3850,7 @@ export default {
     "在启用工具或将其暴露到互联网之前，请寻求有经验人士的帮助。",
   "Config + creds + sessions": "配置 + 凭据 + 会话",
   "Config handling": "配置处理",
+  "Configure details later via %s.": "稍后通过 %s 进行详细配置。",
   "Configure port, network, Tailscale, and auth options.":
     "配置端口、网络、Tailscale 以及认证选项。",
   "Direct to chat channels.": "直接转到聊天频道。",
@@ -3862,19 +3866,19 @@ export default {
     "无效的 --flow 参数（请使用 quickstart、manual 或 advanced）。",
   "Keeping your current gateway settings:": "保留您当前的 Gateway 设置：",
   "Local gateway (this machine)": "本地 Gateway（本机）",
-  Manual: "Manual",
+  Manual: "手动配置",
   "Must read: https://docs.openclaw.ai/gateway/security":
     "必读：https://docs.openclaw.ai/gateway/security",
   "Onboarding mode": "入门模式",
   "OpenClaw is a hobby project and still in beta. Expect sharp edges.":
     "OpenClaw 是一个业余项目，仍处于 Beta 阶段。请做好遇到问题的心理准备。",
   "OpenClaw onboarding": "OpenClaw 入门",
-  QuickStart: "QuickStart",
+  QuickStart: "快速开始",
   "QuickStart only supports local gateways. Switching to Manual mode.":
     "QuickStart 仅支持本地 Gateway。正在切换到手动模式。",
   "Recommended baseline:": "推荐的安全基线：",
   "Remote gateway (info-only)": "远程 Gateway（仅信息）",
-  Reset: "Reset",
+  Reset: "重置",
   "Run regularly:": "定期运行：",
   "Security warning — please read.": "安全警告 — 请阅读。",
   "Skipping channel setup.": "跳过频道设置。",
