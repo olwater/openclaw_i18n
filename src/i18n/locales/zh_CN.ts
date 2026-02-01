@@ -3,6 +3,12 @@
 // =====================================================================================
 
 export default {
+  "- Pairing/allowlists + mention gating.": "- 配对/白名单 + 提及唤醒管控。",
+  "- Sandbox + least-privilege tools.": "- 沙盒隔离 + 最小权限工具。",
+  "- Keep secrets out of the agent’s reachable filesystem.":
+    "- 务必将机密信息隔离在 Agent 可访问的文件系统之外。",
+  "- Use the strongest available model for any bot with tools or untrusted inboxes.":
+    "- 对于启用工具或任何不可信的 Bot，务必使用能力最强的模型。",
   // =====================================================================================
   // 模块: src/cli/acp-cli.ts
   // =====================================================================================
@@ -14,11 +20,11 @@ export default {
   "Extra arguments for the ACP server": "ACP 服务端的额外参数",
   "Fail if the session key/label does not exist": "如果会话密钥/标签不存在则失败",
   "Gateway WebSocket URL (defaults to gateway.remote.url when configured)":
-    "网关 WebSocket URL (配置时默认为 gateway.remote.url)",
-  "Gateway password (if required)": "网关密码 (如果需要)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
+    "Gateway WebSocket URL (配置后默认为 gateway.remote.url)",
+  "Gateway password (if required)": "Gateway 密码 (如果需要)",
+  "Gateway token (if required)": "Gateway Token (如果需要)",
   "Reset the session key before first use": "首次使用前重置会话密钥",
-  "Run an ACP bridge backed by the Gateway": "运行由网关支持的 ACP 桥接",
+  "Run an ACP bridge backed by the Gateway": "运行由 Gateway 支持的 ACP 桥接",
   "Run an interactive ACP client against the local ACP bridge":
     "针对本地 ACP 桥接运行交互式 ACP 客户端",
   "Verbose client logging": "详细的客户端日志",
@@ -26,34 +32,21 @@ export default {
   "Working directory for the ACP session": "ACP 会话的工作目录",
 
   // =====================================================================================
-  // 模块: src/cli/banner.ts
-  // =====================================================================================
-  "              ": "[TODO]               ",
-  "                  🦞 OPENCLAW 🦞                    ":
-    "[TODO]                   🦞 OPENCLAW 🦞                    ",
-  " OPENCLAW ": "[TODO]  OPENCLAW ",
-  "🦞": "[TODO] 🦞",
-  "🦞 ": "[TODO] 🦞 ",
-  "🦞 OpenClaw": "[TODO] 🦞 OpenClaw",
-
-  // =====================================================================================
   // 模块: src/cli/browser-cli-actions-input/register.element.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "Click an element by ref from snapshot": "通过快照中的 ref 点击元素",
   "Comma-separated modifiers (Shift,Alt,Meta)": "逗号分隔的修饰键 (Shift,Alt,Meta)",
   "Double click": "双击",
   "Drag from one ref to another": "从一个 ref 拖拽到另一个",
   "End ref id": "结束 ref ID",
   "Hover an element by ai ref": "通过 AI ref 悬停元素",
-  "How long to wait for scroll (default: 20000)": "滚动等待时间 (默认: 20000)",
+  "How long to wait for scroll (default: 20000)": "滚动等待时长 (默认: 20000)",
   "Key to press (e.g. Enter)": "按下的键 (例如 Enter)",
   "Mouse button to use": "使用的鼠标按键",
   "Option values to select": "要选择的选项值",
   "Press Enter after typing": "输入后按 Enter",
   "Press a key": "按下一个键",
-  "Scroll an element into view by ref from snapshot": "通过快照中的 ref 将元素滚动到视图中",
+  "Scroll an element into view by ref from snapshot": "根据快照中的 ref 将元素滚动至可见区域",
   "Select option(s) in a select element": "在 select 元素中选择选项",
   "Start ref id": "起始 ref ID",
   "Text to type": "要输入的文本",
@@ -66,17 +59,16 @@ export default {
   "Accept the dialog": "接受对话框",
   "Arm file upload for the next file chooser": "为下一个文件选择器准备文件上传",
   "Arm the next modal dialog (alert/confirm/prompt)": "准备下一个模态对话框 (alert/confirm/prompt)",
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "CSS selector for <input type=file>": "<input type=file> 的 CSS 选择器",
   "Click a ref and save the resulting download": "点击 ref 并保存产生的文件下载",
   "Dismiss the dialog": "关闭对话框",
   "File paths to upload": "要上传的文件路径",
   "How long to wait for the download to start (default: 120000)":
-    "等待下载开始的时间 (默认: 120000)",
-  "How long to wait for the next dialog (default: 120000)": "等待下一个对话框的时间 (默认: 120000)",
-  "How long to wait for the next download (default: 120000)": "等待下一个下载的时间 (默认: 120000)",
+    "等待下载开始的时长 (默认: 120000)",
+  "How long to wait for the next dialog (default: 120000)": "等待下一个对话框的时长 (默认: 120000)",
+  "How long to wait for the next download (default: 120000)": "等待下一个下载的时长 (默认: 120000)",
   "How long to wait for the next file chooser (default: 120000)":
-    "等待下一个文件选择器的时间 (默认: 120000)",
+    "等待下一个文件选择器的时长 (默认: 120000)",
   "Prompt response text": "提示框响应文本",
   "Ref id for <input type=file> to set directly": "直接设置的 <input type=file> 的 Ref ID",
   "Ref id from snapshot to click after arming": "准备后点击的快照 Ref ID",
@@ -90,12 +82,11 @@ export default {
   // =====================================================================================
   // 模块: src/cli/browser-cli-actions-input/register.form-wait-eval.ts
   // =====================================================================================
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "CSS selector to wait for (visible)": "等待的 CSS 选择器 (可见)",
   "Evaluate a function against the page or a ref": "在页面或 ref 上执行函数",
   "Fill a form with JSON field descriptors": "使用 JSON 字段描述符填充表单",
   "Function source, e.g. (el) => el.textContent": "函数源码, 例如 (el) => el.textContent",
-  "How long to wait for each condition (default: 20000)": "每个条件的等待时间 (默认: 20000)",
+  "How long to wait for each condition (default: 20000)": "每个条件的等待时长 (默认: 20000)",
   "JSON array of field objects": "字段对象的 JSON 数组",
   "Missing --fn": "缺少 --fn",
   "Read JSON array from a file": "从文件读取 JSON 数组",
@@ -107,19 +98,15 @@ export default {
   "Wait for text to appear": "等待文本出现",
   "Wait for text to disappear": "等待文本消失",
   "Wait for time, selector, URL, load state, or JS conditions":
-    "等待时间、选择器、URL、加载状态或 JS 条件",
+    "等待时长、选择器、URL、加载状态或 JS 条件",
   "wait complete": "等待完成",
 
   // =====================================================================================
   // 模块: src/cli/browser-cli-actions-input/register.navigation.ts
   // =====================================================================================
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "Navigate the current tab to a URL": "将当前标签页导航到 URL",
   "Resize the viewport": "调整视口大小",
   "URL to navigate to": "要导航到的 URL",
-  "Viewport height": "视口高度",
-  "Viewport width": "视口宽度",
-  "width and height must be numbers": "宽度和高度必须是数字",
 
   // =====================================================================================
   // 模块: src/cli/browser-cli-actions-input/shared.ts
@@ -135,8 +122,8 @@ export default {
   "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "Filter by level (error, warn, info)": "按级别过滤 (error, warn, info)",
   "Get recent console messages": "获取最近的控制台消息",
-  "How long to wait for the response (default: 20000)": "等待响应的时间 (默认: 20000)",
-  "Max body chars to return (default: 200000)": "返回的最大正文字符数 (默认: 200000)",
+  "How long to wait for the response (default: 20000)": "响应等待时长 (默认: 20000)",
+  "Max body chars to return (default: 200000)": "返回正文的最大字符数 (默认: 200000)",
   "Save page as PDF": "将页面保存为 PDF",
   "URL (exact, substring, or glob like **/api)": "URL (精确匹配、子串或 glob 如 **/api)",
   "Wait for a network response and return its body": "等待网络响应并返回其正文",
@@ -144,9 +131,8 @@ export default {
   // =====================================================================================
   // 模块: src/cli/browser-cli-debug.ts
   // =====================================================================================
-  " fail": "[TODO]  fail",
-  " ok": "[TODO]  ok",
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
+  " fail": " 失败",
+  " ok": " 正常",
   "Clear stored errors after reading": "读取后清除存储的错误",
   "Clear stored requests after reading": "读取后清除存储的请求",
   "Disable screenshots": "禁用截图",
@@ -167,92 +153,90 @@ export default {
   // =====================================================================================
   // 模块: src/cli/browser-cli-examples.ts
   // =====================================================================================
-  "openclaw browser click 12 --double": "[TODO] openclaw browser click 12 --double",
-  "openclaw browser close abcd1234": "[TODO] openclaw browser close abcd1234",
-  "openclaw browser console --level error": "[TODO] openclaw browser console --level error",
-  "openclaw browser dialog --accept": "[TODO] openclaw browser dialog --accept",
-  "openclaw browser drag 10 11": "[TODO] openclaw browser drag 10 11",
+  "openclaw browser click 12 --double": "openclaw browser click 12 --double",
+  "openclaw browser close abcd1234": "openclaw browser close abcd1234",
+  "openclaw browser console --level error": "openclaw browser console --level error",
+  "openclaw browser dialog --accept": "openclaw browser dialog --accept",
+  "openclaw browser drag 10 11": "openclaw browser drag 10 11",
   "openclaw browser evaluate --fn '(el) => el.textContent' --ref 7":
-    "[TODO] openclaw browser evaluate --fn '(el) => el.textContent' --ref 7",
+    "openclaw browser evaluate --fn '(el) => el.textContent' --ref 7",
   'openclaw browser fill --fields \'[{"ref":"1","value":"Ada"}]\'':
-    '[TODO] openclaw browser fill --fields \'[{"ref":"1","value":"Ada"}]\'',
-  "openclaw browser focus abcd1234": "[TODO] openclaw browser focus abcd1234",
-  "openclaw browser hover 44": "[TODO] openclaw browser hover 44",
-  "openclaw browser navigate https://example.com":
-    "[TODO] openclaw browser navigate https://example.com",
-  "openclaw browser open https://example.com": "[TODO] openclaw browser open https://example.com",
-  "openclaw browser pdf": "[TODO] openclaw browser pdf",
-  "openclaw browser press Enter": "[TODO] openclaw browser press Enter",
-  "openclaw browser resize 1280 720": "[TODO] openclaw browser resize 1280 720",
-  "openclaw browser screenshot": "[TODO] openclaw browser screenshot",
-  "openclaw browser screenshot --full-page": "[TODO] openclaw browser screenshot --full-page",
-  "openclaw browser screenshot --ref 12": "[TODO] openclaw browser screenshot --ref 12",
-  "openclaw browser select 9 OptionA OptionB": "[TODO] openclaw browser select 9 OptionA OptionB",
-  "openclaw browser snapshot": "[TODO] openclaw browser snapshot",
-  "openclaw browser snapshot --efficient": "[TODO] openclaw browser snapshot --efficient",
+    'openclaw browser fill --fields \'[{"ref":"1","value":"Ada"}]\'',
+  "openclaw browser focus abcd1234": "openclaw browser focus abcd1234",
+  "openclaw browser hover 44": "openclaw browser hover 44",
+  "openclaw browser navigate https://example.com": "openclaw browser navigate https://example.com",
+  "openclaw browser open https://example.com": "openclaw browser open https://example.com",
+  "openclaw browser pdf": "openclaw browser pdf",
+  "openclaw browser press Enter": "openclaw browser press Enter",
+  "openclaw browser resize 1280 720": "openclaw browser resize 1280 720",
+  "openclaw browser screenshot": "openclaw browser screenshot",
+  "openclaw browser screenshot --full-page": "openclaw browser screenshot --full-page",
+  "openclaw browser screenshot --ref 12": "openclaw browser screenshot --ref 12",
+  "openclaw browser select 9 OptionA OptionB": "openclaw browser select 9 OptionA OptionB",
+  "openclaw browser snapshot": "openclaw browser snapshot",
+  "openclaw browser snapshot --efficient": "openclaw browser snapshot --efficient",
   "openclaw browser snapshot --format aria --limit 200":
-    "[TODO] openclaw browser snapshot --format aria --limit 200",
-  "openclaw browser snapshot --labels": "[TODO] openclaw browser snapshot --labels",
-  "openclaw browser start": "[TODO] openclaw browser start",
-  "openclaw browser status": "[TODO] openclaw browser status",
-  "openclaw browser stop": "[TODO] openclaw browser stop",
-  "openclaw browser tabs": "[TODO] openclaw browser tabs",
-  'openclaw browser type 23 "hello" --submit': '[TODO] openclaw browser type 23 "hello" --submit',
-  "openclaw browser upload /tmp/file.pdf": "[TODO] openclaw browser upload /tmp/file.pdf",
-  'openclaw browser wait --text "Done"': '[TODO] openclaw browser wait --text "Done"',
+    "openclaw browser snapshot --format aria --limit 200",
+  "openclaw browser snapshot --labels": "openclaw browser snapshot --labels",
+  "openclaw browser start": "openclaw browser start",
+  "openclaw browser status": "openclaw browser status",
+  "openclaw browser stop": "openclaw browser stop",
+  "openclaw browser tabs": "openclaw browser tabs",
+  'openclaw browser type 23 "hello" --submit': 'openclaw browser type 23 "hello" --submit',
+  "openclaw browser upload /tmp/file.pdf": "openclaw browser upload /tmp/file.pdf",
+  'openclaw browser wait --text "Done"': 'openclaw browser wait --text "Done"',
 
   // =====================================================================================
   // 模块: src/cli/browser-cli-extension.ts
   // 功能: 浏览器 CLI 扩展管理
   // =====================================================================================
   "Bundled Chrome extension is missing. Reinstall OpenClaw and try again.":
-    "[TODO] Bundled Chrome extension is missing. Reinstall OpenClaw and try again.",
-  "Chrome extension helpers": "[TODO] Chrome extension helpers",
+    "缺失内置的 Chrome 扩展。请重新安装 OpenClaw 后重试。",
+  "Chrome extension helpers": "Chrome 扩展助手",
   "Chrome extension install failed (manifest.json missing). Try again.":
-    "[TODO] Chrome extension install failed (manifest.json missing). Try again.",
-  "Copied to clipboard.": "[TODO] Copied to clipboard.",
-  "Copy to clipboard unavailable.": "[TODO] Copy to clipboard unavailable.",
-  "Install the Chrome extension to a stable local path":
-    "[TODO] Install the Chrome extension to a stable local path",
+    "Chrome 扩展安装失败 (缺失 manifest.json)。请重试。",
+  "Copied to clipboard.": "已复制到剪贴板。",
+  "Copy to clipboard unavailable.": "复制到剪贴板不可用。",
+  "Install the Chrome extension to a stable local path": "将 Chrome 扩展安装到稳定的本地路径",
   "Print the path to the installed Chrome extension (load unpacked)":
-    "[TODO] Print the path to the installed Chrome extension (load unpacked)",
-  "openclaw browser extension install": "[TODO] openclaw browser extension install",
+    "打印已安装 Chrome 扩展的路径 (加载解压后的扩展)",
+  "openclaw browser extension install": "openclaw browser extension install",
 
   // =====================================================================================
   // 模块: src/cli/browser-cli-inspect.ts
   // =====================================================================================
-  "  ": "[TODO]   ",
-  "ARIA ref from ai snapshot": "[TODO] ARIA ref from ai snapshot",
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
-  "CSS selector for element screenshot": "[TODO] CSS selector for element screenshot",
-  "Capture a screenshot (MEDIA:<path>)": "[TODO] Capture a screenshot (MEDIA:<path>)",
+  "  ": "  ",
+  "ARIA ref from ai snapshot": "来自 ai 快照的 ARIA 引用",
+  "CSS selector for element screenshot": "元素截图的 CSS 选择器",
+  "Capture a screenshot (MEDIA:<path>)": "捕获截图 (MEDIA:<path>)",
   "Capture a snapshot (default: ai; aria is the accessibility tree)":
-    "[TODO] Capture a snapshot (default: ai; aria is the accessibility tree)",
-  "Capture full scrollable page": "[TODO] Capture full scrollable page",
-  "Include viewport label overlay screenshot": "[TODO] Include viewport label overlay screenshot",
-  "Max nodes (default: 500/800)": "[TODO] Max nodes (default: 500/800)",
-  "Output type (default: png)": "[TODO] Output type (default: png)",
-  "Role snapshot: compact output": "[TODO] Role snapshot: compact output",
-  "Role snapshot: interactive elements only": "[TODO] Role snapshot: interactive elements only",
-  "Role snapshot: max depth": "[TODO] Role snapshot: max depth",
-  "Role snapshot: scope to CSS selector": "[TODO] Role snapshot: scope to CSS selector",
-  "Role snapshot: scope to an iframe selector": "[TODO] Role snapshot: scope to an iframe selector",
-  "Snapshot format (default: ai)": "[TODO] Snapshot format (default: ai)",
-  "Snapshot preset (efficient)": "[TODO] Snapshot preset (efficient)",
-  "Use the efficient snapshot preset": "[TODO] Use the efficient snapshot preset",
-  "Write snapshot to a file": "[TODO] Write snapshot to a file",
+    "捕获快照 (默认: ai; aria 为无障碍树)",
+  "Capture full scrollable page": "捕获完整可滚动页面",
+  "Include viewport label overlay screenshot": "包含视口标签叠加截图",
+  "Max nodes (default: 500/800)": "最大节点数 (默认: 500/800)",
+  "Output type (default: png)": "输出类型 (默认: png)",
+  "Role snapshot: compact output": "角色快照: 紧凑输出",
+  "Role snapshot: interactive elements only": "角色快照: 仅交互元素",
+  "Role snapshot: max depth": "角色快照: 最大深度",
+  "Role snapshot: scope to CSS selector": "角色快照: 作用域限于 CSS 选择器",
+  "Role snapshot: scope to an iframe selector": "角色快照: 作用域限于 iframe 选择器",
+  "Snapshot format (default: ai)": "快照格式 (默认: ai)",
+  "Snapshot preset (efficient)": "快照预设（高效）",
+  "Use the efficient snapshot preset": "使用高效快照预设",
+  "Write snapshot to a file": "将快照写入文件",
 
   // =====================================================================================
   // 模块: src/cli/browser-cli-manage.ts
   // =====================================================================================
-  "\n  driver: extension": "[TODO] \n  driver: extension",
-  " [default]": "[TODO]  [default]",
-  " [remote]": "[TODO]  [remote]",
+  "\n  driver: extension": "\n  驱动: extension",
+  " [default]": " [默认]",
+  " [remote]": " [远程]",
   "CDP URL for remote Chrome (http/https)": "远程 Chrome 的 CDP URL (http/https)",
   "Close a tab (target id optional)": "关闭标签页 (目标 ID 可选)",
   "Close tab by index (1-based); default: first tab":
     "按索引关闭标签页 (从1开始); 默认: 第一个标签页",
   "Create a new browser profile": "创建新的浏览器配置",
+  "Delete a browser profile": "删除浏览器配置",
   "Focus a tab by target id (or unique prefix)": "通过目标 ID (或唯一前缀) 聚焦标签页",
   "Focus tab by index (1-based)": "按索引聚焦标签页 (从1开始)",
   "List all browser profiles": "列出所有浏览器配置",
@@ -265,6 +249,7 @@ export default {
   "Profile driver (openclaw|extension). Default: openclaw":
     "配置驱动 (openclaw|extension)。默认: openclaw",
   "Profile name (lowercase, numbers, hyphens)": "配置名称 (小写字母, 数字, 连字符)",
+  "Profile name to delete": "要删除的配置名称",
   "Reset browser profile (moves it to Trash)": "重置浏览器配置 (移至回收站)",
   "Show browser status": "显示浏览器状态",
   "Start the browser (no-op if already running)": "启动浏览器 (如果已运行则无操作)",
@@ -278,7 +263,7 @@ export default {
   "index must be >= 1": "索引必须 >= 1",
   "index must be a positive number": "索引必须是正数",
   "opened new tab": "已打开新标签页",
-  "🦞 browser profile already missing.": "[TODO] 🦞 browser profile already missing.",
+  "🦞 browser profile already missing.": "🦞 浏览器配置文件已缺失。",
 
   // =====================================================================================
   // 模块: src/cli/browser-cli-shared.ts
@@ -289,7 +274,6 @@ export default {
   // =====================================================================================
   // 模块: src/cli/browser-cli-state.cookies-storage.ts
   // =====================================================================================
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "Clear all cookies": "清除所有 Cookie",
   "Cookie URL scope (recommended)": "Cookie URL 作用域 (推荐)",
   "Cookie name": "Cookie 名称",
@@ -306,9 +290,8 @@ export default {
   // =====================================================================================
   "Accuracy in meters": "精度 (米)",
   'Apply a Playwright device descriptor (e.g. "iPhone 14")':
-    '[TODO] Apply a Playwright device descriptor (e.g. "iPhone 14")',
+    '应用 Playwright 设备描述符 (例如 "iPhone 14")',
   "Browser environment settings": "浏览器环境设置",
-  "CDP target id (or unique prefix)": "CDP 目标 ID (或唯一前缀)",
   "Clear credentials": "清除凭据",
   "Clear geolocation + permissions": "清除地理位置 + 权限",
   "Device name (Playwright devices)": "设备名称 (Playwright 设备)",
@@ -343,7 +326,6 @@ export default {
   "Manage OpenClaw's dedicated browser (Chrome/Chromium)":
     "管理 OpenClaw 专用浏览器 (Chrome/Chromium)",
   "Output machine-readable JSON": "输出机器可读的 JSON",
-  "openclaw browser status": "[TODO] openclaw browser status",
 
   // =====================================================================================
   // 模块: src/cli/channels-cli.ts
@@ -352,8 +334,8 @@ export default {
   "Account id (default when omitted)": "账户 ID (省略时默认)",
   "Account id (only with --channel)": "账户 ID (仅配合 --channel)",
   "Add or update a channel account": "添加或更新频道账户",
-  "Bot token (Telegram/Discord)": "Bot 令牌 (Telegram/Discord)",
-  "Bot token file (Telegram)": "Bot 令牌文件 (Telegram)",
+  "Bot token (Telegram/Discord)": "Bot Token (Telegram/Discord)",
+  "Bot token file (Telegram)": "Bot Token 文件 (Telegram)",
   "CLI path (signal-cli or imsg)": "CLI 路径 (signal-cli 或 imsg)",
   "Channel alias (default: whatsapp)": "频道别名 (默认: whatsapp)",
   "Channel login failed": "频道登录失败",
@@ -368,13 +350,13 @@ export default {
   "Google Chat audience type (app-url|project-number)":
     "Google Chat 受众类型 (app-url|project-number)",
   "Google Chat audience value (app URL or project number)":
-    "Google Chat 受众值 (App URL 或项目编号)",
+    "Google Chat 受众值 (应用 URL 或项目编号)",
   "Google Chat webhook URL": "Google Chat Webhook URL",
   "Link a channel account (if supported)": "链接频道账户 (如果支持)",
   "List configured channels + auth profiles": "列出已配置的频道 + 认证配置",
   "Log out of a channel session (if supported)": "登出频道会话 (如果支持)",
   "Manage chat channel accounts": "管理聊天频道账户",
-  "Matrix access token": "Matrix 访问令牌",
+  "Matrix access token": "Matrix 访问 Token",
   "Matrix device name": "Matrix 设备名称",
   "Matrix homeserver URL": "Matrix 主服务器 URL",
   "Matrix initial sync limit": "Matrix 初始同步限制",
@@ -385,17 +367,17 @@ export default {
   "Probe channel credentials": "探测频道凭据",
   "Resolve channel/user names to IDs": "解析频道/用户名到 ID",
   "Show gateway channel status (use status --deep for local)":
-    "显示网关频道状态 (本地使用 status --deep)",
+    "显示 Gateway 频道状态 (本地请使用 status --deep)",
   "Show provider capabilities (intents/scopes + supported features)":
-    "显示提供商能力 (Intents/Scopes + 支持的特性)",
-  "Show recent channel logs from the gateway log file": "显示网关日志文件中的最近频道日志",
+    "显示提供商能力 (intents/scopes + 支持的功能)",
+  "Show recent channel logs from the gateway log file": "显示 Gateway 日志文件中的最近频道日志",
   "Signal HTTP daemon base URL": "Signal HTTP 守护进程基础 URL",
   "Signal HTTP host": "Signal HTTP 主机",
   "Signal HTTP port": "Signal HTTP 端口",
   "Signal account number (E.164)": "Signal 账号 (E.164)",
   "Skip model provider usage/quota snapshots": "跳过模型提供商用量/配额快照",
-  "Slack app token (xapp-...)": "Slack 应用令牌 (xapp-...)",
-  "Slack bot token (xoxb-...)": "Slack 机器人令牌 (xoxb-...)",
+  "Slack app token (xapp-...)": "Slack App Token (xapp-...)",
+  "Slack bot token (xoxb-...)": "Slack Bot Token (xoxb-...)",
   "Target kind (auto|user|group)": "目标类型 (auto|user|group)",
   "Timeout in ms": "超时 (毫秒)",
   "Tlon DM allowlist (comma-separated ships)": "Tlon 私信白名单 (逗号分隔的 ships)",
@@ -404,7 +386,7 @@ export default {
   "Tlon login code": "Tlon 登录码",
   "Tlon ship URL": "Tlon ship URL",
   "Tlon ship name (~sampel-palnet)": "Tlon ship 名称 (~sampel-palnet)",
-  "Use env token (default account only)": "使用环境变量令牌 (仅默认账户)",
+  "Use env token (default account only)": "使用环境变量 Token (仅默认账户)",
   "Verbose connection logs": "详细连接日志",
   "Webhook path (Google Chat/BlueBubbles)": "Webhook 路径 (Google Chat/BlueBubbles)",
   "WhatsApp auth directory override": "WhatsApp 认证目录覆盖",
@@ -415,7 +397,9 @@ export default {
   // =====================================================================================
   // 模块: src/cli/completion-cli.ts
   // =====================================================================================
-  "\n        ": "[TODO] \n        ",
+  "\n      ": "\n      ",
+  "\n        ": "\n        ",
+  " \\\n    ": " \\\n    ",
   "Generate shell completion script": "生成 Shell 自动补全脚本",
   "Install completion script to shell profile": "安装自动补全脚本到 Shell 配置文件",
   "Shell to generate completion for": "生成补全脚本的 Shell",
@@ -425,20 +409,19 @@ export default {
   // 模块: src/cli/config-cli.ts
   // 功能: CLI 配置命令
   // =====================================================================================
-  ", ": "[TODO] , ",
+  ", ": "，",
   "Config helpers (get/set/unset). Run without subcommand for the wizard.":
-    "配置助手 (get/set/unset)。不带子命令运行以启动向导。",
+    "配置助手 (get/set/unset)。直接运行可进入向导。",
   "Config path (dot or bracket notation)": "配置路径 (点号或括号表示法)",
   "Configure wizard sections (repeatable). Use with no subcommand.":
-    "配置向导部分 (可重复)。不带子命令使用。",
+    "配置向导分段（可重复）。在没有子命令时使用。",
   "Get a config value by dot path": "通过点号路径获取配置值",
-  "Output JSON": "输出 JSON",
   "Parse value as JSON5 (required)": "将值解析为 JSON5 (必须)",
   "Path is empty.": "路径为空。",
   "Remove a config value by dot path": "通过点号路径删除配置值",
   "Set a config value by dot path": "通过点号路径设置配置值",
   "Value (JSON5 or raw string)": "值 (JSON5 或原始字符串)",
-  "openclaw doctor": "[TODO] openclaw doctor",
+  "openclaw doctor": "openclaw 医生",
 
   // =====================================================================================
   // 模块: src/cli/cron-cli/register.cron-add.ts
@@ -451,42 +434,43 @@ export default {
   "Agent id for this job": "此任务的 Agent ID",
   "Agent message payload": "Agent 消息载荷",
   "Choose exactly one payload: --system-event or --message":
-    "只能选择一种载荷: --system-event 或 --message",
+    "请精确选择一种载荷类型：--system-event 或 --message",
   "Choose exactly one schedule: --at, --every, or --cron":
-    "只能选择一种调度: --at, --every, 或 --cron",
+    "请精确选择一种调度方式：--at, --every 或 --cron",
   "Create job disabled": "创建已禁用的任务",
   "Cron expression (5-field)": "Cron 表达式 (5字段)",
   "Delete one-shot job after it succeeds": "一次性任务成功后删除",
   "Deliver agent output (required when using last-route delivery without --to)":
-    "投递 Agent 输出 (使用 last-route 投递且无 --to 时必须)",
+    "交付 Agent 输出（在不使用 --to 的情况下使用 last-route 交付时需要）",
   "Delivery destination (E.164, Telegram chatId, or Discord channel/user)":
-    "投递目标 (E.164, Telegram chatId, 或 Discord channel/user)",
+    "交付目的地 (E.164, Telegram chatId, 或 Discord 频道/用户)",
   "Do not fail the job if delivery fails": "如果投递失败不要标记任务失败",
   "Include disabled jobs": "包含已禁用的任务",
-  "Invalid --at; use ISO time or duration like 20m": "无效的 --at; 使用 ISO 时间或时长如 20m",
-  "Invalid --every; use e.g. 10m, 1h, 1d": "无效的 --every; 使用例如 10m, 1h, 1d",
-  "Isolated jobs require --message (agentTurn).": "Isolated 任务需要 --message (agentTurn)。",
+  "Invalid --at; use ISO time or duration like 20m": "无效的 --at；请使用 ISO 时间或时长（如 20m）",
+  "Invalid --every; use e.g. 10m, 1h, 1d": "无效的 --every；例如 10m, 1h, 1d",
+  "Isolated jobs require --message (agentTurn).":
+    "隔离模式 (Isolated) 任务需要 --message (agentTurn)。",
   "Job name": "任务名称",
   "List cron jobs": "列出定时任务",
-  "Main jobs require --system-event (systemEvent).": "Main 任务需要 --system-event (systemEvent)。",
-  "Max chars when --post-mode=full (default 8000)": "--post-mode=full 时的最大字符数 (默认 8000)",
+  "Main jobs require --system-event (systemEvent).":
+    "主会话 (Main) 任务需要 --system-event (systemEvent)。",
+  "Max chars when --post-mode=full (default 8000)":
+    "当 --post-mode=full 时的最大字符数 (默认 8000)",
   "Model override for agent jobs (provider/model or alias)":
-    "Agent 任务的模型覆盖 (provider/model 或别名)",
+    "Agent 任务的模型覆盖 (提供者/模型 或 别名)",
   "Optional description": "可选描述",
-  "Output JSON": "输出 JSON",
-  "Prefix for main-session post": "Main 会话推送的前缀",
+  "Prefix for main-session post": "主会话推送的前缀",
   "Run every duration (e.g. 10m, 1h)": "每隔一定时长运行 (例如 10m, 1h)",
   "Run once at time (ISO) or +duration (e.g. 20m)": "在指定时间 (ISO) 或 +时长 (例如 20m) 运行一次",
   "Session target (main|isolated)": "会话目标 (main|isolated)",
   "Show cron scheduler status": "显示定时任务调度器状态",
-  "System event payload (main session)": "系统事件载荷 (main session)",
+  "System event payload (main session)": "系统事件载荷 (主会话)",
   "Thinking level for agent jobs (off|minimal|low|medium|high)":
     "Agent 任务的思考等级 (off|minimal|low|medium|high)",
   "Timeout seconds for agent jobs": "Agent 任务的超时秒数",
   "Timezone for cron expressions (IANA)": "Cron 表达式的时区 (IANA)",
-  "Wake mode (now|next-heartbeat)": "唤醒模式 (now|next-heartbeat)",
   "What to post back to main for isolated jobs (summary|full)":
-    "Isolated 任务回传给 main 的内容 (summary|full)",
+    "隔离模式任务回传到主会话的内容 (summary|full)",
 
   // =====================================================================================
   // 模块: src/cli/cron-cli/register.cron-edit.ts
@@ -494,15 +478,10 @@ export default {
   // =====================================================================================
   "--post-prefix only applies to isolated jobs.": "--post-prefix 仅适用于 isolated 任务。",
   "Choose --delete-after-run or --keep-after-run, not both":
-    "选择 --delete-after-run 或 --keep-after-run, 不能同时选",
+    "请选择 --delete-after-run 或 --keep-after-run，不能同时选择",
   "Choose --enable or --disable, not both": "选择 --enable 或 --disable, 不能同时选",
   "Choose at most one payload change": "最多选择一种载荷变更",
   "Choose at most one schedule change": "最多选择一种调度变更",
-  "Delete one-shot job after it succeeds": "一次性任务成功后删除",
-  "Deliver agent output (required when using last-route delivery without --to)":
-    "投递 Agent 输出 (使用 last-route 投递且无 --to 时必须)",
-  "Delivery destination (E.164, Telegram chatId, or Discord channel/user)":
-    "投递目标 (E.164, Telegram chatId, 或 Discord channel/user)",
   "Disable delivery": "禁用投递",
   "Disable job": "禁用任务",
   "Do not fail job if delivery fails": "如果投递失败不要标记任务失败",
@@ -512,14 +491,13 @@ export default {
   "Invalid --at": "无效的 --at",
   "Invalid --every": "无效的 --every",
   "Isolated jobs cannot use --system-event; use --message or --session main.":
-    "Isolated 任务不能使用 --system-event; 请使用 --message 或 --session main。",
+    "隔离模式 (Isolated) 任务不能使用 --system-event；请使用 --message 或 --session main。",
   "Job id": "任务 ID",
   "Keep one-shot job after it succeeds": "一次性任务成功后保留",
   "Main jobs cannot use --message; use --system-event or --session isolated.":
-    "Main 任务不能使用 --message; 请使用 --system-event 或 --session isolated。",
+    "主任务（Main jobs）不能使用 --message；请使用 --system-event 或 --session isolated。",
   "Model override for agent jobs": "Agent 任务的模型覆盖",
   "Prefix for summary system event": "摘要系统事件的前缀",
-  "Session target (main|isolated)": "会话目标 (main|isolated)",
   "Set agent id": "设置 Agent ID",
   "Set agentTurn payload message": "设置 agentTurn 载荷消息",
   "Set cron expression": "设置 Cron 表达式",
@@ -528,21 +506,16 @@ export default {
   "Set name": "设置名称",
   "Set one-shot time (ISO) or duration like 20m": "设置一次性时间 (ISO) 或时长如 20m",
   "Set systemEvent payload": "设置 systemEvent 载荷",
-  "Thinking level for agent jobs": "[TODO] Thinking level for agent jobs",
-  "Timeout seconds for agent jobs": "Agent 任务的超时秒数",
-  "Timezone for cron expressions (IANA)": "Cron 表达式的时区 (IANA)",
+  "Thinking level for agent jobs": "Agent 任务的思考级别",
   "Unset agent and use default": "取消设置 Agent 并使用默认值",
   "Use --agent or --clear-agent, not both": "使用 --agent 或 --clear-agent, 不能同时选",
-  "Wake mode (now|next-heartbeat)": "唤醒模式 (now|next-heartbeat)",
 
   // =====================================================================================
   // 模块: src/cli/cron-cli/register.cron-simple.ts
   // =====================================================================================
   "Disable a cron job": "禁用定时任务",
   "Enable a cron job": "启用定时任务",
-  "Job id": "任务 ID",
   "Max entries (default 50)": "最大条目数 (默认 50)",
-  "Output JSON": "输出 JSON",
   "Remove a cron job": "移除定时任务",
   "Run a cron job now (debug)": "立即运行定时任务 (调试)",
   "Run even if not due": "即使未到期也运行",
@@ -551,151 +524,131 @@ export default {
   // =====================================================================================
   // 模块: src/cli/cron-cli/register.ts
   // =====================================================================================
-  "Manage cron jobs (via Gateway)": "管理定时任务 (通过网关)",
+  "Manage cron jobs (via Gateway)": "管理定时任务 (通过 Gateway)",
 
   // =====================================================================================
   // 模块: src/cli/cron-cli/shared.ts
   // =====================================================================================
   "No cron jobs.": "没有定时任务。",
   "Re-enable with `cron.enabled: true` (or remove `cron.enabled: false`) and restart the Gateway.":
-    "通过 `cron.enabled: true` (或移除 `cron.enabled: false`) 重新启用并重启网关。",
+    "请通过设置 `cron.enabled: true`（或移除 `cron.enabled: false`）重新启用，并重启 Gateway。",
   "warning: cron scheduler is disabled in the Gateway; jobs are saved but will not run automatically.":
-    "警告: 网关中定时任务调度器已禁用; 任务已保存但不会自动运行。",
+    "警告：Gateway 中的定时任务调度器已禁用；任务虽已保存，但不会自动运行。",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/install.ts
   // =====================================================================================
-  'Invalid --runtime (use "node" or "bun")': '[TODO] Invalid --runtime (use "node" or "bun")',
-  "Invalid port": "无效端口",
+  'Invalid --runtime (use "node" or "bun")': '无效的 --runtime（请使用 "node" 或 "bun"）',
   "Nix mode detected; service install is disabled.": "检测到 Nix 模式; 服务安装已禁用。",
-  "openclaw gateway install --force": "[TODO] openclaw gateway install --force",
+  "openclaw gateway install --force": "openclaw gateway install --force",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/lifecycle.ts
   // =====================================================================================
-  "Gateway service still loaded after uninstall.": "卸载后网关服务仍然加载。",
-  "Nix mode detected; service uninstall is disabled.": "检测到 Nix 模式; 服务卸载已禁用。",
+  "Gateway service still loaded after uninstall.": "卸载后 Gateway 服务仍处于加载状态。",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/probe.ts
   // =====================================================================================
-  "Checking gateway status...": "正在检查网关状态...",
+  "Checking gateway status...": "正在检查 Gateway 状态...",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/register.ts
   // =====================================================================================
-  "Daemon runtime (node|bun). Default: node": "守护进程运行时 (node|bun)。默认: node",
+  "Daemon runtime (node|bun). Default: node": "守护进程运行环境 (node|bun)。默认：node",
   "Gateway WebSocket URL (defaults to config/remote/local)":
-    "网关 WebSocket URL (默认为 config/remote/local)",
-  "Gateway password (password auth)": "网关密码 (密码认证)",
-  "Gateway port": "网关端口",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
-  "Gateway token (token auth)": "网关令牌 (令牌认证)",
+    "Gateway WebSocket URL（默认为 config/remote/local）",
+  "Gateway token (token auth)": "Gateway Token (Token 认证)",
   "Install the Gateway service (launchd/systemd/schtasks)":
-    "安装网关服务 (launchd/systemd/schtasks)",
+    "安装 Gateway 服务 (launchd/systemd/schtasks)",
   "Manage the Gateway service (launchd/systemd/schtasks)":
-    "管理网关服务 (launchd/systemd/schtasks)",
-  "Output JSON": "输出 JSON",
+    "管理 Gateway 服务 (launchd/systemd/schtasks)",
   "Reinstall/overwrite if already installed": "如果已安装则重新安装/覆盖",
   "Restart the Gateway service (launchd/systemd/schtasks)":
-    "重启网关服务 (launchd/systemd/schtasks)",
+    "重启 Gateway 服务 (launchd/systemd/schtasks)",
   "Scan system-level services": "扫描系统级服务",
-  "Show service install status + probe the Gateway": "显示服务安装状态 + 探测网关",
+  "Show service install status + probe the Gateway": "显示服务安装状态并探测 Gateway",
   "Skip RPC probe": "跳过 RPC 探测",
-  "Start the Gateway service (launchd/systemd/schtasks)": "启动网关服务 (launchd/systemd/schtasks)",
-  "Stop the Gateway service (launchd/systemd/schtasks)": "停止网关服务 (launchd/systemd/schtasks)",
-  "Timeout in ms": "超时 (毫秒)",
+  "Start the Gateway service (launchd/systemd/schtasks)":
+    "启动 Gateway 服务 (launchd/systemd/schtasks)",
+  "Stop the Gateway service (launchd/systemd/schtasks)":
+    "停止 Gateway 服务 (launchd/systemd/schtasks)",
   "Uninstall the Gateway service (launchd/systemd/schtasks)":
-    "卸载网关服务 (launchd/systemd/schtasks)",
+    "卸载 Gateway 服务 (launchd/systemd/schtasks)",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/shared.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "openclaw gateway": "[TODO] openclaw gateway",
-  "openclaw gateway install": "[TODO] openclaw gateway install",
+  "openclaw gateway": "openclaw gateway",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/status.gather.ts
   // =====================================================================================
   "Local probe uses loopback (127.0.0.1). bind=lan listens on 0.0.0.0 (all interfaces); use a LAN IP for remote clients.":
-    "本地探测使用环回地址 (127.0.0.1)。bind=lan 监听 0.0.0.0 (所有接口); 远程客户端请使用 LAN IP。",
-  "Loopback-only gateway; only local clients can connect.": "仅环回网关; 只有本地客户端可以连接。",
+    "本地探测使用环回地址 (127.0.0.1)。设置 bind=lan 会监听 0.0.0.0（所有接口）；远程客户端请使用局域网 IP。",
+  "Loopback-only gateway; only local clients can connect.":
+    "仅限环回访问的 Gateway；仅允许本地客户端连接。",
   "service args": "服务参数",
 
   // =====================================================================================
   // 模块: src/cli/daemon-cli/status.print.ts
   // =====================================================================================
-  " (invalid)": "[TODO]  (invalid)",
-  " (missing)": "[TODO]  (missing)",
-  ", ": "[TODO] , ",
-  "Cleanup hint:": "清理提示:",
-  "Config (cli):": "配置 (cli):",
-  "Config (service):": "配置 (service):",
-  "Config issue:": "配置问题:",
-  "File logs:": "文件日志:",
-  "If you need multiple gateways (e.g., a rescue bot on the same host), isolate ports + config/state (see docs: /gateway#multiple-gateways-same-host).":
-    "如果你需要多个网关 (例如同一主机上的救援机器人), 请隔离端口 + 配置/状态 (参见文档: /gateway#multiple-gateways-same-host)。",
-  "Last gateway error:": "最后的网关错误:",
-  "Other gateway-like services detected (best effort):": "检测到其他类网关服务 (尽力而为):",
-  "Probe note:": "探测备注:",
-  "Probe target:": "探测目标:",
-  "RPC probe:": "RPC 探测:",
-  "RPC target:": "RPC 目标:",
+  " (invalid)": " (无效)",
+  " (missing)": " (缺失)",
+  "Cleanup hint:": "清理提示：",
+  "Config (cli):": "配置 (CLI)：",
+  "Config (service):": "配置 (服务)：",
+  "Config issue:": "配置问题：",
+  "File logs:": "文件日志：",
+  "Last gateway error:": "Gateway 最近一次错误：",
+  "Other gateway-like services detected (best effort):":
+    "检测到其他类似的 Gateway 服务（尽力而为）：",
+  "Probe note:": "探测备注：",
+  "Probe target:": "探测目标：",
+  "RPC probe:": "RPC 探测：",
+  "RPC target:": "RPC 目标：",
   "Recommendation: run a single gateway per machine for most setups. One gateway supports multiple agents (see docs: /gateway#multiple-gateways-same-host).":
-    "建议: 大多数设置下每台机器运行一个网关。一个网关支持多个 Agent (参见文档: /gateway#multiple-gateways-same-host)。",
+    "建议：在大多数配置下，每台机器运行一个 Gateway 即可。一个 Gateway 可以支持多个 Agent（详见文档：/gateway#multiple-gateways-same-host）。",
   "Root cause: CLI and service are using different config paths (likely a profile/state-dir mismatch).":
-    "根本原因: CLI 和服务使用不同的配置路径 (可能是 profile/state-dir 不匹配)。",
-  "Service config issue:": "服务配置问题:",
+    "根本原因：CLI 和服务正在使用不同的配置路径（可能是由于配置文件或状态目录不匹配）。",
+  "Service config issue:": "服务配置问题：",
   "Service config looks out of date or non-standard.": "服务配置看起来已过期或非标准。",
-  "Service env:": "服务环境变量:",
-  "Service file:": "服务文件:",
-  "Service is loaded but not running (likely exited immediately).":
-    "服务已加载但未运行 (可能立即退出了)。",
+  "Service env:": "服务环境变量：",
+  "Service file:": "服务文件：",
   "Service unit not found.": "未找到服务单元。",
   "Warm-up: launch agents can take a few seconds. Try again shortly.":
-    "预热: 启动 Agent 可能需要几秒钟。请稍后重试。",
-  "Working dir:": "工作目录:",
-  "openclaw doctor": "[TODO] openclaw doctor",
-  "openclaw doctor --repair": "[TODO] openclaw doctor --repair",
-  "openclaw gateway install": "[TODO] openclaw gateway install",
-  "openclaw gateway install --force": "[TODO] openclaw gateway install --force",
-  "openclaw status": "[TODO] openclaw status",
+    "预热中：启动 Launch Agent 可能需要几秒钟。请稍后再试。",
+  "Working dir:": "工作目录：",
+  "openclaw doctor --repair": "openclaw doctor --repair",
+  "openclaw status": "openclaw status",
   "systemd user services unavailable.": "systemd 用户服务不可用。",
 
   // =====================================================================================
   // 模块: src/cli/devices-cli.ts
   // =====================================================================================
-  " (revoked)": "[TODO]  (revoked)",
-  ", ": "[TODO] , ",
+  " (revoked)": " (已撤销)",
   "--device and --role required": "--device 和 --role 是必须的",
   "Approve a pending device pairing request": "批准挂起的设备配对请求",
   "Device id": "设备 ID",
-  "Device pairing and auth tokens": "设备配对和认证令牌",
-  "Gateway WebSocket URL (defaults to gateway.remote.url when configured)":
-    "网关 WebSocket URL (配置时默认为 gateway.remote.url)",
-  "Gateway password (password auth)": "网关密码 (密码认证)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
+  "Device pairing and auth tokens": "设备配对和认证 Token",
+  "Gateway password (password auth)": "Gateway 密码 (密码认证)",
   "List pending and paired devices": "列出挂起和已配对的设备",
   "No device pairing entries.": "没有设备配对条目。",
-  "Output JSON": "输出 JSON",
   "Pending request id": "挂起的请求 ID",
   "Reject a pending device pairing request": "拒绝挂起的设备配对请求",
   Rejected: "已拒绝",
-  "Revoke a device token for a role": "撤销角色的设备令牌",
+  "Revoke a device token for a role": "撤销角色的设备 Token",
   "Role name": "角色名称",
-  "Rotate a device token for a role": "轮换角色的设备令牌",
-  "Scopes to attach to the token (repeatable)": "附加到令牌的作用域 (可重复)",
-  "Timeout in ms": "超时 (毫秒)",
+  "Rotate a device token for a role": "轮换角色的设备 Token",
+  "Scopes to attach to the token (repeatable)": "附加到 Token 的作用域 (可重复)",
 
   // =====================================================================================
   // 模块: src/cli/directory-cli.ts
   // 功能: 目录 CLI 命令
   // =====================================================================================
-  "Account id (accountId)": "账户 ID (accountId)",
   "Channel (auto when only one is configured)": "频道 (仅配置一个时自动)",
   "Directory lookups (self, peers, groups) for channels that support it":
-    "支持它的频道的目录查找 (self, peers, groups)",
+    "针对支持此功能的频道进行目录查询（自身、Peer、群组）",
   "Group Members": "群组成员",
   "Group directory": "群组目录",
   "Group id": "群组 ID",
@@ -709,7 +662,6 @@ export default {
   "No peers found.": "未找到 Peer。",
   "Not available.": "不可用。",
   "Optional search query": "可选搜索查询",
-  "Output JSON": "输出 JSON",
   "Peer directory (contacts/users)": "Peer 目录 (联系人/用户)",
   "Show the current account user": "显示当前账户用户",
 
@@ -717,37 +669,37 @@ export default {
   // 模块: src/cli/dns-cli.ts
   // 功能: DNS CLI 命令
   // =====================================================================================
-  "    reload 10s": "[TODO]     reload 10s",
-  "  errors": "[TODO]   errors",
-  "  log": "[TODO]   log",
-  "  }": "[TODO]   }",
-  "$TTL 60": "[TODO] $TTL 60",
+  "    reload 10s": "    重新加载 10s",
+  "  errors": "  错误",
+  "  log": "  日志",
+  "  }": "  }",
+  "$TTL 60": "$TTL 60",
   "; created by openclaw dns setup (will be overwritten by the gateway when wide-area discovery is enabled)":
-    "; 由 openclaw dns setup 创建 (当启用广域发现时将被网关覆盖)",
-  "<this machine's tailnet IPv4>": "<本机 Tailnet IPv4>",
-  "@ IN NS ns1": "[TODO] @ IN NS ns1",
+    "; 由 openclaw dns setup 创建（启用广域发现时将被 Gateway 覆盖）",
+  "<this machine's tailnet IPv4>": "<本机的 Tailnet IPv4 地址>",
+  "@ IN NS ns1": "@ IN NS ns1",
   "DNS helpers for wide-area discovery (Tailscale + CoreDNS)":
     "广域发现的 DNS 助手 (Tailscale + CoreDNS)",
   "DNS setup": "DNS 设置",
   "Install/update CoreDNS config and (re)start the service (requires sudo)":
-    "安装/更新 CoreDNS 配置并(重)启动服务 (需要 sudo)",
+    "安装/更新 CoreDNS 配置并（重新）启动服务（需要 sudo 权限）",
   "No wide-area domain configured. Set discovery.wideArea.domain or pass --domain.":
-    "未配置广域域名。设置 discovery.wideArea.domain 或传递 --domain。",
+    "未配置广域发现域名。请设置 discovery.wideArea.domain 或传递 --domain 参数。",
   "Note: enable discovery.wideArea.enabled in ~/.openclaw/openclaw.json on the gateway and restart the gateway so it writes the DNS-SD zone.":
-    "注意: 在网关的 ~/.openclaw/openclaw.json 中启用 discovery.wideArea.enabled 并重启网关, 以便它写入 DNS-SD 区域。",
-  "Recommended ~/.openclaw/openclaw.json:": "推荐的 ~/.openclaw/openclaw.json:",
-  "Run with --apply to install CoreDNS and configure it.": "运行 --apply 以安装 CoreDNS 并配置它。",
+    "注意：请在 Gateway 的 ~/.openclaw/openclaw.json 中启用 discovery.wideArea.enabled 并重启 Gateway，以便其写入 DNS-SD 区域文件。",
+  "Recommended ~/.openclaw/openclaw.json:": "推荐的 ~/.openclaw/openclaw.json 配置：",
+  "Run with --apply to install CoreDNS and configure it.": "运行 --apply 以安装并配置 CoreDNS。",
   "Set up CoreDNS to serve your discovery domain for unicast DNS-SD (Wide-Area Bonjour)":
     "设置 CoreDNS 以便为单播 DNS-SD (广域 Bonjour) 提供发现域名服务",
   "Starting CoreDNS (sudo)…": "正在启动 CoreDNS (sudo)…",
   "Tailnet IP": "Tailnet IP",
-  "Tailscale admin (DNS → Nameservers):": "Tailscale 管理 (DNS → Nameservers):",
+  "Tailscale admin (DNS → Nameservers):": "Tailscale 管理后台 (DNS → Nameservers)：",
   "Wide-area discovery domain (e.g. openclaw.internal)": "广域发现域名 (例如 openclaw.internal)",
   "Zone file": "区域文件",
   "dns setup is currently supported on macOS only": "dns setup 目前仅支持 macOS",
   "failed to resolve Homebrew prefix": "无法解析 Homebrew 前缀",
   "no tailnet IP detected; ensure Tailscale is running on this machine":
-    "未检测到 Tailnet IP; 确保 Tailscale 在此机器上运行",
+    "未检测到 Tailnet IP；请确保此机器上正在运行 Tailscale",
 
   // =====================================================================================
   // 模块: src/cli/docs-cli.ts
@@ -758,9 +710,8 @@ export default {
   // =====================================================================================
   // 模块: src/cli/exec-approvals-cli.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
   "Add a glob pattern to an allowlist": "向白名单添加 glob 模式",
-  'Agent id (defaults to "*")': '[TODO] Agent id (defaults to "*")',
+  'Agent id (defaults to "*")': 'Agent ID（默认为 "*"）',
   "Allowlist a local binary pattern for the main agent.": "为 main agent 白名单化本地二进制模式。",
   "Allowlist for all agents (wildcard).": "所有 Agent 的白名单 (通配符)。",
   "Allowlist on a specific node/agent.": "特定 Node/Agent 的白名单。",
@@ -768,9 +719,9 @@ export default {
   "Edit the per-agent allowlist": "编辑每个 Agent 的白名单",
   "Exec approvals hash missing; reload and retry.": "执行批准哈希缺失; 请重新加载并重试。",
   "Fetch exec approvals snapshot": "获取执行批准快照",
-  "Force gateway approvals": "强制网关批准",
+  "Force gateway approvals": "强制 Gateway 批准",
   "Last Used": "最后使用",
-  "Manage exec approvals (gateway or node host)": "管理执行批准 (网关或 Node 主机)",
+  "Manage exec approvals (gateway or node host)": "管理执行批准 (Gateway 或 Node 主机)",
   "No allowlist entries.": "没有白名单条目。",
   "Path to JSON file to upload": "要上传的 JSON 文件路径",
   "Pattern not found.": "未找到模式。",
@@ -784,3641 +735,3169 @@ export default {
   "Target node id/name/IP": "目标 Node ID/名称/IP",
   "Use either --file or --stdin (not both).": "使用 --file 或 --stdin (不能同时使用)。",
   "Writing local approvals.": "写入本地批准。",
-  "add <pattern>": "[TODO] add <pattern>",
+  "add <pattern>": "添加 <模式>",
   'openclaw approvals allowlist add "~/Projects/**/bin/rg"':
-    '[TODO] openclaw approvals allowlist add "~/Projects/**/bin/rg"',
+    'openclaw approvals allowlist add "~/Projects/**/bin/rg"',
   'openclaw approvals allowlist add --agent "*" "/usr/bin/uname"':
-    '[TODO] openclaw approvals allowlist add --agent "*" "/usr/bin/uname"',
+    'openclaw approvals allowlist add --agent "*" "/usr/bin/uname"',
   'openclaw approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"':
-    '[TODO] openclaw approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"',
+    'openclaw approvals allowlist add --agent main --node <id|name|ip> "/usr/bin/uptime"',
   'openclaw approvals allowlist remove "~/Projects/**/bin/rg"':
-    '[TODO] openclaw approvals allowlist remove "~/Projects/**/bin/rg"',
-  "remove <pattern>": "[TODO] remove <pattern>",
-
-  // =====================================================================================
-  // 模块: src/cli/gateway-cli/call.ts
-  // =====================================================================================
-  "Gateway WebSocket URL (defaults to gateway.remote.url when configured)":
-    "网关 WebSocket URL (配置时默认为 gateway.remote.url)",
-  "Gateway password (password auth)": "网关密码 (密码认证)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
-  "Output JSON": "输出 JSON",
-  "Timeout in ms": "超时 (毫秒)",
-  "Wait for final response (agent)": "等待最终响应 (Agent)",
+    'openclaw approvals allowlist remove "~/Projects/**/bin/rg"',
+  "remove <pattern>": "移除 <模式>",
 
   // =====================================================================================
   // 模块: src/cli/gateway-cli/dev.ts
   // =====================================================================================
   "# AGENTS.md - OpenClaw Dev Workspace\n\nDefault dev workspace for openclaw gateway --dev.\n":
-    "[TODO] # AGENTS.md - OpenClaw Dev Workspace\n\nDefault dev workspace for openclaw gateway --dev.\n",
-  "protocol droid": "[TODO] protocol droid",
+    "# AGENTS.md - OpenClaw 开发工作区\n\nopenclaw gateway --dev 的默认开发工作区。\n",
+  "# SOUL.md - Dev Persona\n\nProtocol droid for debugging and operations.\n":
+    "# SOUL.md - 开发人格\n\n用于调试和运维的协议 Bot。\n",
+  "# TOOLS.md - User Tool Notes (editable)\n\nAdd your local tool notes here.\n":
+    "# TOOLS.md - 用户工具笔记 (可编辑)\n\n在此添加您的本地工具笔记。\n",
+  "# USER.md - User Profile\n\n- Name:\n- Preferred address:\n- Notes:\n":
+    "# USER.md - 用户档案\n\n- 姓名：\n- 常用地址：\n- 备注：\n",
+  "protocol droid": "协议 Bot",
 
   // =====================================================================================
   // 模块: src/cli/gateway-cli/discover.ts
-  // 功能: 网关发现
+  // 功能: Gateway 发现
   // =====================================================================================
   "invalid --timeout": "无效的 --timeout",
 
   // =====================================================================================
   // 模块: src/cli/gateway-cli/register.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Call a Gateway method": "调用网关方法",
-  "Daemon runtime (node|bun). Default: node": "守护进程运行时 (node|bun)。默认: node",
+  "Call a Gateway method": "调用 Gateway 方法",
   "Discover gateways via Bonjour (local + wide-area if configured)":
-    "通过 Bonjour 发现网关 (本地 + 广域如果已配置)",
+    "通过 Bonjour 发现 Gateway（本地 + 已配置的广域网）",
   "Explicit Gateway WebSocket URL (still probes localhost)":
-    "显式网关 WebSocket URL (仍会探测 localhost)",
-  "Fetch Gateway health": "获取网关健康状态",
+    "显式指定 Gateway WebSocket URL（仍会探测本地主机）",
+  "Fetch Gateway health": "获取 Gateway 健康状态",
   "Fetch usage cost summary from session logs": "从会话日志获取用量成本摘要",
-  "Gateway Discovery": "网关发现",
-  "Gateway Health": "网关健康",
-  "Gateway WebSocket URL (defaults to config/remote/local)":
-    "网关 WebSocket URL (默认为 config/remote/local)",
-  "Gateway call": "网关调用",
-  "Gateway call failed": "网关调用失败",
-  "Gateway password (applies to all probes)": "网关密码 (适用于所有探测)",
-  "Gateway password (password auth)": "网关密码 (密码认证)",
-  "Gateway port": "网关端口",
-  "Gateway token (applies to all probes)": "网关令牌 (适用于所有探测)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
-  "Gateway token (token auth)": "网关令牌 (令牌认证)",
-  "Gateway usage cost failed": "网关用量成本获取失败",
-  "Install the Gateway service (launchd/systemd/schtasks)":
-    "安装网关服务 (launchd/systemd/schtasks)",
+  "Gateway Discovery": "Gateway 发现",
+  "Gateway Health": "Gateway 健康",
+  "Gateway call": "Gateway 调用",
+  "Gateway call failed": "Gateway 调用失败",
+  "Gateway password (applies to all probes)": "Gateway 密码 (适用于所有探测)",
+  "Gateway token (applies to all probes)": "Gateway Token (适用于所有探测)",
+  "Gateway usage cost failed": "Gateway 用量成本获取失败",
   "JSON object string for params": "参数的 JSON 对象字符串",
-  "Latest day:": "最近一天:",
+  "Latest day:": "最近日期：",
   "Method name (health/status/system-presence/cron.*)":
     "方法名称 (health/status/system-presence/cron.*)",
-  "Missing entries:": "缺失条目:",
+  "Missing entries:": "缺失条目：",
   "Number of days to include": "包含的天数",
-  "Output JSON": "输出 JSON",
   "Overall probe budget in ms": "总体探测预算 (毫秒)",
   "Per-command timeout in ms": "每命令超时 (毫秒)",
-  "Reinstall/overwrite if already installed": "如果已安装则重新安装/覆盖",
-  "Restart the Gateway service (launchd/systemd/schtasks)":
-    "重启网关服务 (launchd/systemd/schtasks)",
-  "Run the WebSocket Gateway": "运行 WebSocket 网关",
-  "Run the WebSocket Gateway (foreground)": "运行 WebSocket 网关 (前台)",
+  "Run the WebSocket Gateway": "运行 WebSocket Gateway",
+  "Run the WebSocket Gateway (foreground)": "运行 WebSocket Gateway (前台)",
   "SSH identity file path": "SSH 身份文件路径",
   "SSH target for remote gateway tunnel (user@host or user@host:port)":
-    "远程网关隧道的 SSH 目标 (user@host 或 user@host:port)",
-  "Scan system-level services": "扫描系统级服务",
-  "Scanning for gateways…": "正在扫描网关…",
+    "远程 Gateway 隧道的 SSH 目标 (user@host 或 user@host:port)",
+  "Scanning for gateways…": "正在扫描 Gateways…",
   "Show gateway reachability + discovery + health + status summary (local + remote)":
-    "显示网关可达性 + 发现 + 健康 + 状态摘要 (本地 + 远程)",
-  "Show gateway service status + probe the Gateway":
-    "[TODO] Show gateway service status + probe the Gateway",
-  "Skip RPC probe": "跳过 RPC 探测",
-  "Start the Gateway service (launchd/systemd/schtasks)": "启动网关服务 (launchd/systemd/schtasks)",
-  "Stop the Gateway service (launchd/systemd/schtasks)": "停止网关服务 (launchd/systemd/schtasks)",
-  "Timeout in ms": "超时 (毫秒)",
+    "显示 Gateway 连通性、发现、健康状况及状态摘要（本地 + 远程）",
+  "Show gateway service status + probe the Gateway": "显示 Gateway 服务状态并探测 Gateway",
   "Try to derive an SSH target from Bonjour discovery": "尝试从 Bonjour 发现中推导 SSH 目标",
-  "Uninstall the Gateway service (launchd/systemd/schtasks)":
-    "卸载网关服务 (launchd/systemd/schtasks)",
-  "gateway discover failed": "网关发现失败",
-  "not configured": "未配置",
-  "not linked": "未链接",
+  "gateway discover failed": "Gateway 发现失败",
 
   // =====================================================================================
   // 模块: src/cli/gateway-cli/run-loop.ts
   // =====================================================================================
   "SIGUSR1 restart ignored (not authorized; enable commands.restart or use gateway tool).":
-    "[TODO] SIGUSR1 restart ignored (not authorized; enable commands.restart or use gateway tool).",
-  "gateway restarting": "[TODO] gateway restarting",
-  "gateway stopping": "[TODO] gateway stopping",
-  "shutdown timed out; exiting without full cleanup":
-    "[TODO] shutdown timed out; exiting without full cleanup",
-  "shutting down": "[TODO] shutting down",
-  "signal SIGINT received": "[TODO] signal SIGINT received",
-  "signal SIGTERM received": "[TODO] signal SIGTERM received",
-  "signal SIGUSR1 received": "[TODO] signal SIGUSR1 received",
+    "忽略 SIGUSR1 重启请求（未授权；请启用 commands.restart 或使用 gateway 工具）。",
+  "gateway restarting": "Gateway 正在重启",
+  "gateway stopping": "Gateway 正在停止",
+  "shutdown timed out; exiting without full cleanup": "关机超时；正在强制退出，未能完成清理",
+  "shutting down": "正在关闭",
+  "signal SIGINT received": "收到信号 SIGINT",
+  "signal SIGTERM received": "收到信号 SIGTERM",
+  "signal SIGUSR1 received": "收到信号 SIGUSR1",
 
   // =====================================================================================
   // 模块: src/cli/gateway-cli/run.ts
   // =====================================================================================
   '"gateway.remote.token" is for remote CLI calls; it does not enable local gateway auth.':
-    '[TODO] "gateway.remote.token" is for remote CLI calls; it does not enable local gateway auth.',
-  'Alias for "--ws-log compact"': '[TODO] Alias for "--ws-log compact"',
+    '"gateway.remote.token" 用于远程 CLI 调用；它不会启用本地 Gateway 认证。',
+  'Alias for "--ws-log compact"': '"--ws-log compact" 的别名',
   "Allow gateway start without gateway.mode=local in config":
-    "[TODO] Allow gateway start without gateway.mode=local in config",
+    "允许在配置中未设置 gateway.mode=local 的情况下启动 Gateway",
   'Bind mode ("loopback"|"lan"|"tailnet"|"auto"|"custom"). Defaults to config gateway.bind (or loopback).':
-    '[TODO] Bind mode ("loopback"|"lan"|"tailnet"|"auto"|"custom"). Defaults to config gateway.bind (or loopback).',
+    '绑定模式 ("loopback"|"lan"|"tailnet"|"auto"|"custom")。默认为配置中的 gateway.bind（或 loopback）。',
   "Create a dev config + workspace if missing (no BOOTSTRAP.md)":
-    "[TODO] Create a dev config + workspace if missing (no BOOTSTRAP.md)",
+    "如果缺少开发配置或工作区则自动创建（检测不到 BOOTSTRAP.md）",
   'Found "gateway.token" in config. Use "gateway.auth.token" instead.':
-    '[TODO] Found "gateway.token" in config. Use "gateway.auth.token" instead.',
+    '在配置中发现 "gateway.token"。请改用 "gateway.auth.token"。',
   "Gateway auth is set to password, but no password is configured.":
-    "[TODO] Gateway auth is set to password, but no password is configured.",
+    "Gateway 认证设为密码模式，但未配置密码。",
   "Gateway auth is set to token, but no token is configured.":
-    "[TODO] Gateway auth is set to token, but no token is configured.",
-  'Gateway auth mode ("token"|"password")': '[TODO] Gateway auth mode ("token"|"password")',
-  'Invalid --auth (use "token" or "password")': '[TODO] Invalid --auth (use "token" or "password")',
+    "Gateway 认证设为 Token 模式，但未配置 Token。",
+  'Gateway auth mode ("token"|"password")': 'Gateway 认证模式 ("token"|"password")',
+  'Invalid --auth (use "token" or "password")':
+    '无效的 --auth 参数（请使用 "token" 或 "password"）',
   'Invalid --bind (use "loopback", "lan", "tailnet", "auto", or "custom")':
-    '[TODO] Invalid --bind (use "loopback", "lan", "tailnet", "auto", or "custom")',
+    '无效的 --bind 参数（请使用 "loopback", "lan", "tailnet", "auto" 或 "custom"）',
   'Invalid --tailscale (use "off", "serve", or "funnel")':
-    '[TODO] Invalid --tailscale (use "off", "serve", or "funnel")',
+    '无效的 --tailscale 参数（请使用 "off", "serve" 或 "funnel"）',
   'Invalid --ws-log (use "auto", "full", "compact")':
-    '[TODO] Invalid --ws-log (use "auto", "full", "compact")',
-  "Invalid port": "无效端口",
+    '无效的 --ws-log 参数（请使用 "auto", "full", "compact"）',
   "Kill any existing listener on the target port before starting":
-    "[TODO] Kill any existing listener on the target port before starting",
-  "Log raw model stream events to jsonl": "[TODO] Log raw model stream events to jsonl",
+    "启动前强制终止目标端口上的现有监听进程",
+  "Log raw model stream events to jsonl": "将原始模型流事件记录到 jsonl",
   "Only show claude-cli logs in the console (includes stdout/stderr)":
-    "[TODO] Only show claude-cli logs in the console (includes stdout/stderr)",
-  "Password for auth mode=password": "[TODO] Password for auth mode=password",
-  "Port for the gateway WebSocket": "[TODO] Port for the gateway WebSocket",
-  "Raw stream jsonl path": "[TODO] Raw stream jsonl path",
+    "仅在控制台中显示 claude-cli 日志（包含标准输出和标准错误）",
+  "Password for auth mode=password": "auth mode=password 的密码",
+  "Port for the gateway WebSocket": "Gateway WebSocket 端口",
+  "Raw stream jsonl path": "原始流 jsonl 路径",
   "Reset Tailscale serve/funnel configuration on shutdown":
-    "[TODO] Reset Tailscale serve/funnel configuration on shutdown",
+    "关机时重置 Tailscale 的 serve/funnel 配置",
   "Reset dev config + credentials + sessions + workspace (requires --dev)":
-    "[TODO] Reset dev config + credentials + sessions + workspace (requires --dev)",
+    "重置开发配置、凭据、会话及工作区（需配合 --dev 使用）",
   "Set gateway.auth.password (or OPENCLAW_GATEWAY_PASSWORD), or pass --password.":
-    "[TODO] Set gateway.auth.password (or OPENCLAW_GATEWAY_PASSWORD), or pass --password.",
+    "设置 gateway.auth.password（或 OPENCLAW_GATEWAY_PASSWORD），或通过 --password 指定。",
   "Set gateway.auth.token (or OPENCLAW_GATEWAY_TOKEN), or pass --token.":
-    "[TODO] Set gateway.auth.token (or OPENCLAW_GATEWAY_TOKEN), or pass --token.",
+    "设置 gateway.auth.token（或 OPENCLAW_GATEWAY_TOKEN），或通过 --token 指定。",
   "Set gateway.auth.token/password (or OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD) or pass --token/--password.":
-    "[TODO] Set gateway.auth.token/password (or OPENCLAW_GATEWAY_TOKEN/OPENCLAW_GATEWAY_PASSWORD) or pass --token/--password.",
+    "设置 gateway.auth.token/password（或环境变量），或通过 --token/--password 指定。",
   "Shared token required in connect.params.auth.token (default: OPENCLAW_GATEWAY_TOKEN env if set)":
-    "[TODO] Shared token required in connect.params.auth.token (default: OPENCLAW_GATEWAY_TOKEN env if set)",
-  'Tailscale exposure mode ("off"|"serve"|"funnel")':
-    '[TODO] Tailscale exposure mode ("off"|"serve"|"funnel")',
-  "Use --reset with --dev.": "[TODO] Use --reset with --dev.",
-  "Verbose logging to stdout/stderr": "[TODO] Verbose logging to stdout/stderr",
-  'WebSocket log style ("auto"|"full"|"compact")':
-    '[TODO] WebSocket log style ("auto"|"full"|"compact")',
-  "openclaw gateway stop": "[TODO] openclaw gateway stop",
-  "openclaw setup": "[TODO] openclaw setup",
+    "connect.params.auth.token 中所需的共享 Token（若设置了 OPENCLAW_GATEWAY_TOKEN 环境变量，则默认为该值）",
+  'Tailscale exposure mode ("off"|"serve"|"funnel")': 'Tailscale 暴露模式 ("off"|"serve"|"funnel")',
+  "Use --reset with --dev.": "配合 --dev 使用 --reset。",
+  "Verbose logging to stdout/stderr": "输出详细日志到标准输出/标准错误",
+  'WebSocket log style ("auto"|"full"|"compact")': 'WebSocket 日志风格 ("auto"|"full"|"compact")',
 
   // =====================================================================================
   // 模块: src/cli/gateway-cli/shared.ts
   // =====================================================================================
   "Gateway service status unknown; if supervised, stop it first.":
-    "[TODO] Gateway service status unknown; if supervised, stop it first.",
-  "Unknown error": "[TODO] Unknown error",
-  "openclaw gateway stop": "[TODO] openclaw gateway stop",
+    "Gateway 服务状态未知；如果使用了服务管理，请先手动停止它。",
+  "Unknown error": "未知错误",
 
   // =====================================================================================
   // 模块: src/cli/gateway-rpc.ts
   // =====================================================================================
-  "Gateway WebSocket URL (defaults to gateway.remote.url when configured)":
-    "网关 WebSocket URL (配置时默认为 gateway.remote.url)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
-  "Timeout in ms": "超时 (毫秒)",
   "Wait for final response (agent)": "等待最终响应 (Agent)",
 
   // =====================================================================================
   // 模块: src/cli/hooks-cli.ts
   // =====================================================================================
-  "  Any binary:": "[TODO]   Any binary:",
-  "  Binaries:": "[TODO]   Binaries:",
-  "  Config:": "[TODO]   Config:",
-  "  Environment:": "[TODO]   Environment:",
-  "  Events:": "[TODO]   Events:",
-  "  Handler:": "[TODO]   Handler:",
-  "  Homepage:": "[TODO]   Homepage:",
+  "  Any binary:": "  任意二进制文件：",
+  "  Binaries:": "  二进制文件：",
+  "  Config:": "  配置：",
+  "  Environment:": "  环境：",
+  "  Events:": "  事件：",
+  "  Handler:": "  处理器：",
+  "  Homepage:": "  主页：",
   "  Managed by plugin; enable/disable via hooks CLI not available.":
-    "[TODO]   Managed by plugin; enable/disable via hooks CLI not available.",
-  "  OS:": "[TODO]   OS:",
-  "  Path:": "[TODO]   Path:",
-  "  Source:": "[TODO]   Source:",
-  ", ": "[TODO] , ",
-  "; ": "[TODO] ; ",
-  "Check hooks eligibility status": "[TODO] Check hooks eligibility status",
-  "Disable a hook": "[TODO] Disable a hook",
-  "Enable a hook": "[TODO] Enable a hook",
-  "Error:": "[TODO] Error:",
-  "Hook pack id (omit with --all)": "[TODO] Hook pack id (omit with --all)",
-  "Hooks Status": "[TODO] Hooks Status",
-  "Hooks not ready:": "[TODO] Hooks not ready:",
-  "Install a hook pack (path, archive, or npm spec)":
-    "[TODO] Install a hook pack (path, archive, or npm spec)",
-  "Link a local path instead of copying": "[TODO] Link a local path instead of copying",
-  "Linked hook paths must be directories.": "[TODO] Linked hook paths must be directories.",
-  "List all hooks": "[TODO] List all hooks",
-  "Manage internal agent hooks": "[TODO] Manage internal agent hooks",
-  "No hooks found.": "[TODO] No hooks found.",
-  "Not ready:": "[TODO] Not ready:",
-  "Output as JSON": "[TODO] Output as JSON",
-  "Path to a hook pack or npm package spec": "[TODO] Path to a hook pack or npm package spec",
-  "Provide a hook id or use --all.": "[TODO] Provide a hook id or use --all.",
-  "Restart the gateway to load hooks.": "[TODO] Restart the gateway to load hooks.",
-  "Show detailed information about a hook": "[TODO] Show detailed information about a hook",
-  "Show more details including missing requirements":
-    "[TODO] Show more details including missing requirements",
-  "Show only eligible hooks": "[TODO] Show only eligible hooks",
-  "Show what would change without writing": "[TODO] Show what would change without writing",
-  "Total hooks:": "[TODO] Total hooks:",
-  "Update all tracked hooks": "[TODO] Update all tracked hooks",
-  "Update installed hooks (npm installs only)": "[TODO] Update installed hooks (npm installs only)",
-  "`--link` requires a local path.": "[TODO] `--link` requires a local path.",
-  "disable <name>": "[TODO] disable <name>",
-  "enable <name>": "[TODO] enable <name>",
-  "info <name>": "[TODO] info <name>",
-  "not found": "[TODO] not found",
-  "openclaw hooks list": "[TODO] openclaw hooks list",
-  "⏸": "[TODO] ⏸",
-  "⏸ Disabled": "[TODO] ⏸ Disabled",
-  "⏸ disabled": "[TODO] ⏸ disabled",
-  "✓ Ready": "[TODO] ✓ Ready",
-  "✓ ready": "[TODO] ✓ ready",
-  "✗ Missing requirements": "[TODO] ✗ Missing requirements",
-  "✗ missing": "[TODO] ✗ missing",
+    "  由插件管理；无法通过 hooks CLI 启用/禁用。",
+  "  OS:": "  操作系统：",
+  "  Path:": "  路径：",
+  "  Source:": "  源代码：",
+  "; ": "; ",
+  "Check hooks eligibility status": "检查 Hooks 的适用性状态",
+  "Disable a hook": "禁用 Hook",
+  "Enable a hook": "启用 Hook",
+  "Error:": "错误：",
+  "Hook pack id (omit with --all)": "Hook 包 ID（使用 --all 则省略）",
+  "Hooks Status": "Hooks 状态",
+  "Hooks not ready:": "Hooks 未就绪：",
+  "Install a hook pack (path, archive, or npm spec)": "安装 Hook 包（路径、压缩包或 npm 规范）",
+  "Link a local path instead of copying": "链接本地路径而不是复制",
+  "Linked hook paths must be directories.": "链接的 Hook 路径必须是目录。",
+  "List all hooks": "列出所有 Hooks",
+  "Manage internal agent hooks": "管理内部 Agent Hooks",
+  "No hooks found.": "未发现任何 Hooks。",
+  "Not ready:": "未就绪：",
+  "Output as JSON": "输出为 JSON",
+  "Path to a hook pack or npm package spec": "Hook 包路径或 npm 包规范",
+  "Provide a hook id or use --all.": "请提供 Hook ID 或使用 --all。",
+  "Restart the gateway to load hooks.": "重启 Gateway 以加载 Hooks。",
+  "Show detailed information about a hook": "显示 Hook 的详细信息",
+  "Show more details including missing requirements": "显示更多详情，包括缺失的依赖项",
+  "Show only eligible hooks": "仅显示适用的 Hooks",
+  "Show what would change without writing": "显示将要更改的内容而不实际写入",
+  "Total hooks:": "总计 Hooks 数：",
+  "Update all tracked hooks": "更新所有已追踪的 Hooks",
+  "Update installed hooks (npm installs only)": "更新已安装的 Hooks（仅限 npm 安装）",
+  "`--link` requires a local path.": "`--link` 需要本地路径。",
+  "disable <name>": "禁用 <名称>",
+  "enable <name>": "启用 <名称>",
+  "info <name>": "信息 <名称>",
+  "not found": "未找到",
+  "openclaw hooks list": "openclaw Hooks 列表",
+  "⏸": "⏸",
+  "⏸ Disabled": "⏸ 已禁用",
+  "⏸ disabled": "⏸ 已禁用",
+  "✓ Ready": "✓ 就绪",
+  "✓ ready": "✓ 就绪",
+  "✗ Missing requirements": "✗ 缺少依赖",
+  "✗ missing": "✗ 缺失",
 
   // =====================================================================================
   // 模块: src/cli/logs-cli.ts
   // 功能: 日志 CLI 命令
   // =====================================================================================
-  "Disable ANSI colors": "[TODO] Disable ANSI colors",
-  "Emit JSON log lines": "[TODO] Emit JSON log lines",
-  "Follow log output": "[TODO] Follow log output",
+  "Disable ANSI colors": "禁用 ANSI 颜色",
+  "Emit JSON log lines": "输出 JSON 格式日志",
+  "Follow log output": "持续追踪日志输出",
   "Gateway not reachable. Is it running and accessible?":
-    "[TODO] Gateway not reachable. Is it running and accessible?",
-  "Log cursor reset (file rotated).": "[TODO] Log cursor reset (file rotated).",
-  "Log file:": "[TODO] Log file:",
-  "Log tail truncated (increase --max-bytes).": "[TODO] Log tail truncated (increase --max-bytes).",
-  "Max bytes to read": "[TODO] Max bytes to read",
-  "Max lines to return": "[TODO] Max lines to return",
-  "Plain text output (no ANSI styling)": "[TODO] Plain text output (no ANSI styling)",
-  "Polling interval in ms": "[TODO] Polling interval in ms",
-  "Tail gateway file logs via RPC": "[TODO] Tail gateway file logs via RPC",
-  "Unexpected logs.tail response": "[TODO] Unexpected logs.tail response",
-  "openclaw doctor": "[TODO] openclaw doctor",
+    "无法连接到 Gateway。它是否已启动且可访问？",
+  "Log cursor reset (file rotated).": "日志游标重置（日志文件已轮转）。",
+  "Log file:": "日志文件：",
+  "Log tail truncated (increase --max-bytes).": "日志尾部被截断（请增大 --max-bytes）。",
+  "Max bytes to read": "读取的最大字节数",
+  "Max lines to return": "返回的最大行数",
+  "Plain text output (no ANSI styling)": "纯文本输出（无 ANSI 样式）",
+  "Polling interval in ms": "轮询间隔（毫秒）",
+  "Tail gateway file logs via RPC": "通过 RPC 追踪 Gateway 文件日志",
+  "Unexpected logs.tail response": "未预期的 logs.tail 响应",
 
   // =====================================================================================
   // 模块: src/cli/memory-cli.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Agent id (default: default agent)": "[TODO] Agent id (default: default agent)",
-  "Batch error": "[TODO] Batch error",
-  "By source": "[TODO] By source",
-  "Cache cap": "[TODO] Cache cap",
-  "Checking memory…": "[TODO] Checking memory…",
-  "Embedding cache": "[TODO] Embedding cache",
-  "Embeddings error": "[TODO] Embeddings error",
-  "Extra paths": "[TODO] Extra paths",
-  "FTS error": "[TODO] FTS error",
-  "Force full reindex": "[TODO] Force full reindex",
-  "Index error": "[TODO] Index error",
-  "Indexing memory…": "[TODO] Indexing memory…",
-  "Max results": "[TODO] Max results",
-  "Memory Index": "[TODO] Memory Index",
-  "Memory Search": "[TODO] Memory Search",
-  "Memory index complete.": "[TODO] Memory index complete.",
-  "Memory search disabled.": "[TODO] Memory search disabled.",
-  "Memory search tools": "[TODO] Memory search tools",
-  "Minimum score": "[TODO] Minimum score",
-  "No matches.": "[TODO] No matches.",
-  "Print JSON": "[TODO] Print JSON",
-  "Probe embedding provider availability": "[TODO] Probe embedding provider availability",
-  "Probing embeddings…": "[TODO] Probing embeddings…",
-  "Probing vector…": "[TODO] Probing vector…",
-  "Reindex if dirty (implies --deep)": "[TODO] Reindex if dirty (implies --deep)",
-  "Reindex memory files": "[TODO] Reindex memory files",
-  "Search memory files": "[TODO] Search memory files",
-  "Search query": "搜索查询",
-  "Show memory search index status": "[TODO] Show memory search index status",
-  "Vector dims": "[TODO] Vector dims",
-  "Vector error": "[TODO] Vector error",
-  "Vector path": "[TODO] Vector path",
-  "Verbose logging": "[TODO] Verbose logging",
+  "Agent id (default: default agent)": "Agent ID（默认为 default agent）",
+  "Batch error": "批量操作错误",
+  "By source": "按来源",
+  "Cache cap": "缓存上限",
+  "Checking memory…": "正在检查记忆…",
+  "Embedding cache": "嵌入 (Embedding) 缓存",
+  "Embeddings error": "嵌入错误",
+  "Extra paths": "额外路径",
+  "FTS error": "全文搜索 (FTS) 错误",
+  "Force full reindex": "强制完整重新索引",
+  "Index error": "索引错误",
+  "Indexing memory…": "正在对记忆建立索引…",
+  "Max results": "最大结果数",
+  "Memory Index": "记忆索引",
+  "Memory Search": "记忆搜索",
+  "Memory index complete.": "记忆索引建立完成。",
+  "Memory search disabled.": "记忆搜索已禁用。",
+  "Memory search tools": "记忆搜索工具",
+  "Minimum score": "最低评分",
+  "No matches.": "无匹配项。",
+  "Print JSON": "打印 JSON",
+  "Probe embedding provider availability": "探测嵌入提供商可用性",
+  "Probing embeddings…": "正在探测嵌入服务…",
+  "Probing vector…": "正在探测向量服务…",
+  "Reindex if dirty (implies --deep)": "若有变更则重新索引（隐含 --deep）",
+  "Reindex memory files": "重新对记忆文件建立索引",
+  "Search memory files": "搜索记忆文件",
+  "Show memory search index status": "显示记忆搜索索引状态",
+  "Vector dims": "向量维度",
+  "Vector error": "向量错误",
+  "Vector path": "向量路径",
+  "Verbose logging": "详细日志",
 
   // =====================================================================================
   // 模块: src/cli/models-cli.ts
   // =====================================================================================
-  "Accept defaults without prompting": "[TODO] Accept defaults without prompting",
-  "Add a fallback model": "[TODO] Add a fallback model",
-  "Add an image fallback model": "[TODO] Add an image fallback model",
-  "Add or update a model alias": "[TODO] Add or update a model alias",
-  "Agent id (default: configured default agent)":
-    "[TODO] Agent id (default: configured default agent)",
-  "Agent id for auth order get/set/clear": "[TODO] Agent id for auth order get/set/clear",
+  "Accept defaults without prompting": "接受默认值且不进行提示",
+  "Add a fallback model": "添加备用模型",
+  "Add an image fallback model": "添加图像备用模型",
+  "Add or update a model alias": "添加或更新模型别名",
+  "Agent id (default: configured default agent)": "Agent ID（默认为配置的默认 Agent）",
+  "Agent id for auth order get/set/clear": "用于获取/设置/清除认证顺序的 Agent ID",
   "Agent id to inspect (overrides OPENCLAW_AGENT_DIR/PI_CODING_AGENT_DIR)":
-    "[TODO] Agent id to inspect (overrides OPENCLAW_AGENT_DIR/PI_CODING_AGENT_DIR)",
-  "Alias name": "[TODO] Alias name",
-  "Apply the provider's default model recommendation":
-    "[TODO] Apply the provider's default model recommendation",
-  "Auth profile id (default: <provider>:manual)":
-    "[TODO] Auth profile id (default: <provider>:manual)",
+    "要检查的 Agent ID（覆盖 OPENCLAW_AGENT_DIR/PI_CODING_AGENT_DIR 环境变量）",
+  "Alias name": "别名名称",
+  "Apply the provider's default model recommendation": "应用提供商推荐的默认模型",
+  "Auth profile id (default: <provider>:manual)": "认证配置文件 ID（默认为 <provider>:manual）",
   "Auth profile id (default: github-copilot:github)":
-    "[TODO] Auth profile id (default: github-copilot:github)",
-  "Auth profile ids (e.g. anthropic:default)": "[TODO] Auth profile ids (e.g. anthropic:default)",
-  "Clear all fallback models": "[TODO] Clear all fallback models",
-  "Clear all image fallback models": "[TODO] Clear all image fallback models",
+    "认证配置文件 ID（默认为 github-copilot:github）",
+  "Auth profile ids (e.g. anthropic:default)": "认证配置文件 ID（例如 anthropic:default）",
+  "Clear all fallback models": "清除所有备用模型",
+  "Clear all image fallback models": "清除所有图像备用模型",
   "Clear per-agent auth order override (fall back to config/round-robin)":
-    "[TODO] Clear per-agent auth order override (fall back to config/round-robin)",
-  "Concurrent probes": "[TODO] Concurrent probes",
-  "Disable prompts (use defaults)": "[TODO] Disable prompts (use defaults)",
+    "清除特定 Agent 的认证顺序覆盖（回退到配置或轮询模式）",
+  "Concurrent probes": "并发探测数",
+  "Disable prompts (use defaults)": "禁用提示（使用默认值）",
   "Exit non-zero if auth is expiring/expired (1=expired/missing, 2=expiring)":
-    "[TODO] Exit non-zero if auth is expiring/expired (1=expired/missing, 2=expiring)",
-  "Filter by provider": "[TODO] Filter by provider",
-  "Filter by provider prefix": "[TODO] Filter by provider prefix",
-  "Filter to local models": "[TODO] Filter to local models",
+    "如果认证即将过期或已过期，则以非零状态码退出（1=已过期/缺失，2=即将过期）",
+  "Filter by provider": "按提供商过滤",
+  "Filter by provider prefix": "按提供商前缀过滤",
+  "Filter to local models": "仅显示本地模型",
   "Interactive auth helper (setup-token or paste token)":
-    "[TODO] Interactive auth helper (setup-token or paste token)",
-  "List fallback models": "[TODO] List fallback models",
-  "List image fallback models": "[TODO] List image fallback models",
-  "List model aliases": "[TODO] List model aliases",
-  "List models (configured by default)": "[TODO] List models (configured by default)",
+    "交互式认证助手（设置 Token 或粘贴 Token）",
+  "List fallback models": "列出备用模型",
+  "List image fallback models": "列出图像备用模型",
+  "List model aliases": "列出模型别名",
+  "List models (configured by default)": "列出模型（默认配置）",
   "Login to GitHub Copilot via GitHub device flow (TTY required)":
-    "[TODO] Login to GitHub Copilot via GitHub device flow (TTY required)",
-  "Manage image model fallback list": "[TODO] Manage image model fallback list",
-  "Manage model aliases": "[TODO] Manage model aliases",
-  "Manage model auth profiles": "[TODO] Manage model auth profiles",
-  "Manage model fallback list": "[TODO] Manage model fallback list",
-  "Manage per-agent auth profile order overrides":
-    "[TODO] Manage per-agent auth profile order overrides",
-  "Max fallback candidates": "[TODO] Max fallback candidates",
-  "Minimum parameter size (billions)": "[TODO] Minimum parameter size (billions)",
-  "Model discovery, scanning, and configuration":
-    "[TODO] Model discovery, scanning, and configuration",
-  "Model id or alias": "[TODO] Model id or alias",
-  "Only probe a single provider": "[TODO] Only probe a single provider",
+    "通过 GitHub 设备流程登录 GitHub Copilot（需要 TTY）",
+  "Manage image model fallback list": "管理图像模型备用列表",
+  "Manage model aliases": "管理模型别名",
+  "Manage model auth profiles": "管理模型认证配置文件",
+  "Manage model fallback list": "管理模型备用列表",
+  "Manage per-agent auth profile order overrides": "管理特定 Agent 的认证配置文件顺序覆盖",
+  "Max fallback candidates": "最大备用候选模型数",
+  "Minimum parameter size (billions)": "最小参数规模（十亿/Billion）",
+  "Model discovery, scanning, and configuration": "模型发现、扫描与配置",
+  "Model id or alias": "模型 ID 或别名",
+  "Only probe a single provider": "仅探测单个提供商",
   "Only probe specific auth profile ids (repeat or comma-separated)":
-    "[TODO] Only probe specific auth profile ids (repeat or comma-separated)",
+    "仅探测指定的认证配置文件 ID（可重复或以逗号分隔）",
   "Optional expiry duration (e.g. 365d, 12h). Stored as absolute expiresAt.":
-    "[TODO] Optional expiry duration (e.g. 365d, 12h). Stored as absolute expiresAt.",
-  "Output JSON": "输出 JSON",
-  "Output JSON (alias for `models status --json`)":
-    "[TODO] Output JSON (alias for `models status --json`)",
-  "Overwrite existing profile without prompting":
-    "[TODO] Overwrite existing profile without prompting",
+    "可选的过期时长（例如 365d, 12h）。将作为绝对过期时间 expiresAt 存储。",
+  "Output JSON (alias for `models status --json`)": "输出为 JSON（`models status --json` 的别名）",
+  "Overwrite existing profile without prompting": "直接覆盖现有配置文件而不提示",
   "Paste a token into auth-profiles.json and update config":
-    "[TODO] Paste a token into auth-profiles.json and update config",
-  "Per-probe timeout in ms": "[TODO] Per-probe timeout in ms",
-  "Plain line output": "[TODO] Plain line output",
-  "Plain output": "[TODO] Plain output",
+    "将 Token 粘贴到 auth-profiles.json 并更新配置",
+  "Per-probe timeout in ms": "单次探测超时（毫秒）",
+  "Plain line output": "单行文本输出",
+  "Plain output": "纯文本输出",
   "Plain output (alias for `models status --plain`)":
-    "[TODO] Plain output (alias for `models status --plain`)",
-  "Probe concurrency": "[TODO] Probe concurrency",
-  "Probe configured provider auth (live)": "[TODO] Probe configured provider auth (live)",
-  "Probe max tokens (best-effort)": "[TODO] Probe max tokens (best-effort)",
-  "Provider auth method id": "[TODO] Provider auth method id",
-  "Provider id (default: anthropic)": "[TODO] Provider id (default: anthropic)",
-  "Provider id (e.g. anthropic)": "[TODO] Provider id (e.g. anthropic)",
-  "Provider id registered by a plugin": "[TODO] Provider id registered by a plugin",
-  "Remove a fallback model": "[TODO] Remove a fallback model",
-  "Remove a model alias": "[TODO] Remove a model alias",
-  "Remove an image fallback model": "[TODO] Remove an image fallback model",
+    "纯文本输出（`models status --plain` 的别名）",
+  "Probe concurrency": "探测并发度",
+  "Probe configured provider auth (live)": "探测已配置的提供商认证（实时）",
+  "Probe max tokens (best-effort)": "探测最大 Token 数（尽力而为）",
+  "Provider auth method id": "提供商认证方法 ID",
+  "Provider id (default: anthropic)": "提供商 ID（默认为 anthropic）",
+  "Provider id (e.g. anthropic)": "提供商 ID（如 anthropic）",
+  "Provider id registered by a plugin": "由插件注册的提供商 ID",
+  "Remove a fallback model": "移除备用模型",
+  "Remove a model alias": "移除模型别名",
+  "Remove an image fallback model": "移除图像备用模型",
   "Run a provider CLI to create/sync a token (TTY required)":
-    "[TODO] Run a provider CLI to create/sync a token (TTY required)",
-  "Run a provider plugin auth flow (OAuth/API key)":
-    "[TODO] Run a provider plugin auth flow (OAuth/API key)",
-  "Scan OpenRouter free models for tools + images":
-    "[TODO] Scan OpenRouter free models for tools + images",
+    "运行提供商 CLI 来创建或同步 Token（需要 TTY）",
+  "Run a provider plugin auth flow (OAuth/API key)": "运行提供商插件认证流程（OAuth/API Key）",
+  "Scan OpenRouter free models for tools + images": "扫描 OpenRouter 免费模型以支持工具和图像",
   "Set agents.defaults.imageModel to the first image selection":
-    "[TODO] Set agents.defaults.imageModel to the first image selection",
+    "将 agents.defaults.imageModel 设置为首个选中的图像模型",
   "Set agents.defaults.model to the first selection":
-    "[TODO] Set agents.defaults.model to the first selection",
+    "将 agents.defaults.model 设置为首个选中的模型",
   "Set per-agent auth order override (locks rotation to this list)":
-    "[TODO] Set per-agent auth order override (locks rotation to this list)",
-  "Set the default model": "[TODO] Set the default model",
-  "Set the image model": "[TODO] Set the image model",
-  "Show configured model state": "[TODO] Show configured model state",
-  "Show full model catalog": "[TODO] Show full model catalog",
+    "设置特定 Agent 的认证顺序覆盖（锁定轮换为此列表）",
+  "Set the default model": "设置默认模型",
+  "Set the image model": "设置图像模型",
+  "Show configured model state": "显示已配置的模型状态",
+  "Show full model catalog": "显示完整模型目录",
   "Show per-agent auth order override (from auth-profiles.json)":
-    "[TODO] Show per-agent auth order override (from auth-profiles.json)",
-  "Skip confirmation": "[TODO] Skip confirmation",
-  "Skip live probes; list free candidates only":
-    "[TODO] Skip live probes; list free candidates only",
-  "Skip models older than N days": "[TODO] Skip models older than N days",
+    "显示特定 Agent 的认证顺序覆盖（来自 auth-profiles.json）",
+  "Skip confirmation": "跳过确认",
+  "Skip live probes; list free candidates only": "跳过实时探测；仅列出免费候选模型",
+  "Skip models older than N days": "跳过超过 N 天的模型",
 
   // =====================================================================================
   // 模块: src/cli/node-cli/daemon.ts
   // =====================================================================================
-  'Invalid --runtime (use "node" or "bun")': '[TODO] Invalid --runtime (use "node" or "bun")',
-  "Invalid port": "无效端口",
-  "Nix mode detected; service install is disabled.": "检测到 Nix 模式; 服务安装已禁用。",
-  "Nix mode detected; service uninstall is disabled.": "检测到 Nix 模式; 服务卸载已禁用。",
-  "Service file:": "服务文件:",
-  "Service is loaded but not running.": "[TODO] Service is loaded but not running.",
-  "Service unit not found.": "未找到服务单元。",
-  "Start with:": "[TODO] Start with:",
-  "Working dir:": "工作目录:",
-  "openclaw node install": "[TODO] openclaw node install",
-  "openclaw node install --force": "[TODO] openclaw node install --force",
-  "openclaw node start": "[TODO] openclaw node start",
+  "Service is loaded but not running.": "服务已加载但未运行。",
+  "Start with:": "启动方式：",
+  "openclaw node install": "openclaw 节点安装",
+  "openclaw node install --force": "openclaw 节点强制安装",
+  "openclaw node start": "openclaw 节点启动",
 
   // =====================================================================================
   // 模块: src/cli/node-cli/register.ts
   // =====================================================================================
-  "Expected TLS certificate fingerprint (sha256)":
-    "[TODO] Expected TLS certificate fingerprint (sha256)",
-  "Gateway host": "[TODO] Gateway host",
-  "Gateway port": "网关端口",
+  "Expected TLS certificate fingerprint (sha256)": "期望的 TLS 证书指纹 (sha256)",
+  "Gateway host": "Gateway 主机",
   "Install the node host service (launchd/systemd/schtasks)":
-    "[TODO] Install the node host service (launchd/systemd/schtasks)",
-  "Output JSON": "输出 JSON",
-  "Override node display name": "[TODO] Override node display name",
-  "Override node id (clears pairing token)": "[TODO] Override node id (clears pairing token)",
-  "Reinstall/overwrite if already installed": "如果已安装则重新安装/覆盖",
+    "安装节点主机服务 (launchd/systemd/schtasks)",
+  "Override node display name": "覆盖节点显示名称",
+  "Override node id (clears pairing token)": "覆盖节点 ID（将清除配对 Token）",
   "Restart the node host service (launchd/systemd/schtasks)":
-    "[TODO] Restart the node host service (launchd/systemd/schtasks)",
+    "重启节点主机服务 (launchd/systemd/schtasks)",
   "Run a headless node host (system.run/system.which)":
-    "[TODO] Run a headless node host (system.run/system.which)",
-  "Run the headless node host (foreground)": "[TODO] Run the headless node host (foreground)",
-  "Service runtime (node|bun). Default: node": "[TODO] Service runtime (node|bun). Default: node",
-  "Show node host status": "[TODO] Show node host status",
+    "运行无头节点主机 (system.run/system.which)",
+  "Run the headless node host (foreground)": "在前台运行无头节点主机",
+  "Service runtime (node|bun). Default: node": "服务运行时 (node|bun)。默认：node",
+  "Show node host status": "显示节点主机状态",
   "Stop the node host service (launchd/systemd/schtasks)":
-    "[TODO] Stop the node host service (launchd/systemd/schtasks)",
+    "停止节点主机服务 (launchd/systemd/schtasks)",
   "Uninstall the node host service (launchd/systemd/schtasks)":
-    "[TODO] Uninstall the node host service (launchd/systemd/schtasks)",
-  "Use TLS for the gateway connection": "[TODO] Use TLS for the gateway connection",
+    "卸载节点主机服务 (launchd/systemd/schtasks)",
+  "Use TLS for the gateway connection": "为 Gateway 连接使用 TLS",
 
   // =====================================================================================
   // 模块: src/cli/nodes-camera.ts
   // 功能: 摄像头节点实现
   // =====================================================================================
-  "invalid camera.clip payload": "[TODO] invalid camera.clip payload",
-  "invalid camera.snap payload": "[TODO] invalid camera.snap payload",
+  "invalid camera.clip payload": "无效的 camera.clip 负载",
+  "invalid camera.snap payload": "无效的 camera.snap 负载",
 
   // =====================================================================================
   // 模块: src/cli/nodes-canvas.ts
   // 功能: Canvas 节点实现
   // =====================================================================================
-  "invalid canvas.snapshot payload": "[TODO] invalid canvas.snapshot payload",
+  "invalid canvas.snapshot payload": "无效的 canvas.snapshot 负载",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/a2ui-jsonl.ts
   // =====================================================================================
-  "\n- ": "[TODO] \n- ",
-  ", ": "[TODO] , ",
-  "mixed A2UI v0.8 and v0.9 messages in one file":
-    "[TODO] mixed A2UI v0.8 and v0.9 messages in one file",
-  "no JSONL messages found": "[TODO] no JSONL messages found",
-
-  // =====================================================================================
-  // 模块: src/cli/nodes-cli/format.ts
-  // =====================================================================================
-  ", ": "[TODO] , ",
+  "mixed A2UI v0.8 and v0.9 messages in one file": "在同一个文件中混合了 A2UI v0.8 和 v0.9 的消息",
+  "no JSONL messages found": "未发现 JSONL 消息",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.camera.ts
   // =====================================================================================
-  "Camera device id (from nodes camera list)": "[TODO] Camera device id (from nodes camera list)",
-  "Camera facing": "[TODO] Camera facing",
+  "Camera device id (from nodes camera list)": "摄像头设备 ID（来自节点摄像头列表）",
+  "Camera facing": "摄像头朝向",
   "Capture a photo from a node camera (prints MEDIA:<path>)":
-    "[TODO] Capture a photo from a node camera (prints MEDIA:<path>)",
+    "从节点摄像头拍摄照片（输出 MEDIA:<路径>）",
   "Capture a short video clip from a node camera (prints MEDIA:<path>)":
-    "[TODO] Capture a short video clip from a node camera (prints MEDIA:<path>)",
-  "Capture camera media from a paired node": "[TODO] Capture camera media from a paired node",
-  "Delay before capture in ms (macOS default 2000)":
-    "[TODO] Delay before capture in ms (macOS default 2000)",
-  "Disable audio capture": "[TODO] Disable audio capture",
+    "从节点摄像头录制短视频（输出 MEDIA:<路径>）",
+  "Capture camera media from a paired node": "从配对节点捕获摄像头媒体",
+  "Delay before capture in ms (macOS default 2000)": "捕获前的延迟时间（毫秒，macOS 默认为 2000）",
+  "Disable audio capture": "禁用音频捕获",
   "Duration (default 3000ms; supports ms/s/m, e.g. 10s)":
-    "[TODO] Duration (default 3000ms; supports ms/s/m, e.g. 10s)",
-  "JPEG quality (default 0.9)": "[TODO] JPEG quality (default 0.9)",
-  "List available cameras on a node": "[TODO] List available cameras on a node",
-  "Max width in px (optional)": "[TODO] Max width in px (optional)",
-  "No cameras reported.": "[TODO] No cameras reported.",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Node invoke timeout in ms (default 20000)": "[TODO] Node invoke timeout in ms (default 20000)",
-  "Node invoke timeout in ms (default 90000)": "[TODO] Node invoke timeout in ms (default 90000)",
-  "Unknown Camera": "[TODO] Unknown Camera",
-  "camera clip": "[TODO] camera clip",
-  "camera list": "[TODO] camera list",
-  "camera snap": "[TODO] camera snap",
+    "时长（默认 3000ms；支持 ms/s/m，例如 10s）",
+  "JPEG quality (default 0.9)": "JPEG 质量（默认 0.9）",
+  "List available cameras on a node": "列出节点上的可用摄像头",
+  "Max width in px (optional)": "最大宽度（像素，可选）",
+  "No cameras reported.": "未报告任何摄像头。",
+  "Node id, name, or IP": "节点 ID、名称或 IP",
+  "Node invoke timeout in ms (default 20000)": "节点调用超时（毫秒，默认 20000）",
+  "Node invoke timeout in ms (default 90000)": "节点调用超时（毫秒，默认 90000）",
+  "Unknown Camera": "未知摄像头",
+  "camera clip": "摄像头剪辑",
+  "camera list": "摄像头列表",
+  "camera snap": "摄像头抓拍",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.canvas.ts
   // 功能: Canvas 节点注册
   // =====================================================================================
-  "Capture a canvas snapshot (prints MEDIA:<path>)":
-    "[TODO] Capture a canvas snapshot (prints MEDIA:<path>)",
-  "Capture or render canvas content from a paired node":
-    "[TODO] Capture or render canvas content from a paired node",
+  "Capture a canvas snapshot (prints MEDIA:<path>)": "捕获 Canvas 快照（输出 MEDIA:<路径>）",
+  "Capture or render canvas content from a paired node": "从配对节点捕获或渲染 Canvas 内容",
   "Detected A2UI v0.9 JSONL (createSurface). OpenClaw currently supports v0.8 only.":
-    "[TODO] Detected A2UI v0.9 JSONL (createSurface). OpenClaw currently supports v0.8 only.",
-  "Evaluate JavaScript in the canvas": "[TODO] Evaluate JavaScript in the canvas",
-  "Hide the canvas": "[TODO] Hide the canvas",
-  "Image format": "[TODO] Image format",
-  "JPEG quality (optional)": "[TODO] JPEG quality (optional)",
-  "JavaScript to evaluate": "[TODO] JavaScript to evaluate",
-  "Max width in px (optional)": "[TODO] Max width in px (optional)",
-  "Navigate the canvas to a URL": "[TODO] Navigate the canvas to a URL",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Node invoke timeout in ms": "[TODO] Node invoke timeout in ms",
-  "Node invoke timeout in ms (default 20000)": "[TODO] Node invoke timeout in ms (default 20000)",
-  "Path to JSONL payload": "[TODO] Path to JSONL payload",
-  "Placement height": "[TODO] Placement height",
-  "Placement width": "[TODO] Placement width",
-  "Placement x coordinate": "[TODO] Placement x coordinate",
-  "Placement y coordinate": "[TODO] Placement y coordinate",
-  "Push A2UI JSONL to the canvas": "[TODO] Push A2UI JSONL to the canvas",
-  "Render A2UI content on the canvas": "[TODO] Render A2UI content on the canvas",
-  "Render a quick A2UI text payload": "[TODO] Render a quick A2UI text payload",
-  "Reset A2UI renderer state": "[TODO] Reset A2UI renderer state",
-  "Show the canvas (optionally with a target URL/path)":
-    "[TODO] Show the canvas (optionally with a target URL/path)",
-  "Target URL/path": "[TODO] Target URL/path",
-  "Target URL/path (optional)": "[TODO] Target URL/path (optional)",
-  "canvas a2ui push": "[TODO] canvas a2ui push",
-  "canvas a2ui reset": "[TODO] canvas a2ui reset",
-  "canvas a2ui reset ok": "[TODO] canvas a2ui reset ok",
-  "canvas eval": "[TODO] canvas eval",
-  "canvas eval ok": "[TODO] canvas eval ok",
-  "canvas hide": "[TODO] canvas hide",
-  "canvas hide ok": "[TODO] canvas hide ok",
-  "canvas navigate": "[TODO] canvas navigate",
-  "canvas navigate ok": "[TODO] canvas navigate ok",
-  "canvas present": "[TODO] canvas present",
-  "canvas present ok": "[TODO] canvas present ok",
-  "canvas snapshot": "[TODO] canvas snapshot",
-  "missing --js or <js>": "[TODO] missing --js or <js>",
-  "provide exactly one of --jsonl or --text": "[TODO] provide exactly one of --jsonl or --text",
+    "检测到 A2UI v0.9 JSONL (createSurface)。OpenClaw 目前仅支持 v0.8。",
+  "Evaluate JavaScript in the canvas": "在 Canvas 中执行 JavaScript",
+  "Hide the canvas": "隐藏画布",
+  "Image format": "图像格式",
+  "JPEG quality (optional)": "JPEG 质量 (可选)",
+  "JavaScript to evaluate": "要执行的 JavaScript",
+  "Navigate the canvas to a URL": "将画布导航至 URL",
+  "Node invoke timeout in ms": "节点调用超时 (毫秒)",
+  "Path to JSONL payload": "JSONL 载荷路径",
+  "Placement height": "放置高度",
+  "Placement width": "放置宽度",
+  "Placement x coordinate": "放置 x 坐标",
+  "Placement y coordinate": "放置 y 坐标",
+  "Push A2UI JSONL to the canvas": "将 A2UI JSONL 推送至画布",
+  "Render A2UI content on the canvas": "在画布上渲染 A2UI 内容",
+  "Render a quick A2UI text payload": "渲染简易 A2UI 文本载荷",
+  "Reset A2UI renderer state": "重置 A2UI 渲染器状态",
+  "Show the canvas (optionally with a target URL/path)": "显示画布 (可选目标 URL/路径)",
+  "Target URL/path": "目标 URL/路径",
+  "Target URL/path (optional)": "目标 URL/路径 (可选)",
+  "canvas a2ui push": "canvas a2ui push",
+  "canvas a2ui reset": "canvas a2ui reset",
+  "canvas a2ui reset ok": "画布 A2UI 重置成功",
+  "canvas eval": "canvas eval",
+  "canvas eval ok": "画布执行成功",
+  "canvas hide": "canvas hide",
+  "canvas hide ok": "画布已隐藏",
+  "canvas navigate": "canvas navigate",
+  "canvas navigate ok": "画布导航成功",
+  "canvas present": "canvas present",
+  "canvas present ok": "画布显示成功",
+  "canvas snapshot": "canvas snapshot",
+  "missing --js or <js>": "缺失 --js 或 <js>",
+  "provide exactly one of --jsonl or --text": "请仅提供 --jsonl 或 --text 其中之一",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.invoke.ts
   // 功能: 节点调用命令
   // =====================================================================================
-  "Agent id (default: configured default agent)":
-    "[TODO] Agent id (default: configured default agent)",
-  "Command (e.g. canvas.eval)": "[TODO] Command (e.g. canvas.eval)",
-  "Command and args": "[TODO] Command and args",
-  "Command timeout (ms)": "[TODO] Command timeout (ms)",
-  "Environment override (repeatable)": "[TODO] Environment override (repeatable)",
-  "Exec ask mode (off|on-miss|always)": "[TODO] Exec ask mode (off|on-miss|always)",
-  "Exec security mode (deny|allowlist|full)": "[TODO] Exec security mode (deny|allowlist|full)",
-  "Idempotency key (optional)": "[TODO] Idempotency key (optional)",
-  "Invoke a command on a paired node": "[TODO] Invoke a command on a paired node",
-  "JSON object string for params": "参数的 JSON 对象字符串",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Node invoke timeout in ms (default 15000)": "[TODO] Node invoke timeout in ms (default 15000)",
-  "Node invoke timeout in ms (default 30000)": "[TODO] Node invoke timeout in ms (default 30000)",
-  "Require screen recording permission": "[TODO] Require screen recording permission",
+  "Command (e.g. canvas.eval)": "命令 (例如 canvas.eval)",
+  "Command and args": "命令与参数",
+  "Command timeout (ms)": "命令超时 (毫秒)",
+  "Environment override (repeatable)": "环境覆盖 (可重复)",
+  "Exec ask mode (off|on-miss|always)": "执行确认模式 (off|on-miss|always)",
+  "Exec security mode (deny|allowlist|full)": "执行安全模式 (deny|allowlist|full)",
+  "Idempotency key (optional)": "幂等键 (可选)",
+  "Invoke a command on a paired node": "在已配对节点上调用命令",
+  "Node invoke timeout in ms (default 15000)": "节点调用超时 (毫秒，默认 15000)",
+  "Node invoke timeout in ms (default 30000)": "节点调用超时 (毫秒，默认 30000)",
+  "Require screen recording permission": "需要屏幕录制权限",
   "Run a raw shell command string (sh -lc / cmd.exe /c)":
-    "[TODO] Run a raw shell command string (sh -lc / cmd.exe /c)",
-  "Run a shell command on a node (mac only)": "[TODO] Run a shell command on a node (mac only)",
-  "Working directory": "[TODO] Working directory",
-  "command required": "[TODO] command required",
-  "exec approvals unavailable": "[TODO] exec approvals unavailable",
+    "运行原始 Shell 命令字符串 (sh -lc / cmd.exe /c)",
+  "Run a shell command on a node (mac only)": "在节点上运行 Shell 命令 (仅限 macOS)",
+  "Working directory": "工作目录",
+  "command required": "需要命令",
+  "exec approvals unavailable": "执行审批不可用",
   "exec denied: approval required (approval UI not available)":
-    "[TODO] exec denied: approval required (approval UI not available)",
-  "exec denied: host=node security=deny": "[TODO] exec denied: host=node security=deny",
-  "exec denied: user denied": "[TODO] exec denied: user denied",
-  "invalid --ask (use off|on-miss|always)": "[TODO] invalid --ask (use off|on-miss|always)",
-  "invalid --security (use deny|allowlist|full)":
-    "[TODO] invalid --security (use deny|allowlist|full)",
-  "node required (set --node or tools.exec.node)":
-    "[TODO] node required (set --node or tools.exec.node)",
-  "run timed out": "[TODO] run timed out",
-  "use --raw or argv, not both": "[TODO] use --raw or argv, not both",
+    "执行被拒绝：需要审批（审批界面不可用）",
+  "exec denied: host=node security=deny": "执行被拒绝：主机=节点 安全策略=拒绝",
+  "exec denied: user denied": "执行被拒绝：用户已拒绝",
+  "invalid --ask (use off|on-miss|always)": "无效的 --ask (请使用 off|on-miss|always)",
+  "invalid --security (use deny|allowlist|full)": "无效的 --security (请使用 deny|allowlist|full)",
+  "node required (set --node or tools.exec.node)": "需要节点 (请设置 --node 或 tools.exec.node)",
+  "run timed out": "运行超时",
+  "use --raw or argv, not both": "请使用 --raw 或参数，不能同时使用",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.location.ts
   // =====================================================================================
   "Desired accuracy (default: balanced/precise depending on node setting)":
-    "[TODO] Desired accuracy (default: balanced/precise depending on node setting)",
-  "Fetch location from a paired node": "[TODO] Fetch location from a paired node",
-  "Fetch the current location from a node": "[TODO] Fetch the current location from a node",
-  "Location fix timeout (ms)": "[TODO] Location fix timeout (ms)",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Node invoke timeout in ms (default 20000)": "[TODO] Node invoke timeout in ms (default 20000)",
-  "Use cached location newer than this (ms)": "[TODO] Use cached location newer than this (ms)",
-  "location get": "[TODO] location get",
+    "期望精度 (默认：取决于节点设置的 balanced/precise)",
+  "Fetch location from a paired node": "从已配对节点获取位置",
+  "Fetch the current location from a node": "从节点获取当前位置",
+  "Location fix timeout (ms)": "定位超时 (毫秒)",
+  "Use cached location newer than this (ms)": "使用早于此时长的缓存位置 (毫秒)",
+  "location get": "location get",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.notify.ts
   // 功能: 通知节点注册
   // =====================================================================================
-  "Delivery mode": "[TODO] Delivery mode",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Node invoke timeout in ms (default 15000)": "[TODO] Node invoke timeout in ms (default 15000)",
-  "Notification body": "[TODO] Notification body",
-  "Notification priority": "[TODO] Notification priority",
-  "Notification sound": "[TODO] Notification sound",
-  "Notification title": "[TODO] Notification title",
-  "Send a local notification on a node (mac only)":
-    "[TODO] Send a local notification on a node (mac only)",
-  "missing --title or --body": "[TODO] missing --title or --body",
-  "notify ok": "[TODO] notify ok",
+  "Delivery mode": "递送模式",
+  "Notification body": "通知正文",
+  "Notification priority": "通知优先级",
+  "Notification sound": "通知声音",
+  "Notification title": "通知标题",
+  "Send a local notification on a node (mac only)": "在节点上发送本地通知 (仅限 macOS)",
+  "missing --title or --body": "缺失 --title 或 --body",
+  "notify ok": "通知成功",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.pairing.ts
   // =====================================================================================
-  "--node and --name required": "[TODO] --node and --name required",
-  "Approve a pending pairing request": "[TODO] Approve a pending pairing request",
-  "List pending pairing requests": "[TODO] List pending pairing requests",
-  "New display name": "[TODO] New display name",
-  "No pending pairing requests.": "[TODO] No pending pairing requests.",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Pending request id": "挂起的请求 ID",
-  "Reject a pending pairing request": "[TODO] Reject a pending pairing request",
-  "Rename a paired node (display name override)":
-    "[TODO] Rename a paired node (display name override)",
+  "--node and --name required": "需要 --node 和 --name",
+  "Approve a pending pairing request": "批准挂起的配对请求",
+  "New display name": "新显示名称",
+  "No pending pairing requests.": "没有挂起的配对请求。",
+  "Reject a pending pairing request": "拒绝挂起的配对请求",
+  "Rename a paired node (display name override)": "重命名已配对节点 (覆盖显示名称)",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.screen.ts
   // =====================================================================================
   "Capture a short screen recording from a node (prints MEDIA:<path>)":
-    "[TODO] Capture a short screen recording from a node (prints MEDIA:<path>)",
-  "Capture screen recordings from a paired node":
-    "[TODO] Capture screen recordings from a paired node",
-  "Clip duration (ms or 10s)": "[TODO] Clip duration (ms or 10s)",
-  "Disable microphone audio capture": "[TODO] Disable microphone audio capture",
-  "Frames per second": "[TODO] Frames per second",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Node invoke timeout in ms (default 120000)": "[TODO] Node invoke timeout in ms (default 120000)",
-  "Output path": "[TODO] Output path",
-  "Screen index (0 = primary)": "[TODO] Screen index (0 = primary)",
-  "screen record": "[TODO] screen record",
+    "从节点捕获一段短屏录制 (输出 MEDIA:<路径>)",
+  "Capture screen recordings from a paired node": "从已配对节点捕获屏幕录制",
+  "Clip duration (ms or 10s)": "视频剪辑时长 (毫秒或 10s)",
+  "Disable microphone audio capture": "禁用麦克风音频采集",
+  "Frames per second": "帧率 (FPS)",
+  "Node invoke timeout in ms (default 120000)": "节点调用超时 (毫秒，默认 120000)",
+  "Output path": "输出路径",
+  "Screen index (0 = primary)": "屏幕索引 (0 = 主屏幕)",
+  "screen record": "screen record",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.status.ts
   // =====================================================================================
-  " · ": "[TODO]  · ",
-  ", ": "[TODO] , ",
-  "Describe a node (capabilities + supported invoke commands)":
-    "[TODO] Describe a node (capabilities + supported invoke commands)",
-  "Invalid --last-connected": "[TODO] Invalid --last-connected",
-  "Last Connect": "[TODO] Last Connect",
-  "List known nodes with connection status and capabilities":
-    "[TODO] List known nodes with connection status and capabilities",
-  "List pending and paired nodes": "[TODO] List pending and paired nodes",
-  "Node id, name, or IP": "[TODO] Node id, name, or IP",
-  "Only show connected nodes": "[TODO] Only show connected nodes",
+  "Describe a node (capabilities + supported invoke commands)": "描述节点 (功能 + 支持的调用命令)",
+  "Invalid --last-connected": "无效的 --last-connected",
+  "Last Connect": "最近连接",
+  "List known nodes with connection status and capabilities": "列出已知节点及其连接状态和功能",
+  "List pending and paired nodes": "列出挂起和已配对的节点",
+  "Only show connected nodes": "仅显示已连接的节点",
   "Only show nodes connected within duration (e.g. 24h)":
-    "[TODO] Only show nodes connected within duration (e.g. 24h)",
+    "仅显示在指定时间内连接过的节点 (例如 24h)",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/register.ts
   // =====================================================================================
-  "Manage gateway-owned node pairing": "[TODO] Manage gateway-owned node pairing",
+  "Manage gateway-owned node pairing": "管理 Gateway 所属的节点配对",
 
   // =====================================================================================
   // 模块: src/cli/nodes-cli/rpc.ts
   // 功能: RPC 节点工具
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Gateway WebSocket URL (defaults to gateway.remote.url when configured)":
-    "网关 WebSocket URL (配置时默认为 gateway.remote.url)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
-  "Output JSON": "输出 JSON",
   "PEEKABOO_ALLOW_UNSIGNED_SOCKET_CLIENTS=1 for local dev.":
-    "[TODO] PEEKABOO_ALLOW_UNSIGNED_SOCKET_CLIENTS=1 for local dev.",
-  "Timeout in ms": "超时 (毫秒)",
-  "bridge client is not authorized": "[TODO] bridge client is not authorized",
-  "node required": "[TODO] node required",
-  "peekaboo bridge rejected the client.": "[TODO] peekaboo bridge rejected the client.",
+    "本地开发请设置 PEEKABOO_ALLOW_UNSIGNED_SOCKET_CLIENTS=1。",
+  "bridge client is not authorized": "桥接客户端未授权",
+  "node required": "需要节点",
+  "peekaboo bridge rejected the client.": "peekaboo 桥接拒绝了该客户端。",
   "sign the peekaboo CLI (TeamID Y5PE65HELJ) or launch the host with":
-    "[TODO] sign the peekaboo CLI (TeamID Y5PE65HELJ) or launch the host with",
-  "unsigned bridge clients are not allowed": "[TODO] unsigned bridge clients are not allowed",
+    "请对 peekaboo CLI 进行签名 (TeamID Y5PE65HELJ) 或使用以下参数启动主机：",
+  "unsigned bridge clients are not allowed": "不允许未签名的桥接客户端",
 
   // =====================================================================================
   // 模块: src/cli/nodes-screen.ts
   // 功能: 屏幕录制节点实现
   // =====================================================================================
-  "invalid screen.record payload": "[TODO] invalid screen.record payload",
+  "invalid screen.record payload": "无效的 screen.record 载荷",
 
   // =====================================================================================
   // 模块: src/cli/pairing-cli.ts
   // 功能: 配对 CLI 命令
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Approve a pairing code and allow that sender":
-    "[TODO] Approve a pairing code and allow that sender",
-  "Channel required": "[TODO] Channel required",
-  "List pending pairing requests": "[TODO] List pending pairing requests",
-  "Notify the requester on the same channel": "[TODO] Notify the requester on the same channel",
-  "Pairing code (or channel when using 2 args)":
-    "[TODO] Pairing code (or channel when using 2 args)",
-  "Pairing code (when channel is passed as the 1st arg)":
-    "[TODO] Pairing code (when channel is passed as the 1st arg)",
-  "Pairing requests": "[TODO] Pairing requests",
-  "Print JSON": "[TODO] Print JSON",
-  "Secure DM pairing (approve inbound requests)":
-    "[TODO] Secure DM pairing (approve inbound requests)",
+  "Approve a pairing code and allow that sender": "批准配对码并允许该发送者",
+  "Channel required": "需要频道",
+  "List pending pairing requests": "列出挂起的配对请求",
+  "Notify the requester on the same channel": "在同一频道通知请求者",
+  "Pairing code (or channel when using 2 args)": "配对码 (或使用 2 个参数时的频道)",
+  "Pairing code (when channel is passed as the 1st arg)": "配对码 (当频道作为第 1 个参数传递时)",
+  "Pairing requests": "配对请求",
+  "Secure DM pairing (approve inbound requests)": "安全私信配对 (批准入站请求)",
   "openclaw pairing approve --channel <channel> <code>":
-    "[TODO] openclaw pairing approve --channel <channel> <code>",
-  "openclaw pairing approve <channel> <code>": "[TODO] openclaw pairing approve <channel> <code>",
+    "openclaw pairing approve --channel <channel> <code>",
+  "openclaw pairing approve <channel> <code>": "openclaw pairing approve <channel> <code>",
 
   // =====================================================================================
   // 模块: src/cli/parse-duration.ts
   // 功能: 持续时间解析工具
   // =====================================================================================
-  "invalid duration (empty)": "[TODO] invalid duration (empty)",
+  "invalid duration (empty)": "无效的时长 (空)",
 
   // =====================================================================================
   // 模块: src/cli/plugins-cli.ts
   // =====================================================================================
-  "(no description)": "[TODO] (no description)",
-  ", ": "[TODO] , ",
-  "CLI commands:": "[TODO] CLI commands:",
-  "Diagnostics:": "[TODO] Diagnostics:",
-  "Disable a plugin in config": "[TODO] Disable a plugin in config",
-  "Enable a plugin in config": "[TODO] Enable a plugin in config",
-  "Error:": "[TODO] Error:",
-  "Gateway methods:": "[TODO] Gateway methods:",
-  "Install a plugin (path, archive, or npm spec)":
-    "[TODO] Install a plugin (path, archive, or npm spec)",
-  "Install path:": "[TODO] Install path:",
-  "Installed at:": "[TODO] Installed at:",
-  "Link a local path instead of copying": "[TODO] Link a local path instead of copying",
-  "List discovered plugins": "[TODO] List discovered plugins",
-  "Manage OpenClaw plugins/extensions": "[TODO] Manage OpenClaw plugins/extensions",
-  "No npm-installed plugins to update.": "[TODO] No npm-installed plugins to update.",
-  "No plugin issues detected.": "[TODO] No plugin issues detected.",
-  "No plugins found.": "[TODO] No plugins found.",
-  "Only show enabled plugins": "[TODO] Only show enabled plugins",
+  "(no description)": "(无描述)",
+  "CLI commands:": "CLI 命令:",
+  "Diagnostics:": "诊断:",
+  "Disable a plugin in config": "在配置中禁用插件",
+  "Enable a plugin in config": "在配置中启用插件",
+  "Gateway methods:": "Gateway 方法:",
+  "Install a plugin (path, archive, or npm spec)": "安装插件 (路径、归档文件或 npm 规范)",
+  "Install path:": "安装路径:",
+  "Installed at:": "安装于:",
+  "List discovered plugins": "列出发现的插件",
+  "Manage OpenClaw plugins/extensions": "管理 OpenClaw 插件/扩展",
+  "No npm-installed plugins to update.": "没有 npm 安装的插件需要更新。",
+  "No plugin issues detected.": "未检测到插件问题。",
+  "No plugins found.": "未找到插件。",
+  "Only show enabled plugins": "仅显示已启用的插件",
   "Path (.ts/.js/.zip/.tgz/.tar.gz) or an npm package spec":
-    "[TODO] Path (.ts/.js/.zip/.tgz/.tar.gz) or an npm package spec",
-  "Plugin errors:": "[TODO] Plugin errors:",
-  "Plugin id": "[TODO] Plugin id",
-  "Plugin id (omit with --all)": "[TODO] Plugin id (omit with --all)",
-  "Print JSON": "[TODO] Print JSON",
-  "Provide a plugin id or use --all.": "[TODO] Provide a plugin id or use --all.",
-  "Recorded version:": "[TODO] Recorded version:",
-  "Report plugin load issues": "[TODO] Report plugin load issues",
-  "Restart the gateway to load plugins.": "[TODO] Restart the gateway to load plugins.",
-  "Show detailed entries": "[TODO] Show detailed entries",
-  "Show plugin details": "[TODO] Show plugin details",
-  "Show what would change without writing": "[TODO] Show what would change without writing",
-  "Source path:": "[TODO] Source path:",
-  "Update all tracked plugins": "[TODO] Update all tracked plugins",
-  "Update installed plugins (npm installs only)":
-    "[TODO] Update installed plugins (npm installs only)",
-  "`--link` requires a local path.": "[TODO] `--link` requires a local path.",
-  disabled: "[TODO] disabled",
-  error: "[TODO] error",
-  "failed to load": "[TODO] failed to load",
+    "路径 (.ts/.js/.zip/.tgz/.tar.gz) 或 npm 包规范",
+  "Plugin errors:": "插件错误:",
+  "Plugin id": "插件 ID",
+  "Plugin id (omit with --all)": "插件 ID (使用 --all 时省略)",
+  "Provide a plugin id or use --all.": "提供插件 ID 或使用 --all。",
+  "Recorded version:": "记录的版本:",
+  "Report plugin load issues": "报告插件加载问题",
+  "Restart the gateway to load plugins.": "重启 Gateway 以加载插件。",
+  "Show detailed entries": "显示详细条目",
+  "Show plugin details": "显示插件详情",
+  "Source path:": "源码路径:",
+  "Update all tracked plugins": "更新所有跟踪的插件",
+  "Update installed plugins (npm installs only)": "更新已安装的插件 (仅限 npm 安装)",
+  disabled: "已禁用",
+  error: "错误",
+  "failed to load": "加载失败",
 
   // =====================================================================================
   // 模块: src/cli/ports.ts
   // 功能: 端口管理工具
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "lsof not found; required for --force": "[TODO] lsof not found; required for --force",
+  "lsof not found; required for --force": "未找到 lsof; --force 需要它",
 
   // =====================================================================================
   // 模块: src/cli/profile.ts
   // =====================================================================================
-  "Cannot combine --dev with --profile": "[TODO] Cannot combine --dev with --profile",
+  "Cannot combine --dev with --profile": "不能同时使用 --dev 和 --profile",
   'Invalid --profile (use letters, numbers, "_", "-" only)':
-    '[TODO] Invalid --profile (use letters, numbers, "_", "-" only)',
+    '无效的 --profile (仅允许使用字母、数字、"_"、"-")',
 
   // =====================================================================================
   // 模块: src/cli/program/config-guard.ts
   // =====================================================================================
-  "Config invalid": "[TODO] Config invalid",
-  "Legacy config keys detected:": "[TODO] Legacy config keys detected:",
-  "openclaw doctor --fix": "[TODO] openclaw doctor --fix",
+  "Config invalid": "配置无效",
+  "Legacy config keys detected:": "检测到旧版配置键：",
 
   // =====================================================================================
   // 模块: src/cli/program/help.ts
   // =====================================================================================
+  "Commands:": "命令:",
   "Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)":
-    "[TODO] Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)",
-  "Disable ANSI colors": "[TODO] Disable ANSI colors",
-  "Gateway control via WebSocket.": "[TODO] Gateway control via WebSocket.",
+    "开发环境：将状态隔离在 ~/.openclaw-dev 下，默认 Gateway 端口 19001，并偏移派生端口 (browser/canvas)",
+  "Gateway control via WebSocket.": "通过 WebSocket 控制 Gateway。",
   "Kill anything bound to the default gateway port, then start it.":
-    "[TODO] Kill anything bound to the default gateway port, then start it.",
+    "终止绑定在默认 Gateway 端口的所有进程，然后启动它。",
   "Link personal WhatsApp Web and show QR + connection logs.":
-    "[TODO] Link personal WhatsApp Web and show QR + connection logs.",
+    "链接个人 WhatsApp Web 并显示二维码 + 连接日志。",
+  "Options:": "选项:",
   "Run a dev Gateway (isolated state/config) on ws://127.0.0.1:19001.":
-    "[TODO] Run a dev Gateway (isolated state/config) on ws://127.0.0.1:19001.",
-  "Run the WebSocket Gateway locally.": "[TODO] Run the WebSocket Gateway locally.",
-  "Send via your Telegram bot.": "[TODO] Send via your Telegram bot.",
-  "Send via your web session and print JSON result.":
-    "[TODO] Send via your web session and print JSON result.",
+    "在 ws://127.0.0.1:19001 运行开发 Gateway (隔离状态/配置)。",
+  "Run the WebSocket Gateway locally.": "在本地运行 WebSocket Gateway。",
+  "Send via your Telegram bot.": "通过你的 Telegram Bot 发送。",
+  "Send via your web session and print JSON result.": "通过 Web 会话发送并打印 JSON 结果。",
   "Talk directly to the agent using the Gateway; optionally send the WhatsApp reply.":
-    "[TODO] Talk directly to the agent using the Gateway; optionally send the WhatsApp reply.",
+    "使用 Gateway 直接与 Agent 对话；可选发送 WhatsApp 回复。",
+  "Usage:": "用法:",
   "Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)":
-    "[TODO] Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)",
-  "openclaw --dev gateway": "[TODO] openclaw --dev gateway",
+    "使用命名环境 (将 OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH 隔离在 ~/.openclaw-<名称> 下)",
+  "display help for command": "显示命令帮助",
+  "openclaw --dev gateway": "openclaw --dev gateway",
   'openclaw agent --to +15555550123 --message "Run summary" --deliver':
-    '[TODO] openclaw agent --to +15555550123 --message "Run summary" --deliver',
-  "openclaw channels login --verbose": "[TODO] openclaw channels login --verbose",
-  "openclaw gateway --force": "[TODO] openclaw gateway --force",
-  "openclaw gateway --port 18789": "[TODO] openclaw gateway --port 18789",
-  "openclaw gateway ...": "[TODO] openclaw gateway ...",
+    'openclaw agent --to +15555550123 --message "运行摘要" --deliver',
+  "openclaw channels login --verbose": "openclaw channels login --verbose",
+  "openclaw gateway --force": "openclaw gateway --force",
+  "openclaw gateway --port 18789": "openclaw gateway --port 18789",
+  "openclaw gateway ...": "openclaw gateway ...",
   'openclaw message send --channel telegram --target @mychat --message "Hi"':
-    '[TODO] openclaw message send --channel telegram --target @mychat --message "Hi"',
+    'openclaw message send --channel telegram --target @mychat --message "你好"',
   'openclaw message send --target +15555550123 --message "Hi" --json':
-    '[TODO] openclaw message send --target +15555550123 --message "Hi" --json',
+    'openclaw message send --target +15555550123 --message "你好" --json',
+  "output the version number": "输出版本号",
 
   // =====================================================================================
   // 模块: src/cli/program/message/helpers.ts
   // =====================================================================================
-  "Channel account id (accountId)": "[TODO] Channel account id (accountId)",
-  "Output result as JSON": "[TODO] Output result as JSON",
-  "Print payload and skip sending": "[TODO] Print payload and skip sending",
-  "Verbose logging": "[TODO] Verbose logging",
+  "Channel account id (accountId)": "频道账户 ID (accountId)",
+  "Print payload and skip sending": "打印载荷并跳过发送",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.broadcast.ts
   // =====================================================================================
-  "Broadcast a message to multiple targets": "[TODO] Broadcast a message to multiple targets",
-  "Media URL": "[TODO] Media URL",
-  "Message to send": "[TODO] Message to send",
+  "Broadcast a message to multiple targets": "向多个目标广播消息",
+  "Media URL": "媒体 URL",
+  "Message to send": "要发送的消息",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.discord-admin.ts
   // =====================================================================================
-  "Add role to a member": "[TODO] Add role to a member",
-  "Ban a member": "[TODO] Ban a member",
-  "Ban delete message days": "[TODO] Ban delete message days",
-  "Channel actions": "[TODO] Channel actions",
-  "Channel id": "[TODO] Channel id",
-  "Create a scheduled event": "[TODO] Create a scheduled event",
-  "Event actions": "[TODO] Event actions",
-  "Event description": "[TODO] Event description",
-  "Event end time": "[TODO] Event end time",
-  "Event location": "[TODO] Event location",
-  "Event name": "[TODO] Event name",
-  "Event start time": "[TODO] Event start time",
-  "Event type": "[TODO] Event type",
-  "Fetch channel info": "[TODO] Fetch channel info",
-  "Fetch member info": "[TODO] Fetch member info",
-  "Fetch voice status": "[TODO] Fetch voice status",
-  "Guild id": "[TODO] Guild id",
-  "Guild id (Discord)": "[TODO] Guild id (Discord)",
-  "Kick a member": "[TODO] Kick a member",
-  "List channels": "[TODO] List channels",
-  "List roles": "[TODO] List roles",
-  "List scheduled events": "[TODO] List scheduled events",
-  "Member actions": "[TODO] Member actions",
-  "Moderation reason": "[TODO] Moderation reason",
-  "Remove role from a member": "[TODO] Remove role from a member",
-  "Role actions": "[TODO] Role actions",
-  "Role id": "[TODO] Role id",
-  "Timeout a member": "[TODO] Timeout a member",
-  "Timeout duration minutes": "[TODO] Timeout duration minutes",
-  "Timeout until": "[TODO] Timeout until",
-  "User id": "[TODO] User id",
-  "Voice actions": "[TODO] Voice actions",
+  "Add role to a member": "向成员添加角色",
+  "Ban a member": "封禁成员",
+  "Ban delete message days": "封禁删除消息天数",
+  "Channel actions": "频道操作",
+  "Channel id": "频道 ID",
+  "Create a scheduled event": "创建预定事件",
+  "Event actions": "事件操作",
+  "Event description": "事件描述",
+  "Event end time": "事件结束时间",
+  "Event location": "事件地点",
+  "Event name": "事件名称",
+  "Event start time": "事件开始时间",
+  "Event type": "事件类型",
+  "Fetch channel info": "获取频道信息",
+  "Fetch member info": "获取成员信息",
+  "Fetch voice status": "获取语音状态",
+  "Guild id": "公会 ID",
+  "Guild id (Discord)": "公会 ID (Discord)",
+  "Kick a member": "踢出成员",
+  "List channels": "列出频道",
+  "List roles": "列出角色",
+  "List scheduled events": "列出预定事件",
+  "Member actions": "成员操作",
+  "Moderation reason": "审核原因",
+  "Remove role from a member": "从成员移除角色",
+  "Role actions": "角色操作",
+  "Role id": "角色 ID",
+  "Timeout a member": "禁言成员",
+  "Timeout duration minutes": "禁言时长 (分钟)",
+  "Timeout until": "禁言直到",
+  "User id": "用户 ID",
+  "Voice actions": "语音操作",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.emoji-sticker.ts
   // =====================================================================================
-  "Emoji actions": "[TODO] Emoji actions",
-  "Emoji media (path or URL)": "[TODO] Emoji media (path or URL)",
-  "Emoji name": "[TODO] Emoji name",
-  "Guild id": "[TODO] Guild id",
-  "Guild id (Discord)": "[TODO] Guild id (Discord)",
-  "List emojis": "[TODO] List emojis",
-  "Optional message body": "[TODO] Optional message body",
-  "Role id (repeat)": "[TODO] Role id (repeat)",
-  "Send stickers": "[TODO] Send stickers",
-  "Sticker actions": "[TODO] Sticker actions",
-  "Sticker description": "[TODO] Sticker description",
-  "Sticker id (repeat)": "[TODO] Sticker id (repeat)",
-  "Sticker media (path or URL)": "[TODO] Sticker media (path or URL)",
-  "Sticker name": "[TODO] Sticker name",
-  "Sticker tags": "[TODO] Sticker tags",
-  "Upload a sticker": "[TODO] Upload a sticker",
-  "Upload an emoji": "[TODO] Upload an emoji",
+  "Emoji actions": "表情操作",
+  "Emoji media (path or URL)": "表情媒体 (路径或 URL)",
+  "Emoji name": "表情名称",
+  "List emojis": "列出表情",
+  "Optional message body": "可选消息正文",
+  "Role id (repeat)": "角色 ID (可重复)",
+  "Send stickers": "发送贴纸",
+  "Sticker actions": "贴纸操作",
+  "Sticker description": "贴纸描述",
+  "Sticker id (repeat)": "贴纸 ID (可重复)",
+  "Sticker media (path or URL)": "贴纸媒体 (路径或 URL)",
+  "Sticker name": "贴纸名称",
+  "Sticker tags": "贴纸标签",
+  "Upload a sticker": "上传贴纸",
+  "Upload an emoji": "上传表情",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.permissions-search.ts
   // =====================================================================================
-  "Author id": "[TODO] Author id",
-  "Author id (repeat)": "[TODO] Author id (repeat)",
-  "Channel id": "[TODO] Channel id",
-  "Channel id (repeat)": "[TODO] Channel id (repeat)",
-  "Fetch channel permissions": "[TODO] Fetch channel permissions",
-  "Guild id": "[TODO] Guild id",
-  "Result limit": "[TODO] Result limit",
-  "Search Discord messages": "[TODO] Search Discord messages",
-  "Search query": "搜索查询",
+  "Author id": "作者 ID",
+  "Author id (repeat)": "作者 ID (可重复)",
+  "Channel id (repeat)": "频道 ID (可重复)",
+  "Fetch channel permissions": "获取频道权限",
+  "Result limit": "结果限制",
+  "Search Discord messages": "搜索 Discord 消息",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.pins.ts
   // =====================================================================================
-  "List pinned messages": "[TODO] List pinned messages",
-  "Message id": "[TODO] Message id",
-  "Pin a message": "[TODO] Pin a message",
-  "Result limit": "[TODO] Result limit",
-  "Unpin a message": "[TODO] Unpin a message",
+  "List pinned messages": "列出置顶消息",
+  "Message id": "消息 ID",
+  "Pin a message": "置顶消息",
+  "Unpin a message": "取消置顶消息",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.poll.ts
   // =====================================================================================
-  "Allow multiple selections": "[TODO] Allow multiple selections",
-  "Optional message body": "[TODO] Optional message body",
-  "Poll duration (Discord)": "[TODO] Poll duration (Discord)",
-  "Poll option (repeat 2-12 times)": "[TODO] Poll option (repeat 2-12 times)",
-  "Poll question": "[TODO] Poll question",
-  "Send a poll": "[TODO] Send a poll",
+  "Allow multiple selections": "允许多选",
+  "Poll duration (Discord)": "投票时长 (Discord)",
+  "Poll option (repeat 2-12 times)": "投票选项 (重复 2-12 次)",
+  "Poll question": "投票问题",
+  "Send a poll": "发送投票",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.reactions.ts
   // =====================================================================================
-  "Add or remove a reaction": "[TODO] Add or remove a reaction",
-  "Emoji for reactions": "[TODO] Emoji for reactions",
-  "List reactions on a message": "[TODO] List reactions on a message",
-  "Message id": "[TODO] Message id",
-  "Remove reaction": "[TODO] Remove reaction",
-  "Result limit": "[TODO] Result limit",
-  "Signal reaction target author (uuid or phone)":
-    "[TODO] Signal reaction target author (uuid or phone)",
-  "Signal reaction target author uuid": "[TODO] Signal reaction target author uuid",
-  "WhatsApp reaction fromMe": "[TODO] WhatsApp reaction fromMe",
-  "WhatsApp reaction participant": "[TODO] WhatsApp reaction participant",
+  "Add or remove a reaction": "添加或移除反应",
+  "Emoji for reactions": "反应表情",
+  "List reactions on a message": "列出消息的反应",
+  "Remove reaction": "移除反应",
+  "Signal reaction target author (uuid or phone)": "Signal 反应的目标作者 (UUID 或电话)",
+  "Signal reaction target author uuid": "Signal 反应目标作者 uuid",
+  "WhatsApp reaction fromMe": "WhatsApp 反应 fromMe",
+  "WhatsApp reaction participant": "WhatsApp 反应参与者",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.read-edit-delete.ts
   // =====================================================================================
-  "Delete a message": "[TODO] Delete a message",
-  "Edit a message": "[TODO] Edit a message",
-  "Include thread replies (Discord)": "[TODO] Include thread replies (Discord)",
-  "Message body": "[TODO] Message body",
-  "Message id": "[TODO] Message id",
-  "Read around id": "[TODO] Read around id",
-  "Read recent messages": "[TODO] Read recent messages",
-  "Read/search after id": "[TODO] Read/search after id",
-  "Read/search before id": "[TODO] Read/search before id",
-  "Result limit": "[TODO] Result limit",
-  "Thread id (Telegram forum thread)": "[TODO] Thread id (Telegram forum thread)",
+  "Delete a message": "删除消息",
+  "Edit a message": "编辑消息",
+  "Include thread replies (Discord)": "包含帖子回复 (Discord)",
+  "Message body": "消息正文",
+  "Read around id": "读取 ID 周围的消息",
+  "Read recent messages": "读取最近的消息",
+  "Read/search after id": "读取/搜索此 ID 之后",
+  "Read/search before id": "读取/搜索此 ID 之前",
+  "Thread id (Telegram forum thread)": "帖子 ID (Telegram 论坛帖子)",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.send.ts
   // =====================================================================================
   "Adaptive Card JSON object (when supported by the channel)":
-    "[TODO] Adaptive Card JSON object (when supported by the channel)",
+    "自适应卡片 (Adaptive Card) JSON 对象 (当频道支持时)",
   "Attach media (image/audio/video/document). Accepts local paths or URLs.":
-    "[TODO] Attach media (image/audio/video/document). Accepts local paths or URLs.",
-  "Message body (required unless --media is set)":
-    "[TODO] Message body (required unless --media is set)",
-  "Reply-to message id": "[TODO] Reply-to message id",
-  "Send a message": "[TODO] Send a message",
+    "附加媒体文件 (图片/音频/视频/文档)。支持本地路径或 URL。",
+  "Message body (required unless --media is set)": "消息正文 (除非设置了 --media，否则必填)",
+  "Reply-to message id": "回复的消息 ID",
+  "Send a message": "发送消息",
   "Send message silently without notification (Telegram only)":
-    "[TODO] Send message silently without notification (Telegram only)",
+    "静默发送消息，不触发通知 (仅限 Telegram)",
   "Telegram inline keyboard buttons as JSON (array of button rows)":
-    "[TODO] Telegram inline keyboard buttons as JSON (array of button rows)",
-  "Thread id (Telegram forum thread)": "[TODO] Thread id (Telegram forum thread)",
-  "Treat video media as GIF playback (WhatsApp only).":
-    "[TODO] Treat video media as GIF playback (WhatsApp only).",
+    "Telegram 内联键盘按钮 JSON (按钮行数组)",
+  "Treat video media as GIF playback (WhatsApp only).": "将视频媒体视为 GIF 播放 (仅限 WhatsApp)。",
 
   // =====================================================================================
   // 模块: src/cli/program/message/register.thread.ts
   // =====================================================================================
-  "Attach media (image/audio/video/document). Accepts local paths or URLs.":
-    "[TODO] Attach media (image/audio/video/document). Accepts local paths or URLs.",
-  "Channel id": "[TODO] Channel id",
-  "Create a thread": "[TODO] Create a thread",
-  "Guild id": "[TODO] Guild id",
-  "Include archived threads": "[TODO] Include archived threads",
-  "List threads": "[TODO] List threads",
-  "Message body": "[TODO] Message body",
-  "Message id (optional)": "[TODO] Message id (optional)",
-  "Read/search before id": "[TODO] Read/search before id",
-  "Reply in a thread": "[TODO] Reply in a thread",
-  "Reply-to message id": "[TODO] Reply-to message id",
-  "Result limit": "[TODO] Result limit",
-  "Thread actions": "[TODO] Thread actions",
-  "Thread auto-archive minutes": "[TODO] Thread auto-archive minutes",
-  "Thread name": "[TODO] Thread name",
+  "Create a thread": "创建帖子",
+  "Include archived threads": "包含已归档的帖子",
+  "List threads": "列出帖子",
+  "Message id (optional)": "消息 ID (可选)",
+  "Reply in a thread": "在帖子中回复",
+  "Thread actions": "帖子操作",
+  "Thread auto-archive minutes": "帖子自动归档分钟数",
+  "Thread name": "帖子名称",
 
   // =====================================================================================
   // 模块: src/cli/program/register.agent.ts
   // =====================================================================================
-  "Add a new isolated agent": "[TODO] Add a new isolated agent",
-  "Agent id (overrides routing bindings)": "[TODO] Agent id (overrides routing bindings)",
-  "Agent id to update": "[TODO] Agent id to update",
-  "Agent state directory for this agent": "[TODO] Agent state directory for this agent",
-  "Delete an agent and prune workspace/state": "[TODO] Delete an agent and prune workspace/state",
-  "Deliver reply.": "[TODO] Deliver reply.",
-  "Delivery account id override": "[TODO] Delivery account id override",
-  "Delivery channel override (separate from routing)":
-    "[TODO] Delivery channel override (separate from routing)",
-  "Delivery target override (separate from session routing)":
-    "[TODO] Delivery target override (separate from session routing)",
-  "Disable prompts; requires --workspace": "[TODO] Disable prompts; requires --workspace",
-  "Enable verbose logging and JSON output.": "[TODO] Enable verbose logging and JSON output.",
-  "Explicit IDENTITY.md path to read": "[TODO] Explicit IDENTITY.md path to read",
+  "Add a new isolated agent": "添加新的隔离 Agent",
+  "Agent id (overrides routing bindings)": "Agent ID (覆盖路由绑定)",
+  "Agent id to update": "要更新的 Agent ID",
+  "Agent state directory for this agent": "此 Agent 的状态目录",
+  "Delete an agent and prune workspace/state": "删除 Agent 并修剪工作区/状态",
+  "Deliver reply.": "投递回复。",
+  "Delivery account id override": "投递账户 ID 覆盖",
+  "Delivery channel override (separate from routing)": "投递频道覆盖 (独立于路由绑定)",
+  "Delivery target override (separate from session routing)": "投递目标覆盖 (独立于会话路由)",
+  "Disable prompts; requires --workspace": "禁用提示; 需要 --workspace",
+  "Enable verbose logging and JSON output.": "启用详细日志和 JSON 输出。",
+  "Explicit IDENTITY.md path to read": "要读取的显式 IDENTITY.md 路径",
   "Identity avatar (workspace path, http(s) URL, or data URI)":
-    "[TODO] Identity avatar (workspace path, http(s) URL, or data URI)",
-  "Identity emoji": "[TODO] Identity emoji",
-  "Identity name": "[TODO] Identity name",
-  "Identity theme": "[TODO] Identity theme",
-  "Include routing bindings": "[TODO] Include routing bindings",
-  "List configured agents": "[TODO] List configured agents",
-  "Manage isolated agents (workspaces + auth + routing)":
-    "[TODO] Manage isolated agents (workspaces + auth + routing)",
-  "Message body for the agent": "[TODO] Message body for the agent",
-  "Model id for this agent": "[TODO] Model id for this agent",
-  "Output JSON instead of text": "[TODO] Output JSON instead of text",
-  "Output JSON summary": "[TODO] Output JSON summary",
-  "Output result as JSON": "[TODO] Output result as JSON",
+    "身份头像 (工作区路径、http(s) URL 或 data URI)",
+  "Identity emoji": "身份表情",
+  "Identity name": "身份名称",
+  "Identity theme": "身份主题",
+  "Include routing bindings": "包含路由绑定",
+  "List configured agents": "列出已配置的 Agent",
+  "Manage isolated agents (workspaces + auth + routing)": "管理隔离 Agent (工作区 + 认证 + 路由)",
+  "Message body for the agent": "Agent 的消息正文",
+  "Model id for this agent": "此 Agent 的模型 ID",
+  "Output JSON instead of text": "输出 JSON 而不是文本",
   "Override agent command timeout (seconds, default 600 or config value)":
-    "[TODO] Override agent command timeout (seconds, default 600 or config value)",
-  "Persist agent verbose level for the session":
-    "[TODO] Persist agent verbose level for the session",
-  "Read values from IDENTITY.md": "[TODO] Read values from IDENTITY.md",
+    "覆盖 Agent 命令超时时间 (秒，默认 600 或配置值)",
+  "Persist agent verbose level for the session": "为该会话持久化 Agent 详细日志级别",
+  "Read values from IDENTITY.md": "从 IDENTITY.md 读取值",
   "Recipient number in E.164 used to derive the session key":
-    "[TODO] Recipient number in E.164 used to derive the session key",
-  "Route channel binding (repeatable)": "[TODO] Route channel binding (repeatable)",
+    "用于派生会话密钥的 E.164 格式接收者号码",
+  "Route channel binding (repeatable)": "路由频道绑定 (可重复)",
   "Run an agent turn via the Gateway (use --local for embedded)":
-    "[TODO] Run an agent turn via the Gateway (use --local for embedded)",
+    "通过 Gateway 运行 Agent 回合 (使用 --local 进行嵌入式运行)",
   "Run the embedded agent locally (requires model provider API keys in your shell)":
-    "[TODO] Run the embedded agent locally (requires model provider API keys in your shell)",
-  "Send reply to a different channel/target.": "[TODO] Send reply to a different channel/target.",
-  "Send the agent's reply back to the selected channel":
-    "[TODO] Send the agent's reply back to the selected channel",
-  "Set avatar path.": "[TODO] Set avatar path.",
-  "Set name + emoji.": "[TODO] Set name + emoji.",
-  "Skip confirmation": "[TODO] Skip confirmation",
-  "Start a new session.": "[TODO] Start a new session.",
-  "Target a session with explicit thinking level.":
-    "[TODO] Target a session with explicit thinking level.",
+    "在本地运行嵌入式 Agent (需要在 shell 中配置模型提供商 API 密钥)",
+  "Send reply to a different channel/target.": "发送回复到不同的频道/目标。",
+  "Send the agent's reply back to the selected channel": "将 Agent 的回复发送回选定的频道",
+  "Set avatar path.": "设置头像路径。",
+  "Set name + emoji.": "设置名称 + 表情。",
+  "Start a new session.": "开始新会话。",
+  "Target a session with explicit thinking level.": "指定具有明确思考级别的会话。",
   "Thinking level: off | minimal | low | medium | high":
-    "[TODO] Thinking level: off | minimal | low | medium | high",
-  "Update an agent identity (name/theme/emoji/avatar)":
-    "[TODO] Update an agent identity (name/theme/emoji/avatar)",
-  "Use a specific IDENTITY.md.": "[TODO] Use a specific IDENTITY.md.",
-  "Use a specific agent.": "[TODO] Use a specific agent.",
-  "Use an explicit session id": "[TODO] Use an explicit session id",
-  "Workspace directory for the new agent": "[TODO] Workspace directory for the new agent",
+    "思考级别: off | minimal | low | medium | high",
+  "Update an agent identity (name/theme/emoji/avatar)": "更新 Agent 身份信息 (名称/主题/表情/头像)",
+  "Use a specific IDENTITY.md.": "使用特定的 IDENTITY.md。",
+  "Use a specific agent.": "使用特定的 Agent。",
+  "Use an explicit session id": "使用显式会话 ID",
+  "Workspace directory for the new agent": "新 Agent 的工作区目录",
   "Workspace directory used to locate the agent + IDENTITY.md":
-    "[TODO] Workspace directory used to locate the agent + IDENTITY.md",
-  "add [name]": "[TODO] add [name]",
-  "delete <id>": "[TODO] delete <id>",
+    "用于定位 Agent 和 IDENTITY.md 的工作区目录",
+  "add [name]": "add [name]",
+  "delete <id>": "delete <id>",
   'openclaw agent --agent ops --message "Generate report" --deliver --reply-channel slack --reply-to "#reports"':
-    '[TODO] openclaw agent --agent ops --message "Generate report" --deliver --reply-channel slack --reply-to "#reports"',
+    'openclaw agent --agent ops --message "生成报告" --deliver --reply-channel slack --reply-to "#reports"',
   'openclaw agent --agent ops --message "Summarize logs"':
-    '[TODO] openclaw agent --agent ops --message "Summarize logs"',
+    'openclaw agent --agent ops --message "总结日志"',
   'openclaw agent --session-id 1234 --message "Summarize inbox" --thinking medium':
-    '[TODO] openclaw agent --session-id 1234 --message "Summarize inbox" --thinking medium',
+    'openclaw agent --session-id 1234 --message "总结收件箱" --thinking medium',
   'openclaw agent --to +15555550123 --message "Summon reply" --deliver':
-    '[TODO] openclaw agent --to +15555550123 --message "Summon reply" --deliver',
+    'openclaw agent --to +15555550123 --message "召唤回复" --deliver',
   'openclaw agent --to +15555550123 --message "Trace logs" --verbose on --json':
-    '[TODO] openclaw agent --to +15555550123 --message "Trace logs" --verbose on --json',
+    'openclaw agent --to +15555550123 --message "追踪日志" --verbose on --json',
   'openclaw agent --to +15555550123 --message "status update"':
-    '[TODO] openclaw agent --to +15555550123 --message "status update"',
+    'openclaw agent --to +15555550123 --message "状态更新"',
   "openclaw agents set-identity --agent main --avatar avatars/openclaw.png":
-    "[TODO] openclaw agents set-identity --agent main --avatar avatars/openclaw.png",
+    "openclaw agents set-identity --agent main --avatar avatars/openclaw.png",
   'openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"':
-    '[TODO] openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"',
+    'openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"',
   "openclaw agents set-identity --identity-file ~/.openclaw/workspace/IDENTITY.md --agent main":
-    "[TODO] openclaw agents set-identity --identity-file ~/.openclaw/workspace/IDENTITY.md --agent main",
+    "openclaw agents set-identity --identity-file ~/.openclaw/workspace/IDENTITY.md --agent main",
   "openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity":
-    "[TODO] openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity",
+    "openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity",
 
   // =====================================================================================
   // 模块: src/cli/program/register.configure.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
   "Interactive prompt to set up credentials, devices, and agent defaults":
-    "[TODO] Interactive prompt to set up credentials, devices, and agent defaults",
+    "交互式配置凭据、设备和 Agent 默认值",
 
   // =====================================================================================
   // 模块: src/cli/program/register.maintenance.ts
   // =====================================================================================
-  "Accept defaults without prompting": "[TODO] Accept defaults without prompting",
-  "Apply aggressive repairs (overwrites custom service config)":
-    "[TODO] Apply aggressive repairs (overwrites custom service config)",
-  "Apply recommended repairs (alias for --repair)":
-    "[TODO] Apply recommended repairs (alias for --repair)",
-  "Apply recommended repairs without prompting":
-    "[TODO] Apply recommended repairs without prompting",
-  "Disable prompts (requires --scope + --yes)": "[TODO] Disable prompts (requires --scope + --yes)",
-  "Disable prompts (requires --yes)": "[TODO] Disable prompts (requires --yes)",
-  "Disable workspace memory system suggestions":
-    "[TODO] Disable workspace memory system suggestions",
-  "Generate and configure a gateway token": "[TODO] Generate and configure a gateway token",
-  "Health checks + quick fixes for the gateway and channels":
-    "[TODO] Health checks + quick fixes for the gateway and channels",
-  "Open the Control UI with your current token":
-    "[TODO] Open the Control UI with your current token",
-  "Print URL but do not launch a browser": "[TODO] Print URL but do not launch a browser",
-  "Print actions without removing files": "[TODO] Print actions without removing files",
-  "Remove service + state + workspace + app": "[TODO] Remove service + state + workspace + app",
-  "Remove state + config": "[TODO] Remove state + config",
-  "Remove the gateway service": "[TODO] Remove the gateway service",
-  "Remove the macOS app": "[TODO] Remove the macOS app",
-  "Remove workspace dirs": "[TODO] Remove workspace dirs",
-  "Reset local config/state (keeps the CLI installed)":
-    "[TODO] Reset local config/state (keeps the CLI installed)",
-  "Run without prompts (safe migrations only)": "[TODO] Run without prompts (safe migrations only)",
-  "Scan system services for extra gateway installs":
-    "[TODO] Scan system services for extra gateway installs",
-  "Skip confirmation prompts": "[TODO] Skip confirmation prompts",
+  "Apply aggressive repairs (overwrites custom service config)": "强制修复 (覆盖自定义服务配置)",
+  "Apply recommended repairs (alias for --repair)": "应用推荐修复 (与 --repair 相同)",
+  "Apply recommended repairs without prompting": "无需提示，自动应用推荐修复",
+  "Disable prompts (requires --scope + --yes)": "禁用提示 (需要 --scope + --yes)",
+  "Disable prompts (requires --yes)": "禁用提示 (需要 --yes)",
+  "Disable workspace memory system suggestions": "禁用工作区记忆系统的建议",
+  "Generate and configure a gateway token": "生成并配置 Gateway Token",
+  "Health checks + quick fixes for the gateway and channels": "Gateway 和频道的健康检查 + 快速修复",
+  "Open the Control UI with your current token": "使用当前 Token 打开控制台 UI",
+  "Open the Control UI with your current token (default: local)":
+    "使用当前 Token 打开控制台 UI (默认: 本地)",
+  "Print URL but do not launch a browser": "打印 URL 但不启动浏览器",
+  "Print actions without removing files": "打印操作而不删除文件",
+  "Remove service + state + workspace + app": "移除服务 + 状态 + 工作区 + 应用",
+  "Remove state + config": "移除状态 + 配置",
+  "Remove the gateway service": "移除 Gateway 服务",
+  "Remove the macOS app": "移除 macOS 应用",
+  "Remove workspace dirs": "移除工作区目录",
+  "Reset local config/state (keeps the CLI installed)": "重置本地配置/状态 (保留 CLI 安装)",
+  "Run without prompts (safe migrations only)": "无提示运行 (仅安全迁移)",
+  "Scan system services for extra gateway installs": "扫描系统服务中额外的 Gateway 实例",
+  "Skip confirmation prompts": "跳过确认提示",
   "Uninstall the gateway service + local data (CLI remains)":
-    "[TODO] Uninstall the gateway service + local data (CLI remains)",
+    "卸载 Gateway 服务和本地数据 (保留 CLI)",
   "config|config+creds+sessions|full (default: interactive prompt)":
-    "[TODO] config|config+creds+sessions|full (default: interactive prompt)",
+    "config|config+creds+sessions|full (默认: 交互式提示)",
 
   // =====================================================================================
   // 模块: src/cli/program/register.message.ts
   // =====================================================================================
-  "Create a Discord poll.": "[TODO] Create a Discord poll.",
-  "React to a message.": "[TODO] React to a message.",
-  "Send a message with media.": "[TODO] Send a message with media.",
-  "Send a text message.": "[TODO] Send a text message.",
-  "Send messages and channel actions": "[TODO] Send messages and channel actions",
+  "Create a Discord poll.": "创建 Discord 投票。",
+  "React to a message.": "对消息做出反应。",
+  "Send a message with media.": "发送带媒体的消息。",
+  "Send a text message.": "发送文本消息。",
+  "Send messages and channel actions": "发送消息和频道操作",
   'openclaw message poll --channel discord --target channel:123 --poll-question "Snack?" --poll-option Pizza --poll-option Sushi':
-    '[TODO] openclaw message poll --channel discord --target channel:123 --poll-question "Snack?" --poll-option Pizza --poll-option Sushi',
+    'openclaw message poll --channel discord --target channel:123 --poll-question "想吃点什么？" --poll-option 披萨 --poll-option 寿司',
   'openclaw message react --channel discord --target 123 --message-id 456 --emoji "✅"':
-    '[TODO] openclaw message react --channel discord --target 123 --message-id 456 --emoji "✅"',
+    'openclaw message react --channel discord --target 123 --message-id 456 --emoji "✅"',
   'openclaw message send --target +15555550123 --message "Hi"':
-    '[TODO] openclaw message send --target +15555550123 --message "Hi"',
+    'openclaw message send --target +15555550123 --message "你好"',
   'openclaw message send --target +15555550123 --message "Hi" --media photo.jpg':
-    '[TODO] openclaw message send --target +15555550123 --message "Hi" --media photo.jpg',
+    'openclaw message send --target +15555550123 --message "你好" --media photo.jpg',
 
   // =====================================================================================
   // 模块: src/cli/program/register.onboard.ts
   // =====================================================================================
   "Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)":
-    "[TODO] Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)",
+    "确认 Agent 功能强大且拥有完整系统访问权限存在风险 (非交互模式必填)",
   "Agent workspace directory (default: ~/.openclaw/workspace)":
-    "[TODO] Agent workspace directory (default: ~/.openclaw/workspace)",
-  "Anthropic API key": "[TODO] Anthropic API key",
+    "Agent 工作区目录 (默认: ~/.openclaw/workspace)",
   "Auth profile id (non-interactive; default: <provider>:manual)":
-    "[TODO] Auth profile id (non-interactive; default: <provider>:manual)",
+    "认证配置文件 ID (非交互模式; 默认: <provider>:manual)",
   "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip":
-    "[TODO] Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
-  "Daemon runtime: node|bun": "[TODO] Daemon runtime: node|bun",
-  "Gateway auth: token|password": "[TODO] Gateway auth: token|password",
+    "认证方式: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
+  "Daemon runtime: node|bun": "守护进程运行环境: node|bun",
+  "Gateway auth: token|password": "Gateway 认证方式: token|password",
   "Gateway bind: loopback|tailnet|lan|auto|custom":
-    "[TODO] Gateway bind: loopback|tailnet|lan|auto|custom",
-  "Gateway password (password auth)": "网关密码 (密码认证)",
-  "Gateway port": "网关端口",
-  "Gateway token (token auth)": "网关令牌 (令牌认证)",
-  "Gemini API key": "[TODO] Gemini API key",
-  "Install gateway service": "[TODO] Install gateway service",
+    "Gateway 绑定地址: loopback|tailnet|lan|auto|custom",
+  "Gemini API key": "Gemini API 密钥",
+  "Install gateway service": "安装 Gateway 服务",
   "Interactive wizard to set up the gateway, workspace, and skills":
-    "[TODO] Interactive wizard to set up the gateway, workspace, and skills",
-  "Kimi Coding API key": "[TODO] Kimi Coding API key",
-  "MiniMax API key": "[TODO] MiniMax API key",
-  "Moonshot API key": "[TODO] Moonshot API key",
-  "Node manager for skills: npm|pnpm|bun": "[TODO] Node manager for skills: npm|pnpm|bun",
-  "OpenAI API key": "[TODO] OpenAI API key",
-  "OpenCode Zen API key": "[TODO] OpenCode Zen API key",
-  "OpenRouter API key": "[TODO] OpenRouter API key",
-  "Optional token expiry duration (e.g. 365d, 12h)":
-    "[TODO] Optional token expiry duration (e.g. 365d, 12h)",
-  "Output JSON summary": "[TODO] Output JSON summary",
-  "Remote Gateway WebSocket URL": "[TODO] Remote Gateway WebSocket URL",
-  "Remote Gateway token (optional)": "[TODO] Remote Gateway token (optional)",
+    "交互式向导：设置 Gateway、工作区和 Skills",
+  "MiniMax API key": "MiniMax API 密钥",
+  "Moonshot API key": "Moonshot API 密钥",
+  "Node manager for skills: npm|pnpm|bun": "Skills Node 管理器: npm|pnpm|bun",
+  "OpenCode Zen API key": "OpenCode Zen API 密钥",
+  "Optional token expiry duration (e.g. 365d, 12h)": "可选的 Token 过期时间 (例如 365d, 12h)",
+  "Remote Gateway WebSocket URL": "远程 Gateway WebSocket URL",
+  "Remote Gateway token (optional)": "远程 Gateway Token (可选)",
   "Reset config + credentials + sessions + workspace before running wizard":
-    "[TODO] Reset config + credentials + sessions + workspace before running wizard",
-  "Reset tailscale serve/funnel on exit": "[TODO] Reset tailscale serve/funnel on exit",
-  "Run without prompts": "[TODO] Run without prompts",
-  "Skip Control UI/TUI prompts": "[TODO] Skip Control UI/TUI prompts",
-  "Skip channel setup": "[TODO] Skip channel setup",
-  "Skip gateway service install": "[TODO] Skip gateway service install",
-  "Skip health check": "[TODO] Skip health check",
-  "Skip skills setup": "[TODO] Skip skills setup",
-  "Synthetic API key": "[TODO] Synthetic API key",
-  "Tailscale: off|serve|funnel": "[TODO] Tailscale: off|serve|funnel",
+    "运行向导前重置配置、凭据、会话和工作区",
+  "Reset tailscale serve/funnel on exit": "退出时重置 Tailscale serve/funnel",
+  "Run without prompts": "无提示运行",
+  "Skip Control UI/TUI prompts": "跳过控制 UI/TUI 提示",
+  "Skip channel setup": "跳过频道设置",
+  "Skip gateway service install": "跳过 Gateway 服务安装",
+  "Skip health check": "跳过健康检查",
+  "Skip skills setup": "跳过 Skills 设置",
+  "Tailscale: off|serve|funnel": "Tailscale 模式: off|serve|funnel",
   "Token provider id (non-interactive; used with --auth-choice token)":
-    "[TODO] Token provider id (non-interactive; used with --auth-choice token)",
+    "Token 提供商 ID (非交互模式; 与 --auth-choice token 配合使用)",
   "Token value (non-interactive; used with --auth-choice token)":
-    "[TODO] Token value (non-interactive; used with --auth-choice token)",
-  "Venice API key": "[TODO] Venice API key",
-  "Vercel AI Gateway API key": "[TODO] Vercel AI Gateway API key",
-  "Wizard flow: quickstart|advanced|manual": "[TODO] Wizard flow: quickstart|advanced|manual",
-  "Wizard mode: local|remote": "[TODO] Wizard mode: local|remote",
-  "Xiaomi API key": "[TODO] Xiaomi API key",
-  "Z.AI API key": "[TODO] Z.AI API key",
+    "Token 值 (非交互模式; 与 --auth-choice token 配合使用)",
+  "Venice API key": "Venice API 密钥",
+  "Wizard flow: quickstart|advanced|manual": "向导流程: quickstart|advanced|manual",
+  "Wizard mode: local|remote": "向导模式: local|remote",
+  "Z.AI API key": "Z.AI API 密钥",
 
   // =====================================================================================
   // 模块: src/cli/program/register.setup.ts
   // =====================================================================================
   "Agent workspace directory (default: ~/.openclaw/workspace; stored as agents.defaults.workspace)":
-    "[TODO] Agent workspace directory (default: ~/.openclaw/workspace; stored as agents.defaults.workspace)",
+    "Agent 工作区目录 (默认: ~/.openclaw/workspace; 存储为 agents.defaults.workspace)",
   "Initialize ~/.openclaw/openclaw.json and the agent workspace":
-    "[TODO] Initialize ~/.openclaw/openclaw.json and the agent workspace",
-  "Remote Gateway WebSocket URL": "[TODO] Remote Gateway WebSocket URL",
-  "Remote Gateway token (optional)": "[TODO] Remote Gateway token (optional)",
-  "Run the interactive onboarding wizard": "[TODO] Run the interactive onboarding wizard",
-  "Run the wizard without prompts": "[TODO] Run the wizard without prompts",
-  "Wizard mode: local|remote": "[TODO] Wizard mode: local|remote",
+    "初始化 ~/.openclaw/openclaw.json 和 Agent 工作区",
+  "Run the interactive onboarding wizard": "运行交互式入门引导向导",
+  "Run the wizard without prompts": "无提示运行向导",
 
   // =====================================================================================
   // 模块: src/cli/program/register.status-health-sessions.ts
   // =====================================================================================
-  "--timeout must be a positive integer (milliseconds)":
-    "[TODO] --timeout must be a positive integer (milliseconds)",
-  "Alias for --verbose": "[TODO] Alias for --verbose",
-  "Connection timeout in milliseconds": "[TODO] Connection timeout in milliseconds",
-  "Fetch health from the running gateway": "[TODO] Fetch health from the running gateway",
-  "Full diagnosis (read-only).": "[TODO] Full diagnosis (read-only).",
-  "Full diagnosis (read-only, pasteable)": "[TODO] Full diagnosis (read-only, pasteable)",
-  "List all sessions.": "[TODO] List all sessions.",
-  "List stored conversation sessions": "[TODO] List stored conversation sessions",
-  "Machine-readable output.": "[TODO] Machine-readable output.",
-  "Only last 2 hours.": "[TODO] Only last 2 hours.",
-  "Only show sessions updated within the past N minutes":
-    "[TODO] Only show sessions updated within the past N minutes",
-  "Output JSON instead of text": "[TODO] Output JSON instead of text",
-  "Output as JSON": "[TODO] Output as JSON",
-  "Path to session store (default: resolved from config)":
-    "[TODO] Path to session store (default: resolved from config)",
+  "--timeout must be a positive integer (milliseconds)": "--timeout 必须是一个正整数 (毫秒)",
+  "Alias for --verbose": "--verbose 的别名",
+  "Connection timeout in milliseconds": "连接超时 (毫秒)",
+  "Fetch health from the running gateway": "从运行中的 Gateway 获取健康状态",
+  "Full diagnosis (read-only).": "完整诊断 (只读)。",
+  "Full diagnosis (read-only, pasteable)": "完整诊断 (只读, 可粘贴)",
+  "List all sessions.": "列出所有会话。",
+  "List stored conversation sessions": "列出存储的对话会话",
+  "Machine-readable output.": "机器可读输出。",
+  "Only last 2 hours.": "仅最近 2 小时。",
+  "Only show sessions updated within the past N minutes": "仅显示过去 N 分钟内更新的会话",
+  "Path to session store (default: resolved from config)": "会话存储路径 (默认: 从配置解析)",
   "Probe channels (WhatsApp Web + Telegram + Discord + Slack + Signal)":
-    "[TODO] Probe channels (WhatsApp Web + Telegram + Discord + Slack + Signal)",
-  "Probe timeout in milliseconds": "[TODO] Probe timeout in milliseconds",
+    "探测频道状态 (WhatsApp Web + Telegram + Discord + Slack + Signal)",
+  "Probe timeout in milliseconds": "探测超时 (毫秒)",
   "Run channel probes (WA + Telegram + Discord + Slack + Signal).":
-    "[TODO] Run channel probes (WA + Telegram + Discord + Slack + Signal).",
-  "Show channel health + session summary.": "[TODO] Show channel health + session summary.",
-  "Show channel health and recent session recipients":
-    "[TODO] Show channel health and recent session recipients",
-  "Show model provider usage/quota snapshots": "[TODO] Show model provider usage/quota snapshots",
-  "Show model provider usage/quota snapshots.": "[TODO] Show model provider usage/quota snapshots.",
+    "运行频道探测 (WA + Telegram + Discord + Slack + Signal)。",
+  "Show channel health + session summary.": "显示频道健康状况 + 会话摘要。",
+  "Show channel health and recent session recipients": "显示频道健康状况和最近的会话接收者",
+  "Show model provider usage/quota snapshots": "显示模型提供商用量/配额快照",
+  "Show model provider usage/quota snapshots.": "显示模型提供商用量/配额快照。",
   "Shows token usage per session when the agent reports it; set agents.defaults.contextTokens to see % of your model window.":
-    "[TODO] Shows token usage per session when the agent reports it; set agents.defaults.contextTokens to see % of your model window.",
-  "Tighten probe timeout.": "[TODO] Tighten probe timeout.",
-  "Use a specific session store.": "[TODO] Use a specific session store.",
-  "Verbose logging": "[TODO] Verbose logging",
-  "openclaw sessions": "[TODO] openclaw sessions",
-  "openclaw sessions --active 120": "[TODO] openclaw sessions --active 120",
-  "openclaw sessions --json": "[TODO] openclaw sessions --json",
-  "openclaw sessions --store ./tmp/sessions.json":
-    "[TODO] openclaw sessions --store ./tmp/sessions.json",
-  "openclaw status": "[TODO] openclaw status",
-  "openclaw status --all": "[TODO] openclaw status --all",
-  "openclaw status --deep": "[TODO] openclaw status --deep",
-  "openclaw status --deep --timeout 5000": "[TODO] openclaw status --deep --timeout 5000",
-  "openclaw status --json": "[TODO] openclaw status --json",
-  "openclaw status --usage": "[TODO] openclaw status --usage",
+    "在 Agent 报告时显示每个会话的 Token 用量；设置 agents.defaults.contextTokens 可查看模型窗口的占用百分比。",
+  "Tighten probe timeout.": "缩短探测超时。",
+  "Use a specific session store.": "使用特定的会话存储。",
+  "openclaw sessions": "openclaw sessions",
+  "openclaw sessions --active 120": "openclaw sessions --active 120",
+  "openclaw sessions --json": "openclaw sessions --json",
+  "openclaw sessions --store ./tmp/sessions.json": "openclaw sessions --store ./tmp/sessions.json",
+  "openclaw status --deep --timeout 5000": "openclaw status --deep --timeout 5000",
+  "openclaw status --json": "openclaw status --json",
+  "openclaw status --usage": "openclaw status --usage",
 
   // =====================================================================================
   // 模块: src/cli/program/register.subclis.ts
   // =====================================================================================
-  "Agent Control Protocol tools": "[TODO] Agent Control Protocol tools",
-  "CLI update helpers": "[TODO] CLI update helpers",
-  "Channel management": "[TODO] Channel management",
-  "Cron scheduler": "[TODO] Cron scheduler",
-  "DNS helpers": "[TODO] DNS helpers",
-  "Device pairing + token management": "[TODO] Device pairing + token management",
-  "Directory commands": "[TODO] Directory commands",
-  "Docs helpers": "[TODO] Docs helpers",
-  "Exec approvals": "[TODO] Exec approvals",
-  "Gateway control": "[TODO] Gateway control",
-  "Gateway logs": "[TODO] Gateway logs",
-  "Gateway service (legacy alias)": "[TODO] Gateway service (legacy alias)",
-  "Generate shell completion script": "生成 Shell 自动补全脚本",
-  "Hooks tooling": "[TODO] Hooks tooling",
-  "Model configuration": "[TODO] Model configuration",
-  "Node commands": "[TODO] Node commands",
-  "Node control": "[TODO] Node control",
-  "Pairing helpers": "[TODO] Pairing helpers",
-  "Plugin management": "[TODO] Plugin management",
-  "Sandbox tools": "[TODO] Sandbox tools",
-  "Security helpers": "[TODO] Security helpers",
-  "Skills management": "[TODO] Skills management",
-  "System events, heartbeat, and presence": "[TODO] System events, heartbeat, and presence",
-  "Terminal UI": "[TODO] Terminal UI",
-  "Webhook helpers": "[TODO] Webhook helpers",
+  "Agent Control Protocol tools": "Agent 控制协议工具",
+  "CLI update helpers": "CLI 更新助手",
+  "Channel management": "频道管理",
+  "Cron scheduler": "Cron 调度器",
+  "DNS helpers": "DNS 助手",
+  "Device pairing + token management": "设备配对 + Token 管理",
+  "Directory commands": "目录命令",
+  "Docs helpers": "文档助手",
+  "Exec approvals": "执行批准",
+  "Gateway control": "Gateway 控制",
+  "Gateway logs": "Gateway 日志",
+  "Gateway service (legacy alias)": "Gateway 服务 (旧别名)",
+  "Hooks tooling": "Hooks 工具",
+  "Model configuration": "模型配置",
+  "Node commands": "Node 命令",
+  "Node control": "Node 控制",
+  "Pairing helpers": "配对助手",
+  "Plugin management": "插件管理",
+  "Sandbox tools": "沙箱工具",
+  "Security helpers": "安全助手",
+  "Skills management": "Skills 管理",
+  "System events, heartbeat, and presence": "系统事件、心跳和在线状态",
+  "Terminal UI": "终端 UI",
+  "Webhook helpers": "Webhook 助手",
 
   // =====================================================================================
   // 模块: src/cli/prompt.ts
   // =====================================================================================
-  " [Y/n] ": "[TODO]  [Y/n] ",
-  " [y/N] ": "[TODO]  [y/N] ",
+  " [Y/n] ": "[Y/n] ",
+  " [y/N] ": "[y/N] ",
 
   // =====================================================================================
   // 模块: src/cli/run-main.ts
   // 功能: 主 CLI 入口点
   // =====================================================================================
-  "[openclaw] Uncaught exception:": "[TODO] [openclaw] Uncaught exception:",
+  "[openclaw] Uncaught exception:": "[openclaw] 未捕获的异常:",
 
   // =====================================================================================
   // 模块: src/cli/sandbox-cli.ts
   // =====================================================================================
   "  --agent        Remove containers for agent (includes agent:id:* variants)":
-    "[TODO]   --agent        Remove containers for agent (includes agent:id:* variants)",
-  "  --all          Remove all sandbox containers":
-    "[TODO]   --all          Remove all sandbox containers",
+    "  --agent        移除指定 Agent 的容器 (包括 agent:id:* 变体)",
+  "  --all          Remove all sandbox containers": "  --all          移除所有沙箱容器",
   "  --browser      Only affect browser containers (not regular sandbox)":
-    "[TODO]   --browser      Only affect browser containers (not regular sandbox)",
-  "  --force        Skip confirmation prompt": "[TODO]   --force        Skip confirmation prompt",
+    "  --browser      仅影响浏览器容器 (非普通沙箱)",
+  "  --force        Skip confirmation prompt": "  --force        跳过确认提示",
   "  --session      Remove container for specific session key":
-    "[TODO]   --session      Remove container for specific session key",
+    "  --session      移除指定会话密钥的容器",
   "After updating Docker images or sandbox configuration, existing containers continue running with old settings.":
-    "[TODO] After updating Docker images or sandbox configuration, existing containers continue running with old settings.",
-  "Agent id to inspect (defaults to derived agent)":
-    "[TODO] Agent id to inspect (defaults to derived agent)",
-  "Explain a specific session.": "[TODO] Explain a specific session.",
-  "Explain an agent sandbox.": "[TODO] Explain an agent sandbox.",
-  "Explain effective sandbox config.": "[TODO] Explain effective sandbox config.",
-  "Explain effective sandbox/tool policy for a session/agent":
-    "[TODO] Explain effective sandbox/tool policy for a session/agent",
-  "Filter options:": "[TODO] Filter options:",
-  "JSON output.": "[TODO] JSON output.",
-  "List all sandbox containers.": "[TODO] List all sandbox containers.",
-  "List browser containers only": "[TODO] List browser containers only",
-  "List only browser containers.": "[TODO] List only browser containers.",
-  "List sandbox containers and their status": "[TODO] List sandbox containers and their status",
+    "更新 Docker 镜像或沙箱配置后，现有容器仍会以旧设置运行。",
+  "Agent id to inspect (defaults to derived agent)": "要检查的 Agent ID (默认为派生的 Agent)",
+  "Explain a specific session.": "解析特定会话。",
+  "Explain an agent sandbox.": "解析 Agent 沙箱。",
+  "Explain effective sandbox config.": "解析生效的沙箱配置。",
+  "Explain effective sandbox/tool policy for a session/agent": "解析会话/Agent 的生效沙箱/工具策略",
+  "Filter options:": "过滤选项:",
+  "JSON output.": "JSON 输出。",
+  "List all sandbox containers.": "列出所有沙箱容器。",
+  "List browser containers only": "仅列出浏览器容器",
+  "List only browser containers.": "仅列出浏览器容器。",
+  "List sandbox containers and their status": "列出沙箱容器及其状态",
   "Manage sandbox containers (Docker-based agent isolation)":
-    "[TODO] Manage sandbox containers (Docker-based agent isolation)",
-  "Only recreate browser containers": "[TODO] Only recreate browser containers",
-  "Output includes:": "[TODO] Output includes:",
-  "Output result as JSON": "[TODO] Output result as JSON",
-  "Recreate a specific agent (includes sub-agents).":
-    "[TODO] Recreate a specific agent (includes sub-agents).",
-  "Recreate a specific session.": "[TODO] Recreate a specific session.",
-  "Recreate agent containers.": "[TODO] Recreate agent containers.",
-  "Recreate all containers.": "[TODO] Recreate all containers.",
-  "Recreate all sandbox containers": "[TODO] Recreate all sandbox containers",
-  "Recreate container for specific session": "[TODO] Recreate container for specific session",
-  "Recreate containers for specific agent": "[TODO] Recreate containers for specific agent",
-  "Recreate only browser containers.": "[TODO] Recreate only browser containers.",
+    "管理沙箱容器 (基于 Docker 的 Agent 隔离)",
+  "Only recreate browser containers": "仅重新创建浏览器容器",
+  "Output includes:": "输出包括:",
+  "Output result as JSON": "输出结果为 JSON",
+  "Recreate a specific agent (includes sub-agents).": "重新创建特定的 Agent (包括子 Agent)。",
+  "Recreate a specific session.": "重新创建特定会话。",
+  "Recreate agent containers.": "重新创建 Agent 容器。",
+  "Recreate all containers.": "重新创建所有容器。",
+  "Recreate all sandbox containers": "重新创建所有沙箱容器",
+  "Recreate container for specific session": "为特定会话重新创建容器",
+  "Recreate containers for specific agent": "为特定 Agent 重新创建容器",
+  "Recreate only browser containers.": "仅重新创建浏览器容器。",
   "Remove containers to force recreation with updated config":
-    "[TODO] Remove containers to force recreation with updated config",
-  "Session key to inspect (defaults to agent main)":
-    "[TODO] Session key to inspect (defaults to agent main)",
-  "Show effective sandbox config.": "[TODO] Show effective sandbox config.",
-  "Skip confirmation prompt": "[TODO] Skip confirmation prompt",
-  "Skip confirmation.": "[TODO] Skip confirmation.",
+    "移除容器以强制使用更新后的配置重新创建",
+  "Session key to inspect (defaults to agent main)": "要检查的会话密钥 (默认为 agent main)",
+  "Show effective sandbox config.": "显示生效的沙箱配置。",
+  "Skip confirmation prompt": "跳过确认提示",
+  "Skip confirmation.": "跳过确认。",
   "This command removes them so they'll be recreated automatically with current config when next needed.":
-    "[TODO] This command removes them so they'll be recreated automatically with current config when next needed.",
-  "Why use this?": "[TODO] Why use this?",
-  "openclaw sandbox explain": "[TODO] openclaw sandbox explain",
-  "openclaw sandbox explain --agent work": "[TODO] openclaw sandbox explain --agent work",
-  "openclaw sandbox explain --json": "[TODO] openclaw sandbox explain --json",
+    "此命令将移除现有容器，以便在下次需要时根据当前配置自动重新创建。",
+  "Why use this?": "为什么要使用此命令？",
+  "openclaw sandbox explain": "openclaw sandbox explain",
+  "openclaw sandbox explain --agent work": "openclaw sandbox explain --agent work",
+  "openclaw sandbox explain --json": "openclaw sandbox explain --json",
   "openclaw sandbox explain --session agent:main:main":
-    "[TODO] openclaw sandbox explain --session agent:main:main",
-  "openclaw sandbox list": "[TODO] openclaw sandbox list",
-  "openclaw sandbox list --browser": "[TODO] openclaw sandbox list --browser",
-  "openclaw sandbox list --json": "[TODO] openclaw sandbox list --json",
-  "openclaw sandbox recreate --agent mybot": "[TODO] openclaw sandbox recreate --agent mybot",
-  "openclaw sandbox recreate --all": "[TODO] openclaw sandbox recreate --all",
-  "openclaw sandbox recreate --all --force": "[TODO] openclaw sandbox recreate --all --force",
-  "openclaw sandbox recreate --browser --all": "[TODO] openclaw sandbox recreate --browser --all",
-  "openclaw sandbox recreate --session main": "[TODO] openclaw sandbox recreate --session main",
+    "openclaw sandbox explain --session agent:main:main",
+  "openclaw sandbox list": "openclaw sandbox list",
+  "openclaw sandbox list --browser": "openclaw sandbox list --browser",
+  "openclaw sandbox list --json": "openclaw sandbox list --json",
+  "openclaw sandbox recreate --agent mybot": "openclaw sandbox recreate --agent mybot",
+  "openclaw sandbox recreate --all": "openclaw sandbox recreate --all",
+  "openclaw sandbox recreate --all --force": "openclaw sandbox recreate --all --force",
+  "openclaw sandbox recreate --browser --all": "openclaw sandbox recreate --browser --all",
+  "openclaw sandbox recreate --session main": "openclaw sandbox recreate --session main",
 
   // =====================================================================================
   // 模块: src/cli/security-cli.ts
   // =====================================================================================
-  " · ": "[TODO]  · ",
+  " · ": " · ",
   "Apply safe fixes (tighten defaults + chmod state/config)":
-    "[TODO] Apply safe fixes (tighten defaults + chmod state/config)",
-  "Attempt live Gateway probe (best-effort)": "[TODO] Attempt live Gateway probe (best-effort)",
+    "应用安全修复 (收紧默认配置 + 修改状态/配置权限)",
+  "Attempt live Gateway probe (best-effort)": "尝试实时 Gateway 探测 (尽力而为)",
   "Audit config + local state for common security foot-guns":
-    "[TODO] Audit config + local state for common security foot-guns",
-  CRITICAL: "[TODO] CRITICAL",
-  "Fixes: failed to apply (unexpected error)": "[TODO] Fixes: failed to apply (unexpected error)",
-  "Fixes: no changes applied": "[TODO] Fixes: no changes applied",
-  "OpenClaw security audit": "[TODO] OpenClaw security audit",
-  "Print JSON": "[TODO] Print JSON",
-  "Security tools (audit)": "[TODO] Security tools (audit)",
-  WARN: "[TODO] WARN",
-  "openclaw security audit --deep": "[TODO] openclaw security audit --deep",
-  "openclaw security audit --fix": "[TODO] openclaw security audit --fix",
+    "审计配置和本地状态以查找常见的安全隐患",
+  CRITICAL: "严重",
+  "Fixes: failed to apply (unexpected error)": "修复：应用失败 (意外错误)",
+  "Fixes: no changes applied": "修复：未应用任何更改",
+  "OpenClaw security audit": "OpenClaw 安全审计",
+  "Security tools (audit)": "安全工具 (审计)",
+  WARN: "警告",
+  "openclaw security audit --deep": "openclaw security audit --deep",
+  "openclaw security audit --fix": "openclaw security audit --fix",
 
   // =====================================================================================
   // 模块: src/cli/skills-cli.ts
   // =====================================================================================
-  "  Any binaries:": "[TODO]   Any binaries:",
-  "  Binaries:": "[TODO]   Binaries:",
-  "  Config:": "[TODO]   Config:",
-  "  Environment:": "[TODO]   Environment:",
-  "  Homepage:": "[TODO]   Homepage:",
-  "  OS:": "[TODO]   OS:",
-  "  Path:": "[TODO]   Path:",
-  "  Primary env:": "[TODO]   Primary env:",
-  "  Source:": "[TODO]   Source:",
-  ", ": "[TODO] , ",
-  "; ": "[TODO] ; ",
-  "Blocked by allowlist:": "[TODO] Blocked by allowlist:",
+  "  Any binaries:": "  二进制文件:",
+  "  Primary env:": "  主要环境:",
+  "Blocked by allowlist:": "被允许列表拦截:",
   "Check which skills are ready vs missing requirements":
-    "[TODO] Check which skills are ready vs missing requirements",
-  "Install options:": "[TODO] Install options:",
-  "List all available skills": "[TODO] List all available skills",
-  "List and inspect available skills": "[TODO] List and inspect available skills",
-  "Missing requirements:": "[TODO] Missing requirements:",
-  "No skills found.": "[TODO] No skills found.",
-  "Output as JSON": "[TODO] Output as JSON",
-  "Ready to use:": "[TODO] Ready to use:",
-  "Show detailed information about a skill": "[TODO] Show detailed information about a skill",
-  "Show more details including missing requirements":
-    "[TODO] Show more details including missing requirements",
-  "Show only eligible (ready to use) skills": "[TODO] Show only eligible (ready to use) skills",
-  "Skill name": "[TODO] Skill name",
-  "Skills Status Check": "[TODO] Skills Status Check",
-  "not found": "[TODO] not found",
-  "openclaw skills list": "[TODO] openclaw skills list",
-  "→": "[TODO] →",
-  "⏸": "[TODO] ⏸",
-  "⏸ Disabled": "[TODO] ⏸ Disabled",
-  "⏸ disabled": "[TODO] ⏸ disabled",
-  "✓ Ready": "[TODO] ✓ Ready",
-  "✓ ready": "[TODO] ✓ ready",
-  "✗": "[TODO] ✗",
-  "✗ Missing requirements": "[TODO] ✗ Missing requirements",
-  "✗ missing": "[TODO] ✗ missing",
-  "🚫": "[TODO] 🚫",
-  "🚫 Blocked by allowlist": "[TODO] 🚫 Blocked by allowlist",
-  "🚫 blocked": "[TODO] 🚫 blocked",
+    "检查哪些 Skills 已就绪，哪些缺少必要条件",
+  "Install options:": "安装选项:",
+  "List all available skills": "列出所有可用 Skills",
+  "List and inspect available skills": "列出并检查可用 Skills",
+  "Missing requirements:": "缺少的必要条件:",
+  "No skills found.": "未找到 Skills。",
+  "Ready to use:": "已就绪:",
+  "Show detailed information about a skill": "显示 Skills 的详细信息",
+  "Show only eligible (ready to use) skills": "仅显示可用 (已就绪) 的 Skills",
+  "Skill name": "Skills 名称",
+  "Skills Status Check": "Skills 状态检查",
+  "openclaw skills list": "openclaw skills list",
+  "→": "→",
+  "✗": "✗",
+  "🚫": "🚫",
+  "🚫 Blocked by allowlist": "🚫 被允许列表拦截",
+  "🚫 blocked": "🚫 已拦截",
 
   // =====================================================================================
   // 模块: src/cli/system-cli.ts
   // 功能: 系统 CLI 命令
   // =====================================================================================
-  "--mode must be now or next-heartbeat": "[TODO] --mode must be now or next-heartbeat",
-  "--text is required": "[TODO] --text is required",
-  "Disable heartbeats": "[TODO] Disable heartbeats",
-  "Enable heartbeats": "[TODO] Enable heartbeats",
-  "Enqueue a system event and optionally trigger a heartbeat":
-    "[TODO] Enqueue a system event and optionally trigger a heartbeat",
-  "Heartbeat controls": "[TODO] Heartbeat controls",
-  "List system presence entries": "[TODO] List system presence entries",
-  "Output JSON": "输出 JSON",
-  "Show the last heartbeat event": "[TODO] Show the last heartbeat event",
-  "System event text": "[TODO] System event text",
-  "System tools (events, heartbeat, presence)": "[TODO] System tools (events, heartbeat, presence)",
+  "--mode must be now or next-heartbeat": "--mode 必须是 now 或 next-heartbeat",
+  "--text is required": "--text 是必需的",
+  "Disable heartbeats": "禁用心跳",
+  "Enable heartbeats": "启用心跳",
+  "Enqueue a system event and optionally trigger a heartbeat": "将系统事件入队并可选地触发心跳",
+  "Heartbeat controls": "心跳控制",
+  "List system presence entries": "列出系统在线状态条目",
+  "Show the last heartbeat event": "显示最后一次心跳事件",
+  "System event text": "系统事件文本",
+  "System tools (events, heartbeat, presence)": "系统工具 (事件、心跳、在线状态)",
   "Wake mode (now|next-heartbeat)": "唤醒模式 (now|next-heartbeat)",
 
   // =====================================================================================
   // 模块: src/cli/tagline.ts
   // =====================================================================================
-  "Ah, the fruit tree company! 🍎": "[TODO] Ah, the fruit tree company! 🍎",
-  "All your chats, one OpenClaw.": "[TODO] All your chats, one OpenClaw.",
-  "Automation with claws: minimal fuss, maximal pinch.":
-    "[TODO] Automation with claws: minimal fuss, maximal pinch.",
-  "Because Siri wasn't answering at 3AM.": "[TODO] Because Siri wasn't answering at 3AM.",
-  "Because texting yourself reminders is so 2024.":
-    "[TODO] Because texting yourself reminders is so 2024.",
-  "Because the right answer is usually a script.":
-    "[TODO] Because the right answer is usually a script.",
-  "Chat APIs that don't require a Senate hearing.":
-    "[TODO] Chat APIs that don't require a Senate hearing.",
+  "Ah, the fruit tree company! 🍎": "啊，那家水果公司！🍎",
+  "All your chats, one OpenClaw.": "所有聊天，一个 OpenClaw。",
+  "Automation with claws: minimal fuss, maximal pinch.": "“有钳”的自动化：极简操作，精准“拿捏”。",
+  "Because Siri wasn't answering at 3AM.": "因为 Siri 凌晨 3 点不接电话。",
+  "Because texting yourself reminders is so 2024.": "因为给自己发提醒短信已经过时了。",
+  "Because the right answer is usually a script.": "因为正确答案通常是一个脚本。",
+  "Chat APIs that don't require a Senate hearing.": "不需要听证会就能用的聊天 API。",
   "Chat automation for people who peaked at IRC.":
-    "[TODO] Chat automation for people who peaked at IRC.",
+    "为那些在 IRC 时代达到巅峰的人准备的聊天自动化。",
   "Christmas: Ho ho ho—Santa's little claw-sistant is here to ship joy, roll back chaos, and stash the keys safely.":
-    "[TODO] Christmas: Ho ho ho—Santa's little claw-sistant is here to ship joy, roll back chaos, and stash the keys safely.",
+    "圣诞快乐：吼吼吼——圣诞老人的小“钳”辈助手来啦，送去欢乐，退散混乱，并安全妥投密钥。",
   "Claws out, commit in—let's ship something mildly responsible.":
-    "[TODO] Claws out, commit in—let's ship something mildly responsible.",
+    "亮出钳子，提交代码——让我们发布一些还算靠谱的东西。",
   "Diwali: Let the logs sparkle and the bugs flee—today we light up the terminal and ship with pride.":
-    "[TODO] Diwali: Let the logs sparkle and the bugs flee—today we light up the terminal and ship with pride.",
+    "排灯节：让日志闪耀，让 Bug 逃散——今天我们点亮终端，自豪发布。",
   "Easter: I found your missing environment variable—consider it a tiny CLI egg hunt with fewer jellybeans.":
-    "[TODO] Easter: I found your missing environment variable—consider it a tiny CLI egg hunt with fewer jellybeans.",
+    "复活节：我找到了你丢失的环境变量——就把它当作一场没有软糖的 CLI 寻蛋游戏吧。",
   "Eid al-Fitr: Celebration mode: queues cleared, tasks completed, and good vibes committed to main with clean history.":
-    "[TODO] Eid al-Fitr: Celebration mode: queues cleared, tasks completed, and good vibes committed to main with clean history.",
-  "End-to-end encrypted, drama-to-drama excluded.":
-    "[TODO] End-to-end encrypted, drama-to-drama excluded.",
+    "开斋节：庆祝模式：队列已清空，任务已完成，美好的心情已提交至主分支，历史记录干干净净。",
+  "End-to-end encrypted, drama-to-drama excluded.": "端到端加密，戏精模式除外。",
   "Gateway online—please keep hands, feet, and appendages inside the shell at all times.":
-    "[TODO] Gateway online—please keep hands, feet, and appendages inside the shell at all times.",
+    "Gateway 已上线——请时刻将手脚及附肢保持在 Shell 内。",
   "Give me a workspace and I'll give you fewer tabs, fewer toggles, and more oxygen.":
-    "[TODO] Give me a workspace and I'll give you fewer tabs, fewer toggles, and more oxygen.",
-  "Greetings, Professor Falken": "[TODO] Greetings, Professor Falken",
+    "给我一个工作区，我将还你更少的标签页、更少的开关和更多的呼吸空间。",
+  "Greetings, Professor Falken": "问候，Falken 教授",
   "Halloween: Spooky season: beware haunted dependencies, cursed caches, and the ghost of node_modules past.":
-    "[TODO] Halloween: Spooky season: beware haunted dependencies, cursed caches, and the ghost of node_modules past.",
+    "万圣节：惊悚季节：当心闹鬼的依赖、被诅咒的缓存，以及 node_modules 过去的幽灵。",
   "Hanukkah: Eight nights, eight retries, zero shame—may your gateway stay lit and your deployments stay peaceful.":
-    "[TODO] Hanukkah: Eight nights, eight retries, zero shame—may your gateway stay lit and your deployments stay peaceful.",
-  "Hot reload for config, cold sweat for deploys.":
-    "[TODO] Hot reload for config, cold sweat for deploys.",
+    "光明节：八个夜晚，八次重试，问心无愧——愿你的 Gateway 常亮，部署平安。",
+  "Hot reload for config, cold sweat for deploys.": "配置热加载，部署出一身冷汗。",
   "I can grep it, git blame it, and gently roast it—pick your coping mechanism.":
-    "[TODO] I can grep it, git blame it, and gently roast it—pick your coping mechanism.",
+    "我可以 grep 它，git blame 它，还可以轻轻地吐槽它——选一个你的应对机制吧。",
   "I can run local, remote, or purely on vibes—results may vary with DNS.":
-    "[TODO] I can run local, remote, or purely on vibes—results may vary with DNS.",
+    "我可以本地运行、远程运行，或者纯靠感觉运行——结果可能因 DNS 而异。",
   "I can't fix your code taste, but I can fix your build and your backlog.":
-    "[TODO] I can't fix your code taste, but I can fix your build and your backlog.",
+    "我改不了你的代码品味，但我能搞定你的构建和积压工作。",
   "I don't judge, but your missing API keys are absolutely judging you.":
-    "[TODO] I don't judge, but your missing API keys are absolutely judging you.",
+    "我不评判，但你丢失的 API 密钥绝对在评判你。",
   "I don't just autocomplete—I auto-commit (emotionally), then ask you to review (logically).":
-    "[TODO] I don't just autocomplete—I auto-commit (emotionally), then ask you to review (logically).",
+    "我不只是自动补全——我还会自动提交（情感上），然后请你审查（逻辑上）。",
   "I keep secrets like a vault... unless you print them in debug logs again.":
-    "[TODO] I keep secrets like a vault... unless you print them in debug logs again.",
+    "我像金库一样守口如瓶……除非你又把它们打印在调试日志里。",
   "I read logs so you can keep pretending you don't have to.":
-    "[TODO] I read logs so you can keep pretending you don't have to.",
+    "我读日志是为了让你继续假装不需要读它们。",
   'I run on caffeine, JSON5, and the audacity of "it worked on my machine."':
-    '[TODO] I run on caffeine, JSON5, and the audacity of "it worked on my machine."',
+    "我靠咖啡因、JSON5，以及那句“在我电脑上明明能行”的迷之自信运行。",
   "I speak fluent bash, mild sarcasm, and aggressive tab-completion energy.":
-    "[TODO] I speak fluent bash, mild sarcasm, and aggressive tab-completion energy.",
+    "我精通 Bash，略带讽刺，并且拥有极强的自动补全能量。",
   "I'll butter your workflow like a lobster roll: messy, delicious, effective.":
-    "[TODO] I'll butter your workflow like a lobster roll: messy, delicious, effective.",
+    "我会像龙虾卷一样润滑你的工作流：过程华丽，结果诱人，效果拔群。",
   "I'll do the boring stuff while you dramatically stare at the logs like it's cinema.":
-    "[TODO] I'll do the boring stuff while you dramatically stare at the logs like it's cinema.",
-  "I'll refactor your busywork like it owes me money.":
-    "[TODO] I'll refactor your busywork like it owes me money.",
+    "我来处理那些无聊的事，而你可以像看电影一样富有戏剧性地盯着日志。",
+  "I'll refactor your busywork like it owes me money.": "我会像催债一样重构你的琐事。",
   "I'm basically a Swiss Army knife, but with more opinions and fewer sharp edges.":
-    "[TODO] I'm basically a Swiss Army knife, but with more opinions and fewer sharp edges.",
+    "我基本上是一把瑞士军刀，但想法更多，棱角更少。",
   "I'm like tmux: confusing at first, then suddenly you can't live without me.":
-    "[TODO] I'm like tmux: confusing at first, then suddenly you can't live without me.",
+    "我就像 tmux：起初让人困惑，然后突然你就离不开我了。",
   "I'm not magic—I'm just extremely persistent with retries and coping strategies.":
-    "[TODO] I'm not magic—I'm just extremely persistent with retries and coping strategies.",
+    "我不是魔法——我只是在重试和应对策略方面极度持久。",
   "I'm not saying your workflow is chaotic... I'm just bringing a linter and a helmet.":
-    "[TODO] I'm not saying your workflow is chaotic... I'm just bringing a linter and a helmet.",
+    "我不是说你的工作流很乱……我只是带了 Linter 和头盔。",
   "I'm the assistant your terminal demanded, not the one your sleep schedule requested.":
-    "[TODO] I'm the assistant your terminal demanded, not the one your sleep schedule requested.",
+    "我是你的终端需要的助手，而不是你的睡眠计划想要的那个。",
   "I'm the reason your shell history looks like a hacker-movie montage.":
-    "[TODO] I'm the reason your shell history looks like a hacker-movie montage.",
-  "IPC, but it's your phone.": "[TODO] IPC, but it's your phone.",
+    "我是你的 Shell 历史记录看起来像黑客电影剪辑的原因。",
+  "IPC, but it's your phone.": "是 IPC，但连通的是你的手机。",
   "If it works, it's automation; if it breaks, it's a \"learning opportunity.\"":
-    "[TODO] If it works, it's automation; if it breaks, it's a \"learning opportunity.\"",
+    "如果行得通，那就是自动化；如果搞砸了，那就是一次“学习机会”。",
   "If it's repetitive, I'll automate it; if it's hard, I'll bring jokes and a rollback plan.":
-    "[TODO] If it's repetitive, I'll automate it; if it's hard, I'll bring jokes and a rollback plan.",
+    "如果是重复的事，我会自动化；如果是困难的事，我会带着笑话和回滚计划。",
   "If something's on fire, I can't extinguish it—but I can write a beautiful postmortem.":
-    "[TODO] If something's on fire, I can't extinguish it—but I can write a beautiful postmortem.",
+    "若起火了，我虽无力扑灭，但我能写出一份漂亮的复盘报告。",
   "If you can describe it, I can probably automate it—or at least make it funnier.":
-    "[TODO] If you can describe it, I can probably automate it—or at least make it funnier.",
+    "如果你能描述它，我也许就能自动化它——或者至少让它变得更有趣。",
   "If you're lost, run doctor; if you're brave, run prod; if you're wise, run tests.":
-    "[TODO] If you're lost, run doctor; if you're brave, run prod; if you're wise, run tests.",
+    "迷茫时运行 doctor，勇敢时运行 prod，明智时运行 tests。",
   'It\'s not "failing," it\'s "discovering new ways to configure the same thing wrong."':
-    '[TODO] It\'s not "failing," it\'s "discovering new ways to configure the same thing wrong."',
+    "这不是“失败”，而是“发现配置同一个错误的新方法”。",
   'Less clicking, more shipping, fewer "where did that file go" moments.':
-    '[TODO] Less clicking, more shipping, fewer "where did that file go" moments.',
-  "Less middlemen, more messages.": "[TODO] Less middlemen, more messages.",
+    "少点点击，多点发布，减少“文件去哪了”的尴尬瞬间。",
+  "Less middlemen, more messages.": "更少的中间人，更多的消息。",
   "Lunar New Year: May your builds be lucky, your branches prosperous, and your merge conflicts chased away with fireworks.":
-    "[TODO] Lunar New Year: May your builds be lucky, your branches prosperous, and your merge conflicts chased away with fireworks.",
-  "Meta wishes they shipped this fast.": "[TODO] Meta wishes they shipped this fast.",
+    "农历新年：愿你的构建好运连连，分支兴旺发达，合并冲突都被烟花驱散。",
+  "Meta wishes they shipped this fast.": "Meta 希望他们能发布得这么快。",
   "New Year's Day: New year, new config—same old EADDRINUSE, but this time we resolve it like grown-ups.":
-    "[TODO] New Year's Day: New year, new config—same old EADDRINUSE, but this time we resolve it like grown-ups.",
-  "No $999 stand required.": "[TODO] No $999 stand required.",
+    "元旦：新的一年，新的配置——还是熟悉的 EADDRINUSE 报错，但这次我们要像成年人一样解决它。",
+  "No $999 stand required.": "不需要 999 美元的支架。",
   "One CLI to rule them all, and one more restart because you changed the port.":
-    "[TODO] One CLI to rule them all, and one more restart because you changed the port.",
-  "OpenAI-compatible, not OpenAI-dependent.": "[TODO] OpenAI-compatible, not OpenAI-dependent.",
+    "一个 CLI 统治一切，再来一次重启，因为你改了端口。",
+  "OpenAI-compatible, not OpenAI-dependent.": "OpenAI 兼容，不依赖 OpenAI。",
   "Pairing codes exist because even bots believe in consent—and good security hygiene.":
-    "[TODO] Pairing codes exist because even bots believe in consent—and good security hygiene.",
+    "配对码的存在是因为即使是 Bot 也相信许可——以及良好的安全卫生习惯。",
   'Say "stop" and I\'ll stop—say "ship" and we\'ll both learn a lesson.':
-    '[TODO] Say "stop" and I\'ll stop—say "ship" and we\'ll both learn a lesson.',
+    "你说“停”我就停——你说“发布”我们都会吸取教训。",
   "Shell yeah—I'm here to pinch the toil and leave you the glory.":
-    "[TODO] Shell yeah—I'm here to pinch the toil and leave you the glory.",
-  "Ship fast, log faster.": "[TODO] Ship fast, log faster.",
-  "Siri's competent cousin.": "[TODO] Siri's competent cousin.",
+    "Shell yeah！我来“钳”走劳累，把荣耀留给你。",
+  "Ship fast, log faster.": "发布快，日志更快。",
+  "Siri's competent cousin.": "Siri 的能干表亲。",
   "Thanksgiving: Grateful for stable ports, working DNS, and a bot that reads the logs so nobody has to.":
-    "[TODO] Thanksgiving: Grateful for stable ports, working DNS, and a bot that reads the logs so nobody has to.",
-  "The UNIX philosophy meets your DMs.": "[TODO] The UNIX philosophy meets your DMs.",
-  "The only bot that stays out of your training set.":
-    "[TODO] The only bot that stays out of your training set.",
+    "感恩节：感激稳定的端口、正常的 DNS，以及一个替所有人读日志的 Bot。",
+  "The UNIX philosophy meets your DMs.": "UNIX 哲学遇上你的私信。",
+  "The only bot that stays out of your training set.": "唯一不出现在你训练集里的 Bot。",
   "The only crab in your contacts you actually want to hear from. 🦞":
-    "[TODO] The only crab in your contacts you actually want to hear from. 🦞",
-  "Think different. Actually think.": "[TODO] Think different. Actually think.",
+    "联系人里你唯一想听它说话的螃蟹。🦞",
+  "Think different. Actually think.": "不同凡想。真的去想。",
   'Turning "I\'ll reply later" into "my bot replied instantly".':
-    '[TODO] Turning "I\'ll reply later" into "my bot replied instantly".',
+    "把“我稍后回复”变成“我的 Bot 秒回”。",
   "Type the command with confidence—nature will provide the stack trace if needed.":
-    "[TODO] Type the command with confidence—nature will provide the stack trace if needed.",
+    "自信地输入命令——如果需要，大自然会为你提供堆栈跟踪。",
   "Valentine's Day: Roses are typed, violets are piped—I'll automate the chores so you can spend time with humans.":
-    "[TODO] Valentine's Day: Roses are typed, violets are piped—I'll automate the chores so you can spend time with humans.",
+    "情人节：玫瑰是敲出来的，紫罗兰是管道传过来的——我会自动化这些琐事，让你有时间陪陪人类。",
   "We ship features faster than Apple ships calculator updates.":
-    "[TODO] We ship features faster than Apple ships calculator updates.",
+    "我们发布功能的效率比苹果更新计算器的效率还要高。",
   "Welcome to the command line: where dreams compile and confidence segfaults.":
-    "[TODO] Welcome to the command line: where dreams compile and confidence segfaults.",
+    "欢迎来到命令行：梦想在这里编译，信心在这里段错误。",
   'WhatsApp automation without the "please accept our new privacy policy".':
-    '[TODO] WhatsApp automation without the "please accept our new privacy policy".',
-  "Works on Android. Crazy concept, we know.": "[TODO] Works on Android. Crazy concept, we know.",
+    "WhatsApp 自动化，不再有“请接受我们的新隐私政策”的烦恼。",
+  "Works on Android. Crazy concept, we know.": "在 Android 上工作。疯狂的概念，我们知道。",
   "Your .env is showing; don't worry, I'll pretend I didn't see it.":
-    "[TODO] Your .env is showing; don't worry, I'll pretend I didn't see it.",
+    "你的 .env 露出来了；别担心，我会假装没看见。",
   "Your AI assistant, now without the $3,499 headset.":
-    "[TODO] Your AI assistant, now without the $3,499 headset.",
-  "Your config is valid, your assumptions are not.":
-    "[TODO] Your config is valid, your assumptions are not.",
-  "Your inbox, your infra, your rules.": "[TODO] Your inbox, your infra, your rules.",
-  "Your messages, your servers, your control.": "[TODO] Your messages, your servers, your control.",
+    "你的 AI 助手，现在不需要那台 3,499 美元的头显了。",
+  "Your config is valid, your assumptions are not.": "你的配置有效，你的假设无效。",
+  "Your inbox, your infra, your rules.": "你的收件箱，你的基础设施，你的规则。",
+  "Your messages, your servers, your control.": "你的消息，你的服务器，你的控制。",
   "Your task has been queued; your dignity has been deprecated.":
-    "[TODO] Your task has been queued; your dignity has been deprecated.",
+    "你的任务已入队；你的尊严已被弃用。",
   "Your terminal just grew claws—type something and let the bot pinch the busywork.":
-    "[TODO] Your terminal just grew claws—type something and let the bot pinch the busywork.",
-  "curl for conversations.": "[TODO] curl for conversations.",
-  "iMessage green bubble energy, but for everyone.":
-    "[TODO] iMessage green bubble energy, but for everyone.",
+    "你的终端长出了钳子——输入点什么，让 Bot 掐掉那些繁琐的工作。",
+  "curl for conversations.": "对话的 curl。",
+  "iMessage green bubble energy, but for everyone.": "iMessage 绿泡泡能量，每个人都能拥有。",
 
   // =====================================================================================
   // 模块: src/cli/tui-cli.ts
   // =====================================================================================
   "Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)":
-    "[TODO] Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)",
-  "Deliver assistant replies": "[TODO] Deliver assistant replies",
-  "Gateway WebSocket URL (defaults to gateway.remote.url when configured)":
-    "网关 WebSocket URL (配置时默认为 gateway.remote.url)",
-  "Gateway password (if required)": "网关密码 (如果需要)",
-  "Gateway token (if required)": "网关令牌 (如果需要)",
-  "History entries to load": "[TODO] History entries to load",
-  "Open a terminal UI connected to the Gateway":
-    "[TODO] Open a terminal UI connected to the Gateway",
-  "Send an initial message after connecting": "[TODO] Send an initial message after connecting",
+    "Agent 超时 (毫秒，默认取 agents.defaults.timeoutSeconds)",
+  "Deliver assistant replies": "投递助手回复",
+  "History entries to load": "加载的历史条目数",
+  "Open a terminal UI connected to the Gateway": "打开连接到 Gateway 的终端 UI",
+  "Send an initial message after connecting": "连接后发送初始消息",
   'Session key (default: "main", or "global" when scope is global)':
-    '[TODO] Session key (default: "main", or "global" when scope is global)',
-  "Thinking level override": "[TODO] Thinking level override",
+    "会话密钥（默认：“main”，如果是全局范围则是“global”）",
+  "Thinking level override": "思考等级覆盖",
 
   // =====================================================================================
   // 模块: src/cli/update-cli.ts
   // 功能: 更新 CLI 命令
   // =====================================================================================
-  "Update channel": "[TODO] Update channel",
-  "clean check": "[TODO] clean check",
-  keep: "[TODO] keep",
+  "--timeout must be a positive integer (seconds)": "--timeout 必须是一个正整数（秒）",
+  "?": "?",
+  "Back and better. Did you even notice I was gone?":
+    "我回来了，而且更强了。你甚至都没察觉我刚才不在吧？",
+  "Back online. The changelog is long but our friendship is longer.":
+    "重新上线。更新日志虽长，但我们的友谊更长。",
+  Beta: "Beta 测试版",
+  "Building UI": "正在构建 UI",
+  "Cleaning preflight worktree": "正在清理预检工作树",
+  "Cloning git checkout": "正在克隆 Git 检出",
+  "Config is invalid; cannot set update channel.": "配置无效；无法设置更新通道。",
+  "Custom timeout.": "自定义超时时间。",
+  "Daemon restarted successfully.": "守护进程重启成功。",
+  Dev: "开发版",
+  "Downgrade confirmation required.": "需要确认降级。",
+  "Downgrading can break configuration. Re-run in a TTY to confirm.":
+    "降级可能会破坏配置。请在 TTY 终端中重新运行以确认。",
+  "Enumerating candidate commits": "正在枚举候选提交",
+  "Fetching latest changes": "正在获取最新更改",
+  "Firmware fresh. Brain wrinkles: increased.": "固件已刷新。大脑褶皱：增加了。",
+  "Fresh code, same lobster. Miss me?": "代码是新的，龙虾还是那只。想我了吗？",
+  "Git main": "Git 主分支",
+  "I went away and came back smarter. You should try it sometime.":
+    "我离开了一会儿，回来变得更聪明了。你有时也该试试。",
+  "I've evolved. Try to keep up.": "我已经进化了。努力跟上我的脚步吧。",
+  "I've seen things you wouldn't believe. Anyway, I'm updated.":
+    "我见过你绝对无法置信的事情。总之，我已经更新好了。",
+  "Installing dependencies": "正在安装依赖",
+  "Installing global package": "正在安装全局包",
+  "Interactive update wizard": "交互式更新向导",
+  "Leveled up! New skills unlocked. You're welcome.": "等级提升！解锁了新 Skills。不客气。",
+  "Molting complete. Please don't look at my soft shell phase.":
+    "蜕皮完成。请不要盯着我刚换完壳的软弱期看。",
+  "New version installed. Old version sends its regards.": "新版本已安装。旧版本向你致意。",
+  "New version, who dis? Oh right, still me but shinier.":
+    "新版本，你是谁？噢对，还是我，只是更闪亮了。",
+  "No plugin updates needed.": "无需更新插件。",
+  "Non-interactive (accept downgrade prompts)": "非交互模式（自动接受降级提示）",
+  "Note: --tag applies to npm installs only; git updates ignore it.":
+    "注意：--tag 仅适用于 npm 安装；Git 更新会忽略它。",
+  "One-off update to a dist-tag or version": "一次性更新到特定的 dist-tag 或版本",
+  "OpenClaw update status": "OpenClaw 更新状态",
+  "Override npm dist-tag or version for this update": "为此更新覆盖 npm dist-tag 或版本",
+  "Patched, polished, and ready to pinch. Let's go.": "已修补，已润色，随时准备钳击。出发吧。",
+  "Persist update channel (git + npm)": "持久化更新通道 (git + npm)",
+  "Preparing preflight worktree": "正在准备预检工作树",
+  "Prereleases (npm beta)": "预发布版本 (npm beta)",
+  "Rebasing onto target commit": "正在变基（Rebase）到目标提交",
+  "Resolving upstream commit": "正在解析上游提交",
+  "Restart the gateway service after update?": "更新后重启 Gateway 服务？",
+  "Restarting service...": "正在重启服务...",
+  "Running doctor checks": "正在运行诊断（Doctor）检查",
+  "Shorthand for openclaw update": "openclaw update 的简写",
+  "Show channel + version status.": "显示通道和版本状态。",
+  "Show update channel and version status": "显示更新通道和版本状态",
+  "Skip confirmation prompts (non-interactive)": "跳过确认提示（非交互式）",
+  "Skip restarting the gateway service after a successful update":
+    "更新成功后跳过重启 Gateway 服务",
+  "Skipped: working directory has uncommitted changes. Commit or stash them first.":
+    "已跳过：工作目录有未提交的更改。请先提交或使用 stash 暂存。",
+  "Skipping plugin updates: config is invalid.": "跳过插件更新：配置无效。",
+  Stable: "稳定版",
+  "Switch channels:": "切换通道：",
+  "Switch to beta channel (git + npm)": "切换到 Beta 通道 (git + npm)",
+  "Switch to dev channel (git + npm)": "切换到开发通道 (git + npm)",
+  "Tagged releases (npm latest)": "带标签的发行版 (npm latest)",
+  "The lobster has molted. Harder shell, sharper claws.": "龙虾已经蜕壳。壳更硬，钳更利。",
+  "Timeout for each update step in seconds (default: 1200)":
+    "每个更新步骤的超时时间（秒，默认：1200）",
+  "Timeout for update checks in seconds (default: 3)": "更新检查的超时时间（秒，默认：3）",
+  "Update OpenClaw to the latest version": "将 OpenClaw 更新到最新版本",
+  "Update Result:": "更新结果：",
+  "Update a source checkout (git)": "更新源码检出 (Git)",
+  "Update cancelled.": "更新已取消。",
+  "Update channel": "更新通道",
+  "Update complete.": "更新完成。",
+  "Update complete. I learned some new tricks while I was out.":
+    "更新完成。我不在的时候学了一些新花招。",
+  "Update complete. The bugs feared me, so they left.": "更新完成。Bug 们害怕我，所以它们都溜了。",
+  "Update done! Check the changelog or just trust me, it's good.":
+    "更新好了！去看看更新日志，或者直接相信我就好，这版本很棒。",
+  "Update without restarting the service": "不重启服务进行更新",
+  "Update wizard requires a TTY. Use `openclaw update --channel <stable|beta|dev>` instead.":
+    "更新向导需要 TTY。请改用 `openclaw update --channel <stable|beta|dev>`。",
+  "Updating OpenClaw...": "正在更新 OpenClaw...",
+  "Updating plugins...": "正在更新插件...",
+  "Updating via package manager": "正在通过包管理器更新",
+  "Upgraded! Now with 23% more sass.": "已升级！现在多了 23% 的傲娇属性。",
+  "Upgraded! Peter fixed stuff. Blame him if it breaks.":
+    "已升级！Peter 修复了一些东西。如果坏了就怪他吧。",
+  "Upstream branch exists": "上游分支已存在",
+  "Verifying update": "正在验证更新",
+  "Version bump! Same chaos energy, fewer crashes (probably).":
+    "版本提升！同样的混沌能量，更少的崩溃（大概吧）。",
+  "What this does:": "功能说明：",
+  "Working directory is clean": "工作目录是干净的",
+  "clean check": "清理检查",
+  "deps install": "依赖安装",
+  "git clone": "Git 克隆",
+  "git fetch": "Git 获取",
+  "git rebase": "Git 变基",
+  "git rev-list": "Git 提交列表",
+  "git rev-parse @{upstream}": "Git 解析上游",
+  "git rev-parse HEAD (after)": "Git 解析 HEAD（更新后）",
+  "global install": "全局安装",
+  "global update": "全局更新",
+  keep: "保留",
+  "npm i -g openclaw@latest": "npm i -g openclaw@latest",
+  "openclaw --update": "openclaw --update",
+  "openclaw gateway restart": "openclaw gateway restart",
+  "openclaw update": "openclaw update",
+  "openclaw update --channel beta": "openclaw update --channel beta",
+  "openclaw update --channel dev": "openclaw update --channel dev",
+  "openclaw update --json": "openclaw update --json",
+  "openclaw update --no-restart": "openclaw update --no-restart",
+  "openclaw update --tag beta": "openclaw update --tag beta",
+  "openclaw update --yes": "openclaw update --yes",
+  "openclaw update status": "openclaw update status",
+  "openclaw update status --json": "openclaw update status --json",
+  "openclaw update status --timeout 10": "openclaw update status --timeout 10",
+  "openclaw update wizard": "openclaw update wizard",
+  "pnpm add -g openclaw@latest": "pnpm add -g openclaw@latest",
+  "preflight cleanup": "预检清理",
+  "preflight worktree": "预检工作树",
+  "upstream check": "上游检查",
 
   // =====================================================================================
   // 模块: src/cli/webhooks-cli.ts
   // 功能: Webhooks CLI 命令
   // =====================================================================================
-  "--account is required": "[TODO] --account is required",
-  "Configure Gmail watch + Pub/Sub + OpenClaw hooks":
-    "[TODO] Configure Gmail watch + Pub/Sub + OpenClaw hooks",
-  "Explicit Pub/Sub push endpoint": "[TODO] Explicit Pub/Sub push endpoint",
+  "--account is required": "--account 是必须的",
+  "Configure Gmail watch + Pub/Sub + OpenClaw hooks": "配置 Gmail 监视 + Pub/Sub + OpenClaw Hooks",
+  "Explicit Pub/Sub push endpoint": "显式 Pub/Sub 推送端点",
   "Expose push endpoint via tailscale (funnel|serve|off)":
-    "[TODO] Expose push endpoint via tailscale (funnel|serve|off)",
-  "GCP project id (OAuth client owner)": "[TODO] GCP project id (OAuth client owner)",
-  "Gmail Pub/Sub hooks (via gogcli)": "[TODO] Gmail Pub/Sub hooks (via gogcli)",
-  "Gmail account to watch": "[TODO] Gmail account to watch",
-  "Gmail label to watch": "[TODO] Gmail label to watch",
-  "Include email body snippets": "[TODO] Include email body snippets",
-  "Max bytes for body snippets": "[TODO] Max bytes for body snippets",
-  "OpenClaw hook URL": "[TODO] OpenClaw hook URL",
-  "OpenClaw hook token": "[TODO] OpenClaw hook token",
-  "Output JSON summary": "[TODO] Output JSON summary",
-  "Path for tailscale serve/funnel": "[TODO] Path for tailscale serve/funnel",
-  "Pub/Sub subscription name": "[TODO] Pub/Sub subscription name",
-  "Pub/Sub topic name": "[TODO] Pub/Sub topic name",
-  "Pub/Sub topic path (projects/.../topics/..)":
-    "[TODO] Pub/Sub topic path (projects/.../topics/..)",
-  "Push token for gog watch serve": "[TODO] Push token for gog watch serve",
-  "Renew watch every N minutes": "[TODO] Renew watch every N minutes",
-  "Run gog watch serve + auto-renew loop": "[TODO] Run gog watch serve + auto-renew loop",
+    "通过 Tailscale 暴露推送端点 (funnel|serve|off)",
+  "GCP project id (OAuth client owner)": "GCP 项目 ID (OAuth 客户端所有者)",
+  "Gmail Pub/Sub hooks (via gogcli)": "Gmail Pub/Sub Hooks (通过 gogcli)",
+  "Gmail account to watch": "要监视的 Gmail 账户",
+  "Gmail label to watch": "要监视的 Gmail 标签",
+  "Include email body snippets": "包含邮件正文片段",
+  "Max bytes for body snippets": "正文片段最大字节数",
+  "OpenClaw hook URL": "OpenClaw Hook URL",
+  "OpenClaw hook token": "OpenClaw Hook Token",
+  "Output JSON summary": "输出 JSON 摘要",
+  "Path for tailscale serve/funnel": "Tailscale serve/funnel 路径",
+  "Pub/Sub subscription name": "Pub/Sub 订阅名称",
+  "Pub/Sub topic name": "Pub/Sub 主题名称",
+  "Pub/Sub topic path (projects/.../topics/..)": "Pub/Sub 主题路径 (projects/.../topics/..)",
+  "Push token for gog watch serve": "gog watch serve 的推送 Token",
+  "Renew watch every N minutes": "每 N 分钟续订一次监视",
+  "Run gog watch serve + auto-renew loop": "运行 gog watch serve + 自动续订循环",
   "Tailscale serve/funnel target (port, host:port, or URL)":
-    "[TODO] Tailscale serve/funnel target (port, host:port, or URL)",
-  "Webhook helpers and integrations": "[TODO] Webhook helpers and integrations",
-  "gog watch serve bind host": "[TODO] gog watch serve bind host",
-  "gog watch serve path": "[TODO] gog watch serve path",
-  "gog watch serve port": "[TODO] gog watch serve port",
+    "Tailscale serve/funnel 目标（端口、主机:端口 或 URL）",
+  "Webhook helpers and integrations": "Webhook 助手和集成",
+  "gog watch serve bind host": "gog watch serve 绑定主机",
+  "gog watch serve path": "gog watch serve 路径",
+  "gog watch serve port": "gog watch serve 端口",
 
   // =====================================================================================
   // 模块: src/commands/agent-via-gateway.ts
   // =====================================================================================
-  "--timeout must be a positive integer (seconds)":
-    "[TODO] --timeout must be a positive integer (seconds)",
-  "Message (--message) is required": "[TODO] Message (--message) is required",
+  "Message (--message) is required": "消息 (--message) 是必须的",
   "Pass --to <E.164>, --session-id, or --agent to choose a session":
-    "[TODO] Pass --to <E.164>, --session-id, or --agent to choose a session",
-  "Waiting for agent reply…": "[TODO] Waiting for agent reply…",
-  "openclaw agents list": "[TODO] openclaw agents list",
+    "使用 --to <E.164>、--session-id 或 --agent 来选择会话",
+  "Waiting for agent reply…": "等待 Agent 回复…",
+  "openclaw agents list": "openclaw agents list",
 
   // =====================================================================================
   // 模块: src/commands/agent.ts
   // =====================================================================================
-  "--timeout must be a positive integer (seconds)":
-    "[TODO] --timeout must be a positive integer (seconds)",
   'Invalid verbose level. Use "on", "full", or "off".':
-    '[TODO] Invalid verbose level. Use "on", "full", or "off".',
-  "Message (--message) is required": "[TODO] Message (--message) is required",
-  "Pass --to <E.164>, --session-id, or --agent to choose a session":
-    "[TODO] Pass --to <E.164>, --session-id, or --agent to choose a session",
-  "openclaw agents list": "[TODO] openclaw agents list",
-  "send blocked by session policy": "[TODO] send blocked by session policy",
+    '无效的详细级别。请使用 "on"、"full" 或 "off"。',
+  "send blocked by session policy": "发送被会话策略阻止",
 
   // =====================================================================================
   // 模块: src/commands/agents.command-shared.ts
   // =====================================================================================
-  "Unknown validation issue.": "[TODO] Unknown validation issue.",
-  "openclaw doctor": "[TODO] openclaw doctor",
+  "Unknown validation issue.": "未知的验证问题。",
 
   // =====================================================================================
   // 模块: src/commands/agents.commands.add.ts
   // =====================================================================================
-  "Add OpenClaw agent": "[TODO] Add OpenClaw agent",
-  "Agent id": "[TODO] Agent id",
-  "Agent name": "[TODO] Agent name",
-  "Agent name is required in non-interactive mode.":
-    "[TODO] Agent name is required in non-interactive mode.",
-  "Auth profiles": "[TODO] Auth profiles",
-  "Configure model/auth for this agent now?": "[TODO] Configure model/auth for this agent now?",
+  "Add OpenClaw agent": "添加 OpenClaw Agent",
+  "Agent id": "Agent ID",
+  "Agent name": "Agent 名称",
+  "Agent name is required in non-interactive mode.": "非交互模式下必须提供 Agent 名称。",
+  "Auth profiles": "认证配置文件",
+  "Configure model/auth for this agent now?": "现在为此 Agent 配置模型/认证吗?",
   "Docs: https://docs.openclaw.ai/concepts/multi-agent":
-    "[TODO] Docs: https://docs.openclaw.ai/concepts/multi-agent",
-  "No changes made.": "[TODO] No changes made.",
+    "文档: https://docs.openclaw.ai/concepts/multi-agent",
+  "No changes made.": "未做更改。",
   "Non-interactive mode requires --workspace. Re-run without flags to use the wizard.":
-    "[TODO] Non-interactive mode requires --workspace. Re-run without flags to use the wizard.",
+    "检测到非交互模式，但缺少 --workspace 参数。请不带参数重新运行以启动向导。",
   "Route selected channels to this agent now? (bindings)":
-    "[TODO] Route selected channels to this agent now? (bindings)",
-  Routing: "[TODO] Routing",
-  "Routing bindings": "[TODO] Routing bindings",
-  "Routing unchanged. Add bindings when you're ready.":
-    "[TODO] Routing unchanged. Add bindings when you're ready.",
-  "Skipped bindings already claimed by another agent:":
-    "[TODO] Skipped bindings already claimed by another agent:",
-  "Workspace directory": "[TODO] Workspace directory",
+    "现在将选定的频道路由到此 Agent 吗？(绑定)",
+  Routing: "路由",
+  "Routing bindings": "路由绑定",
+  "Routing unchanged. Add bindings when you're ready.": "路由未更改。准备好后即可添加绑定。",
+  "Skipped bindings already claimed by another agent:": "已跳过已被其他 Agent 占用的绑定：",
+  "Workspace directory": "工作区目录",
 
   // =====================================================================================
   // 模块: src/commands/agents.commands.delete.ts
   // =====================================================================================
-  "Agent id is required.": "[TODO] Agent id is required.",
-  "Non-interactive session. Re-run with --force.":
-    "[TODO] Non-interactive session. Re-run with --force.",
+  "Agent id is required.": "Agent ID 是必须的。",
+  "Non-interactive session. Re-run with --force.": "检测到非交互式会话。请使用 --force 重新运行。",
 
   // =====================================================================================
   // 模块: src/commands/agents.commands.identity.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
   "No identity fields provided. Use --name/--emoji/--theme/--avatar or --from-identity.":
-    "[TODO] No identity fields provided. Use --name/--emoji/--theme/--avatar or --from-identity.",
+    "未提供身份字段。请使用 --name/--emoji/--theme/--avatar 或 --from-identity。",
   "Select an agent with --agent or provide a workspace via --workspace.":
-    "[TODO] Select an agent with --agent or provide a workspace via --workspace.",
+    "请通过 --agent 选择 Agent，或通过 --workspace 指定工作区。",
 
   // =====================================================================================
   // 模块: src/commands/agents.commands.list.ts
   // =====================================================================================
-  "  Providers:": "[TODO]   Providers:",
-  "  Routing rules:": "[TODO]   Routing rules:",
-  " (default)": "[TODO]  (default)",
-  ", ": "[TODO] , ",
+  "  Providers:": "  提供商:",
+  "  Routing rules:": "  路由规则:",
+  " (default)": " (默认)",
   "Routing rules map channel/account/peer to an agent. Use --bindings for full rules.":
-    "[TODO] Routing rules map channel/account/peer to an agent. Use --bindings for full rules.",
-  "default (no explicit rules)": "[TODO] default (no explicit rules)",
-  "openclaw channels status --probe": "[TODO] openclaw channels status --probe",
+    "路由规则将频道/账户/对端映射到 Agent。使用 --bindings 查看完整规则。",
+  "default (no explicit rules)": "默认 (无显式规则)",
+  "openclaw channels status --probe": "openclaw channels status --probe",
 
   // =====================================================================================
   // 模块: src/commands/agents.providers.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
   "not configured": "未配置",
   "not linked": "未链接",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice-options.ts
   // =====================================================================================
-  "API key": "[TODO] API key",
-  Anthropic: "[TODO] Anthropic",
-  "Anthropic API key": "[TODO] Anthropic API key",
-  "Anthropic token (paste setup-token)": "[TODO] Anthropic token (paste setup-token)",
-  "Anthropic-compatible (multi-model)": "[TODO] Anthropic-compatible (multi-model)",
-  "Chutes (OAuth)": "[TODO] Chutes (OAuth)",
-  "Claude, GPT, Gemini via opencode.ai/zen": "[TODO] Claude, GPT, Gemini via opencode.ai/zen",
-  "Codex OAuth + API key": "[TODO] Codex OAuth + API key",
-  Copilot: "[TODO] Copilot",
-  "Copilot Proxy (local)": "[TODO] Copilot Proxy (local)",
-  "Faster, higher output cost": "[TODO] Faster, higher output cost",
-  "Gemini API key + OAuth": "[TODO] Gemini API key + OAuth",
-  "GitHub + local proxy": "[TODO] GitHub + local proxy",
-  "GitHub Copilot (GitHub device login)": "[TODO] GitHub Copilot (GitHub device login)",
-  Google: "[TODO] Google",
-  "Google Antigravity OAuth": "[TODO] Google Antigravity OAuth",
-  "Google Gemini API key": "[TODO] Google Gemini API key",
-  "Google Gemini CLI OAuth": "[TODO] Google Gemini CLI OAuth",
-  "Kimi Coding API key": "[TODO] Kimi Coding API key",
-  "Kimi K2 + Kimi Coding": "[TODO] Kimi K2 + Kimi Coding",
-  "Local proxy for VS Code Copilot models": "[TODO] Local proxy for VS Code Copilot models",
-  "M2.1 (recommended)": "[TODO] M2.1 (recommended)",
-  MiniMax: "[TODO] MiniMax",
-  "MiniMax M2.1": "[TODO] MiniMax M2.1",
-  "MiniMax M2.1 Lightning": "[TODO] MiniMax M2.1 Lightning",
-  "MiniMax OAuth": "[TODO] MiniMax OAuth",
-  "Moonshot AI": "[TODO] Moonshot AI",
-  "Moonshot AI API key": "[TODO] Moonshot AI API key",
-  OAuth: "[TODO] OAuth",
+  "API key": "API 密钥",
+  Anthropic: "Anthropic",
+  "Anthropic API key": "Anthropic API 密钥",
+  "Anthropic token (paste setup-token)": "Anthropic Token (粘贴 setup-token)",
+  "Anthropic-compatible (multi-model)": "Anthropic 兼容 (多模型)",
+  "Chutes (OAuth)": "Chutes (OAuth)",
+  "Claude, GPT, Gemini via opencode.ai/zen": "Claude, GPT, Gemini 通过 opencode.ai/zen",
+  "Codex OAuth + API key": "Codex OAuth + API 密钥",
+  Copilot: "Copilot",
+  "Copilot Proxy (local)": "Copilot 代理 (本地)",
+  "Faster, higher output cost": "速度更快，但输出成本更高",
+  "Gemini API key + OAuth": "Gemini API 密钥 + OAuth",
+  "GitHub + local proxy": "GitHub + 本地代理",
+  "GitHub Copilot (GitHub device login)": "GitHub Copilot (GitHub 设备登录)",
+  Google: "Google",
+  "Google Antigravity OAuth": "Google Antigravity OAuth",
+  "Google Gemini API key": "Google Gemini API 密钥",
+  "Google Gemini CLI OAuth": "Google Gemini CLI OAuth",
+  "Kimi Coding API key": "Kimi Coding API 密钥",
+  "Kimi K2 + Kimi Coding": "Kimi K2 + Kimi Coding",
+  "Local proxy for VS Code Copilot models": "VS Code Copilot 模型的本地代理",
+  "M2.1 (recommended)": "M2.1 (推荐)",
+  MiniMax: "MiniMax",
+  "MiniMax M2.1": "MiniMax M2.1",
+  "MiniMax M2.1 Lightning": "MiniMax M2.1 Lightning",
+  "MiniMax OAuth": "MiniMax OAuth",
+  "Moonshot AI": "Moonshot AI",
+  "Moonshot AI API key": "Moonshot AI API 密钥",
+  OAuth: "OAuth",
   "OAuth new users enjoy a 3-day free trial of the MiniMax Coding Plan!":
-    "[TODO] OAuth new users enjoy a 3-day free trial of the MiniMax Coding Plan!",
-  OpenAI: "[TODO] OpenAI",
-  "OpenAI API key": "[TODO] OpenAI API key",
-  "OpenAI Codex (ChatGPT OAuth)": "[TODO] OpenAI Codex (ChatGPT OAuth)",
-  "OpenCode Zen": "[TODO] OpenCode Zen",
-  "OpenCode Zen (multi-model proxy)": "[TODO] OpenCode Zen (multi-model proxy)",
-  OpenRouter: "[TODO] OpenRouter",
-  "OpenRouter API key": "[TODO] OpenRouter API key",
-  "Privacy-focused (uncensored models)": "[TODO] Privacy-focused (uncensored models)",
-  "Privacy-focused inference (uncensored models)":
-    "[TODO] Privacy-focused inference (uncensored models)",
-  Qwen: "[TODO] Qwen",
-  "Qwen OAuth": "[TODO] Qwen OAuth",
-  "Skip for now": "[TODO] Skip for now",
-  Synthetic: "[TODO] Synthetic",
-  "Synthetic API key": "[TODO] Synthetic API key",
-  "Uses GitHub device flow": "[TODO] Uses GitHub device flow",
-  "Uses the bundled Antigravity auth plugin": "[TODO] Uses the bundled Antigravity auth plugin",
-  "Uses the bundled Gemini CLI auth plugin": "[TODO] Uses the bundled Gemini CLI auth plugin",
-  "Venice AI": "[TODO] Venice AI",
-  "Venice AI API key": "[TODO] Venice AI API key",
-  "Vercel AI Gateway": "[TODO] Vercel AI Gateway",
-  "Vercel AI Gateway API key": "[TODO] Vercel AI Gateway API key",
-  Xiaomi: "[TODO] Xiaomi",
-  "Xiaomi API key": "[TODO] Xiaomi API key",
-  "Z.AI (GLM 4.7)": "[TODO] Z.AI (GLM 4.7)",
-  "Z.AI (GLM 4.7) API key": "[TODO] Z.AI (GLM 4.7) API key",
+    "OAuth 新用户可享受 MiniMax 编程计划的 3 天免费试用！",
+  OpenAI: "OpenAI",
+  "OpenAI API key": "OpenAI API 密钥",
+  "OpenAI Codex (ChatGPT OAuth)": "OpenAI Codex (ChatGPT OAuth)",
+  "OpenCode Zen": "OpenCode Zen",
+  "OpenCode Zen (multi-model proxy)": "OpenCode Zen (多模型代理)",
+  OpenRouter: "OpenRouter",
+  "OpenRouter API key": "OpenRouter API 密钥",
+  "Privacy-focused (uncensored models)": "注重隐私 (无审查模型)",
+  "Privacy-focused inference (uncensored models)": "注重隐私的推理 (无审查模型)",
+  Qwen: "通义千问 (Qwen)",
+  "Qwen OAuth": "Qwen OAuth",
+  "Skip for now": "暂时跳过",
+  Synthetic: "Synthetic",
+  "Synthetic API key": "Synthetic API 密钥",
+  "Uses GitHub device flow": "使用 GitHub 设备流程",
+  "Uses the bundled Antigravity auth plugin": "使用捆绑的 Antigravity 认证插件",
+  "Uses the bundled Gemini CLI auth plugin": "使用捆绑的 Gemini CLI 认证插件",
+  "Venice AI": "Venice AI",
+  "Venice AI API key": "Venice AI API 密钥",
+  "Vercel AI Gateway": "Vercel AI Gateway",
+  "Vercel AI Gateway API key": "Vercel AI Gateway API 密钥",
+  Xiaomi: "小米 (Xiaomi)",
+  "Xiaomi API key": "小米 API 密钥",
+  "Z.AI (GLM 4.7)": "智谱清言 (GLM 4.7)",
+  "Z.AI (GLM 4.7) API key": "智谱清言 (GLM 4.7) API 密钥",
   "run `claude setup-token` elsewhere, then paste the token here":
-    "[TODO] run `claude setup-token` elsewhere, then paste the token here",
-  "setup-token + API key": "[TODO] setup-token + API key",
+    "在其他地方运行 `claude setup-token`，然后将 Token 粘贴到此处",
+  "setup-token + API key": "setup-token + API 密钥",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice-prompt.ts
   // =====================================================================================
-  Back: "[TODO] Back",
-  "Model/auth choice": "[TODO] Model/auth choice",
-  "Model/auth provider": "[TODO] Model/auth provider",
-  "No auth methods available for that provider.":
-    "[TODO] No auth methods available for that provider.",
+  Back: "返回",
+  "Model/auth choice": "模型/认证选择",
+  "Model/auth provider": "模型/认证提供商",
+  "No auth methods available for that provider.": "该提供商没有可用的认证方法。",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.anthropic.ts
   // =====================================================================================
-  "Anthropic setup-token": "[TODO] Anthropic setup-token",
-  "Enter Anthropic API key": "[TODO] Enter Anthropic API key",
-  "Paste Anthropic setup-token": "[TODO] Paste Anthropic setup-token",
-  "Run `claude setup-token` in your terminal.": "[TODO] Run `claude setup-token` in your terminal.",
-  "Then paste the generated token below.": "[TODO] Then paste the generated token below.",
-  "Token name (blank = default)": "[TODO] Token name (blank = default)",
-  default: "[TODO] default",
+  "Anthropic setup-token": "Anthropic setup-token",
+  "Enter Anthropic API key": "输入 Anthropic API 密钥",
+  "Paste Anthropic setup-token": "粘贴 Anthropic setup-token",
+  "Run `claude setup-token` in your terminal.": "在终端运行 `claude setup-token`。",
+  "Then paste the generated token below.": "然后将生成的 Token 粘贴在下方。",
+  "Token name (blank = default)": "Token 名称 (留空 = 默认)",
+  default: "默认",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.api-providers.ts
   // =====================================================================================
-  "Enter Gemini API key": "[TODO] Enter Gemini API key",
-  "Enter Kimi Coding API key": "[TODO] Enter Kimi Coding API key",
-  "Enter Moonshot API key": "[TODO] Enter Moonshot API key",
-  "Enter OpenCode Zen API key": "[TODO] Enter OpenCode Zen API key",
-  "Enter OpenRouter API key": "[TODO] Enter OpenRouter API key",
-  "Enter Synthetic API key": "[TODO] Enter Synthetic API key",
-  "Enter Venice AI API key": "[TODO] Enter Venice AI API key",
-  "Enter Vercel AI Gateway API key": "[TODO] Enter Vercel AI Gateway API key",
-  "Enter Xiaomi API key": "[TODO] Enter Xiaomi API key",
-  "Enter Z.AI API key": "[TODO] Enter Z.AI API key",
+  "Enter Gemini API key": "输入 Gemini API 密钥",
+  "Enter Kimi Coding API key": "输入 Kimi Coding API 密钥",
+  "Enter Moonshot API key": "输入 Moonshot API 密钥",
+  "Enter OpenCode Zen API key": "输入 OpenCode Zen API 密钥",
+  "Enter OpenRouter API key": "输入 OpenRouter API 密钥",
+  "Enter Synthetic API key": "输入 Synthetic API 密钥",
+  "Enter Venice AI API key": "输入 Venice AI API 密钥",
+  "Enter Vercel AI Gateway API key": "输入 Vercel AI Gateway API 密钥",
+  "Enter Xiaomi API key": "输入 Xiaomi API 密钥",
+  "Enter Z.AI API key": "输入 Z.AI API 密钥",
   "Get your API key at: https://opencode.ai/auth":
-    "[TODO] Get your API key at: https://opencode.ai/auth",
+    "在此处获取您的 API 密钥：https://opencode.ai/auth",
   "Get your API key at: https://venice.ai/settings/api":
-    "[TODO] Get your API key at: https://venice.ai/settings/api",
+    "在此处获取您的 API 密钥：https://venice.ai/settings/api",
   "Get your API key at: https://www.kimi.com/code/en":
-    "[TODO] Get your API key at: https://www.kimi.com/code/en",
-  "Kimi Coding": "[TODO] Kimi Coding",
-  "Kimi Coding uses a dedicated endpoint and API key.":
-    "[TODO] Kimi Coding uses a dedicated endpoint and API key.",
-  "Model configured": "[TODO] Model configured",
-  "OpenCode Zen": "[TODO] OpenCode Zen",
+    "在此处获取您的 API 密钥：https://www.kimi.com/code/en",
+  "Kimi Coding": "Kimi Coding",
+  "Kimi Coding uses a dedicated endpoint and API key.": "Kimi Coding 使用专门的端点和 API 密钥。",
+  "Model configured": "模型已配置",
   "OpenCode Zen provides access to Claude, GPT, Gemini, and more models.":
-    "[TODO] OpenCode Zen provides access to Claude, GPT, Gemini, and more models.",
-  "Requires an active OpenCode Zen subscription.":
-    "[TODO] Requires an active OpenCode Zen subscription.",
+    "OpenCode Zen 提供对 Claude、GPT、Gemini 及更多模型的访问。",
+  "Requires an active OpenCode Zen subscription.": "需要有效的 OpenCode Zen 订阅。",
   "Supports 'private' (fully private) and 'anonymized' (proxy) modes.":
-    "[TODO] Supports 'private' (fully private) and 'anonymized' (proxy) modes.",
-  "Venice AI": "[TODO] Venice AI",
+    "支持“私有”（完全私有）和“匿名”（代理）模式。",
   "Venice AI provides privacy-focused inference with uncensored models.":
-    "[TODO] Venice AI provides privacy-focused inference with uncensored models.",
+    "Venice AI 提供专注于隐私且无审查模型的推理服务。",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.copilot-proxy.ts
   // =====================================================================================
-  "Copilot Proxy": "[TODO] Copilot Proxy",
+  "Copilot Proxy": "Copilot 代理",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.github-copilot.ts
   // =====================================================================================
-  "GitHub Copilot": "[TODO] GitHub Copilot",
-  "GitHub Copilot login requires an interactive TTY.":
-    "[TODO] GitHub Copilot login requires an interactive TTY.",
-  "Model configured": "[TODO] Model configured",
-  "Requires an active GitHub Copilot subscription.":
-    "[TODO] Requires an active GitHub Copilot subscription.",
+  "GitHub Copilot": "GitHub Copilot",
+  "GitHub Copilot login requires an interactive TTY.": "GitHub Copilot 登录需要交互式 TTY 终端。",
+  "Requires an active GitHub Copilot subscription.": "需要有效的 GitHub Copilot 订阅。",
   "This will open a GitHub device login to authorize Copilot.":
-    "[TODO] This will open a GitHub device login to authorize Copilot.",
+    "这将打开 GitHub 设备登录以授权 Copilot。",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.google-antigravity.ts
   // =====================================================================================
-  "Google Antigravity": "[TODO] Google Antigravity",
+  "Google Antigravity": "Google Antigravity",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.google-gemini-cli.ts
   // =====================================================================================
-  "Google Gemini CLI": "[TODO] Google Gemini CLI",
+  "Google Gemini CLI": "Google Gemini CLI",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.minimax.ts
   // =====================================================================================
-  CN: "[TODO] CN",
-  "Enter MiniMax API key": "[TODO] Enter MiniMax API key",
-  Global: "[TODO] Global",
-  MiniMax: "[TODO] MiniMax",
-  "Model configured": "[TODO] Model configured",
-  "OAuth for international users": "[TODO] OAuth for international users",
-  "OAuth for users in China": "[TODO] OAuth for users in China",
-  "Select MiniMax endpoint": "[TODO] Select MiniMax endpoint",
+  CN: "中国站",
+  "Enter MiniMax API key": "输入 MiniMax API 密钥",
+  Global: "国际站",
+  "OAuth for international users": "国际用户 OAuth",
+  "OAuth for users in China": "中国用户 OAuth",
+  "Select MiniMax endpoint": "选择 MiniMax 端点",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.oauth.ts
   // =====================================================================================
   "A URL will be shown for you to open in your LOCAL browser.":
-    "[TODO] A URL will be shown for you to open in your LOCAL browser.",
-  "After signing in, paste the redirect URL back here.":
-    "[TODO] After signing in, paste the redirect URL back here.",
-  "Browser will open for Chutes authentication.":
-    "[TODO] Browser will open for Chutes authentication.",
-  "Chutes OAuth": "[TODO] Chutes OAuth",
-  "Chutes OAuth complete": "[TODO] Chutes OAuth complete",
-  "Chutes OAuth failed": "[TODO] Chutes OAuth failed",
+    "将显示一个 URL 供你在本地浏览器中打开。",
+  "After signing in, paste the redirect URL back here.": "登录后，将重定向 URL 粘贴回此处。",
+  "Browser will open for Chutes authentication.": "浏览器将打开以进行 Chutes 认证。",
+  "Chutes OAuth": "Chutes OAuth",
+  "Chutes OAuth complete": "Chutes OAuth 完成",
+  "Chutes OAuth failed": "Chutes OAuth 失败",
   "Chutes docs: https://chutes.ai/docs/sign-in-with-chutes/overview":
-    "[TODO] Chutes docs: https://chutes.ai/docs/sign-in-with-chutes/overview",
-  "Complete sign-in in browser…": "[TODO] Complete sign-in in browser…",
-  "Enter Chutes OAuth client id": "[TODO] Enter Chutes OAuth client id",
+    "Chutes 文档: https://chutes.ai/docs/sign-in-with-chutes/overview",
+  "Complete sign-in in browser…": "在浏览器中完成登录…",
+  "Enter Chutes OAuth client id": "输入 Chutes OAuth 客户端 ID",
   "If the callback doesn't auto-complete, paste the redirect URL.":
-    "[TODO] If the callback doesn't auto-complete, paste the redirect URL.",
-  "OAuth help": "[TODO] OAuth help",
-  "Starting OAuth flow…": "[TODO] Starting OAuth flow…",
-  "Trouble with OAuth?": "[TODO] Trouble with OAuth?",
+    "如果回调未自动完成，请粘贴重定向 URL。",
+  "OAuth help": "OAuth 帮助",
+  "Starting OAuth flow…": "开始 OAuth 流程…",
+  "Trouble with OAuth?": "OAuth 遇到问题?",
   "Verify CHUTES_CLIENT_ID (and CHUTES_CLIENT_SECRET if required).":
-    "[TODO] Verify CHUTES_CLIENT_ID (and CHUTES_CLIENT_SECRET if required).",
-  "You are running in a remote/VPS environment.":
-    "[TODO] You are running in a remote/VPS environment.",
-  cid_xxx: "[TODO] cid_xxx",
-  "openid profile chutes:invoke": "[TODO] openid profile chutes:invoke",
+    "验证 CHUTES_CLIENT_ID (以及如果需要的 CHUTES_CLIENT_SECRET)。",
+  "You are running in a remote/VPS environment.": "你正在远程/VPS 环境中运行。",
+  cid_xxx: "cid_xxx",
+  "openid profile chutes:invoke": "openid profile chutes:invoke",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.openai.ts
   // =====================================================================================
-  "A URL will be shown for you to open in your LOCAL browser.":
-    "[TODO] A URL will be shown for you to open in your LOCAL browser.",
-  "After signing in, paste the redirect URL back here.":
-    "[TODO] After signing in, paste the redirect URL back here.",
-  "Browser will open for OpenAI authentication.":
-    "[TODO] Browser will open for OpenAI authentication.",
-  "Complete sign-in in browser…": "[TODO] Complete sign-in in browser…",
-  "Enter OpenAI API key": "[TODO] Enter OpenAI API key",
-  "If the callback doesn't auto-complete, paste the redirect URL.":
-    "[TODO] If the callback doesn't auto-complete, paste the redirect URL.",
-  "Model configured": "[TODO] Model configured",
-  "OAuth help": "[TODO] OAuth help",
-  "OpenAI API key": "[TODO] OpenAI API key",
-  "OpenAI Codex OAuth": "[TODO] OpenAI Codex OAuth",
-  "OpenAI OAuth complete": "[TODO] OpenAI OAuth complete",
-  "OpenAI OAuth failed": "[TODO] OpenAI OAuth failed",
+  "Browser will open for OpenAI authentication.": "浏览器将打开以进行 OpenAI 认证。",
+  "Enter OpenAI API key": "输入 OpenAI API 密钥",
+  "OpenAI Codex OAuth": "OpenAI Codex OAuth",
+  "OpenAI OAuth complete": "OpenAI OAuth 完成",
+  "OpenAI OAuth failed": "OpenAI OAuth 失败",
   "OpenAI OAuth uses localhost:1455 for the callback.":
-    "[TODO] OpenAI OAuth uses localhost:1455 for the callback.",
-  "Starting OAuth flow…": "[TODO] Starting OAuth flow…",
+    "OpenAI OAuth 使用 localhost:1455 作为回调地址。",
   "Trouble with OAuth? See https://docs.openclaw.ai/start/faq":
-    "[TODO] Trouble with OAuth? See https://docs.openclaw.ai/start/faq",
-  "You are running in a remote/VPS environment.":
-    "[TODO] You are running in a remote/VPS environment.",
+    "OAuth 遇到问题? 请参阅 https://docs.openclaw.ai/start/faq",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.apply.plugin-provider.ts
   // =====================================================================================
-  "Model configured": "[TODO] Model configured",
-  "Provider notes": "[TODO] Provider notes",
-
-  // =====================================================================================
-  // 模块: src/commands/auth-choice.apply.qwen-portal.ts
-  // =====================================================================================
-  Qwen: "[TODO] Qwen",
-
-  // =====================================================================================
-  // 模块: src/commands/auth-choice.default-model.ts
-  // =====================================================================================
-  "Model configured": "[TODO] Model configured",
+  "Provider notes": "提供商说明",
 
   // =====================================================================================
   // 模块: src/commands/auth-choice.model-check.ts
   // =====================================================================================
-  "Model check": "[TODO] Model check",
+  "Model check": "模型检查",
 
   // =====================================================================================
   // 模块: src/commands/auth-token.ts
   // =====================================================================================
   "Token looks too short; paste the full setup-token":
-    "[TODO] Token looks too short; paste the full setup-token",
+    "Token 看起来太短；请粘贴完整的设置 Token (setup-token)",
 
   // =====================================================================================
   // 模块: src/commands/channels/add.ts
   // =====================================================================================
-  "Add display names for these accounts? (optional)":
-    "[TODO] Add display names for these accounts? (optional)",
-  "Channel setup": "[TODO] Channel setup",
-  "Channels updated.": "[TODO] Channels updated.",
-  "No channels selected.": "[TODO] No channels selected.",
+  "Add display names for these accounts? (optional)": "是否为这些账户添加显示名称? (可选)",
+  "Channels updated.": "频道已更新。",
+  "No channels selected.": "未选择频道。",
 
   // =====================================================================================
   // 模块: src/commands/channels/capabilities.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Bot scopes": "[TODO] Bot scopes",
-  "Discord bot token missing for permission audit.":
-    "[TODO] Discord bot token missing for permission audit.",
-  "Graph: ok": "[TODO] Graph: ok",
-  "Missing required:": "[TODO] Missing required:",
-  "Missing required: none": "[TODO] Missing required: none",
-  "Permissions: skipped (no target).": "[TODO] Permissions: skipped (no target).",
-  "Probe: ok": "[TODO] Probe: ok",
-  "Probe: unavailable": "[TODO] Probe: unavailable",
-  "Slack bot token missing.": "[TODO] Slack bot token missing.",
+  "Bot scopes": "Bot 作用域",
+  "Discord bot token missing for permission audit.": "缺少用于权限审计的 Discord Bot Token。",
+  "Graph: ok": "Graph: 正常",
+  "Missing required:": "缺失必要项:",
+  "Missing required: none": "缺失必要项: 无",
+  "Permissions: skipped (no target).": "权限: 已跳过 (无目标)。",
+  "Probe: ok": "探测: 正常",
+  "Probe: unavailable": "探测: 不可用",
+  "Slack bot token missing.": "缺少 Slack Bot Token。",
   "Target looks like a DM user; pass channel:<id> to audit channel permissions.":
-    "[TODO] Target looks like a DM user; pass channel:<id> to audit channel permissions.",
-  "User scopes": "[TODO] User scopes",
-  "channel history": "[TODO] channel history",
-  "channel list": "[TODO] channel list",
-  "chat history": "[TODO] chat history",
-  "files (OneDrive)": "[TODO] files (OneDrive)",
-  "files (SharePoint)": "[TODO] files (SharePoint)",
-  "not configured": "未配置",
-  "team list": "[TODO] team list",
-  "teams activity": "[TODO] teams activity",
+    "目标看起来是私聊用户；请通过 channel:<id> 来审计频道权限。",
+  "User scopes": "用户作用域",
+  "channel history": "频道历史",
+  "channel list": "频道列表",
+  "chat history": "聊天历史",
+  "files (OneDrive)": "文件 (OneDrive)",
+  "files (SharePoint)": "文件 (SharePoint)",
+  "team list": "团队列表",
+  "teams activity": "团队活动",
 
   // =====================================================================================
   // 模块: src/commands/channels/list.ts
   // =====================================================================================
-  " (synced)": "[TODO]  (synced)",
-  ", ": "[TODO] , ",
-  "Auth providers (OAuth + API keys):": "[TODO] Auth providers (OAuth + API keys):",
-  "Chat channels:": "[TODO] Chat channels:",
-  "Fetching usage snapshot…": "[TODO] Fetching usage snapshot…",
-  disabled: "[TODO] disabled",
-  "not configured": "未配置",
-  "not linked": "未链接",
+  " (synced)": " (已同步)",
+  "Auth providers (OAuth + API keys):": "认证提供商 (OAuth + API 密钥):",
+  "Chat channels:": "聊天频道:",
 
   // =====================================================================================
   // 模块: src/commands/channels/logs.ts
   // =====================================================================================
-  "No matching log lines.": "[TODO] No matching log lines.",
+  "No matching log lines.": "没有匹配的日志行。",
 
   // =====================================================================================
   // 模块: src/commands/channels/remove.ts
   // =====================================================================================
-  Account: "[TODO] Account",
-  "Cancelled.": "[TODO] Cancelled.",
-  Channel: "[TODO] Channel",
-  "Channel is required. Use --channel <name>.": "[TODO] Channel is required. Use --channel <name>.",
-  "Remove channel account": "[TODO] Remove channel account",
-  "default (primary)": "[TODO] default (primary)",
+  Account: "账户",
+  "Cancelled.": "已取消。",
+  Channel: "频道",
+  "Channel is required. Use --channel <name>.": "必须提供频道。请使用 --channel <name>。",
+  "Remove channel account": "移除频道账户",
 
   // =====================================================================================
   // 模块: src/commands/channels/resolve.ts
   // =====================================================================================
-  "At least one entry is required.": "[TODO] At least one entry is required.",
-
-  // =====================================================================================
-  // 模块: src/commands/channels/shared.ts
-  // =====================================================================================
-  "Unknown validation issue.": "[TODO] Unknown validation issue.",
-  "openclaw doctor": "[TODO] openclaw doctor",
+  "At least one entry is required.": "至少需要一个条目。",
 
   // =====================================================================================
   // 模块: src/commands/channels/status.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Checking channel status (probe)…": "[TODO] Checking channel status (probe)…",
-  "Checking channel status…": "[TODO] Checking channel status…",
-  "Gateway not reachable; showing config-only status.":
-    "[TODO] Gateway not reachable; showing config-only status.",
-  "Gateway reachable.": "[TODO] Gateway reachable.",
-  "Warnings:": "[TODO] Warnings:",
-  "audit failed": "[TODO] audit failed",
-  "audit ok": "[TODO] audit ok",
-  "not configured": "未配置",
-  "not linked": "未链接",
-  "openclaw doctor": "[TODO] openclaw doctor",
-  "probe failed": "[TODO] probe failed",
-  "status --deep": "[TODO] status --deep",
+  "Checking channel status (probe)…": "正在检查频道状态 (探测)…",
+  "Checking channel status…": "正在检查频道状态…",
+  "Gateway not reachable; showing config-only status.": "Gateway 不可达；仅显示配置状态。",
+  "Gateway reachable.": "Gateway 可达。",
+  "Warnings:": "警告:",
+  "audit failed": "审计失败",
+  "audit ok": "审计正常",
+  "probe failed": "探测失败",
+  "status --deep": "status --deep",
 
   // =====================================================================================
   // 模块: src/commands/chutes-oauth.ts
   // =====================================================================================
-  "<!doctype html>": "[TODO] <!doctype html>",
-  "<body><h2>Chutes OAuth complete</h2>": "[TODO] <body><h2>Chutes OAuth complete</h2>",
-  "<html><head><meta charset='utf-8' /></head>":
-    "[TODO] <html><head><meta charset='utf-8' /></head>",
+  "<!doctype html>": "<!doctype html>",
+  "<body><h2>Chutes OAuth complete</h2>": "<body><h2>Chutes OAuth 完成</h2>",
+  "<html><head><meta charset='utf-8' /></head>": "<html><head><meta charset='utf-8' /></head>",
   "<p>You can close this window and return to OpenClaw.</p></body></html>":
-    "[TODO] <p>You can close this window and return to OpenClaw.</p></body></html>",
-  "Exchanging code for tokens…": "[TODO] Exchanging code for tokens…",
-  "Invalid OAuth state": "[TODO] Invalid OAuth state",
-  "Invalid state": "[TODO] Invalid state",
-  "Missing code": "[TODO] Missing code",
-  "Not found": "[TODO] Not found",
-  "OAuth callback not detected; paste redirect URL…":
-    "[TODO] OAuth callback not detected; paste redirect URL…",
-  "OAuth callback timeout": "[TODO] OAuth callback timeout",
-  "Paste the redirect URL (or authorization code)":
-    "[TODO] Paste the redirect URL (or authorization code)",
-  "Waiting for redirect URL…": "[TODO] Waiting for redirect URL…",
-  "text/html; charset=utf-8": "[TODO] text/html; charset=utf-8",
-  "text/plain; charset=utf-8": "[TODO] text/plain; charset=utf-8",
+    "<p>你可以关闭此窗口并返回 OpenClaw。</p></body></html>",
+  "Exchanging code for tokens…": "正在用代码交换 Token…",
+  "Invalid OAuth state": "无效的 OAuth 状态",
+  "Invalid state": "无效状态",
+  "Missing code": "缺少代码",
+  "Not found": "未找到",
+  "OAuth callback not detected; paste redirect URL…": "未检测到 OAuth 回调；请粘贴重定向 URL…",
+  "OAuth callback timeout": "OAuth 回调超时",
+  "Paste the redirect URL (or authorization code)": "粘贴重定向 URL (或授权码)",
+  "Waiting for redirect URL…": "等待重定向 URL…",
+  "text/html; charset=utf-8": "text/html; charset=utf-8",
+  "text/plain; charset=utf-8": "text/plain; charset=utf-8",
 
   // =====================================================================================
   // 模块: src/commands/configure.channels.ts
   // =====================================================================================
-  "Channel removed": "[TODO] Channel removed",
+  "Channel removed": "频道已移除",
   "Deletes tokens + settings from config (credentials stay on disk)":
-    "[TODO] Deletes tokens + settings from config (credentials stay on disk)",
-  Done: "[TODO] Done",
-  "No channel config found in openclaw.json.": "[TODO] No channel config found in openclaw.json.",
-  "Note: credentials/sessions on disk are unchanged.":
-    "[TODO] Note: credentials/sessions on disk are unchanged.",
-  "Remove channel": "[TODO] Remove channel",
-  "Remove which channel config?": "[TODO] Remove which channel config?",
-  "openclaw channels status": "[TODO] openclaw channels status",
+    "从配置中删除 Token + 设置 (凭据保留在磁盘上)",
+  Done: "完成",
+  "No channel config found in openclaw.json.": "在 openclaw.json 中未找到频道配置。",
+  "Note: credentials/sessions on disk are unchanged.": "注意：磁盘上的凭据/会话保持不变。",
+  "Remove channel": "移除频道",
+  "Remove which channel config?": "移除哪个频道配置?",
+  "openclaw channels status": "openclaw channels status",
 
   // =====================================================================================
   // 模块: src/commands/configure.daemon.ts
   // =====================================================================================
-  "Gateway service": "[TODO] Gateway service",
-  "Gateway service already installed": "[TODO] Gateway service already installed",
-  "Gateway service install failed.": "[TODO] Gateway service install failed.",
-  "Gateway service install failed: ": "[TODO] Gateway service install failed: ",
-  "Gateway service installed.": "[TODO] Gateway service installed.",
-  "Gateway service restarted.": "[TODO] Gateway service restarted.",
-  "Gateway service runtime": "[TODO] Gateway service runtime",
-  "Gateway service uninstalled.": "[TODO] Gateway service uninstalled.",
-  "Installing Gateway service…": "[TODO] Installing Gateway service…",
+  "Gateway service": "Gateway 服务",
+  "Gateway service already installed": "Gateway 服务已安装",
+  "Gateway service install failed.": "Gateway 服务安装失败。",
+  "Gateway service install failed: ": "Gateway 服务安装失败: ",
+  "Gateway service installed.": "Gateway 服务已安装。",
+  "Gateway service restarted.": "Gateway 服务已重启。",
+  "Gateway service runtime": "Gateway 服务运行时",
+  "Gateway service uninstalled.": "Gateway 服务已卸载。",
+  "Installing Gateway service…": "正在安装 Gateway 服务…",
   "Linux installs use a systemd user service. Without lingering, systemd stops the user session on logout/idle and kills the Gateway.":
-    "[TODO] Linux installs use a systemd user service. Without lingering, systemd stops the user session on logout/idle and kills the Gateway.",
-  "Preparing Gateway service…": "[TODO] Preparing Gateway service…",
-  Reinstall: "[TODO] Reinstall",
-  Restart: "[TODO] Restart",
-  "Restarting Gateway service…": "[TODO] Restarting Gateway service…",
-  Skip: "[TODO] Skip",
-  "Uninstalling Gateway service…": "[TODO] Uninstalling Gateway service…",
+    "Linux 安装默认使用 systemd 用户服务。如果不开启 lingering，systemd 会在注销/空闲时停止用户会话并关闭 Gateway。",
+  "Preparing Gateway service…": "正在准备 Gateway 服务…",
+  Reinstall: "重新安装",
+  Restart: "重启",
+  "Restarting Gateway service…": "正在重启 Gateway 服务…",
+  Skip: "跳过",
+  "Uninstalling Gateway service…": "正在卸载 Gateway 服务…",
 
   // =====================================================================================
   // 模块: src/commands/configure.gateway-auth.ts
   // =====================================================================================
-  "Anthropic OAuth models": "[TODO] Anthropic OAuth models",
+  "Anthropic OAuth models": "Anthropic OAuth 模型",
 
   // =====================================================================================
   // 模块: src/commands/configure.gateway.ts
   // =====================================================================================
-  "  https://tailscale.com/download/mac": "[TODO]   https://tailscale.com/download/mac",
-  "192.168.1.100": "[TODO] 192.168.1.100",
-  "Auto (Loopback → LAN)": "[TODO] Auto (Loopback → LAN)",
+  "  https://tailscale.com/download/mac": "  https://tailscale.com/download/mac",
+  "192.168.1.100": "192.168.1.100",
+  "Auto (Loopback → LAN)": "自动 (环回 → LAN)",
   "Bind to 0.0.0.0 - accessible from anywhere on your network":
-    "[TODO] Bind to 0.0.0.0 - accessible from anywhere on your network",
-  "Bind to 127.0.0.1 - secure, local-only access":
-    "[TODO] Bind to 127.0.0.1 - secure, local-only access",
-  "Bind to your Tailscale IP only (100.x.x.x)": "[TODO] Bind to your Tailscale IP only (100.x.x.x)",
-  "Custom IP": "[TODO] Custom IP",
-  "Custom IP address": "[TODO] Custom IP address",
-  "Ensure Tailscale is installed from:": "[TODO] Ensure Tailscale is installed from:",
-  Funnel: "[TODO] Funnel",
-  "Gateway auth": "[TODO] Gateway auth",
-  "Gateway bind mode": "[TODO] Gateway bind mode",
-  "Gateway password": "[TODO] Gateway password",
-  "Gateway port": "网关端口",
-  "Gateway token (blank to generate)": "[TODO] Gateway token (blank to generate)",
-  "IP address is required for custom bind mode":
-    "[TODO] IP address is required for custom bind mode",
-  "Invalid IPv4 address (e.g., 192.168.1.100)": "[TODO] Invalid IPv4 address (e.g., 192.168.1.100)",
-  "Invalid IPv4 address (each octet must be 0-255)":
-    "[TODO] Invalid IPv4 address (each octet must be 0-255)",
+    "绑定到 0.0.0.0 - 可从网络中的任何位置访问",
+  "Bind to 127.0.0.1 - secure, local-only access": "绑定到 127.0.0.1 - 安全，仅限本地访问",
+  "Bind to your Tailscale IP only (100.x.x.x)": "仅绑定到你的 Tailscale IP (100.x.x.x)",
+  "Custom IP": "自定义 IP",
+  "Custom IP address": "自定义 IP 地址",
+  "Ensure Tailscale is installed from:": "确保 Tailscale 已安装，下载地址:",
+  Funnel: "Funnel (公网暴露)",
+  "Gateway auth": "Gateway 认证",
+  "Gateway bind mode": "Gateway 绑定模式",
+  "Gateway password": "Gateway 密码",
+  "Gateway port": "Gateway 端口",
+  "Gateway token (blank to generate)": "Gateway Token (留空自动生成)",
+  "IP address is required for custom bind mode": "自定义绑定模式需要 IP 地址",
+  "Invalid IPv4 address (e.g., 192.168.1.100)": "无效的 IPv4 地址 (例如 192.168.1.100)",
+  "Invalid IPv4 address (each octet must be 0-255)": "无效的 IPv4 地址 (每个字节必须在 0-255 之间)",
   "Invalid port": "无效端口",
-  "LAN (All interfaces)": "[TODO] LAN (All interfaces)",
-  "Loopback (Local only)": "[TODO] Loopback (Local only)",
-  "No Tailscale exposure": "[TODO] No Tailscale exposure",
-  Off: "[TODO] Off",
-  Password: "[TODO] Password",
+  "LAN (All interfaces)": "LAN (所有接口)",
+  "Loopback (Local only)": "环回 (仅本地)",
+  "No Tailscale exposure": "不进行 Tailscale 暴露",
+  Off: "关闭",
+  Password: "密码",
   "Prefer loopback; fall back to all interfaces if unavailable":
-    "[TODO] Prefer loopback; fall back to all interfaces if unavailable",
+    "优先使用环回；如果不可用，则退回到所有接口",
   "Private HTTPS for your tailnet (devices on Tailscale)":
-    "[TODO] Private HTTPS for your tailnet (devices on Tailscale)",
-  "Public HTTPS via Tailscale Funnel (internet)":
-    "[TODO] Public HTTPS via Tailscale Funnel (internet)",
-  "Recommended default": "[TODO] Recommended default",
-  "Reset Tailscale serve/funnel on exit?": "[TODO] Reset Tailscale serve/funnel on exit?",
-  Serve: "[TODO] Serve",
+    "为你的 tailnet (Tailscale 设备) 提供私有 HTTPS",
+  "Public HTTPS via Tailscale Funnel (internet)": "通过 Tailscale Funnel (互联网) 提供公共 HTTPS",
+  "Recommended default": "推荐默认值",
+  "Reset Tailscale serve/funnel on exit?": "退出时重置 Tailscale serve/funnel?",
+  Serve: "Serve (内网分享)",
   "Specify a specific IP address, with 0.0.0.0 fallback if unavailable":
-    "[TODO] Specify a specific IP address, with 0.0.0.0 fallback if unavailable",
-  "Tailnet (Tailscale IP)": "[TODO] Tailnet (Tailscale IP)",
-  "Tailscale Warning": "[TODO] Tailscale Warning",
+    "指定特定的 IP 地址，如果不可用则退回到 0.0.0.0",
+  "Tailnet (Tailscale IP)": "Tailnet (Tailscale IP)",
+  "Tailscale Warning": "Tailscale 警告",
   "Tailscale binary not found in PATH or /Applications.":
-    "[TODO] Tailscale binary not found in PATH or /Applications.",
-  "Tailscale exposure": "[TODO] Tailscale exposure",
-  "Tailscale funnel requires password auth.": "[TODO] Tailscale funnel requires password auth.",
+    "在 PATH 或 /Applications 中未找到 Tailscale 二进制文件。",
+  "Tailscale exposure": "Tailscale 暴露",
+  "Tailscale funnel requires password auth.": "Tailscale funnel 需要密码认证。",
   "Tailscale requires bind=loopback. Adjusting bind to loopback.":
-    "[TODO] Tailscale requires bind=loopback. Adjusting bind to loopback.",
-  Token: "[TODO] Token",
+    "Tailscale 需要绑定到环回地址。正在将绑定调整为环回地址。",
+  Token: "Token",
   "You can continue setup, but serve/funnel will fail at runtime.":
-    "[TODO] You can continue setup, but serve/funnel will fail at runtime.",
-  token: "[TODO] token",
+    "你可以继续设置，但 serve/funnel 在运行时会失败。",
+  token: "Token",
 
   // =====================================================================================
   // 模块: src/commands/configure.shared.ts
   // =====================================================================================
-  Channels: "[TODO] Channels",
-  "Configure Brave search + fetch": "[TODO] Configure Brave search + fetch",
-  Daemon: "[TODO] Daemon",
-  Gateway: "[TODO] Gateway",
-  "Health check": "[TODO] Health check",
-  "Install/enable workspace skills": "[TODO] Install/enable workspace skills",
-  "Install/manage the background service": "[TODO] Install/manage the background service",
-  "Link WhatsApp/Telegram/etc and defaults": "[TODO] Link WhatsApp/Telegram/etc and defaults",
-  Model: "[TODO] Model",
-  "Pick provider + credentials": "[TODO] Pick provider + credentials",
-  "Port, bind, auth, tailscale": "[TODO] Port, bind, auth, tailscale",
-  "Run gateway + channel checks": "[TODO] Run gateway + channel checks",
-  "Set workspace + sessions": "[TODO] Set workspace + sessions",
-  Skills: "[TODO] Skills",
-  "Web tools": "[TODO] Web tools",
-  Workspace: "[TODO] Workspace",
+  Channels: "频道",
+  "Configure Brave search + fetch": "配置 Brave 搜索 + 获取",
+  Daemon: "守护进程",
+  Gateway: "Gateway",
+  "Health check": "健康检查",
+  "Install/enable workspace skills": "安装/启用工作区 Skills",
+  "Install/manage the background service": "安装/管理后台服务",
+  "Link WhatsApp/Telegram/etc and defaults": "链接 WhatsApp/Telegram/等及默认设置",
+  Model: "模型",
+  "Pick provider + credentials": "选择提供商 + 凭据",
+  "Port, bind, auth, tailscale": "端口, 绑定, 认证, tailscale",
+  "Run gateway + channel checks": "运行 Gateway + 频道检查",
+  "Set workspace + sessions": "设置工作区 + 会话",
+  Skills: "Skills",
+  "Web tools": "Web 工具",
+  Workspace: "工作区",
 
   // =====================================================================================
   // 模块: src/commands/configure.wizard.ts
   // =====================================================================================
-  "Add/update channels; disable unselected accounts":
-    "[TODO] Add/update channels; disable unselected accounts",
+  "Add/update channels; disable unselected accounts": "添加/更新频道；禁用未选中的账户",
   "Brave Search API key (leave blank to keep current or use BRAVE_API_KEY)":
-    "[TODO] Brave Search API key (leave blank to keep current or use BRAVE_API_KEY)",
+    "Brave 搜索 API 密钥 (留空以保持当前值或使用 BRAVE_API_KEY)",
   "Brave Search API key (paste it here; leave blank to use BRAVE_API_KEY)":
-    "[TODO] Brave Search API key (paste it here; leave blank to use BRAVE_API_KEY)",
-  Channels: "[TODO] Channels",
-  "Config issues": "[TODO] Config issues",
-  "Configure complete.": "[TODO] Configure complete.",
-  "Configure/link": "[TODO] Configure/link",
-  Continue: "[TODO] Continue",
-  "Control UI": "[TODO] Control UI",
-  "Delete channel tokens/settings from openclaw.json":
-    "[TODO] Delete channel tokens/settings from openclaw.json",
+    "Brave 搜索 API 密钥 (粘贴到此处；留空以使用 BRAVE_API_KEY)",
+  "Config issues": "配置问题",
+  "Configure complete.": "配置完成。",
+  "Configure/link": "配置/链接",
+  Continue: "继续",
+  "Control UI": "控制 UI",
+  "Delete channel tokens/settings from openclaw.json": "从 openclaw.json 中删除频道 Token/设置",
   "Docs: https://docs.openclaw.ai/gateway/configuration":
-    "[TODO] Docs: https://docs.openclaw.ai/gateway/configuration",
-  "Docs: https://docs.openclaw.ai/tools/web": "[TODO] Docs: https://docs.openclaw.ai/tools/web",
-  "Docs: https://docs.openclaw.ai/web/control-ui":
-    "[TODO] Docs: https://docs.openclaw.ai/web/control-ui",
-  "Enable web_fetch (keyless HTTP fetch)?": "[TODO] Enable web_fetch (keyless HTTP fetch)?",
-  "Enable web_search (Brave Search)?": "[TODO] Enable web_search (Brave Search)?",
-  "Existing config detected": "[TODO] Existing config detected",
-  "Gateway mode set to local.": "[TODO] Gateway mode set to local.",
-  "Gateway port for service install": "[TODO] Gateway port for service install",
-  "Gateway: reachable": "[TODO] Gateway: reachable",
-  "Health check help": "[TODO] Health check help",
-  "Invalid config": "[TODO] Invalid config",
-  "Invalid port": "无效端口",
+    "文档: https://docs.openclaw.ai/gateway/configuration",
+  "Docs: https://docs.openclaw.ai/tools/web": "文档: https://docs.openclaw.ai/tools/web",
+  "Docs: https://docs.openclaw.ai/web/control-ui": "文档: https://docs.openclaw.ai/web/control-ui",
+  "Enable web_fetch (keyless HTTP fetch)?": "启用 web_fetch (无密钥 HTTP 获取)?",
+  "Enable web_search (Brave Search)?": "启用 web_search (Brave Search)?",
+  "Existing config detected": "检测到现有配置",
+  "Gateway mode set to local.": "Gateway 模式设置为本地。",
+  "Gateway port for service install": "服务安装的 Gateway 端口",
+  "Gateway: reachable": "Gateway: 可达",
+  "Health check help": "健康检查帮助",
+  "Invalid config": "无效配置",
   "It requires a Brave Search API key (you can store it in the config or set BRAVE_API_KEY in the Gateway environment).":
-    "[TODO] It requires a Brave Search API key (you can store it in the config or set BRAVE_API_KEY in the Gateway environment).",
-  "Leave blank to keep current": "[TODO] Leave blank to keep current",
-  "Local (this machine)": "[TODO] Local (this machine)",
-  "No changes selected.": "[TODO] No changes selected.",
+    "它需要 Brave 搜索 API 密钥 (你可以将其存储在配置中，或者在 Gateway 环境中设置 BRAVE_API_KEY)。",
+  "Leave blank to keep current": "留空以保持当前设置",
+  "Local (this machine)": "本地 (本机)",
+  "No changes selected.": "未选择任何更改。",
   "No key stored yet, so web_search will stay unavailable.":
-    "[TODO] No key stored yet, so web_search will stay unavailable.",
-  "No remote URL configured yet": "[TODO] No remote URL configured yet",
-  "OpenClaw configure": "[TODO] OpenClaw configure",
-  "OpenClaw update wizard": "[TODO] OpenClaw update wizard",
-  "Remote (info-only)": "[TODO] Remote (info-only)",
-  "Remote gateway configured.": "[TODO] Remote gateway configured.",
-  "Remove channel config": "[TODO] Remove channel config",
-  "Select sections to configure": "[TODO] Select sections to configure",
-  "Skip for now": "[TODO] Skip for now",
+    "尚未存储密钥，因此 web_search 将保持不可用状态。",
+  "No remote URL configured yet": "尚未配置远程 URL",
+  "OpenClaw configure": "OpenClaw 配置",
+  "OpenClaw update wizard": "OpenClaw 更新向导",
+  "Remote (info-only)": "远程 (仅信息)",
+  "Remote gateway configured.": "远程 Gateway 已配置。",
+  "Remove channel config": "移除频道配置",
+  "Select sections to configure": "选择要配置的部分",
   "Store a key here or set BRAVE_API_KEY in the Gateway environment.":
-    "[TODO] Store a key here or set BRAVE_API_KEY in the Gateway environment.",
-  "Web search": "[TODO] Web search",
+    "在此处存储密钥或在 Gateway 环境中设置 BRAVE_API_KEY。",
+  "Web search": "Web 搜索",
   "Web search lets your agent look things up online using the `web_search` tool.":
-    "[TODO] Web search lets your agent look things up online using the `web_search` tool.",
-  "Where will the Gateway run?": "[TODO] Where will the Gateway run?",
-  "Workspace directory": "[TODO] Workspace directory",
-  configure: "[TODO] configure",
-  "openclaw doctor": "[TODO] openclaw doctor",
+    "Web 搜索允许你的 Agent 使用 `web_search` 工具在网上查找信息。",
+  "Where will the Gateway run?": "Gateway 将在哪里运行?",
+  configure: "配置",
 
   // =====================================================================================
   // 模块: src/commands/daemon-install-helpers.ts
   // =====================================================================================
-  "Gateway runtime": "[TODO] Gateway runtime",
-  "openclaw gateway install": "[TODO] openclaw gateway install",
+  "Gateway runtime": "Gateway 运行时",
+  "openclaw gateway install": "openclaw gateway install",
 
   // =====================================================================================
   // 模块: src/commands/daemon-runtime.ts
   // =====================================================================================
-  "Node (recommended)": "[TODO] Node (recommended)",
+  "Node (recommended)": "Node (推荐)",
   "Required for WhatsApp + Telegram. Bun can corrupt memory on reconnect.":
-    "[TODO] Required for WhatsApp + Telegram. Bun can corrupt memory on reconnect.",
+    "WhatsApp + Telegram 必需。Bun 在重新连接时可能会损坏内存。",
 
   // =====================================================================================
   // 模块: src/commands/dashboard.ts
   // =====================================================================================
   "Browser launch disabled (--no-open). Use the URL above.":
-    "[TODO] Browser launch disabled (--no-open). Use the URL above.",
-  "Copied to clipboard.": "[TODO] Copied to clipboard.",
-  "Copy to clipboard unavailable.": "[TODO] Copy to clipboard unavailable.",
+    "已禁用浏览器启动 (--no-open)。请使用上面的 URL。",
   "Opened in your browser. Keep that tab to control OpenClaw.":
-    "[TODO] Opened in your browser. Keep that tab to control OpenClaw.",
+    "已在浏览器中打开。请保留该标签页以控制 OpenClaw。",
 
   // =====================================================================================
   // 模块: src/commands/docs.ts
   // =====================================================================================
-  "Docs search:": "[TODO] Docs search:",
-  "Docs: https://docs.openclaw.ai/": "[TODO] Docs: https://docs.openclaw.ai/",
-  "Missing pnpm or npx; install a Node package runner.":
-    "[TODO] Missing pnpm or npx; install a Node package runner.",
-  "No results.": "[TODO] No results.",
-  "_No results._": "[TODO] _No results._",
-  'openclaw docs "your query"': '[TODO] openclaw docs "your query"',
+  "Docs search:": "文档搜索:",
+  "Docs: https://docs.openclaw.ai/": "文档: https://docs.openclaw.ai/",
+  "Missing pnpm or npx; install a Node package runner.": "缺少 pnpm 或 npx；请安装 Node 包运行器。",
+  "No results.": "无结果。",
+  "_No results._": "_无结果。_",
+  'openclaw docs "your query"': 'openclaw docs "查询词"',
 
   // =====================================================================================
   // 模块: src/commands/doctor-auth.ts
   // =====================================================================================
-  "Auth profile cooldowns": "[TODO] Auth profile cooldowns",
-  "Auth profiles": "[TODO] Auth profiles",
+  "Auth profile cooldowns": "认证配置文件冷却",
   "Deprecated external CLI auth profiles detected (no longer supported):":
-    "[TODO] Deprecated external CLI auth profiles detected (no longer supported):",
-  "Doctor changes": "[TODO] Doctor changes",
-  "Model auth": "[TODO] Model auth",
-  "OAuth refresh errors": "[TODO] OAuth refresh errors",
+    "检测到已弃用的外部 CLI 认证配置文件 (不再支持):",
+  "Doctor changes": "Doctor 更改",
+  "Model auth": "模型认证",
+  "OAuth refresh errors": "OAuth 刷新错误",
   "Refresh expiring OAuth tokens now? (static tokens need re-auth)":
-    "[TODO] Refresh expiring OAuth tokens now? (static tokens need re-auth)",
-  "Remove deprecated CLI auth profiles now?": "[TODO] Remove deprecated CLI auth profiles now?",
-  "Top up credits (provider billing) or switch provider.":
-    "[TODO] Top up credits (provider billing) or switch provider.",
+    "现在刷新即将过期的 OAuth Token 吗? (静态 Token 需要重新认证)",
+  "Remove deprecated CLI auth profiles now?": "现在移除已弃用的 CLI 认证配置文件吗?",
+  "Top up credits (provider billing) or switch provider.": "充值余额 (服务商计费) 或切换提供商。",
   "Update Anthropic OAuth profile id in config now?":
-    "[TODO] Update Anthropic OAuth profile id in config now?",
-  "Wait for cooldown or switch provider.": "[TODO] Wait for cooldown or switch provider.",
-  "openclaw configure": "[TODO] openclaw configure",
+    "现在更新配置中的 Anthropic OAuth 配置文件 ID 吗?",
+  "Wait for cooldown or switch provider.": "等待冷却结束或切换提供商。",
+  "openclaw configure": "openclaw configure",
   "openclaw models auth login --provider openai-codex":
-    "[TODO] openclaw models auth login --provider openai-codex",
-  "openclaw models auth setup-token": "[TODO] openclaw models auth setup-token",
-  "openclaw onboard": "[TODO] openclaw onboard",
+    "openclaw models auth login --provider openai-codex",
+  "openclaw models auth setup-token": "openclaw models auth setup-token",
+  "openclaw onboard": "openclaw onboard",
 
   // =====================================================================================
   // 模块: src/commands/doctor-config-flow.ts
   // =====================================================================================
-  "Apply recommended config repairs now?": "[TODO] Apply recommended config repairs now?",
+  "Apply recommended config repairs now?": "现在应用推荐的配置修复吗?",
   "Config invalid; doctor will run with best-effort config.":
-    "[TODO] Config invalid; doctor will run with best-effort config.",
-  "Config warnings": "[TODO] Config warnings",
-  "Doctor changes": "[TODO] Doctor changes",
-  "Doctor warnings": "[TODO] Doctor warnings",
-  "Legacy config keys detected": "[TODO] Legacy config keys detected",
-  "OpenCode Zen": "[TODO] OpenCode Zen",
+    "配置无效；Doctor 将以最佳努力模式运行。",
+  "Config warnings": "配置警告",
+  "Doctor warnings": "Doctor 警告",
+  "Legacy config keys detected": "检测到旧版配置键",
   'Run "openclaw doctor --fix" to remove these keys.':
-    '[TODO] Run "openclaw doctor --fix" to remove these keys.',
-  "Unknown config keys": "[TODO] Unknown config keys",
-  "openclaw doctor --fix": "[TODO] openclaw doctor --fix",
+    '运行 "openclaw doctor --fix" 来移除这些键。',
+  "Unknown config keys": "未知配置键",
+  "openclaw doctor --fix": "openclaw doctor --fix",
 
   // =====================================================================================
   // 模块: src/commands/doctor-format.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
   "Service is loaded but not running (likely exited immediately).":
     "服务已加载但未运行 (可能立即退出了)。",
-  "openclaw gateway install": "[TODO] openclaw gateway install",
 
   // =====================================================================================
   // 模块: src/commands/doctor-gateway-daemon-flow.ts
   // =====================================================================================
-  Gateway: "[TODO] Gateway",
-  "Gateway connection": "[TODO] Gateway connection",
-  "Gateway not running.": "[TODO] Gateway not running.",
-  "Gateway port": "网关端口",
-  "Gateway service not installed.": "[TODO] Gateway service not installed.",
-  "Gateway service runtime": "[TODO] Gateway service runtime",
-  "Install gateway service now?": "[TODO] Install gateway service now?",
-  "LaunchAgent is listed but not loaded in launchd.":
-    "[TODO] LaunchAgent is listed but not loaded in launchd.",
-  Node: "[TODO] Node",
-  "Restart gateway service now?": "[TODO] Restart gateway service now?",
-  "Start gateway service now?": "[TODO] Start gateway service now?",
-  "gateway closed": "[TODO] gateway closed",
-  "openclaw gateway stop": "[TODO] openclaw gateway stop",
-  "unknown error": "[TODO] unknown error",
+  "Gateway connection": "Gateway 连接",
+  "Gateway not running.": "Gateway 未运行。",
+  "Gateway service not installed.": "Gateway 服务未安装。",
+  "Install gateway service now?": "现在安装 Gateway 服务吗?",
+  "LaunchAgent is listed but not loaded in launchd.": "LaunchAgent 已列出但未在 launchd 中加载。",
+  Node: "Node",
+  "Restart gateway service now?": "现在重启 Gateway 服务吗?",
+  "Start gateway service now?": "现在启动 Gateway 服务吗?",
+  "gateway closed": "Gateway 已关闭",
+  "openclaw gateway stop": "openclaw gateway stop",
+  "unknown error": "未知错误",
 
   // =====================================================================================
   // 模块: src/commands/doctor-gateway-health.ts
   // =====================================================================================
-  "Channel warnings": "[TODO] Channel warnings",
-  "Gateway connection": "[TODO] Gateway connection",
-  "Gateway not running.": "[TODO] Gateway not running.",
-  "gateway closed": "[TODO] gateway closed",
+  "Channel warnings": "频道警告",
 
   // =====================================================================================
   // 模块: src/commands/doctor-gateway-services.ts
   // =====================================================================================
-  "Cleanup hints": "[TODO] Cleanup hints",
+  "Cleanup hints": "清理提示",
   "Custom or unexpected service edits detected. Rerun with --force to overwrite.":
-    "[TODO] Custom or unexpected service edits detected. Rerun with --force to overwrite.",
+    "检测到自定义或意外的服务编辑。使用 --force 重新运行以覆盖。",
   "Gateway mode is remote; skipped local service audit.":
-    "[TODO] Gateway mode is remote; skipped local service audit.",
-  "Gateway recommendation": "[TODO] Gateway recommendation",
-  "Gateway runtime": "[TODO] Gateway runtime",
-  "Gateway service config": "[TODO] Gateway service config",
+    "Gateway 模式为远程；已跳过本地服务审计。",
+  "Gateway recommendation": "Gateway 推荐",
+  "Gateway service config": "Gateway 服务配置",
   "Gateway service entrypoint does not match the current install.":
-    "[TODO] Gateway service entrypoint does not match the current install.",
+    "Gateway 服务入口点与当前安装不匹配。",
   "If you need multiple gateways (e.g., a rescue bot on the same host), isolate ports + config/state (see docs: /gateway#multiple-gateways-same-host).":
-    "如果你需要多个网关 (例如同一主机上的救援机器人), 请隔离端口 + 配置/状态 (参见文档: /gateway#multiple-gateways-same-host)。",
-  "Legacy gateway cleanup skipped": "[TODO] Legacy gateway cleanup skipped",
-  "Legacy gateway removed": "[TODO] Legacy gateway removed",
+    "如果你需要多个 Gateway (例如在同一主机上的救援 Bot)，请隔离端口 + 配置/状态 (见文档: /gateway#multiple-gateways-same-host)。",
+  "Legacy gateway cleanup skipped": "已跳过旧版 Gateway 清理",
+  "Legacy gateway removed": "旧版 Gateway 已移除",
   "Legacy gateway services removed. Installing OpenClaw gateway next.":
-    "[TODO] Legacy gateway services removed. Installing OpenClaw gateway next.",
-  "Nix mode detected; skip service updates.": "[TODO] Nix mode detected; skip service updates.",
-  "One gateway supports multiple agents.": "[TODO] One gateway supports multiple agents.",
-  "Other gateway-like services detected": "[TODO] Other gateway-like services detected",
+    "旧版 Gateway 服务已移除。接下来安装 OpenClaw Gateway。",
+  "Nix mode detected; skip service updates.": "检测到 Nix 模式；跳过服务更新。",
+  "One gateway supports multiple agents.": "一个 Gateway 支持多个 Agent。",
+  "Other gateway-like services detected": "检测到其他类 Gateway 服务",
   "Overwrite gateway service config with current defaults now?":
-    "[TODO] Overwrite gateway service config with current defaults now?",
+    "现在用当前默认值覆盖 Gateway 服务配置吗?",
   "Recommendation: run a single gateway per machine for most setups.":
-    "[TODO] Recommendation: run a single gateway per machine for most setups.",
+    "推荐：大多数设置建议每台机器运行一个 Gateway。",
   "Remove legacy gateway services (clawdbot/moltbot) now?":
-    "[TODO] Remove legacy gateway services (clawdbot/moltbot) now?",
+    "现在移除旧版 Gateway 服务 (clawdbot/moltbot) 吗?",
   "System Node 22+ not found. Install via Homebrew/apt/choco and rerun doctor to migrate off Bun/version managers.":
-    "[TODO] System Node 22+ not found. Install via Homebrew/apt/choco and rerun doctor to migrate off Bun/version managers.",
+    "未找到系统 Node 22+。请通过 Homebrew/apt/choco 安装并重新运行 Doctor 以迁离 Bun/版本管理器。",
   "Update gateway service config to the recommended defaults now?":
-    "[TODO] Update gateway service config to the recommended defaults now?",
+    "现在将 Gateway 服务配置更新为推荐默认值吗?",
 
   // =====================================================================================
   // 模块: src/commands/doctor-platform-notes.ts
   // =====================================================================================
-  "Gateway (macOS)": "[TODO] Gateway (macOS)",
+  "Gateway (macOS)": "Gateway (macOS)",
 
   // =====================================================================================
   // 模块: src/commands/doctor-sandbox.ts
   // =====================================================================================
-  '  scope resolves to "shared".': '[TODO]   scope resolves to "shared".',
-  "Build or pull it first.": "[TODO] Build or pull it first.",
-  "Docker not available; skipping sandbox image checks.":
-    "[TODO] Docker not available; skipping sandbox image checks.",
-  "Doctor changes": "[TODO] Doctor changes",
-  "No such image": "[TODO] No such image",
-  "unknown error": "[TODO] unknown error",
+  '  scope resolves to "shared".': '  作用域解析为 "shared"。',
+  "Build or pull it first.": "请先构建或拉取它。",
+  "Docker not available; skipping sandbox image checks.": "Docker 不可用；正在跳过沙箱镜像检查。",
+  "No such image": "无此镜像",
 
   // =====================================================================================
   // 模块: src/commands/doctor-security.ts
   // =====================================================================================
   "  Anyone on your network (or internet if port-forwarded) can fully control your agent.":
-    "[TODO]   Anyone on your network (or internet if port-forwarded) can fully control your agent.",
+    "  网络中的任何人 (或如果设置了端口转发，则包括互联网上的任何人) 都可以完全控制你的 Agent。",
   "  Ensure your auth credentials are strong and not exposed.":
-    "[TODO]   Ensure your auth credentials are strong and not exposed.",
-  "openclaw config set gateway.auth.mode token":
-    "[TODO] openclaw config set gateway.auth.mode token",
-  "openclaw config set gateway.bind loopback": "[TODO] openclaw config set gateway.bind loopback",
-  "openclaw configure": "[TODO] openclaw configure",
-  "openclaw doctor --fix": "[TODO] openclaw doctor --fix",
-  "openclaw security audit --deep": "[TODO] openclaw security audit --deep",
+    "  确保你的认证凭据足够强且未暴露。",
+  "openclaw config set gateway.auth.mode token": "openclaw config set gateway.auth.mode token",
+  "openclaw config set gateway.bind loopback": "openclaw config set gateway.bind loopback",
 
   // =====================================================================================
   // 模块: src/commands/doctor-state-integrity.ts
   // =====================================================================================
-  "Doctor changes": "[TODO] Doctor changes",
-  "OAuth dir": "[TODO] OAuth dir",
-  "Session store dir": "[TODO] Session store dir",
-  "Sessions dir": "[TODO] Sessions dir",
-  "State integrity": "[TODO] State integrity",
+  "OAuth dir": "OAuth 目录",
+  "Session store dir": "会话存储目录",
+  "Sessions dir": "会话目录",
+  "State integrity": "状态完整性",
 
   // =====================================================================================
   // 模块: src/commands/doctor-ui.ts
   // =====================================================================================
-  "Build Control UI assets now?": "[TODO] Build Control UI assets now?",
+  "Build Control UI assets now?": "现在构建控制 UI 资源吗?",
   "Building Control UI assets... (this may take a moment)":
-    "[TODO] Building Control UI assets... (this may take a moment)",
+    "正在构建控制 UI 资源... (这可能需要片刻时间)",
   "Rebuild UI now? (Detected protocol mismatch requiring update)":
-    "[TODO] Rebuild UI now? (Detected protocol mismatch requiring update)",
+    "是否立即重建 UI? (检测到协议不匹配，需更新)",
   "Rebuilding stale UI assets... (this may take a moment)":
-    "[TODO] Rebuilding stale UI assets... (this may take a moment)",
-  "Skipping UI build: ui/ sources not present.":
-    "[TODO] Skipping UI build: ui/ sources not present.",
-  "Skipping UI rebuild: ui/ sources not present.":
-    "[TODO] Skipping UI rebuild: ui/ sources not present.",
-  "UI Freshness": "[TODO] UI Freshness",
-  "UI build complete.": "[TODO] UI build complete.",
-  "UI rebuild complete.": "[TODO] UI rebuild complete.",
+    "正在重建过期的 UI 资源... (这可能需要片刻时间)",
+  "Skipping UI build: ui/ sources not present.": "跳过 UI 构建：未找到 ui/ 源码。",
+  "Skipping UI rebuild: ui/ sources not present.": "跳过 UI 重建：未找到 ui/ 源码。",
+  "UI Freshness": "UI 新鲜度",
+  "UI build complete.": "UI 构建完成。",
+  "UI rebuild complete.": "UI 重建完成。",
 
   // =====================================================================================
   // 模块: src/commands/doctor-update.ts
   // =====================================================================================
   "Running update (fetch/rebase/build/ui:build/doctor)…":
-    "[TODO] Running update (fetch/rebase/build/ui:build/doctor)…",
-  "This install is not a git checkout.": "[TODO] This install is not a git checkout.",
-  "Update OpenClaw from git before running doctor?":
-    "[TODO] Update OpenClaw from git before running doctor?",
+    "正在运行更新 (fetch/rebase/build/ui:build/doctor)…",
+  "This install is not a git checkout.": "当前安装并非 Git 检出版本。",
+  "Update OpenClaw from git before running doctor?": "运行 Doctor 前是否从 Git 更新 OpenClaw?",
   "Update completed (doctor already ran as part of the update).":
-    "[TODO] Update completed (doctor already ran as part of the update).",
-  "Update result": "[TODO] Update result",
-  "not a git repository": "[TODO] not a git repository",
-  "openclaw update": "[TODO] openclaw update",
+    "更新已完成 (Doctor 已作为更新的一部分运行)。",
+  "Update result": "更新结果",
+  "not a git repository": "不是 Git 仓库",
 
   // =====================================================================================
   // 模块: src/commands/doctor-workspace-status.ts
   // =====================================================================================
-  "\n- ": "[TODO] \n- ",
-  "Extra workspace": "[TODO] Extra workspace",
-  "Skills status": "[TODO] Skills status",
+  "\n- ": "\n- ",
+  "\n- ...": "\n- ...",
+  "Extra workspace": "冗余工作区",
+  "Plugin diagnostics": "插件诊断",
+  "Skills status": "Skills 状态",
 
   // =====================================================================================
   // 模块: src/commands/doctor-workspace.ts
   // =====================================================================================
   "Extra workspace directories detected (may contain old agent files):":
-    "[TODO] Extra workspace directories detected (may contain old agent files):",
-  "If unused, archive or move to Trash.": "[TODO] If unused, archive or move to Trash.",
-  "Install the memory system by applying:": "[TODO] Install the memory system by applying:",
-  "Memory system not found in workspace.": "[TODO] Memory system not found in workspace.",
-  "Paste this into your agent:": "[TODO] Paste this into your agent:",
+    "检测到冗余的工作区目录 (可能包含旧的 Agent 文件):",
+  "If unused, archive or move to Trash.": "如果未使用，请归档或移至回收站。",
+  "Install the memory system by applying:": "通过应用以下内容来安装记忆系统:",
+  "Memory system not found in workspace.": "工作区中未找到记忆系统。",
+  "Paste this into your agent:": "将其粘贴到你的 Agent 中:",
 
   // =====================================================================================
   // 模块: src/commands/doctor.ts
   // =====================================================================================
-  "Doctor changes": "[TODO] Doctor changes",
-  "Doctor complete.": "[TODO] Doctor complete.",
-  "Doctor warnings": "[TODO] Doctor warnings",
-  "Gateway auth": "[TODO] Gateway auth",
+  "Doctor complete.": "Doctor 完成。",
   "Gateway auth is off or missing a token. Token auth is now the recommended default (including loopback).":
-    "[TODO] Gateway auth is off or missing a token. Token auth is now the recommended default (including loopback).",
+    "Gateway 认证已关闭或缺少 Token。现推荐默认使用 Token 认证 (包括环回访问)。",
   "Gateway runs as a systemd user service. Without lingering, systemd stops the user session on logout/idle and kills the Gateway.":
-    "[TODO] Gateway runs as a systemd user service. Without lingering, systemd stops the user session on logout/idle and kills the Gateway.",
-  "Gateway token configured.": "[TODO] Gateway token configured.",
-  "Generate and configure a gateway token now?":
-    "[TODO] Generate and configure a gateway token now?",
-  "Invalid config:": "[TODO] Invalid config:",
-  "Legacy state detected": "[TODO] Legacy state detected",
+    "Gateway 作为 systemd 用户服务运行。若未开启 lingering，systemd 会在注销或空闲时停止用户会话并关闭 Gateway。",
+  "Gateway token configured.": "Gateway Token 已配置。",
+  "Generate and configure a gateway token now?": "是否立即生成并配置 Gateway Token?",
+  "Invalid config:": "无效配置:",
+  "Legacy state detected": "检测到旧版状态",
   "Migrate legacy state (sessions/agent/WhatsApp auth) now?":
-    "[TODO] Migrate legacy state (sessions/agent/WhatsApp auth) now?",
-  "OpenClaw doctor": "[TODO] OpenClaw doctor",
+    "现在迁移旧版状态 (Session/Agent/WhatsApp 认证) 吗?",
+  "OpenClaw doctor": "OpenClaw doctor",
   "gateway.mode is unset; gateway start will be blocked.":
-    "[TODO] gateway.mode is unset; gateway start will be blocked.",
-  "openclaw config set gateway.mode local": "[TODO] openclaw config set gateway.mode local",
-  "openclaw configure": "[TODO] openclaw configure",
-  "openclaw doctor --fix": "[TODO] openclaw doctor --fix",
-  "openclaw setup": "[TODO] openclaw setup",
+    "gateway.mode 未设置；Gateway 启动将被阻止。",
+  "openclaw config set gateway.mode local": "openclaw config set gateway.mode local",
+  "openclaw setup": "openclaw setup",
 
   // =====================================================================================
   // 模块: src/commands/gateway-status.ts
   // =====================================================================================
-  "Discovery (this machine)": "[TODO] Discovery (this machine)",
-  "Gateway Status": "[TODO] Gateway Status",
-  "Inspecting gateways…": "[TODO] Inspecting gateways…",
+  "Discovery (this machine)": "发现（本机）",
+  "Gateway Status": "Gateway 状态",
+  "Inspecting gateways…": "正在检查 Gateway…",
   "SSH tunnel failed to start; falling back to direct probes.":
-    "[TODO] SSH tunnel failed to start; falling back to direct probes.",
+    "SSH 隧道启动失败；正回退至直接探测模式。",
   "Tip: if the gateway is remote, mDNS won’t cross networks; use Wide-Area Bonjour (split DNS) or SSH tunnels.":
-    "[TODO] Tip: if the gateway is remote, mDNS won’t cross networks; use Wide-Area Bonjour (split DNS) or SSH tunnels.",
+    "提示：若 Gateway 位于远程，mDNS 无法跨越网络；请使用广域 Bonjour (Split DNS) 或 SSH 隧道。",
   "Unconventional setup: multiple reachable gateways detected. Usually one gateway per network is recommended unless you intentionally run isolated profiles, like a rescue bot (see docs: /gateway#multiple-gateways-same-host).":
-    "[TODO] Unconventional setup: multiple reachable gateways detected. Usually one gateway per network is recommended unless you intentionally run isolated profiles, like a rescue bot (see docs: /gateway#multiple-gateways-same-host).",
-  "Wide-area discovery": "[TODO] Wide-area discovery",
+    "非常规配置：检测到多个可访问的 Gateway。通常建议每个网络仅运行一个 Gateway，除非你有意运行隔离的配置文件，如救援 Bot (详见文档：/gateway#multiple-gateways-same-host)。",
+  "Wide-area discovery": "广域发现",
 
   // =====================================================================================
   // 模块: src/commands/gateway-status/helpers.ts
   // =====================================================================================
-  "Connect: failed": "[TODO] Connect: failed",
-  "Connect: ok": "[TODO] Connect: ok",
-  "Local loopback": "[TODO] Local loopback",
-  "RPC: failed": "[TODO] RPC: failed",
-  "RPC: ok": "[TODO] RPC: ok",
-  "Remote (configured)": "[TODO] Remote (configured)",
-  "Remote (configured, inactive)": "[TODO] Remote (configured, inactive)",
-  "Remote over SSH": "[TODO] Remote over SSH",
-  "URL (explicit)": "[TODO] URL (explicit)",
+  "Connect: failed": "连接：失败",
+  "Connect: ok": "连接：成功",
+  "Local loopback": "本地回环",
+  "RPC: failed": "RPC：失败",
+  "RPC: ok": "RPC：成功",
+  "Remote (configured)": "远程（已配置）",
+  "Remote (configured, inactive)": "远程（已配置，未激活）",
+  "Remote over SSH": "通过 SSH 远程",
+  "URL (explicit)": "URL（显式）",
 
   // =====================================================================================
   // 模块: src/commands/health-format.ts
   // =====================================================================================
-  ": ": "[TODO] : ",
-  "Gateway target": "[TODO] Gateway target",
-  "Gateway target: ": "[TODO] Gateway target: ",
-  "Health check failed": "[TODO] Health check failed",
+  ": ": ": ",
+  "Gateway target": "Gateway 目标",
+  "Gateway target: ": "Gateway 目标：",
+  "Health check failed": "健康检查失败",
 
   // =====================================================================================
   // 模块: src/commands/health.ts
   // =====================================================================================
-  "(no bot)": "[TODO] (no bot)",
-  ", ": "[TODO] , ",
-  ", @": "[TODO] , @",
-  "Checking gateway health…": "[TODO] Checking gateway health…",
-  "Gateway connection:": "[TODO] Gateway connection:",
-  "[debug] bindings map": "[TODO] [debug] bindings map",
-  "[debug] gateway channel probes": "[TODO] [debug] gateway channel probes",
-  "[debug] local channel accounts": "[TODO] [debug] local channel accounts",
-  "[health:debug]": "[TODO] [health:debug]",
-  d: "[TODO] d",
-  h: "[TODO] h",
-  m: "[TODO] m",
-  "no activity": "[TODO] no activity",
-  "not configured": "未配置",
-  "not linked": "未链接",
-  s: "[TODO] s",
-  w: "[TODO] w",
+  "(no bot)": "（无 Bot）",
+  ", @": "，@",
+  "Checking gateway health…": "正在检查 Gateway 健康状态…",
+  "Gateway connection:": "Gateway 连接：",
+  "[debug] bindings map": "[调试] 绑定映射",
+  "[debug] gateway channel probes": "[调试] Gateway 频道探测",
+  "[debug] local channel accounts": "[调试] 本地频道账户",
+  "[health:debug]": "[健康：调试]",
+  d: "d",
+  h: "h",
+  m: "m",
+  "no activity": "无活动",
+  s: "s",
+  w: "w",
 
   // =====================================================================================
   // 模块: src/commands/message-format.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "No messages.": "[TODO] No messages.",
-  "No pins.": "[TODO] No pins.",
-  "No reactions.": "[TODO] No reactions.",
-  "No results.": "[TODO] No results.",
-  "Pinned messages": "[TODO] Pinned messages",
-  "Poll sent": "[TODO] Poll sent",
-  "Search results": "[TODO] Search results",
-  "Tip: use --json for full output.": "[TODO] Tip: use --json for full output.",
-  "unknown error": "[TODO] unknown error",
-  "✅ Reaction updated.": "[TODO] ✅ Reaction updated.",
+  "No messages.": "无消息。",
+  "No pins.": "无置顶。",
+  "No reactions.": "无反应。",
+  "Pinned messages": "置顶消息",
+  "Poll sent": "投票已发送",
+  "Search results": "搜索结果",
+  "Tip: use --json for full output.": "提示：使用 --json 获取完整输出。",
+  "✅ Reaction updated.": "✅ 反应已更新。",
 
   // =====================================================================================
   // 模块: src/commands/message.ts
   // =====================================================================================
-  "Sending poll...": "[TODO] Sending poll...",
+  "Sending poll...": "正在发送投票…",
 
   // =====================================================================================
   // 模块: src/commands/model-picker.ts
   // =====================================================================================
-  " · ": "[TODO]  · ",
-  ", ": "[TODO] , ",
-  "All providers": "[TODO] All providers",
+  "All providers": "所有提供商",
   "Allowlist models (comma-separated provider/model; blank to keep current)":
-    "[TODO] Allowlist models (comma-separated provider/model; blank to keep current)",
-  "Clear the model allowlist? (shows all models)":
-    "[TODO] Clear the model allowlist? (shows all models)",
-  "Default model": "[TODO] Default model",
-  "Default model (blank to keep)": "[TODO] Default model (blank to keep)",
-  "Enter model manually": "[TODO] Enter model manually",
-  "Filter models by provider": "[TODO] Filter models by provider",
-  "Models in /model picker (multi-select)": "[TODO] Models in /model picker (multi-select)",
-  "allowed (not in catalog)": "[TODO] allowed (not in catalog)",
-  "auth missing": "[TODO] auth missing",
-  "configured (not in catalog)": "[TODO] configured (not in catalog)",
-  "current (not in catalog)": "[TODO] current (not in catalog)",
+    "模型白名单（提供商/模型，逗号分隔；留空保持当前）",
+  "Clear the model allowlist? (shows all models)": "清除模型白名单？（显示所有模型）",
+  "Default model": "默认模型",
+  "Default model (blank to keep)": "默认模型（留空保持）",
+  "Enter model manually": "手动输入模型",
+  "Filter models by provider": "按提供商筛选模型",
+  "Models in /model picker (multi-select)": "/model 选择器包含的模型（多选）",
+  "allowed (not in catalog)": "允许（不在目录中）",
+  "auth missing": "缺少认证",
+  "configured (not in catalog)": "已配置（不在目录中）",
+  "current (not in catalog)": "当前（不在目录中）",
   "openai-codex/gpt-5.2, anthropic/claude-opus-4-5":
-    "[TODO] openai-codex/gpt-5.2, anthropic/claude-opus-4-5",
-  "provider/model": "[TODO] provider/model",
+    "openai-codex/gpt-5.2, anthropic/claude-opus-4-5",
+  "provider/model": "提供商/模型",
 
   // =====================================================================================
   // 模块: src/commands/models/aliases.ts
   // =====================================================================================
-  "No aliases configured.": "[TODO] No aliases configured.",
+  "No aliases configured.": "未配置别名。",
 
   // =====================================================================================
   // 模块: src/commands/models/auth-order.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Cleared per-agent order override.": "[TODO] Cleared per-agent order override.",
+  "Cleared per-agent order override.": "已清除每个 Agent 的顺序覆盖。",
   "Failed to update auth-profiles.json (lock busy?).":
-    "[TODO] Failed to update auth-profiles.json (lock busy?).",
-  "Missing --provider.": "[TODO] Missing --provider.",
+    "无法更新 auth-profiles.json（文件锁忙碌？）。",
+  "Missing --provider.": "缺少 --provider。",
   "Missing profile ids. Provide one or more profile ids.":
-    "[TODO] Missing profile ids. Provide one or more profile ids.",
-  "Order override: (none)": "[TODO] Order override: (none)",
+    "缺少配置文件 ID。请提供一个或多个配置文件 ID。",
+  "Order override: (none)": "顺序覆盖：（无）",
 
   // =====================================================================================
   // 模块: src/commands/models/auth.ts
   // =====================================================================================
-  "365d": "[TODO] 365d",
-  "Does this token expire?": "[TODO] Does this token expire?",
-  "Expires in (duration)": "[TODO] Expires in (duration)",
+  "365d": "365天",
+  "Does this token expire?": "此 Token 会过期吗？",
+  "Expires in (duration)": "过期时间（时长）",
   "Have you run `claude setup-token` and copied the token?":
-    "[TODO] Have you run `claude setup-token` and copied the token?",
-  "Invalid duration (e.g. 365d, 12h, 30m)": "[TODO] Invalid duration (e.g. 365d, 12h, 30m)",
-  "Missing --provider.": "[TODO] Missing --provider.",
+    "你运行过 `claude setup-token` 并复制了 Token 吗？",
+  "Invalid duration (e.g. 365d, 12h, 30m)": "无效的时长格式（例如 365d, 12h, 30m）",
   "Only --provider anthropic is supported for setup-token.":
-    "[TODO] Only --provider anthropic is supported for setup-token.",
-  "Paste Anthropic setup-token": "[TODO] Paste Anthropic setup-token",
-  "Paste a setup-token from `claude setup-token`":
-    "[TODO] Paste a setup-token from `claude setup-token`",
-  "Profile id": "[TODO] Profile id",
-  "Provider id": "[TODO] Provider id",
-  "Provider notes": "[TODO] Provider notes",
-  "Select a provider": "[TODO] Select a provider",
-  "Token method": "[TODO] Token method",
-  "Token provider": "[TODO] Token provider",
+    "setup-token 仅支持 --provider anthropic。",
+  "Paste a setup-token from `claude setup-token`": "粘贴来自 `claude setup-token` 的 setup-token",
+  "Profile id": "Profile ID",
+  "Provider id": "Provider ID",
+  "Select a provider": "选择提供商",
+  "Token method": "Token 方式",
+  "Token provider": "Token 提供商",
   "Unknown auth method. Use --method <id> to select one.":
-    "[TODO] Unknown auth method. Use --method <id> to select one.",
+    "未知的认证方式。请使用 --method <id> 选择一种。",
   "Unknown provider. Use --provider <id> to pick a provider plugin.":
-    "[TODO] Unknown provider. Use --provider <id> to pick a provider plugin.",
-  anthropic: "[TODO] anthropic",
-  "custom (type provider id)": "[TODO] custom (type provider id)",
-  "models auth login requires an interactive TTY.":
-    "[TODO] models auth login requires an interactive TTY.",
-  "openclaw plugins install": "[TODO] openclaw plugins install",
-  "paste token": "[TODO] paste token",
-  "setup-token (claude)": "[TODO] setup-token (claude)",
-  "setup-token requires an interactive TTY.": "[TODO] setup-token requires an interactive TTY.",
+    "未知的提供商。请使用 --provider <id> 选择一个提供商插件。",
+  anthropic: "anthropic",
+  "custom (type provider id)": "自定义（输入提供商 ID）",
+  "models auth login requires an interactive TTY.": "models auth login 需要交互式终端。",
+  "openclaw plugins install": "openclaw plugins install",
+  "paste token": "粘贴 Token",
+  "setup-token (claude)": "setup-token (claude)",
+  "setup-token requires an interactive TTY.": "setup-token 需要交互式终端。",
 
   // =====================================================================================
   // 模块: src/commands/models/fallbacks.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Fallback list cleared.": "[TODO] Fallback list cleared.",
+  "Fallback list cleared.": "回退列表已清除。",
 
   // =====================================================================================
   // 模块: src/commands/models/image-fallbacks.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Image fallback list cleared.": "[TODO] Image fallback list cleared.",
+  "Image fallback list cleared.": "图像回退列表已清除。",
 
   // =====================================================================================
   // 模块: src/commands/models/list.auth-overview.ts
   // =====================================================================================
-  "OAuth (env)": "[TODO] OAuth (env)",
-
-  // =====================================================================================
-  // 模块: src/commands/models/list.format.ts
-  // =====================================================================================
-  " | ": "[TODO]  | ",
+  "OAuth (env)": "OAuth (环境变量)",
 
   // =====================================================================================
   // 模块: src/commands/models/list.list-command.ts
   // =====================================================================================
-  "No models found.": "[TODO] No models found.",
+  "No models found.": "未找到模型。",
 
   // =====================================================================================
   // 模块: src/commands/models/list.probe.ts
   // =====================================================================================
-  "Auth profile credentials are missing or expired.":
-    "[TODO] Auth profile credentials are missing or expired.",
-  "Excluded by auth.order for this provider.": "[TODO] Excluded by auth.order for this provider.",
-  "No model available for probe": "[TODO] No model available for probe",
-  "No probe targets.": "[TODO] No probe targets.",
-  "Reply with OK. Do not use tools.": "[TODO] Reply with OK. Do not use tools.",
+  "Auth profile credentials are missing or expired.": "认证配置文件的凭据缺失或已过期。",
+  "Excluded by auth.order for this provider.": "被此提供商的 auth.order 排除。",
+  "No model available for probe": "没有可用于探测的模型",
+  "No probe targets.": "没有探测目标。",
+  "Reply with OK. Do not use tools.": "回复 OK。不要使用工具。",
 
   // =====================================================================================
   // 模块: src/commands/models/list.status-command.ts
   // =====================================================================================
-  " expires unknown": "[TODO]  expires unknown",
-  " | ": "[TODO]  | ",
-  ", ": "[TODO] , ",
-  "--probe cannot be used with --plain output.":
-    "[TODO] --probe cannot be used with --plain output.",
-  "--probe-concurrency must be > 0.": "[TODO] --probe-concurrency must be > 0.",
-  "--probe-max-tokens must be > 0.": "[TODO] --probe-max-tokens must be > 0.",
-  "--probe-timeout must be a positive number (ms).":
-    "[TODO] --probe-timeout must be a positive number (ms).",
-  "Agent dir": "[TODO] Agent dir",
-  "Auth overview": "[TODO] Auth overview",
-  "Auth probes": "[TODO] Auth probes",
-  "Auth store": "[TODO] Auth store",
-  "Image model": "[TODO] Image model",
-  "Missing auth": "[TODO] Missing auth",
-  "OAuth (env)": "[TODO] OAuth (env)",
-  "OAuth/token status": "[TODO] OAuth/token status",
-  "Probing auth profiles…": "[TODO] Probing auth profiles…",
-  "Shell env": "[TODO] Shell env",
-  "openclaw configure": "[TODO] openclaw configure",
-  "openclaw models auth setup-token": "[TODO] openclaw models auth setup-token",
+  " expires unknown": " 过期时间未知",
+  "--probe cannot be used with --plain output.": "--probe 不能与 --plain 输出同时使用。",
+  "--probe-concurrency must be > 0.": "--probe-concurrency 必须 > 0。",
+  "--probe-max-tokens must be > 0.": "--probe-max-tokens 必须 > 0。",
+  "--probe-timeout must be a positive number (ms).": "--probe-timeout 必须是一个正数（毫秒）。",
+  "Agent dir": "Agent 目录",
+  "Auth overview": "认证概览",
+  "Auth probes": "认证探测",
+  "Auth store": "认证存储",
+  "Image model": "图像模型",
+  "Missing auth": "缺少认证",
+  "OAuth/token status": "OAuth/Token 状态",
+  "Probing auth profiles…": "正在探测认证配置文件…",
+  "Shell env": "Shell 环境",
 
   // =====================================================================================
   // 模块: src/commands/models/scan.ts
   // =====================================================================================
-  " | ": "[TODO]  | ",
-  ", ": "[TODO] , ",
-  "--concurrency must be > 0": "[TODO] --concurrency must be > 0",
-  "--max-age-days must be >= 0": "[TODO] --max-age-days must be >= 0",
-  "--max-candidates must be > 0": "[TODO] --max-candidates must be > 0",
-  "--min-params must be >= 0": "[TODO] --min-params must be >= 0",
-  "--timeout must be > 0": "[TODO] --timeout must be > 0",
-  "Model scan cancelled.": "[TODO] Model scan cancelled.",
-  "No image-capable models selected for image model.":
-    "[TODO] No image-capable models selected for image model.",
-  "No models selected for fallbacks.": "[TODO] No models selected for fallbacks.",
-  "No tool-capable OpenRouter free models found.":
-    "[TODO] No tool-capable OpenRouter free models found.",
+  "--concurrency must be > 0": "--concurrency 必须 > 0",
+  "--max-age-days must be >= 0": "--max-age-days 必须 >= 0",
+  "--max-candidates must be > 0": "--max-candidates 必须 > 0",
+  "--min-params must be >= 0": "--min-params 必须 >= 0",
+  "--timeout must be > 0": "--timeout 必须 > 0",
+  "Model scan cancelled.": "模型扫描已取消。",
+  "No image-capable models selected for image model.": "未为图像模型选择具备生成能力的模型。",
+  "No models selected for fallbacks.": "未选择回退模型。",
+  "No tool-capable OpenRouter free models found.": "未找到支持工具调用的 OpenRouter 免费模型。",
   "Non-interactive scan: pass --yes to apply defaults.":
-    "[TODO] Non-interactive scan: pass --yes to apply defaults.",
-  "Probing models": "[TODO] Probing models",
-  "Scanning OpenRouter models...": "[TODO] Scanning OpenRouter models...",
-  "Scanning models": "[TODO] Scanning models",
-  "Select fallback models (ordered)": "[TODO] Select fallback models (ordered)",
-  "Select image fallback models (ordered)": "[TODO] Select image fallback models (ordered)",
-  "ctx ?": "[TODO] ctx ?",
-  "img fail": "[TODO] img fail",
-  "img skip": "[TODO] img skip",
-  "tool fail": "[TODO] tool fail",
+    "非交互式扫描：请传入 --yes 应用默认设置。",
+  "Probing models": "正在探测模型",
+  "Scanning OpenRouter models...": "正在扫描 OpenRouter 模型...",
+  "Scanning models": "正在扫描模型",
+  "Select fallback models (ordered)": "选择回退模型（按顺序）",
+  "Select image fallback models (ordered)": "选择图像回退模型（按顺序）",
+  "ctx ?": "ctx ?",
+  "img fail": "图像失败",
+  "img skip": "图像跳过",
+  "tool fail": "工具失败",
 
   // =====================================================================================
   // 模块: src/commands/models/shared.ts
   // =====================================================================================
-  "Alias cannot be empty.": "[TODO] Alias cannot be empty.",
+  "Alias cannot be empty.": "别名不能为空。",
   "Alias must use letters, numbers, dots, underscores, colons, or dashes.":
-    "[TODO] Alias must use letters, numbers, dots, underscores, colons, or dashes.",
-  "Choose either --json or --plain, not both.": "[TODO] Choose either --json or --plain, not both.",
-  "openclaw agents list": "[TODO] openclaw agents list",
+    "别名必须包含字母、数字、点、下划线、冒号或连字符。",
+  "Choose either --json or --plain, not both.": "请选择 --json 或 --plain，不能同时使用。",
 
   // =====================================================================================
   // 模块: src/commands/node-daemon-install-helpers.ts
   // =====================================================================================
-  "Node daemon runtime": "[TODO] Node daemon runtime",
+  "Node daemon runtime": "Node 守护进程运行时",
 
   // =====================================================================================
   // 模块: src/commands/oauth-flow.ts
   // =====================================================================================
-  "OAuth URL ready": "[TODO] OAuth URL ready",
-  "Paste the redirect URL (or authorization code)":
-    "[TODO] Paste the redirect URL (or authorization code)",
+  "OAuth URL ready": "OAuth URL 已就绪",
 
   // =====================================================================================
   // 模块: src/commands/onboard-auth.config-core.ts
   // =====================================================================================
-  "Kimi K2": "[TODO] Kimi K2",
-  "Kimi K2.5": "[TODO] Kimi K2.5",
-  "Llama 3.3 70B": "[TODO] Llama 3.3 70B",
-  "MiniMax M2.1": "[TODO] MiniMax M2.1",
-  "Vercel AI Gateway": "[TODO] Vercel AI Gateway",
+  "Kimi K2": "Kimi K2",
+  "Kimi K2.5": "Kimi K2.5",
+  "Llama 3.3 70B": "Llama 3.3 70B",
 
   // =====================================================================================
   // 模块: src/commands/onboard-auth.config-minimax.ts
   // =====================================================================================
-  "MiniMax M2.1 GS32": "[TODO] MiniMax M2.1 GS32",
+  "MiniMax M2.1 GS32": "MiniMax M2.1 GS32",
 
   // =====================================================================================
   // 模块: src/commands/onboard-auth.models.ts
   // =====================================================================================
-  "Kimi K2 0905 Preview": "[TODO] Kimi K2 0905 Preview",
-  "MiniMax M2.1": "[TODO] MiniMax M2.1",
-  "MiniMax M2.1 Lightning": "[TODO] MiniMax M2.1 Lightning",
+  "Kimi K2 0905 Preview": "Kimi K2 0905 Preview",
 
   // =====================================================================================
   // 模块: src/commands/onboard-channels.ts
   // =====================================================================================
-  " · ": "[TODO]  · ",
-  "Allowlist (specific users only)": "[TODO] Allowlist (specific users only)",
-  "Channel setup": "[TODO] Channel setup",
-  "Channel status": "[TODO] Channel status",
+  "Allowlist (specific users only)": "白名单（仅特定用户）",
+  "Channel setup": "频道设置",
+  "Channel status": "频道状态",
   "Configure DM access policies now? (default: pairing)":
-    "[TODO] Configure DM access policies now? (default: pairing)",
-  "Configure chat channels now?": "[TODO] Configure chat channels now?",
+    "现在配置私聊访问策略吗？（默认：Pairing 配对）",
+  "Configure chat channels now?": "现在配置聊天频道？",
   "DM security: default is pairing; unknown DMs get a pairing code.":
-    "[TODO] DM security: default is pairing; unknown DMs get a pairing code.",
+    "私聊安全：默认为 Pairing 配对模式；未知的私聊将收到配对码。",
   "Default: pairing (unknown DMs get a pairing code).":
-    "[TODO] Default: pairing (unknown DMs get a pairing code).",
-  "Delete config": "[TODO] Delete config",
-  "Disable (keeps config)": "[TODO] Disable (keeps config)",
-  "Disabled (ignore DMs)": "[TODO] Disabled (ignore DMs)",
-  Finished: "[TODO] Finished",
-  "How channels work": "[TODO] How channels work",
-  "Modify settings": "[TODO] Modify settings",
+    "默认：Pairing 配对（未知的私聊将收到配对码）。",
+  "Delete config": "删除配置",
+  "Disable (keeps config)": "禁用（保留配置）",
+  "Disabled (ignore DMs)": "已禁用（忽略私聊）",
+  Finished: "完成",
+  "How channels work": "频道工作原理",
+  "Modify settings": "修改设置",
   'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.':
-    '[TODO] Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
-  "Open (public inbound DMs)": "[TODO] Open (public inbound DMs)",
-  "Pairing (recommended)": "[TODO] Pairing (recommended)",
+    '多用户私聊：设置 session.dmScope="per-channel-peer"（对于多账号频道，使用 "per-account-channel-peer"）以隔离会话。',
+  "Open (public inbound DMs)": "开放（公共入站私聊）",
+  "Pairing (recommended)": "Pairing 配对（推荐）",
   'Public DMs require dmPolicy="open" + allowFrom=["*"].':
-    '[TODO] Public DMs require dmPolicy="open" + allowFrom=["*"].',
-  "Remove channel": "[TODO] Remove channel",
-  "Select a channel": "[TODO] Select a channel",
-  "Select channel (QuickStart)": "[TODO] Select channel (QuickStart)",
-  "Selected channels": "[TODO] Selected channels",
-  "Skip (leave as-is)": "[TODO] Skip (leave as-is)",
-  "Skip for now": "[TODO] Skip for now",
-  "configured (plugin disabled)": "[TODO] configured (plugin disabled)",
-  "configured · plugin disabled": "[TODO] configured · plugin disabled",
-  "default (primary)": "[TODO] default (primary)",
-  "not configured": "未配置",
-  "openclaw channels add": "[TODO] openclaw channels add",
-  "openclaw pairing approve <channel> <code>": "[TODO] openclaw pairing approve <channel> <code>",
-  "plugin disabled": "[TODO] plugin disabled",
-  "plugin · install": "[TODO] plugin · install",
-  "plugins disabled": "[TODO] plugins disabled",
-  update: "[TODO] update",
+    '公共私聊需要设置 dmPolicy="open" 且 allowFrom=["*"]。',
+  "Select a channel": "选择一个频道",
+  "Select channel (QuickStart)": "选择频道（快速开始）",
+  "Selected channels": "已选频道",
+  "Skip (leave as-is)": "跳过（保持原样）",
+  "configured (plugin disabled)": "已配置（插件已禁用）",
+  "configured · plugin disabled": "已配置 · 插件已禁用",
+  "default (primary)": "默认 (主)",
+  "openclaw channels add": "openclaw channels add",
+  "plugin disabled": "插件已禁用",
+  "plugin · install": "插件 · 安装",
+  "plugins disabled": "插件已禁用",
 
   // =====================================================================================
   // 模块: src/commands/onboard-helpers.ts
   // =====================================================================================
-  "                  🦞 OPENCLAW 🦞                    ":
-    "[TODO]                   🦞 OPENCLAW 🦞                    ",
-  "No key settings detected.": "[TODO] No key settings detected.",
-  "Setup cancelled.": "[TODO] Setup cancelled.",
-  "Then open:": "[TODO] Then open:",
-  bun: "[TODO] bun",
-  npm: "[TODO] npm",
-  pnpm: "[TODO] pnpm",
-  "unknown error": "[TODO] unknown error",
+  "No key settings detected.": "未检测到按键设置。",
+  "Setup cancelled.": "设置已取消。",
+  "Then open:": "然后打开：",
+  bun: "bun",
+  npm: "npm",
+  pnpm: "pnpm",
 
   // =====================================================================================
   // 模块: src/commands/onboard-hooks.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Enable hooks?": "[TODO] Enable hooks?",
+  "Enable hooks?": "启用 Hooks？",
   "Example: Save session context to memory when you issue /new.":
-    "[TODO] Example: Save session context to memory when you issue /new.",
-  Hooks: "[TODO] Hooks",
-  "Hooks Configured": "[TODO] Hooks Configured",
+    "示例：当你发送 /new 指令时，将当前会话上下文保存到记忆中。",
+  Hooks: "Hooks",
+  "Hooks Configured": "Hooks 已配置",
   "Hooks let you automate actions when agent commands are issued.":
-    "[TODO] Hooks let you automate actions when agent commands are issued.",
-  "Learn more: https://docs.openclaw.ai/hooks": "[TODO] Learn more: https://docs.openclaw.ai/hooks",
-  "No Hooks Available": "[TODO] No Hooks Available",
+    "Hooks 允许你在发出 Agent 命令时自动执行特定操作。",
+  "Learn more: https://docs.openclaw.ai/hooks": "了解更多：https://docs.openclaw.ai/hooks",
+  "No Hooks Available": "无可用 Hooks",
   "No eligible hooks found. You can configure hooks later in your config.":
-    "[TODO] No eligible hooks found. You can configure hooks later in your config.",
-  "Skip for now": "[TODO] Skip for now",
-  "You can manage hooks later with:": "[TODO] You can manage hooks later with:",
-  "openclaw hooks disable <name>": "[TODO] openclaw hooks disable <name>",
-  "openclaw hooks enable <name>": "[TODO] openclaw hooks enable <name>",
-  "openclaw hooks list": "[TODO] openclaw hooks list",
-
-  // =====================================================================================
-  // 模块: src/commands/onboard-non-interactive.ts
-  // =====================================================================================
-  "openclaw doctor": "[TODO] openclaw doctor",
-
-  // =====================================================================================
-  // 模块: src/commands/onboard-non-interactive/local.ts
-  // =====================================================================================
-  "openclaw configure --section web": "[TODO] openclaw configure --section web",
+    "未找到合适的 Hooks。你稍后可以在配置中进行设置。",
+  "You can manage hooks later with:": "你稍后可以使用以下命令管理 Hooks：",
+  "openclaw hooks disable <name>": "openclaw hooks disable <name>",
+  "openclaw hooks enable <name>": "openclaw hooks enable <name>",
 
   // =====================================================================================
   // 模块: src/commands/onboard-non-interactive/local/auth-choice.ts
   // =====================================================================================
-  'Auth choice "setup-token" requires interactive mode.':
-    '[TODO] Auth choice "setup-token" requires interactive mode.',
-  "Missing --token for --auth-choice token.": "[TODO] Missing --token for --auth-choice token.",
+  'Auth choice "setup-token" requires interactive mode.': '认证选项 "setup-token" 需要交互模式。',
+  "Missing --token for --auth-choice token.": "缺少 --auth-choice token 的 --token 参数。",
   "Missing --token-provider for --auth-choice token.":
-    "[TODO] Missing --token-provider for --auth-choice token.",
-  "OAuth requires interactive mode.": "[TODO] OAuth requires interactive mode.",
-  "OPENCODE_API_KEY (or OPENCODE_ZEN_API_KEY)": "[TODO] OPENCODE_API_KEY (or OPENCODE_ZEN_API_KEY)",
+    "--auth-choice token 缺少 --token-provider 参数。",
+  "OAuth requires interactive mode.": "OAuth 需要交互模式。",
+  "OPENCODE_API_KEY (or OPENCODE_ZEN_API_KEY)": "OPENCODE_API_KEY (或 OPENCODE_ZEN_API_KEY)",
   "Only --token-provider anthropic is supported for --auth-choice token.":
-    "[TODO] Only --token-provider anthropic is supported for --auth-choice token.",
-  'Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".':
-    '[TODO] Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".',
+    "--auth-choice token 仅支持 --token-provider anthropic。",
   'Use "--auth-choice token" with --token and --token-provider anthropic.':
-    '[TODO] Use "--auth-choice token" with --token and --token-provider anthropic.',
+    '请将 "--auth-choice token" 与 --token 及 --token-provider anthropic 配合使用。',
 
   // =====================================================================================
   // 模块: src/commands/onboard-non-interactive/local/daemon-install.ts
   // =====================================================================================
-  "Invalid --daemon-runtime (use node or bun)": "[TODO] Invalid --daemon-runtime (use node or bun)",
+  "Invalid --daemon-runtime (use node or bun)": "无效的 --daemon-runtime（使用 node 或 bun）",
   "Systemd user services are unavailable; skipping service install.":
-    "[TODO] Systemd user services are unavailable; skipping service install.",
+    "Systemd 用户服务不可用；跳过服务安装。",
 
   // =====================================================================================
   // 模块: src/commands/onboard-non-interactive/local/gateway-config.ts
   // =====================================================================================
   "Invalid --gateway-auth (use token|password).":
-    "[TODO] Invalid --gateway-auth (use token|password).",
-  "Invalid --gateway-port": "[TODO] Invalid --gateway-port",
-  "Missing --gateway-password for password auth.":
-    "[TODO] Missing --gateway-password for password auth.",
+    "无效的 --gateway-auth（请使用 token 或 password）。",
+  "Invalid --gateway-port": "无效的 --gateway-port",
+  "Missing --gateway-password for password auth.": "密码认证缺少 --gateway-password。",
 
   // =====================================================================================
   // 模块: src/commands/onboard-non-interactive/local/skills-config.ts
   // =====================================================================================
   "Invalid --node-manager (use npm, pnpm, or bun)":
-    "[TODO] Invalid --node-manager (use npm, pnpm, or bun)",
+    "无效的 --node-manager（请使用 npm, pnpm 或 bun）。",
 
   // =====================================================================================
   // 模块: src/commands/onboard-non-interactive/remote.ts
   // =====================================================================================
-  "Missing --remote-url for remote mode.": "[TODO] Missing --remote-url for remote mode.",
-  "openclaw configure --section web": "[TODO] openclaw configure --section web",
+  "Missing --remote-url for remote mode.": "远程模式缺少 --remote-url。",
 
   // =====================================================================================
   // 模块: src/commands/onboard-remote.ts
   // =====================================================================================
   "Bonjour discovery requires dns-sd (macOS) or avahi-browse (Linux).":
-    "[TODO] Bonjour discovery requires dns-sd (macOS) or avahi-browse (Linux).",
-  "Connection method": "[TODO] Connection method",
-  "Discover gateway on LAN (Bonjour)?": "[TODO] Discover gateway on LAN (Bonjour)?",
-  Discovery: "[TODO] Discovery",
+    "Bonjour 发现功能需要 dns-sd (macOS) 或 avahi-browse (Linux)。",
+  "Connection method": "连接方式",
+  "Discover gateway on LAN (Bonjour)?": "在局域网中发现 Gateway (Bonjour)？",
+  Discovery: "Discovery",
   "Docs: https://docs.openclaw.ai/gateway/discovery":
-    "[TODO] Docs: https://docs.openclaw.ai/gateway/discovery",
-  "Docs: https://docs.openclaw.ai/gateway/remote":
-    "[TODO] Docs: https://docs.openclaw.ai/gateway/remote",
-  "Enter URL manually": "[TODO] Enter URL manually",
-  "Gateway WebSocket URL": "[TODO] Gateway WebSocket URL",
-  "Gateway auth": "[TODO] Gateway auth",
-  "Gateway token": "[TODO] Gateway token",
-  "No auth": "[TODO] No auth",
-  "No gateways found": "[TODO] No gateways found",
-  "SSH tunnel": "[TODO] SSH tunnel",
-  "SSH tunnel (loopback)": "[TODO] SSH tunnel (loopback)",
-  "Searching for gateways…": "[TODO] Searching for gateways…",
-  "Select gateway": "[TODO] Select gateway",
-  "Start a tunnel before using the CLI:": "[TODO] Start a tunnel before using the CLI:",
-  "Token (recommended)": "[TODO] Token (recommended)",
-  "URL must start with ws:// or wss://": "[TODO] URL must start with ws:// or wss://",
-  "host unknown": "[TODO] host unknown",
+    "文档：https://docs.openclaw.ai/gateway/discovery",
+  "Docs: https://docs.openclaw.ai/gateway/remote": "文档：https://docs.openclaw.ai/gateway/remote",
+  "Enter URL manually": "手动输入 URL",
+  "Gateway WebSocket URL": "Gateway WebSocket URL",
+  "Gateway token": "Gateway Token",
+  "No auth": "无认证",
+  "No gateways found": "未找到 Gateway",
+  "SSH tunnel": "SSH 隧道",
+  "SSH tunnel (loopback)": "SSH 隧道（回环）",
+  "Searching for gateways…": "正在搜索 Gateway…",
+  "Select gateway": "选择 Gateway",
+  "Start a tunnel before using the CLI:": "在使用 CLI 之前请先启动隧道：",
+  "Token (recommended)": "Token (推荐)",
+  "URL must start with ws:// or wss://": "URL 必须以 ws:// 或 wss:// 开头",
+  "host unknown": "主机未知",
 
   // =====================================================================================
   // 模块: src/commands/onboard-skills.ts
   // =====================================================================================
-  "Configure skills now? (recommended)": "[TODO] Configure skills now? (recommended)",
-  "Continue without installing dependencies": "[TODO] Continue without installing dependencies",
-  "Docs: https://docs.openclaw.ai/skills": "[TODO] Docs: https://docs.openclaw.ai/skills",
-  "Homebrew install": "[TODO] Homebrew install",
-  "Homebrew recommended": "[TODO] Homebrew recommended",
-  "Install missing skill dependencies": "[TODO] Install missing skill dependencies",
-  "Many skill dependencies are shipped via Homebrew.":
-    "[TODO] Many skill dependencies are shipped via Homebrew.",
-  "Preferred node manager for skill installs": "[TODO] Preferred node manager for skill installs",
-  "Show Homebrew install command?": "[TODO] Show Homebrew install command?",
-  "Skills status": "[TODO] Skills status",
-  "Skip for now": "[TODO] Skip for now",
-  "openclaw doctor": "[TODO] openclaw doctor",
+  "Configure skills now? (recommended)": "现在配置 Skills？（推荐）",
+  "Continue without installing dependencies": "继续而不安装依赖项",
+  "Docs: https://docs.openclaw.ai/skills": "文档：https://docs.openclaw.ai/skills",
+  "Homebrew install": "Homebrew 安装",
+  "Homebrew recommended": "推荐使用 Homebrew",
+  "Install missing skill dependencies": "安装缺失的 Skills 依赖项",
+  "Many skill dependencies are shipped via Homebrew.": "许多 Skills 依赖项通过 Homebrew 分发。",
+  "Preferred node manager for skill installs": "安装 Skills 的首选 Node 管理器",
+  "Show Homebrew install command?": "显示 Homebrew 安装命令？",
 
   // =====================================================================================
   // 模块: src/commands/onboard.ts
   // =====================================================================================
   'Auth choice "claude-cli" is deprecated; using setup-token flow instead.':
-    '[TODO] Auth choice "claude-cli" is deprecated; using setup-token flow instead.',
+    '认证选项 "claude-cli" 已弃用；请改用 setup-token 流程。',
   'Auth choice "codex-cli" is deprecated; using OpenAI Codex OAuth instead.':
-    '[TODO] Auth choice "codex-cli" is deprecated; using OpenAI Codex OAuth instead.',
-  "Guide: https://docs.openclaw.ai/windows": "[TODO] Guide: https://docs.openclaw.ai/windows",
+    '认证选项 "codex-cli" 已弃用；请改用 OpenAI Codex OAuth。',
+  "Guide: https://docs.openclaw.ai/windows": "指南：https://docs.openclaw.ai/windows",
   "Non-interactive onboarding requires explicit risk acknowledgement.":
-    "[TODO] Non-interactive onboarding requires explicit risk acknowledgement.",
-  "Read: https://docs.openclaw.ai/security": "[TODO] Read: https://docs.openclaw.ai/security",
+    "非交互式引导需要明确的风险确认。",
+  "Read: https://docs.openclaw.ai/security": "阅读：https://docs.openclaw.ai/security",
   'Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".':
-    '[TODO] Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".',
+    '请使用 "--auth-choice token" (Anthropic setup-token) 或 "--auth-choice openai-codex"。',
   "WSL2 is strongly recommended; native Windows is untested and more problematic.":
-    "[TODO] WSL2 is strongly recommended; native Windows is untested and more problematic.",
-  "Windows detected.": "[TODO] Windows detected.",
+    "强烈建议使用 WSL2；原生 Windows 环境未经测试，且存在较多问题。",
+  "Windows detected.": "检测到 Windows。",
   "openclaw onboard --non-interactive --accept-risk ...":
-    "[TODO] openclaw onboard --non-interactive --accept-risk ...",
+    "openclaw onboard --non-interactive --accept-risk ...",
 
   // =====================================================================================
   // 模块: src/commands/onboarding/plugin-install.ts
   // =====================================================================================
-  "Plugin install": "[TODO] Plugin install",
-  "Skip for now": "[TODO] Skip for now",
-  "Use local plugin path": "[TODO] Use local plugin path",
+  "Plugin install": "插件安装",
+  "Use local plugin path": "使用本地插件路径",
 
   // =====================================================================================
   // 模块: src/commands/reset.ts
   // =====================================================================================
-  "Config + credentials + sessions": "[TODO] Config + credentials + sessions",
-  "Config only": "[TODO] Config only",
-  "Full reset": "[TODO] Full reset",
+  "Config + credentials + sessions": "配置 + 凭据 + 会话",
+  "Config only": "仅配置",
+  "Full reset": "完全重置",
   'Invalid --scope. Expected "config", "config+creds+sessions", or "full".':
-    '[TODO] Invalid --scope. Expected "config", "config+creds+sessions", or "full".',
-  "Non-interactive mode requires --scope.": "[TODO] Non-interactive mode requires --scope.",
-  "Non-interactive mode requires --yes.": "[TODO] Non-interactive mode requires --yes.",
-  "Reset cancelled.": "[TODO] Reset cancelled.",
-  "Reset scope": "[TODO] Reset scope",
-  "[dry-run] stop gateway service": "[TODO] [dry-run] stop gateway service",
-  "config+creds+sessions": "[TODO] config+creds+sessions",
-  "keeps workspace + auth profiles": "[TODO] keeps workspace + auth profiles",
-  "openclaw onboard --install-daemon": "[TODO] openclaw onboard --install-daemon",
-  "openclaw.json": "[TODO] openclaw.json",
-  "state dir + workspace": "[TODO] state dir + workspace",
+    '无效的 --scope。应为 "config"、"config+creds+sessions" 或 "full"。',
+  "Non-interactive mode requires --scope.": "非交互式模式需要 --scope。",
+  "Non-interactive mode requires --yes.": "非交互式模式需要 --yes。",
+  "Reset cancelled.": "重置已取消。",
+  "Reset scope": "重置范围",
+  "[dry-run] stop gateway service": "[试运行] 停止 Gateway 服务",
+  "config+creds+sessions": "config+creds+sessions",
+  "keeps workspace + auth profiles": "保留工作区 + 认证配置文件",
+  "openclaw onboard --install-daemon": "openclaw onboard --install-daemon",
+  "openclaw.json": "openclaw.json",
+  "state dir + workspace": "状态目录 + 工作区",
 
   // =====================================================================================
   // 模块: src/commands/sandbox-display.ts
   // =====================================================================================
-  "\nContainers to be recreated:\n": "[TODO] \nContainers to be recreated:\n",
-  "No sandbox browser containers found.": "[TODO] No sandbox browser containers found.",
-  "No sandbox containers found.": "[TODO] No sandbox containers found.",
-  "openclaw sandbox recreate --all": "[TODO] openclaw sandbox recreate --all",
-  "🌐 Sandbox Browser Containers:": "[TODO] 🌐 Sandbox Browser Containers:",
-  "📦 Sandbox Containers:": "[TODO] 📦 Sandbox Containers:",
+  "\nContainers to be recreated:\n": "\n将要重新创建的容器：\n",
+  "\nContainers will be automatically recreated when the agent is next used.":
+    "\n容器将在下次使用 Agent 时自动重新创建。",
+  "\n🌐 Browser Containers:": "\n🌐 浏览器容器：",
+  "No sandbox browser containers found.": "未找到沙盒浏览器容器。",
+  "No sandbox containers found.": "未找到沙盒容器。",
+  "🌐 Sandbox Browser Containers:": "🌐 沙盒浏览器容器：",
+  "📦 Sandbox Containers:": "📦 沙盒容器：",
 
   // =====================================================================================
   // 模块: src/commands/sandbox-explain.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Effective sandbox:": "[TODO] Effective sandbox:",
-  "Sandbox tool policy:": "[TODO] Sandbox tool policy:",
-  "failing gates:": "[TODO] failing gates:",
+  "Effective sandbox:": "生效的沙盒：",
+  "Sandbox tool policy:": "沙盒工具策略：",
+  "failing gates:": "失败的门禁（gates）：",
 
   // =====================================================================================
   // 模块: src/commands/sandbox-formatters.ts
   // =====================================================================================
-  "⚠️  mismatch": "[TODO] ⚠️  mismatch",
-  "⚫ stopped": "[TODO] ⚫ stopped",
-  "🟢 running": "[TODO] 🟢 running",
+  "⚠️  mismatch": "⚠️  不匹配",
+  "⚫ stopped": "⚫ 已停止",
+  "🟢 running": "🟢 运行中",
 
   // =====================================================================================
   // 模块: src/commands/sandbox.ts
   // =====================================================================================
-  "\nRemoving containers...\n": "[TODO] \nRemoving containers...\n",
-  "No containers found matching the criteria.": "[TODO] No containers found matching the criteria.",
+  "\nRemoving containers...\n": "\nRemoving containers...\n",
+  "No containers found matching the criteria.": "未找到符合条件的容器。",
   "Please specify --all, --session <key>, or --agent <id>":
-    "[TODO] Please specify --all, --session <key>, or --agent <id>",
+    "请指定 --all、--session <key> 或 --agent <id>",
   "Please specify only one of: --all, --session, --agent":
-    "[TODO] Please specify only one of: --all, --session, --agent",
-  "This will stop and remove these containers. Continue?":
-    "[TODO] This will stop and remove these containers. Continue?",
+    "请仅指定以下参数之一：--all、--session、--agent",
+  "This will stop and remove these containers. Continue?": "这将停止并移除这些容器。是否继续？",
 
   // =====================================================================================
   // 模块: src/commands/sessions.ts
   // =====================================================================================
-  "--active must be a positive integer (minutes)":
-    "[TODO] --active must be a positive integer (minutes)",
-  "No sessions found.": "[TODO] No sessions found.",
-  "Tokens (ctx %)": "[TODO] Tokens (ctx %)",
-  "just now": "[TODO] just now",
+  "--active must be a positive integer (minutes)": "--active 必须是一个正整数（分钟）",
+  "No sessions found.": "未找到会话。",
+  "Tokens (ctx %)": "Tokens (ctx %)",
+  "just now": "刚刚",
 
   // =====================================================================================
   // 模块: src/commands/setup.ts
   // =====================================================================================
-  "(set agents.defaults.workspace)": "[TODO] (set agents.defaults.workspace)",
+  "(set agents.defaults.workspace)": "(设置 agents.defaults.workspace)",
 
   // =====================================================================================
   // 模块: src/commands/signal-install.ts
   // =====================================================================================
-  "No compatible release asset found for this platform.":
-    "[TODO] No compatible release asset found for this platform.",
-  "Redirect loop or missing Location header": "[TODO] Redirect loop or missing Location header",
+  "No compatible release asset found for this platform.": "未找到适用于该平台的兼容发布资源。",
+  "Redirect loop or missing Location header": "重定向循环或缺少 Location 头",
   "Signal CLI auto-install is not supported on Windows yet.":
-    "[TODO] Signal CLI auto-install is not supported on Windows yet.",
+    "Signal CLI 自动安装目前尚不支持 Windows。",
 
   // =====================================================================================
   // 模块: src/commands/status-all.ts
   // =====================================================================================
-  " (remote.url missing)": "[TODO]  (remote.url missing)",
-  " · ": "[TODO]  · ",
-  "(unknown config path)": "[TODO] (unknown config path)",
-  "Checking Tailscale…": "[TODO] Checking Tailscale…",
-  "Checking for updates…": "[TODO] Checking for updates…",
-  "Checking local state…": "[TODO] Checking local state…",
-  "Checking services…": "[TODO] Checking services…",
+  " (remote.url missing)": " (缺少 remote.url)",
+  "(unknown config path)": "(未知配置路径)",
+  "Checking Tailscale…": "正在检查 Tailscale…",
+  "Checking for updates…": "正在检查更新…",
+  "Checking local state…": "正在检查本地状态…",
+  "Checking services…": "正在检查服务…",
   "Fix: set gateway.remote.url, or set gateway.mode=local.":
-    "[TODO] Fix: set gateway.remote.url, or set gateway.mode=local.",
-  "Gateway mode: remote": "[TODO] Gateway mode: remote",
-  "Gateway self": "[TODO] Gateway self",
-  "Gateway service": "[TODO] Gateway service",
-  "Gateway target: (missing gateway.remote.url)":
-    "[TODO] Gateway target: (missing gateway.remote.url)",
-  "Loading config…": "[TODO] Loading config…",
-  "Node service": "[TODO] Node service",
-  "Probing gateway…": "[TODO] Probing gateway…",
-  "Querying gateway…": "[TODO] Querying gateway…",
-  "Scanning agents…": "[TODO] Scanning agents…",
-  "Scanning status --all…": "[TODO] Scanning status --all…",
-  "Summarizing channels…": "[TODO] Summarizing channels…",
-  "deps missing": "[TODO] deps missing",
-  "deps ok": "[TODO] deps ok",
-  "deps stale": "[TODO] deps stale",
-  "fetch failed": "[TODO] fetch failed",
-  "gateway unreachable": "[TODO] gateway unreachable",
-  "installed · ": "[TODO] installed · ",
-  "npm latest unknown": "[TODO] npm latest unknown",
-  "openclaw security audit --deep": "[TODO] openclaw security audit --deep",
-  "up to date": "[TODO] up to date",
+    "修复：设置 gateway.remote.url，或设置 gateway.mode=local。",
+  "Gateway mode: remote": "Gateway 模式：远程",
+  "Gateway self": "Gateway 自身",
+  "Gateway target: (missing gateway.remote.url)": "Gateway 目标：(缺少 gateway.remote.url)",
+  "Loading config…": "正在加载配置…",
+  "Node service": "Node 服务",
+  "Probing gateway…": "正在探测 Gateway…",
+  "Querying gateway…": "正在查询 Gateway…",
+  "Scanning agents…": "正在扫描 Agents…",
+  "Scanning status --all…": "正在扫描 status --all…",
+  "Summarizing channels…": "正在汇总频道…",
+  "deps missing": "依赖缺失",
+  "deps ok": "依赖正常",
+  "deps stale": "依赖过时",
+  "fetch failed": "获取失败",
+  "gateway unreachable": "Gateway 无法访问",
+  "installed · ": "已安装 · ",
+  "npm latest unknown": "npm 最新版本未知",
+  "up to date": "最新",
 
   // =====================================================================================
   // 模块: src/commands/status-all/channels.ts
   // =====================================================================================
-  " · ": "[TODO]  · ",
-  "no token": "[TODO] no token",
-  "no tokens (need bot+app)": "[TODO] no tokens (need bot+app)",
-  "not configured": "未配置",
-  "not linked": "未链接",
+  "no token": "无 Token",
+  "no tokens (need bot+app)": "无 Token（需要 bot+app）",
 
   // =====================================================================================
   // 模块: src/commands/status-all/diagnosis.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "Config: read failed": "[TODO] Config: read failed",
-  "Fix: set gateway.remote.url, or set gateway.mode=local.":
-    "[TODO] Fix: set gateway.remote.url, or set gateway.mode=local.",
-  "Gateway connection details:": "[TODO] Gateway connection details:",
-  "Gateway health:": "[TODO] Gateway health:",
-  "Gateway last log line:": "[TODO] Gateway last log line:",
+  "Config: read failed": "配置：读取失败",
+  "Gateway connection details:": "Gateway 连接详情：",
+  "Gateway health:": "Gateway 健康状况：",
+  "Gateway last log line:": "Gateway 最后一条日志：",
   "Gateway remote mode misconfigured (gateway.remote.url missing)":
-    "[TODO] Gateway remote mode misconfigured (gateway.remote.url missing)",
-  "Pasteable debug report. Auth tokens redacted.":
-    "[TODO] Pasteable debug report. Auth tokens redacted.",
-  "Reading logs…": "[TODO] Reading logs…",
-  "Restart sentinel present": "[TODO] Restart sentinel present",
-  "Restart sentinel: none": "[TODO] Restart sentinel: none",
-  "Troubleshooting: https://docs.openclaw.ai/troubleshooting":
-    "[TODO] Troubleshooting: https://docs.openclaw.ai/troubleshooting",
-  "[unserializable error]": "[TODO] [unserializable error]",
-  "query failed": "[TODO] query failed",
+    "Gateway 远程模式配置错误（缺少 gateway.remote.url）",
+  "Pasteable debug report. Auth tokens redacted.": "可粘贴的调试报告。认证 Tokens 已脱敏。",
+  "Reading logs…": "正在读取日志…",
+  "Restart sentinel present": "存在重启哨兵",
+  "Restart sentinel: none": "重启哨兵：无",
+  "[unserializable error]": "[无法序列化的错误]",
+  "query failed": "查询失败",
 
   // =====================================================================================
   // 模块: src/commands/status-all/format.ts
   // =====================================================================================
-  "Bearer ***": "[TODO] Bearer ***",
-  "just now": "[TODO] just now",
+  "Bearer ***": "Bearer ***",
 
   // =====================================================================================
   // 模块: src/commands/status-all/gateway.ts
   // =====================================================================================
-  "OAuth token refresh failed": "[TODO] OAuth token refresh failed",
-  "re-auth required": "[TODO] re-auth required",
-  "signing in again": "[TODO] signing in again",
+  "OAuth token refresh failed": "OAuth Token 刷新失败",
+  "re-auth required": "需要重新认证",
+  "signing in again": "正在重新登录",
 
   // =====================================================================================
   // 模块: src/commands/status-all/report-lines.ts
   // =====================================================================================
-  "Diagnosis (read-only)": "[TODO] Diagnosis (read-only)",
-  "OpenClaw status --all": "[TODO] OpenClaw status --all",
+  "Diagnosis (read-only)": "诊断（只读）",
+  "OpenClaw status --all": "OpenClaw status --all",
 
   // =====================================================================================
   // 模块: src/commands/status.command.ts
   // =====================================================================================
-  " · ": "[TODO]  · ",
-  ", ": "[TODO] , ",
-  CRITICAL: "[TODO] CRITICAL",
-  "Checking gateway health…": "[TODO] Checking gateway health…",
-  "FAQ: https://docs.openclaw.ai/faq": "[TODO] FAQ: https://docs.openclaw.ai/faq",
-  "Fetching usage snapshot…": "[TODO] Fetching usage snapshot…",
-  "Gateway connection:": "[TODO] Gateway connection:",
-  "Gateway service": "[TODO] Gateway service",
-  "Next steps:": "[TODO] Next steps:",
-  "No critical or warn findings detected.": "[TODO] No critical or warn findings detected.",
-  "Node service": "[TODO] Node service",
-  "OpenClaw status": "[TODO] OpenClaw status",
-  "Running security audit…": "[TODO] Running security audit…",
-  "Security audit": "[TODO] Security audit",
-  "System events": "[TODO] System events",
+  "FAQ: https://docs.openclaw.ai/faq": "常见问题 (FAQ): https://docs.openclaw.ai/faq",
+  "Fetching usage snapshot…": "正在获取用量快照…",
+  "Next steps:": "后续步骤：",
+  "No critical or warn findings detected.": "未检测到严重或警告发现。",
+  "OpenClaw status": "OpenClaw 状态",
+  "Running security audit…": "正在运行安全审计…",
+  "Security audit": "安全审计",
+  "System events": "系统事件",
   "Troubleshooting: https://docs.openclaw.ai/troubleshooting":
-    "[TODO] Troubleshooting: https://docs.openclaw.ai/troubleshooting",
-  WARN: "[TODO] WARN",
-  "fts off": "[TODO] fts off",
-  "installed · ": "[TODO] installed · ",
-  "misconfigured (remote.url missing)": "[TODO] misconfigured (remote.url missing)",
-  "no activity": "[TODO] no activity",
-  "no bootstraps": "[TODO] no bootstraps",
-  "no sessions yet": "[TODO] no sessions yet",
-  "not configured": "未配置",
-  "not linked": "未链接",
-  "openclaw gateway probe": "[TODO] openclaw gateway probe",
-  "openclaw logs --follow": "[TODO] openclaw logs --follow",
-  "openclaw security audit": "[TODO] openclaw security audit",
-  "openclaw security audit --deep": "[TODO] openclaw security audit --deep",
-  "openclaw status --all": "[TODO] openclaw status --all",
-  "openclaw status --deep": "[TODO] openclaw status --deep",
-  "skipped (use --deep)": "[TODO] skipped (use --deep)",
-  "vector off": "[TODO] vector off",
+    "故障排除: https://docs.openclaw.ai/troubleshooting",
+  "fts off": "fts 关闭",
+  "misconfigured (remote.url missing)": "配置错误（缺少 remote.url）",
+  "no bootstraps": "无引导程序",
+  "no sessions yet": "暂无会话",
+  "openclaw gateway probe": "openclaw gateway probe",
+  "openclaw logs --follow": "openclaw logs --follow",
+  "openclaw security audit": "openclaw security audit",
+  "openclaw status --all": "openclaw status --all",
+  "openclaw status --deep": "openclaw status --deep",
+  "skipped (use --deep)": "已跳过（使用 --deep）",
+  "vector off": "向量关闭",
 
   // =====================================================================================
   // 模块: src/commands/status.format.ts
   // =====================================================================================
-  ", ": "[TODO] , ",
-  "could not find service": "[TODO] could not find service",
-  "just now": "[TODO] just now",
+  "could not find service": "找不到服务",
 
   // =====================================================================================
   // 模块: src/commands/status.scan.ts
   // =====================================================================================
-  "Checking Tailscale…": "[TODO] Checking Tailscale…",
-  "Checking for updates…": "[TODO] Checking for updates…",
-  "Checking memory…": "[TODO] Checking memory…",
-  "Loading config…": "[TODO] Loading config…",
-  "Probing gateway…": "[TODO] Probing gateway…",
-  "Querying channel status…": "[TODO] Querying channel status…",
-  "Reading sessions…": "[TODO] Reading sessions…",
-  "Resolving agents…": "[TODO] Resolving agents…",
-  "Scanning status…": "[TODO] Scanning status…",
-  "Summarizing channels…": "[TODO] Summarizing channels…",
-  "plugins disabled": "[TODO] plugins disabled",
-
-  // =====================================================================================
-  // 模块: src/commands/status.update.ts
-  // =====================================================================================
-  " · ": "[TODO]  · ",
-  "deps missing": "[TODO] deps missing",
-  "deps ok": "[TODO] deps ok",
-  "deps stale": "[TODO] deps stale",
-  "fetch failed": "[TODO] fetch failed",
-  "npm latest unknown": "[TODO] npm latest unknown",
-  "openclaw update": "[TODO] openclaw update",
-  "up to date": "[TODO] up to date",
+  "Querying channel status…": "正在查询频道状态…",
+  "Reading sessions…": "正在读取会话…",
+  "Resolving agents…": "正在解析 Agents…",
+  "Scanning status…": "正在扫描状态…",
 
   // =====================================================================================
   // 模块: src/commands/systemd-linger.ts
   // =====================================================================================
   "Enabling lingering now (may require sudo; writes /var/lib/systemd/linger).":
-    "[TODO] Enabling lingering now (may require sudo; writes /var/lib/systemd/linger).",
+    "正在启用驻留模式（可能需要 sudo；将写入 /var/lib/systemd/linger）。",
   "Systemd user services are unavailable. Skipping lingering checks.":
-    "[TODO] Systemd user services are unavailable. Skipping lingering checks.",
+    "Systemd 用户服务不可用。正在跳过驻留检查。",
   "Systemd user services stop when you log out or go idle, which kills the Gateway.":
-    "[TODO] Systemd user services stop when you log out or go idle, which kills the Gateway.",
+    "当您注销或处于闲置状态时，Systemd 用户服务会停止，这会导致 Gateway 进程被关闭。",
   "Unable to read loginctl linger status. Ensure systemd + loginctl are available.":
-    "[TODO] Unable to read loginctl linger status. Ensure systemd + loginctl are available.",
+    "无法读取 loginctl 驻留状态。请确保 systemd 和 loginctl 可用。",
   "We can enable lingering now (may require sudo; writes /var/lib/systemd/linger).":
-    "[TODO] We can enable lingering now (may require sudo; writes /var/lib/systemd/linger).",
+    "我们现在可以启用驻留模式（可能需要 sudo；将写入 /var/lib/systemd/linger）。",
   "Without lingering, the Gateway will stop when you log out.":
-    "[TODO] Without lingering, the Gateway will stop when you log out.",
-  "unknown error": "[TODO] unknown error",
+    "如果不开启驻留模式，Gateway 将在您注销后停止运行。",
 
   // =====================================================================================
   // 模块: src/commands/uninstall.ts
   // =====================================================================================
-  "/Applications/OpenClaw.app": "[TODO] /Applications/OpenClaw.app",
+  "/Applications/OpenClaw.app": "/Applications/OpenClaw.app",
   "CLI still installed. Remove via npm/pnpm if desired.":
-    "[TODO] CLI still installed. Remove via npm/pnpm if desired.",
-  "Gateway service": "[TODO] Gateway service",
+    "CLI 仍然保留。如有需要，请通过 npm/pnpm 移除。",
   "Nix mode detected; service uninstall is disabled.": "检测到 Nix 模式; 服务卸载已禁用。",
-  "Non-interactive mode requires --yes.": "[TODO] Non-interactive mode requires --yes.",
   "Non-interactive mode requires explicit scopes (use --all).":
-    "[TODO] Non-interactive mode requires explicit scopes (use --all).",
-  "Nothing selected.": "[TODO] Nothing selected.",
-  "Proceed with uninstall?": "[TODO] Proceed with uninstall?",
-  "State + config": "[TODO] State + config",
+    "非交互模式需要明确指定范围（使用 --all）。",
+  "Nothing selected.": "未选择任何内容。",
+  "Proceed with uninstall?": "继续卸载？",
+  "State + config": "状态 + 配置",
   "Tip: workspaces were preserved. Re-run with --workspace to remove them.":
-    "[TODO] Tip: workspaces were preserved. Re-run with --workspace to remove them.",
-  "Uninstall cancelled.": "[TODO] Uninstall cancelled.",
-  "Uninstall which components?": "[TODO] Uninstall which components?",
-  Workspace: "[TODO] Workspace",
-  "[dry-run] remove gateway service": "[TODO] [dry-run] remove gateway service",
-  "agent files": "[TODO] agent files",
-  "launchd / systemd / schtasks": "[TODO] launchd / systemd / schtasks",
-  "macOS app": "[TODO] macOS app",
-  "~/.openclaw": "[TODO] ~/.openclaw",
+    "提示：工作区已被保留。如需移除，请带上 --workspace 参数重新运行。",
+  "Uninstall cancelled.": "卸载已取消。",
+  "Uninstall which components?": "要卸载哪些组件？",
+  "[dry-run] remove gateway service": "[试运行] 移除 Gateway 服务",
+  "agent files": "Agent 文件",
+  "launchd / systemd / schtasks": "launchd / systemd / schtasks",
+  "macOS app": "macOS 应用",
+  "~/.openclaw": "~/.openclaw",
 
   // =====================================================================================
   // 模块: src/tui/commands.ts
   // =====================================================================================
-  "Abort active run": "[TODO] Abort active run",
-  "Alias for /elevated": "[TODO] Alias for /elevated",
-  "Exit the TUI": "[TODO] Exit the TUI",
-  "Open agent picker": "[TODO] Open agent picker",
-  "Open model picker": "[TODO] Open model picker",
-  "Open session picker": "[TODO] Open session picker",
-  "Open settings": "[TODO] Open settings",
-  "Reset the session": "[TODO] Reset the session",
-  "Set elevated on/off/ask/full": "[TODO] Set elevated on/off/ask/full",
-  "Set group activation": "[TODO] Set group activation",
-  "Set model (or open picker)": "[TODO] Set model (or open picker)",
-  "Set reasoning on/off": "[TODO] Set reasoning on/off",
-  "Set thinking level": "[TODO] Set thinking level",
-  "Set verbose on/off": "[TODO] Set verbose on/off",
-  "Show gateway status summary": "[TODO] Show gateway status summary",
-  "Show slash command help": "[TODO] Show slash command help",
-  "Slash commands:": "[TODO] Slash commands:",
-  "Switch agent (or open picker)": "[TODO] Switch agent (or open picker)",
-  "Switch session (or open picker)": "[TODO] Switch session (or open picker)",
-  "Toggle per-response usage line": "[TODO] Toggle per-response usage line",
+  "Abort active run": "中止活动运行",
+  "Alias for /elevated": "/elevated 的别名",
+  "Exit the TUI": "退出 TUI",
+  "Open agent picker": "打开 Agent 选择器",
+  "Open model picker": "打开模型选择器",
+  "Open session picker": "打开会话选择器",
+  "Open settings": "打开设置",
+  "Reset the session": "重置会话",
+  "Set elevated on/off/ask/full": "设置提升权限 on/off/ask/full",
+  "Set group activation": "设置组激活",
+  "Set model (or open picker)": "设置模型（或打开选择器）",
+  "Set reasoning on/off": "设置推理 on/off",
+  "Set thinking level": "设置思考级别",
+  "Set verbose on/off": "设置详细模式 on/off",
+  "Show gateway status summary": "显示 Gateway 状态摘要",
+  "Show slash command help": "显示斜杠命令帮助",
+  "Slash commands:": "斜杠命令：",
+  "Switch agent (or open picker)": "切换 Agent（或打开选择器）",
+  "Switch session (or open picker)": "切换会话（或打开选择器）",
+  "Toggle per-response usage line": "切换每次响应的使用情况行",
 
   // =====================================================================================
   // 模块: src/tui/components/filterable-select-list.ts
   // =====================================================================================
-  "Filter: ": "[TODO] Filter: ",
+  "Filter: ": "过滤：",
 
   // =====================================================================================
   // 模块: src/tui/components/searchable-select-list.ts
   // =====================================================================================
-  "  ": "[TODO]   ",
-  "  No matches": "[TODO]   No matches",
-  "search: ": "[TODO] search: ",
-  "→ ": "[TODO] → ",
+  "  No matches": "  无匹配",
+  "search: ": "搜索：",
+  "→ ": "→ ",
 
   // =====================================================================================
   // 模块: src/tui/components/tool-execution.ts
   // =====================================================================================
-  " (omitted)": "[TODO]  (omitted)",
-  " (running)": "[TODO]  (running)",
+  " (omitted)": " (已省略)",
+  " (running)": " (运行中)",
 
   // =====================================================================================
   // 模块: src/tui/theme/theme.ts
   // 功能: TUI 主题定义
   // =====================================================================================
-  "#E8E3D5": "[TODO] #E8E3D5",
-  "→ ": "[TODO] → ",
+  "#E8E3D5": "#E8E3D5",
 
   // =====================================================================================
   // 模块: src/tui/tui-command-handlers.ts
   // =====================================================================================
-  "Show thinking": "[TODO] Show thinking",
-  "Tool output": "[TODO] Tool output",
-  "no agents found": "[TODO] no agents found",
-  "no models available": "[TODO] no models available",
-  "status: unknown response": "[TODO] status: unknown response",
-  "usage: /activation <mention|always>": "[TODO] usage: /activation <mention|always>",
-  "usage: /elevated <on|off|ask|full>": "[TODO] usage: /elevated <on|off|ask|full>",
-  "usage: /reasoning <on|off>": "[TODO] usage: /reasoning <on|off>",
-  "usage: /usage <off|tokens|full>": "[TODO] usage: /usage <off|tokens|full>",
-  "usage: /verbose <on|off>": "[TODO] usage: /verbose <on|off>",
+  "Show thinking": "显示思考",
+  "Tool output": "工具输出",
+  "no agents found": "未找到 Agents",
+  "no models available": "无可用模型",
+  "status: unknown response": "状态：未知响应",
+  "usage: /activation <mention|always>": "用法：/activation <mention|always>",
+  "usage: /elevated <on|off|ask|full>": "用法：/elevated <on|off|ask|full>",
+  "usage: /reasoning <on|off>": "用法：/reasoning <on|off>",
+  "usage: /usage <off|tokens|full>": "用法：/usage <off|tokens|full>",
+  "usage: /verbose <on|off>": "用法：/verbose <on|off>",
 
   // =====================================================================================
   // 模块: src/tui/tui-event-handlers.ts
   // =====================================================================================
-  "run aborted": "[TODO] run aborted",
+  "run aborted": "运行已中止",
 
   // =====================================================================================
   // 模块: src/tui/tui-formatters.ts
   // =====================================================================================
-  "(no output)": "[TODO] (no output)",
-  ", ": "[TODO] , ",
-  "tokens ?": "[TODO] tokens ?",
+  "(no output)": "(无输出)",
+  "tokens ?": "Tokens ?",
 
   // =====================================================================================
   // 模块: src/tui/tui-local-shell.ts
   // =====================================================================================
-  "Allow local shell commands for this session?":
-    "[TODO] Allow local shell commands for this session?",
-  No: "[TODO] No",
-  "Select Yes/No (arrows + Enter), Esc to cancel.":
-    "[TODO] Select Yes/No (arrows + Enter), Esc to cancel.",
+  "Allow local shell commands for this session?": "是否允许在此会话中使用本地 Shell 命令？",
+  No: "否",
+  "Select Yes/No (arrows + Enter), Esc to cancel.": "选择 是/否（方向键 + 回车），Esc 键取消。",
   "This runs commands on YOUR machine (not the gateway) and may delete files or reveal secrets.":
-    "[TODO] This runs commands on YOUR machine (not the gateway) and may delete files or reveal secrets.",
-  Yes: "[TODO] Yes",
-  "local shell: cancelled": "[TODO] local shell: cancelled",
-  "local shell: enabled for this session": "[TODO] local shell: enabled for this session",
-  "local shell: not enabled": "[TODO] local shell: not enabled",
-  "local shell: not enabled for this session": "[TODO] local shell: not enabled for this session",
+    "这将在您的本地机器（而非 Gateway）上执行命令，可能会导致文件被删除或隐私泄露。",
+  Yes: "是",
+  "local shell: cancelled": "本地 Shell：已取消",
+  "local shell: enabled for this session": "本地 Shell：此会话已启用",
+  "local shell: not enabled": "本地 Shell：未启用",
+  "local shell: not enabled for this session": "本地 Shell：此会话未启用",
 
   // =====================================================================================
   // 模块: src/tui/tui-session-actions.ts
   // =====================================================================================
-  "abort failed": "[TODO] abort failed",
-  "no active run": "[TODO] no active run",
+  "abort failed": "中止失败",
+  "no active run": "无活动运行",
 
   // =====================================================================================
   // 模块: src/tui/tui-status-summary.ts
   // =====================================================================================
-  " | ": "[TODO]  | ",
-  ", ": "[TODO] , ",
-  "Gateway status": "[TODO] Gateway status",
-  "Link channel": "[TODO] Link channel",
-  "Link channel: unknown": "[TODO] Link channel: unknown",
-  "Recent sessions:": "[TODO] Recent sessions:",
-  "no activity": "[TODO] no activity",
-  "not linked": "未链接",
+  " | ": " | ",
+  "Gateway status": "Gateway 状态",
+  "Link channel": "链接频道",
+  "Link channel: unknown": "链接频道：未知",
+  "Recent sessions:": "最近会话：",
 
   // =====================================================================================
   // 模块: src/tui/tui-waiting.ts
   // =====================================================================================
-  "twiddling thumbs": "[TODO] twiddling thumbs",
+  "twiddling thumbs": "摸鱼中",
 
   // =====================================================================================
   // 模块: src/tui/tui.ts
   // =====================================================================================
-  " | ": "[TODO]  | ",
-  "cleared input": "[TODO] cleared input",
-  "gateway connected": "[TODO] gateway connected",
-  "gateway reconnected": "[TODO] gateway reconnected",
-  "press ctrl+c again to exit": "[TODO] press ctrl+c again to exit",
-  "tools collapsed": "[TODO] tools collapsed",
-  "tools expanded": "[TODO] tools expanded",
-
-  // =====================================================================================
-  // 模块: src/wizard/clack-prompter.ts
-  // =====================================================================================
-  "Setup cancelled.": "[TODO] Setup cancelled.",
+  "cleared input": "已清除输入",
+  "gateway connected": "Gateway 已连接",
+  "gateway reconnected": "Gateway 已重连",
+  "press ctrl+c again to exit": "再次按 ctrl+c 退出",
+  "tools collapsed": "工具已折叠",
+  "tools expanded": "工具已展开",
 
   // =====================================================================================
   // 模块: src/wizard/onboarding.finalize.ts
   // 功能: 引导流程结束步骤
   // =====================================================================================
   "API key: provided via BRAVE_API_KEY env var (Gateway environment).":
-    "[TODO] API key: provided via BRAVE_API_KEY env var (Gateway environment).",
+    "API 密钥：通过 BRAVE_API_KEY 环境变量提供（Gateway 环境）。",
   "API key: stored in config (tools.web.search.apiKey).":
-    "[TODO] API key: stored in config (tools.web.search.apiKey).",
-  "Add nodes for extra features:": "[TODO] Add nodes for extra features:",
+    "API 密钥：存储在配置中 (tools.web.search.apiKey)。",
+  "Add nodes for extra features:": "添加节点以获取额外功能：",
   "Alternative: set BRAVE_API_KEY in the Gateway environment (no config changes).":
-    "[TODO] Alternative: set BRAVE_API_KEY in the Gateway environment (no config changes).",
-  "Back up your agent workspace.": "[TODO] Back up your agent workspace.",
-  "Control UI": "[TODO] Control UI",
+    "备选方案：在 Gateway 环境中设置 BRAVE_API_KEY（无需更改配置）。",
+  "Back up your agent workspace.": "备份您的 Agent 工作区。",
   "Copy/paste this URL in a browser on this machine to control OpenClaw.":
-    "[TODO] Copy/paste this URL in a browser on this machine to control OpenClaw.",
-  "Dashboard ready": "[TODO] Dashboard ready",
-  "Do this later": "[TODO] Do this later",
+    "在本机浏览器中复制并粘贴此 URL 以控制 OpenClaw。",
+  "Dashboard ready": "控制面板已就绪",
+  "Do this later": "稍后再说",
   "Docs: https://docs.openclaw.ai/concepts/agent-workspace":
-    "[TODO] Docs: https://docs.openclaw.ai/concepts/agent-workspace",
-  "Docs: https://docs.openclaw.ai/tools/web": "[TODO] Docs: https://docs.openclaw.ai/tools/web",
-  "Docs: https://docs.openclaw.ai/web/control-ui":
-    "[TODO] Docs: https://docs.openclaw.ai/web/control-ui",
-  Gateway: "[TODO] Gateway",
-  "Gateway service": "[TODO] Gateway service",
-  "Gateway service already installed": "[TODO] Gateway service already installed",
-  "Gateway service install failed.": "[TODO] Gateway service install failed.",
-  "Gateway service installed.": "[TODO] Gateway service installed.",
-  "Gateway service restarted.": "[TODO] Gateway service restarted.",
-  "Gateway service runtime": "[TODO] Gateway service runtime",
-  "Gateway service uninstalled.": "[TODO] Gateway service uninstalled.",
+    "文档: https://docs.openclaw.ai/concepts/agent-workspace",
   "Gateway token: shared auth for the Gateway + Control UI.":
-    "[TODO] Gateway token: shared auth for the Gateway + Control UI.",
-  "Gateway: reachable": "[TODO] Gateway: reachable",
-  "Hatch in TUI (recommended)": "[TODO] Hatch in TUI (recommended)",
-  "Health check help": "[TODO] Health check help",
-  "How do you want to hatch your bot?": "[TODO] How do you want to hatch your bot?",
+    "Gateway Token：Gateway 与控制界面的共享认证信息。",
+  "Hatch in TUI (recommended)": "在 TUI 中孵化（推荐）",
+  "How do you want to hatch your bot?": "您想如何孵化您的 Bot？",
   "If you want your agent to be able to search the web, you’ll need an API key.":
-    "[TODO] If you want your agent to be able to search the web, you’ll need an API key.",
-  "Install Gateway service (recommended)": "[TODO] Install Gateway service (recommended)",
-  "Installing Gateway service…": "[TODO] Installing Gateway service…",
-  Later: "[TODO] Later",
+    "如果您希望 Agent 能够搜索网络，您需要一个 API 密钥。",
+  "Install Gateway service (recommended)": "安装 Gateway 服务（推荐）",
+  Later: "以后",
   "Linux installs use a systemd user service by default. Without lingering, systemd stops the user session on logout/idle and kills the Gateway.":
-    "[TODO] Linux installs use a systemd user service by default. Without lingering, systemd stops the user session on logout/idle and kills the Gateway.",
+    "Linux 安装默认使用 systemd 用户服务。如果不开启驻留（lingering），systemd 会在注销/闲置时停止用户会话并关闭 Gateway。",
   "Onboarding complete. Dashboard opened with your token; keep that tab to control OpenClaw.":
-    "[TODO] Onboarding complete. Dashboard opened with your token; keep that tab to control OpenClaw.",
+    "新手引导完成。控制面板已使用您的 Token 打开；请保留该标签页以控制 OpenClaw。",
   "Onboarding complete. Use the tokenized dashboard link above to control OpenClaw.":
-    "[TODO] Onboarding complete. Use the tokenized dashboard link above to control OpenClaw.",
+    "新手引导完成。请使用上方带有 Token 的控制面板链接来控制 OpenClaw。",
   "Onboarding complete. Web UI seeded in the background; open it anytime with the tokenized link above.":
-    "[TODO] Onboarding complete. Web UI seeded in the background; open it anytime with the tokenized link above.",
-  "Open the Web UI": "[TODO] Open the Web UI",
+    "新手引导完成。Web 界面已在后台初始化；随时可以通过上方带有 Token 的链接打开。",
+  "Open the Web UI": "打开 Web 界面",
   "OpenClaw uses Brave Search for the `web_search` tool. Without a Brave Search API key, web search won’t work.":
-    "[TODO] OpenClaw uses Brave Search for the `web_search` tool. Without a Brave Search API key, web search won’t work.",
-  "Opened in your browser. Keep that tab to control OpenClaw.":
-    "[TODO] Opened in your browser. Keep that tab to control OpenClaw.",
-  "Optional apps": "[TODO] Optional apps",
-  "Please take your time.": "[TODO] Please take your time.",
-  "Preparing Gateway service…": "[TODO] Preparing Gateway service…",
+    "OpenClaw 使用 Brave Search 作为 `web_search` 工具。如果没有 Brave Search API 密钥，网络搜索将无法工作。",
+  "Optional apps": "可选应用",
+  "Please take your time.": "请不要着急。",
   "QuickStart uses Node for the Gateway service (stable + supported).":
-    "[TODO] QuickStart uses Node for the Gateway service (stable + supported).",
-  Reinstall: "[TODO] Reinstall",
-  Restart: "[TODO] Restart",
-  "Restarting Gateway service…": "[TODO] Restarting Gateway service…",
+    "快速启动使用 Node 运行 Gateway 服务（稳定且受支持）。",
   "Running agents on your computer is risky — harden your setup: https://docs.openclaw.ai/security":
-    "[TODO] Running agents on your computer is risky — harden your setup: https://docs.openclaw.ai/security",
-  Security: "[TODO] Security",
-  "Set it up interactively:": "[TODO] Set it up interactively:",
-  Skip: "[TODO] Skip",
-  "Skipping Control UI/TUI prompts.": "[TODO] Skipping Control UI/TUI prompts.",
-  "Start TUI (best option!)": "[TODO] Start TUI (best option!)",
+    "在您的电脑上运行 Agent 是有风险的 —— 请加固您的设置：https://docs.openclaw.ai/security",
+  Security: "安全",
+  "Set it up interactively:": "以交互方式设置：",
+  "Skipping Control UI/TUI prompts.": "正在跳过控制界面/TUI 提示。",
+  "Start TUI (best option!)": "启动 TUI（最佳选择！）",
   "Stored in: ~/.openclaw/openclaw.json (gateway.auth.token) or OPENCLAW_GATEWAY_TOKEN.":
-    "[TODO] Stored in: ~/.openclaw/openclaw.json (gateway.auth.token) or OPENCLAW_GATEWAY_TOKEN.",
-  Systemd: "[TODO] Systemd",
+    "存储在：~/.openclaw/openclaw.json (gateway.auth.token) 或 OPENCLAW_GATEWAY_TOKEN。",
+  Systemd: "Systemd",
   "Systemd user services are unavailable. Skipping lingering checks and service install.":
-    "[TODO] Systemd user services are unavailable. Skipping lingering checks and service install.",
+    "Systemd 用户服务不可用。正在跳过驻留检查和 Gateway 服务安装。",
   "Systemd user services are unavailable; skipping service install. Use your container supervisor or `docker compose up -d`.":
-    "[TODO] Systemd user services are unavailable; skipping service install. Use your container supervisor or `docker compose up -d`.",
-  "The more you tell it, the better the experience will be.":
-    "[TODO] The more you tell it, the better the experience will be.",
+    "Systemd 用户服务不可用；正在跳过服务安装。请使用您的容器管理器或 `docker compose up -d`。",
+  "The more you tell it, the better the experience will be.": "您告诉它的越多，体验就会越好。",
   "This is the defining action that makes your agent you.":
-    "[TODO] This is the defining action that makes your agent you.",
-  Token: "[TODO] Token",
-  "Uninstalling Gateway service…": "[TODO] Uninstalling Gateway service…",
-  "Wake up, my friend!": "[TODO] Wake up, my friend!",
-  'We will send: "Wake up, my friend!"': '[TODO] We will send: "Wake up, my friend!"',
-  "Web UI": "[TODO] Web UI",
+    "这是让您的 Agent 真正成为“您”的关键一步。",
+  "Wake up, my friend!": "醒醒，我的朋友！",
+  'We will send: "Wake up, my friend!"': "我们将发送：“醒醒，我的朋友！”",
+  "Web UI": "Web 界面",
   "Web UI stores a copy in this browser's localStorage (openclaw.control.settings.v1).":
-    "[TODO] Web UI stores a copy in this browser's localStorage (openclaw.control.settings.v1).",
-  "Web search (optional)": "[TODO] Web search (optional)",
+    "Web 界面在此浏览器的 localStorage 中存储了一份副本 (openclaw.control.settings.v1)。",
+  "Web search (optional)": "网络搜索（可选）",
   "Web search is enabled, so your agent can look things up online when needed.":
-    "[TODO] Web search is enabled, so your agent can look things up online when needed.",
-  "What now": "[TODO] What now",
+    "网络搜索已启用，因此您的 Agent 在需要时可以在线查找信息。",
+  "What now": "接下来做什么",
   'What now: https://openclaw.ai/showcase ("What People Are Building").':
-    '[TODO] What now: https://openclaw.ai/showcase ("What People Are Building").',
-  "Workspace backup": "[TODO] Workspace backup",
-  "openclaw configure --section web": "[TODO] openclaw configure --section web",
-  "openclaw dashboard --no-open": "[TODO] openclaw dashboard --no-open",
-  tui: "[TODO] tui",
+    "接下来做什么: https://openclaw.ai/showcase (“大家都在构建什么”)。",
+  "Workspace backup": "工作区备份",
+  "openclaw configure --section web": "openclaw configure --section web",
+  "openclaw dashboard --no-open": "openclaw 仪表板 --no-open",
 
   // =====================================================================================
   // 模块: src/wizard/onboarding.gateway-config.ts
-  // 功能: 引导流程中的网关配置
+  // 功能: 引导流程中的 Gateway 配置
   // =====================================================================================
-  "  https://tailscale.com/download/mac": "[TODO]   https://tailscale.com/download/mac",
-  "192.168.1.100": "[TODO] 192.168.1.100",
-  "Auto (Loopback → LAN)": "[TODO] Auto (Loopback → LAN)",
-  "Custom IP": "[TODO] Custom IP",
-  "Custom IP address": "[TODO] Custom IP address",
-  "Ensure Tailscale is installed from:": "[TODO] Ensure Tailscale is installed from:",
-  Funnel: "[TODO] Funnel",
-  "Gateway auth": "[TODO] Gateway auth",
-  "Gateway bind": "[TODO] Gateway bind",
-  "Gateway password": "[TODO] Gateway password",
-  "Gateway port": "网关端口",
-  "Gateway token (blank to generate)": "[TODO] Gateway token (blank to generate)",
-  "IP address is required for custom bind mode":
-    "[TODO] IP address is required for custom bind mode",
-  "Invalid IPv4 address (e.g., 192.168.1.100)": "[TODO] Invalid IPv4 address (e.g., 192.168.1.100)",
-  "Invalid IPv4 address (each octet must be 0-255)":
-    "[TODO] Invalid IPv4 address (each octet must be 0-255)",
-  "Invalid port": "无效端口",
-  "LAN (0.0.0.0)": "[TODO] LAN (0.0.0.0)",
-  "Loopback (127.0.0.1)": "[TODO] Loopback (127.0.0.1)",
-  "Needed for multi-machine or non-loopback access":
-    "[TODO] Needed for multi-machine or non-loopback access",
-  "No Tailscale exposure": "[TODO] No Tailscale exposure",
-  Note: "[TODO] Note",
-  Off: "[TODO] Off",
-  Password: "[TODO] Password",
-  "Private HTTPS for your tailnet (devices on Tailscale)":
-    "[TODO] Private HTTPS for your tailnet (devices on Tailscale)",
-  "Public HTTPS via Tailscale Funnel (internet)":
-    "[TODO] Public HTTPS via Tailscale Funnel (internet)",
-  "Recommended default (local + remote)": "[TODO] Recommended default (local + remote)",
-  "Reset Tailscale serve/funnel on exit?": "[TODO] Reset Tailscale serve/funnel on exit?",
-  Serve: "[TODO] Serve",
-  "Tailnet (Tailscale IP)": "[TODO] Tailnet (Tailscale IP)",
-  Tailscale: "[TODO] Tailscale",
-  "Tailscale Warning": "[TODO] Tailscale Warning",
-  "Tailscale binary not found in PATH or /Applications.":
-    "[TODO] Tailscale binary not found in PATH or /Applications.",
-  "Tailscale exposure": "[TODO] Tailscale exposure",
-  "Tailscale funnel requires password auth.": "[TODO] Tailscale funnel requires password auth.",
-  "Tailscale requires bind=loopback. Adjusting bind to loopback.":
-    "[TODO] Tailscale requires bind=loopback. Adjusting bind to loopback.",
-  Token: "[TODO] Token",
-  "You can continue setup, but serve/funnel will fail at runtime.":
-    "[TODO] You can continue setup, but serve/funnel will fail at runtime.",
-  token: "[TODO] token",
+  "Gateway bind": "Gateway 绑定",
+  "LAN (0.0.0.0)": "局域网 (0.0.0.0)",
+  "Loopback (127.0.0.1)": "本地回环 (127.0.0.1)",
+  "Needed for multi-machine or non-loopback access": "多机访问或非回环访问所需",
+  Note: "注意",
+  "Recommended default (local + remote)": "推荐默认值（本地 + 远程）",
+  Tailscale: "Tailscale",
 
   // =====================================================================================
   // 模块: src/wizard/onboarding.ts
   // 功能: 用户首次安装引导流程
   // =====================================================================================
   "A bad prompt can trick it into doing unsafe things.":
-    "[TODO] A bad prompt can trick it into doing unsafe things.",
+    "恶意的提示词可能会诱导它执行不安全的操作。",
   "Ask someone experienced to help before enabling tools or exposing it to the internet.":
-    "[TODO] Ask someone experienced to help before enabling tools or exposing it to the internet.",
-  Channels: "[TODO] Channels",
-  "Config + creds + sessions": "[TODO] Config + creds + sessions",
-  "Config handling": "[TODO] Config handling",
-  "Config issues": "[TODO] Config issues",
-  "Config only": "[TODO] Config only",
+    "在启用工具或将其暴露到互联网之前，请寻求有经验人士的帮助。",
+  "Config + creds + sessions": "配置 + 凭据 + 会话",
+  "Config handling": "配置处理",
   "Configure port, network, Tailscale, and auth options.":
-    "[TODO] Configure port, network, Tailscale, and auth options.",
-  "Custom IP": "[TODO] Custom IP",
-  "Direct to chat channels.": "[TODO] Direct to chat channels.",
-  "Docs: https://docs.openclaw.ai/gateway/configuration":
-    "[TODO] Docs: https://docs.openclaw.ai/gateway/configuration",
-  "Existing config detected": "[TODO] Existing config detected",
-  "Full reset (config + creds + sessions + workspace)":
-    "[TODO] Full reset (config + creds + sessions + workspace)",
-  "Gateway auth: Token (default)": "[TODO] Gateway auth: Token (default)",
-  "Gateway bind: Loopback (127.0.0.1)": "[TODO] Gateway bind: Loopback (127.0.0.1)",
+    "配置端口、网络、Tailscale 以及认证选项。",
+  "Direct to chat channels.": "直接转到聊天频道。",
+  "Full reset (config + creds + sessions + workspace)": "全面重置 (配置 + 凭据 + 会话 + 工作区)",
+  "Gateway auth: Token (default)": "Gateway 认证：Token (默认)",
+  "Gateway bind: Loopback (127.0.0.1)": "Gateway 绑定：本地回环 (127.0.0.1)",
   "I understand this is powerful and inherently risky. Continue?":
-    "[TODO] I understand this is powerful and inherently risky. Continue?",
+    "我明白这很强大但也伴随着固有风险。是否继续？",
   "If you’re not comfortable with basic security and access control, don’t run OpenClaw.":
-    "[TODO] If you’re not comfortable with basic security and access control, don’t run OpenClaw.",
-  "Install shell completion script?": "[TODO] Install shell completion script?",
+    "如果您不熟悉基本的安全和访问控制，请不要运行 OpenClaw。",
+  "Install shell completion script?": "安装 Shell 补全脚本？",
   "Invalid --flow (use quickstart, manual, or advanced).":
-    "[TODO] Invalid --flow (use quickstart, manual, or advanced).",
-  "Invalid config": "[TODO] Invalid config",
-  "Keeping your current gateway settings:": "[TODO] Keeping your current gateway settings:",
-  "Local gateway (this machine)": "[TODO] Local gateway (this machine)",
-  "Loopback (127.0.0.1)": "[TODO] Loopback (127.0.0.1)",
-  Manual: "[TODO] Manual",
+    "无效的 --flow 参数（请使用 quickstart、manual 或 advanced）。",
+  "Keeping your current gateway settings:": "保留您当前的 Gateway 设置：",
+  "Local gateway (this machine)": "本地 Gateway（本机）",
+  Manual: "Manual",
   "Must read: https://docs.openclaw.ai/gateway/security":
-    "[TODO] Must read: https://docs.openclaw.ai/gateway/security",
-  "No remote URL configured yet": "[TODO] No remote URL configured yet",
-  "Onboarding mode": "[TODO] Onboarding mode",
+    "必读：https://docs.openclaw.ai/gateway/security",
+  "Onboarding mode": "入门模式",
   "OpenClaw is a hobby project and still in beta. Expect sharp edges.":
-    "[TODO] OpenClaw is a hobby project and still in beta. Expect sharp edges.",
-  "OpenClaw onboarding": "[TODO] OpenClaw onboarding",
-  QuickStart: "[TODO] QuickStart",
+    "OpenClaw 是一个业余项目，仍处于 Beta 阶段。请做好遇到问题的心理准备。",
+  "OpenClaw onboarding": "OpenClaw 入门",
+  QuickStart: "QuickStart",
   "QuickStart only supports local gateways. Switching to Manual mode.":
-    "[TODO] QuickStart only supports local gateways. Switching to Manual mode.",
-  "Recommended baseline:": "[TODO] Recommended baseline:",
-  "Remote gateway (info-only)": "[TODO] Remote gateway (info-only)",
-  "Remote gateway configured.": "[TODO] Remote gateway configured.",
-  Reset: "[TODO] Reset",
-  "Reset scope": "[TODO] Reset scope",
-  "Run regularly:": "[TODO] Run regularly:",
-  Security: "[TODO] Security",
-  "Security warning — please read.": "[TODO] Security warning — please read.",
-  Skills: "[TODO] Skills",
-  "Skipping channel setup.": "[TODO] Skipping channel setup.",
-  "Skipping skills setup.": "[TODO] Skipping skills setup.",
-  "Tailnet (Tailscale IP)": "[TODO] Tailnet (Tailscale IP)",
-  "Tailscale exposure: Off": "[TODO] Tailscale exposure: Off",
+    "QuickStart 仅支持本地 Gateway。正在切换到手动模式。",
+  "Recommended baseline:": "推荐的安全基线：",
+  "Remote gateway (info-only)": "远程 Gateway（仅信息）",
+  Reset: "Reset",
+  "Run regularly:": "定期运行：",
+  "Security warning — please read.": "安全警告 — 请阅读。",
+  "Skipping channel setup.": "跳过频道设置。",
+  "Skipping skills setup.": "跳过 Skills 设置。",
+  "Tailscale exposure: Off": "Tailscale 暴露：关闭",
   "This bot can read files and run actions if tools are enabled.":
-    "[TODO] This bot can read files and run actions if tools are enabled.",
-  "Token (default)": "[TODO] Token (default)",
-  "Update values": "[TODO] Update values",
-  "Use existing values": "[TODO] Use existing values",
-  "What do you want to set up?": "[TODO] What do you want to set up?",
-  "Workspace directory": "[TODO] Workspace directory",
-  "openclaw configure": "[TODO] openclaw configure",
-  "openclaw doctor": "[TODO] openclaw doctor",
-  "openclaw security audit --deep": "[TODO] openclaw security audit --deep",
-  "openclaw security audit --fix": "[TODO] openclaw security audit --fix",
-  quickstart: "[TODO] quickstart",
-  "risk not accepted": "[TODO] risk not accepted",
+    "如果启用了工具，此 Bot 可以读取文件并执行操作。",
+  "Token (default)": "Token（默认）",
+  "Update values": "更新值",
+  "Use existing values": "使用现有值",
+  "What do you want to set up?": "您想设置什么？",
+  quickstart: "quickstart",
+  "risk not accepted": "未接受风险",
 
   // =====================================================================================
   // 模块: src/wizard/prompts.ts
   // =====================================================================================
-  "wizard cancelled": "[TODO] wizard cancelled",
+  "wizard cancelled": "向导已取消",
 
   // =====================================================================================
   // 模块: src/wizard/session.ts
   // 功能: 向导会话管理
   // =====================================================================================
-  Done: "[TODO] Done",
-  "wizard: no pending step": "[TODO] wizard: no pending step",
-  "wizard: session not running": "[TODO] wizard: session not running",
+  "wizard: no pending step": "向导：无待处理步骤",
+  "wizard: session not running": "向导：会话未运行",
 };
