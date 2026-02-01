@@ -5,6 +5,7 @@ import { resolveConfiguredModelRef } from "../agents/model-selection.js";
 import { loadConfig } from "../config/config.js";
 import { loadSessionStore, resolveStorePath, type SessionEntry } from "../config/sessions.js";
 import { info } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { isRich, theme } from "../terminal/theme.js";
 
 type SessionRow = {
@@ -122,7 +123,7 @@ const formatAge = (ms: number | null | undefined) => {
   }
   const minutes = Math.round(ms / 60_000);
   if (minutes < 1) {
-    return "just now";
+    return t("just now");
   }
   if (minutes < 60) {
     return `${minutes}m ago`;
@@ -201,7 +202,7 @@ export async function sessionsCommand(
   if (opts.active !== undefined) {
     const parsed = Number.parseInt(String(opts.active), 10);
     if (Number.isNaN(parsed) || parsed <= 0) {
-      runtime.error("--active must be a positive integer (minutes)");
+      runtime.error(t("--active must be a positive integer (minutes)"));
       runtime.exit(1);
       return;
     }
@@ -245,7 +246,7 @@ export async function sessionsCommand(
     runtime.log(info(`Filtered to last ${activeMinutes} minute(s)`));
   }
   if (rows.length === 0) {
-    runtime.log("No sessions found.");
+    runtime.log(t("No sessions found."));
     return;
   }
 
@@ -255,7 +256,7 @@ export async function sessionsCommand(
     "Key".padEnd(KEY_PAD),
     "Age".padEnd(AGE_PAD),
     "Model".padEnd(MODEL_PAD),
-    "Tokens (ctx %)".padEnd(TOKENS_PAD),
+    t("Tokens (ctx %)").padEnd(TOKENS_PAD),
     "Flags",
   ].join(" ");
 

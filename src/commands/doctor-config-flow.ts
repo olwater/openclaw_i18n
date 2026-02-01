@@ -11,6 +11,7 @@ import {
   readConfigFileSnapshot,
 } from "../config/config.js";
 import { applyPluginAutoEnable } from "../config/plugin-auto-enable.js";
+import { t } from "../i18n/index.js";
 import { note } from "../terminal/note.js";
 import { resolveHomeDir } from "../utils.js";
 import { normalizeLegacyConfigValues } from "./doctor-legacy-config.js";
@@ -143,7 +144,7 @@ function noteOpencodeProviderOverrides(cfg: OpenClawConfig) {
     "- Remove these entries to restore per-model API routing + costs (then re-run onboarding if needed).",
   );
 
-  note(lines.join("\n"), "OpenCode Zen");
+  note(lines.join("\n"), t("OpenCode Zen"));
 }
 
 async function maybeMigrateLegacyConfig(): Promise<string[]> {
@@ -200,15 +201,15 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
   const shouldRepair = params.options.repair === true || params.options.yes === true;
   const stateDirResult = await autoMigrateLegacyStateDir({ env: process.env });
   if (stateDirResult.changes.length > 0) {
-    note(stateDirResult.changes.map((entry) => `- ${entry}`).join("\n"), "Doctor changes");
+    note(stateDirResult.changes.map((entry) => `- ${entry}`).join("\n"), t("Doctor changes"));
   }
   if (stateDirResult.warnings.length > 0) {
-    note(stateDirResult.warnings.map((entry) => `- ${entry}`).join("\n"), "Doctor warnings");
+    note(stateDirResult.warnings.map((entry) => `- ${entry}`).join("\n"), t("Doctor warnings"));
   }
 
   const legacyConfigChanges = await maybeMigrateLegacyConfig();
   if (legacyConfigChanges.length > 0) {
-    note(legacyConfigChanges.map((entry) => `- ${entry}`).join("\n"), "Doctor changes");
+    note(legacyConfigChanges.map((entry) => `- ${entry}`).join("\n"), t("Doctor changes"));
   }
 
   let snapshot = await readConfigFileSnapshot();
@@ -219,22 +220,22 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
   let shouldWriteConfig = false;
   const fixHints: string[] = [];
   if (snapshot.exists && !snapshot.valid && snapshot.legacyIssues.length === 0) {
-    note("Config invalid; doctor will run with best-effort config.", "Config");
+    note(t("Config invalid; doctor will run with best-effort config."), "Config");
   }
   const warnings = snapshot.warnings ?? [];
   if (warnings.length > 0) {
     const lines = warnings.map((issue) => `- ${issue.path}: ${issue.message}`).join("\n");
-    note(lines, "Config warnings");
+    note(lines, t("Config warnings"));
   }
 
   if (snapshot.legacyIssues.length > 0) {
     note(
       snapshot.legacyIssues.map((issue) => `- ${issue.path}: ${issue.message}`).join("\n"),
-      "Legacy config keys detected",
+      t("Legacy config keys detected"),
     );
     const { config: migrated, changes } = migrateLegacyConfig(snapshot.parsed);
     if (changes.length > 0) {
-      note(changes.join("\n"), "Doctor changes");
+      note(changes.join("\n"), t("Doctor changes"));
     }
     if (migrated) {
       candidate = migrated;
@@ -247,32 +248,36 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
       }
     } else {
       fixHints.push(
-        `Run "${formatCliCommand("openclaw doctor --fix")}" to apply legacy migrations.`,
+        `Run "${formatCliCommand(t("openclaw doctor --fix"))}" to apply legacy migrations.`,
       );
     }
   }
 
   const normalized = normalizeLegacyConfigValues(candidate);
   if (normalized.changes.length > 0) {
-    note(normalized.changes.join("\n"), "Doctor changes");
+    note(normalized.changes.join("\n"), t("Doctor changes"));
     candidate = normalized.config;
     pendingChanges = true;
     if (shouldRepair) {
       cfg = normalized.config;
     } else {
-      fixHints.push(`Run "${formatCliCommand("openclaw doctor --fix")}" to apply these changes.`);
+      fixHints.push(
+        `Run "${formatCliCommand(t("openclaw doctor --fix"))}" to apply these changes.`,
+      );
     }
   }
 
   const autoEnable = applyPluginAutoEnable({ config: candidate, env: process.env });
   if (autoEnable.changes.length > 0) {
-    note(autoEnable.changes.join("\n"), "Doctor changes");
+    note(autoEnable.changes.join("\n"), t("Doctor changes"));
     candidate = autoEnable.config;
     pendingChanges = true;
     if (shouldRepair) {
       cfg = autoEnable.config;
     } else {
-      fixHints.push(`Run "${formatCliCommand("openclaw doctor --fix")}" to apply these changes.`);
+      fixHints.push(
+        `Run "${formatCliCommand(t("openclaw doctor --fix"))}" to apply these changes.`,
+      );
     }
   }
 
@@ -283,16 +288,16 @@ export async function loadAndMaybeMigrateDoctorConfig(params: {
     pendingChanges = true;
     if (shouldRepair) {
       cfg = unknown.config;
-      note(lines, "Doctor changes");
+      note(lines, t("Doctor changes"));
     } else {
-      note(lines, "Unknown config keys");
-      fixHints.push('Run "openclaw doctor --fix" to remove these keys.');
+      note(lines, t("Unknown config keys"));
+      fixHints.push(t('Run "openclaw doctor --fix" to remove these keys.'));
     }
   }
 
   if (!shouldRepair && pendingChanges) {
     const shouldApply = await params.confirm({
-      message: "Apply recommended config repairs now?",
+      message: t("Apply recommended config repairs now?"),
       initialValue: true,
     });
     if (shouldApply) {

@@ -12,11 +12,12 @@ import {
   readConfigFileSnapshot,
   writeConfigFile,
 } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { normalizeAgentId } from "../../routing/session-key.js";
 
 export const ensureFlagCompatibility = (opts: { json?: boolean; plain?: boolean }) => {
   if (opts.json && opts.plain) {
-    throw new Error("Choose either --json or --plain, not both.");
+    throw new Error(t("Choose either --json or --plain, not both."));
   }
 };
 
@@ -91,10 +92,10 @@ export function buildAllowlistSet(cfg: OpenClawConfig): Set<string> {
 export function normalizeAlias(alias: string): string {
   const trimmed = alias.trim();
   if (!trimmed) {
-    throw new Error("Alias cannot be empty.");
+    throw new Error(t("Alias cannot be empty."));
   }
   if (!/^[A-Za-z0-9_.:-]+$/.test(trimmed)) {
-    throw new Error("Alias must use letters, numbers, dots, underscores, colons, or dashes.");
+    throw new Error(t("Alias must use letters, numbers, dots, underscores, colons, or dashes."));
   }
   return trimmed;
 }
@@ -111,7 +112,7 @@ export function resolveKnownAgentId(params: {
   const knownAgents = listAgentIds(params.cfg);
   if (!knownAgents.includes(agentId)) {
     throw new Error(
-      `Unknown agent id "${raw}". Use "${formatCliCommand("openclaw agents list")}" to see configured agents.`,
+      `Unknown agent id "${raw}". Use "${formatCliCommand(t("openclaw agents list"))}" to see configured agents.`,
     );
   }
   return agentId;

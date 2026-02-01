@@ -1,6 +1,7 @@
 import type { TUI } from "@mariozechner/pi-tui";
 import type { ChatLog } from "./components/chat-log.js";
 import type { AgentEvent, ChatEvent, TuiStateAccess } from "./tui-types.js";
+import { t } from "../i18n/index.js";
 import { asString, extractTextFromMessage, isCommandMessage } from "./tui-formatters.js";
 import { TuiStreamAssembler } from "./tui-stream-assembler.js";
 
@@ -148,7 +149,7 @@ export function createEventHandlers(context: EventHandlerContext) {
       void refreshSessionInfo?.();
     }
     if (evt.state === "aborted") {
-      chatLog.addSystem("run aborted");
+      chatLog.addSystem(t("run aborted"));
       streamAssembler.drop(evt.runId);
       sessionRuns.delete(evt.runId);
       state.activeChatRunId = null;

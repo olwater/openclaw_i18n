@@ -5,6 +5,7 @@ import {
   normalizeChannelId,
 } from "../../channels/plugins/index.js";
 import { type OpenClawConfig, writeConfigFile } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../routing/session-key.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { createClackPrompter } from "../../wizard/clack-prompter.js";
@@ -41,9 +42,9 @@ export async function channelsRemoveCommand(
   const deleteConfig = Boolean(opts.delete);
 
   if (useWizard && prompter) {
-    await prompter.intro("Remove channel account");
+    await prompter.intro(t("Remove channel account"));
     const selectedChannel = await prompter.select({
-      message: "Channel",
+      message: t("Channel"),
       options: listChannelPlugins().map((plugin) => ({
         value: plugin.id,
         label: plugin.meta.label,
@@ -54,10 +55,10 @@ export async function channelsRemoveCommand(
     accountId = await (async () => {
       const ids = listAccountIds(cfg, selectedChannel);
       const choice = await prompter.select({
-        message: "Account",
+        message: t("Account"),
         options: ids.map((id) => ({
           value: id,
-          label: id === DEFAULT_ACCOUNT_ID ? "default (primary)" : id,
+          label: id === DEFAULT_ACCOUNT_ID ? t("default (primary)") : id,
         })),
         initialValue: ids[0] ?? DEFAULT_ACCOUNT_ID,
       });
@@ -69,12 +70,12 @@ export async function channelsRemoveCommand(
       initialValue: true,
     });
     if (!wantsDisable) {
-      await prompter.outro("Cancelled.");
+      await prompter.outro(t("Cancelled."));
       return;
     }
   } else {
     if (!channel) {
-      runtime.error("Channel is required. Use --channel <name>.");
+      runtime.error(t("Channel is required. Use --channel <name>."));
       runtime.exit(1);
       return;
     }

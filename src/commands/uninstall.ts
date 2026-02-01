@@ -9,6 +9,7 @@ import {
   resolveStateDir,
 } from "../config/config.js";
 import { resolveGatewayService } from "../daemon/service.js";
+import { t } from "../i18n/index.js";
 import { stylePromptHint, stylePromptMessage, stylePromptTitle } from "../terminal/prompt-style.js";
 import { resolveHomeDir } from "../utils.js";
 import { collectWorkspaceDirs, isPathWithin, removePath } from "./cleanup-utils.js";
@@ -58,7 +59,7 @@ function buildScopeSelection(opts: UninstallOptions): {
 
 async function stopAndUninstallService(runtime: RuntimeEnv): Promise<boolean> {
   if (isNixMode) {
-    runtime.error("Nix mode detected; service uninstall is disabled.");
+    runtime.error(t("Nix mode detected; service uninstall is disabled."));
     return false;
   }
   const service = resolveGatewayService();
@@ -93,7 +94,7 @@ async function removeMacApp(runtime: RuntimeEnv, dryRun?: boolean) {
   }
   await removePath("/Applications/OpenClaw.app", runtime, {
     dryRun,
-    label: "/Applications/OpenClaw.app",
+    label: t("/Applications/OpenClaw.app"),
   });
 }
 
@@ -101,37 +102,37 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
   const { scopes, hadExplicit } = buildScopeSelection(opts);
   const interactive = !opts.nonInteractive;
   if (!interactive && !opts.yes) {
-    runtime.error("Non-interactive mode requires --yes.");
+    runtime.error(t("Non-interactive mode requires --yes."));
     runtime.exit(1);
     return;
   }
 
   if (!hadExplicit) {
     if (!interactive) {
-      runtime.error("Non-interactive mode requires explicit scopes (use --all).");
+      runtime.error(t("Non-interactive mode requires explicit scopes (use --all)."));
       runtime.exit(1);
       return;
     }
     const selection = await multiselectStyled<UninstallScope>({
-      message: "Uninstall which components?",
+      message: t("Uninstall which components?"),
       options: [
         {
           value: "service",
-          label: "Gateway service",
-          hint: "launchd / systemd / schtasks",
+          label: t("Gateway service"),
+          hint: t("launchd / systemd / schtasks"),
         },
-        { value: "state", label: "State + config", hint: "~/.openclaw" },
-        { value: "workspace", label: "Workspace", hint: "agent files" },
+        { value: "state", label: t("State + config"), hint: t("~/.openclaw") },
+        { value: "workspace", label: t("Workspace"), hint: t("agent files") },
         {
           value: "app",
-          label: "macOS app",
-          hint: "/Applications/OpenClaw.app",
+          label: t("macOS app"),
+          hint: t("/Applications/OpenClaw.app"),
         },
       ],
       initialValues: ["service", "state", "workspace"],
     });
     if (isCancel(selection)) {
-      cancel(stylePromptTitle("Uninstall cancelled.") ?? "Uninstall cancelled.");
+      cancel(stylePromptTitle(t("Uninstall cancelled.")) ?? t("Uninstall cancelled."));
       runtime.exit(0);
       return;
     }
@@ -141,16 +142,16 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
   }
 
   if (scopes.size === 0) {
-    runtime.log("Nothing selected.");
+    runtime.log(t("Nothing selected."));
     return;
   }
 
   if (interactive && !opts.yes) {
     const ok = await confirm({
-      message: stylePromptMessage("Proceed with uninstall?"),
+      message: stylePromptMessage(t("Proceed with uninstall?")),
     });
     if (isCancel(ok) || !ok) {
-      cancel(stylePromptTitle("Uninstall cancelled.") ?? "Uninstall cancelled.");
+      cancel(stylePromptTitle(t("Uninstall cancelled.")) ?? t("Uninstall cancelled."));
       runtime.exit(0);
       return;
     }
@@ -167,7 +168,7 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
 
   if (scopes.has("service")) {
     if (dryRun) {
-      runtime.log("[dry-run] remove gateway service");
+      runtime.log(t("[dry-run] remove gateway service"));
     } else {
       await stopAndUninstallService(runtime);
     }
@@ -193,12 +194,12 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
     await removeMacApp(runtime, dryRun);
   }
 
-  runtime.log("CLI still installed. Remove via npm/pnpm if desired.");
+  runtime.log(t("CLI still installed. Remove via npm/pnpm if desired."));
 
   if (scopes.has("state") && !scopes.has("workspace")) {
     const home = resolveHomeDir();
     if (home && workspaceDirs.some((dir) => dir.startsWith(path.resolve(home)))) {
-      runtime.log("Tip: workspaces were preserved. Re-run with --workspace to remove them.");
+      runtime.log(t("Tip: workspaces were preserved. Re-run with --workspace to remove them."));
     }
   }
 }

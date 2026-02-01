@@ -8,6 +8,7 @@ import {
   generateChutesPkce,
   parseOAuthCallbackInput,
 } from "../agents/chutes-oauth.js";
+import { t } from "../i18n/index.js";
 
 type OAuthPrompt = {
   message: string;
@@ -54,8 +55,8 @@ async function waitForLocalCallback(params: {
         const requestUrl = new URL(req.url ?? "/", redirectUrl.origin);
         if (requestUrl.pathname !== expectedPath) {
           res.statusCode = 404;
-          res.setHeader("Content-Type", "text/plain; charset=utf-8");
-          res.end("Not found");
+          res.setHeader("Content-Type", t("text/plain; charset=utf-8"));
+          res.end(t("Not found"));
           return;
         }
 
@@ -64,25 +65,25 @@ async function waitForLocalCallback(params: {
 
         if (!code) {
           res.statusCode = 400;
-          res.setHeader("Content-Type", "text/plain; charset=utf-8");
-          res.end("Missing code");
+          res.setHeader("Content-Type", t("text/plain; charset=utf-8"));
+          res.end(t("Missing code"));
           return;
         }
         if (!state || state !== params.expectedState) {
           res.statusCode = 400;
-          res.setHeader("Content-Type", "text/plain; charset=utf-8");
-          res.end("Invalid state");
+          res.setHeader("Content-Type", t("text/plain; charset=utf-8"));
+          res.end(t("Invalid state"));
           return;
         }
 
         res.statusCode = 200;
-        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        res.setHeader("Content-Type", t("text/html; charset=utf-8"));
         res.end(
           [
-            "<!doctype html>",
-            "<html><head><meta charset='utf-8' /></head>",
-            "<body><h2>Chutes OAuth complete</h2>",
-            "<p>You can close this window and return to OpenClaw.</p></body></html>",
+            t("<!doctype html>"),
+            t("<html><head><meta charset='utf-8' /></head>"),
+            t("<body><h2>Chutes OAuth complete</h2>"),
+            t("<p>You can close this window and return to OpenClaw.</p></body></html>"),
           ].join(""),
         );
         if (timeout) {
@@ -114,7 +115,7 @@ async function waitForLocalCallback(params: {
       try {
         server.close();
       } catch {}
-      reject(new Error("OAuth callback timeout"));
+      reject(new Error(t("OAuth callback timeout")));
     }, params.timeoutMs);
   });
 }
@@ -148,9 +149,9 @@ export async function loginChutes(params: {
   let codeAndState: { code: string; state: string };
   if (params.manual) {
     await params.onAuth({ url });
-    params.onProgress?.("Waiting for redirect URL…");
+    params.onProgress?.(t("Waiting for redirect URL…"));
     const input = await params.onPrompt({
-      message: "Paste the redirect URL (or authorization code)",
+      message: t("Paste the redirect URL (or authorization code)"),
       placeholder: `${params.app.redirectUri}?code=...&state=...`,
     });
     const parsed = parseOAuthCallbackInput(String(input), state);
@@ -158,7 +159,7 @@ export async function loginChutes(params: {
       throw new Error(parsed.error);
     }
     if (parsed.state !== state) {
-      throw new Error("Invalid OAuth state");
+      throw new Error(t("Invalid OAuth state"));
     }
     codeAndState = parsed;
   } else {
@@ -168,9 +169,9 @@ export async function loginChutes(params: {
       timeoutMs,
       onProgress: params.onProgress,
     }).catch(async () => {
-      params.onProgress?.("OAuth callback not detected; paste redirect URL…");
+      params.onProgress?.(t("OAuth callback not detected; paste redirect URL…"));
       const input = await params.onPrompt({
-        message: "Paste the redirect URL (or authorization code)",
+        message: t("Paste the redirect URL (or authorization code)"),
         placeholder: `${params.app.redirectUri}?code=...&state=...`,
       });
       const parsed = parseOAuthCallbackInput(String(input), state);
@@ -178,7 +179,7 @@ export async function loginChutes(params: {
         throw new Error(parsed.error);
       }
       if (parsed.state !== state) {
-        throw new Error("Invalid OAuth state");
+        throw new Error(t("Invalid OAuth state"));
       }
       return parsed;
     });
@@ -187,7 +188,7 @@ export async function loginChutes(params: {
     codeAndState = await callback;
   }
 
-  params.onProgress?.("Exchanging code for tokens…");
+  params.onProgress?.(t("Exchanging code for tokens…"));
   return await exchangeChutesCodeForTokens({
     app: params.app,
     code: codeAndState.code,

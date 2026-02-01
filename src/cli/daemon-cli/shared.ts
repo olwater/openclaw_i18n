@@ -4,6 +4,7 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
+import { t } from "../../i18n/index.js";
 import { getResolvedLoggerSettings } from "../../logging.js";
 import { formatCliCommand } from "../command-format.js";
 
@@ -146,7 +147,7 @@ export function formatRuntimeStatus(
   if (runtime.detail) {
     details.push(runtime.detail);
   }
-  return details.length > 0 ? `${status} (${details.join(", ")})` : status;
+  return details.length > 0 ? `${status} (${details.join(t(", "))})` : status;
 }
 
 export function renderRuntimeHints(
@@ -165,7 +166,9 @@ export function renderRuntimeHints(
     }
   })();
   if (runtime.missingUnit) {
-    hints.push(`Service not installed. Run: ${formatCliCommand("openclaw gateway install", env)}`);
+    hints.push(
+      `Service not installed. Run: ${formatCliCommand(t("openclaw gateway install"), env)}`,
+    );
     if (fileLog) {
       hints.push(`File logs: ${fileLog}`);
     }
@@ -192,8 +195,8 @@ export function renderRuntimeHints(
 
 export function renderGatewayServiceStartHints(env: NodeJS.ProcessEnv = process.env): string[] {
   const base = [
-    formatCliCommand("openclaw gateway install", env),
-    formatCliCommand("openclaw gateway", env),
+    formatCliCommand(t("openclaw gateway install"), env),
+    formatCliCommand(t("openclaw gateway"), env),
   ];
   const profile = env.OPENCLAW_PROFILE;
   switch (process.platform) {

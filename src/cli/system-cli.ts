@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { GatewayRpcOpts } from "./gateway-rpc.js";
 import { danger } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { theme } from "../terminal/theme.js";
@@ -16,13 +17,13 @@ const normalizeWakeMode = (raw: unknown) => {
   if (mode === "now" || mode === "next-heartbeat") {
     return mode;
   }
-  throw new Error("--mode must be now or next-heartbeat");
+  throw new Error(t("--mode must be now or next-heartbeat"));
 };
 
 export function registerSystemCli(program: Command) {
   const system = program
     .command("system")
-    .description("System tools (events, heartbeat, presence)")
+    .description(t("System tools (events, heartbeat, presence)"))
     .addHelpText(
       "after",
       () =>
@@ -32,15 +33,15 @@ export function registerSystemCli(program: Command) {
   addGatewayClientOptions(
     system
       .command("event")
-      .description("Enqueue a system event and optionally trigger a heartbeat")
-      .requiredOption("--text <text>", "System event text")
-      .option("--mode <mode>", "Wake mode (now|next-heartbeat)", "next-heartbeat")
-      .option("--json", "Output JSON", false),
+      .description(t("Enqueue a system event and optionally trigger a heartbeat"))
+      .requiredOption("--text <text>", t("System event text"))
+      .option("--mode <mode>", t("Wake mode (now|next-heartbeat)"), "next-heartbeat")
+      .option("--json", t("Output JSON"), false),
   ).action(async (opts: SystemEventOpts) => {
     try {
       const text = typeof opts.text === "string" ? opts.text.trim() : "";
       if (!text) {
-        throw new Error("--text is required");
+        throw new Error(t("--text is required"));
       }
       const mode = normalizeWakeMode(opts.mode);
       const result = await callGatewayFromCli("wake", opts, { mode, text }, { expectFinal: false });
@@ -55,13 +56,13 @@ export function registerSystemCli(program: Command) {
     }
   });
 
-  const heartbeat = system.command("heartbeat").description("Heartbeat controls");
+  const heartbeat = system.command("heartbeat").description(t("Heartbeat controls"));
 
   addGatewayClientOptions(
     heartbeat
       .command("last")
-      .description("Show the last heartbeat event")
-      .option("--json", "Output JSON", false),
+      .description(t("Show the last heartbeat event"))
+      .option("--json", t("Output JSON"), false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli("last-heartbeat", opts, undefined, {
@@ -77,8 +78,8 @@ export function registerSystemCli(program: Command) {
   addGatewayClientOptions(
     heartbeat
       .command("enable")
-      .description("Enable heartbeats")
-      .option("--json", "Output JSON", false),
+      .description(t("Enable heartbeats"))
+      .option("--json", t("Output JSON"), false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli(
@@ -97,8 +98,8 @@ export function registerSystemCli(program: Command) {
   addGatewayClientOptions(
     heartbeat
       .command("disable")
-      .description("Disable heartbeats")
-      .option("--json", "Output JSON", false),
+      .description(t("Disable heartbeats"))
+      .option("--json", t("Output JSON"), false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli(
@@ -117,8 +118,8 @@ export function registerSystemCli(program: Command) {
   addGatewayClientOptions(
     system
       .command("presence")
-      .description("List system presence entries")
-      .option("--json", "Output JSON", false),
+      .description(t("List system presence entries"))
+      .option("--json", t("Output JSON"), false),
   ).action(async (opts: GatewayRpcOpts & { json?: boolean }) => {
     try {
       const result = await callGatewayFromCli("system-presence", opts, undefined, {

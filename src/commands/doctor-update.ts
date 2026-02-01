@@ -1,6 +1,7 @@
 import type { RuntimeEnv } from "../runtime.js";
 import type { DoctorOptions } from "./doctor-prompter.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import { t } from "../i18n/index.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { runGatewayUpdate } from "../infra/update-runner.js";
 import { runCommandWithTimeout } from "../process/exec.js";
@@ -16,7 +17,7 @@ async function detectOpenClawGitCheckout(root: string): Promise<"git" | "not-git
   if (res.code !== 0) {
     // Avoid noisy "Update via package manager" notes when git is missing/broken,
     // but do show it when this is clearly not a git checkout.
-    if (res.stderr.toLowerCase().includes("not a git repository")) {
+    if (res.stderr.toLowerCase().includes(t("not a git repository"))) {
       return "not-git";
     }
     return "unknown";
@@ -45,13 +46,13 @@ export async function maybeOfferUpdateBeforeDoctor(params: {
   const git = await detectOpenClawGitCheckout(params.root);
   if (git === "git") {
     const shouldUpdate = await params.confirm({
-      message: "Update OpenClaw from git before running doctor?",
+      message: t("Update OpenClaw from git before running doctor?"),
       initialValue: true,
     });
     if (!shouldUpdate) {
       return { updated: false };
     }
-    note("Running update (fetch/rebase/build/ui:build/doctor)…", "Update");
+    note(t("Running update (fetch/rebase/build/ui:build/doctor)…"), "Update");
     const result = await runGatewayUpdate({
       cwd: params.root,
       argv1: process.argv[1],
@@ -65,10 +66,10 @@ export async function maybeOfferUpdateBeforeDoctor(params: {
       ]
         .filter(Boolean)
         .join("\n"),
-      "Update result",
+      t("Update result"),
     );
     if (result.status === "ok") {
-      params.outro("Update completed (doctor already ran as part of the update).");
+      params.outro(t("Update completed (doctor already ran as part of the update)."));
       return { updated: true, handled: true };
     }
     return { updated: true, handled: false };
@@ -77,8 +78,8 @@ export async function maybeOfferUpdateBeforeDoctor(params: {
   if (git === "not-git") {
     note(
       [
-        "This install is not a git checkout.",
-        `Run \`${formatCliCommand("openclaw update")}\` to update via your package manager (npm/pnpm), then rerun doctor.`,
+        t("This install is not a git checkout."),
+        `Run \`${formatCliCommand(t("openclaw update"))}\` to update via your package manager (npm/pnpm), then rerun doctor.`,
       ].join("\n"),
       "Update",
     );

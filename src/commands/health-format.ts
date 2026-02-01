@@ -1,7 +1,8 @@
+import { t } from "../i18n/index.js";
 import { colorize, isRich, theme } from "../terminal/theme.js";
 
 const formatKv = (line: string, rich: boolean) => {
-  const idx = line.indexOf(": ");
+  const idx = line.indexOf(t(": "));
   if (idx <= 0) {
     return colorize(rich, theme.muted, line);
   }
@@ -9,7 +10,7 @@ const formatKv = (line: string, rich: boolean) => {
   const value = line.slice(idx + 2);
 
   const valueColor =
-    key === "Gateway target" || key === "Config"
+    key === t("Gateway target") || key === "Config"
       ? theme.command
       : key === "Source"
         ? theme.muted
@@ -31,7 +32,7 @@ export function formatHealthCheckFailure(err: unknown, opts: { rich?: boolean } 
     .split("\n")
     .map((l) => l.trimEnd())
     .filter(Boolean);
-  const detailsIdx = lines.findIndex((l) => l.startsWith("Gateway target: "));
+  const detailsIdx = lines.findIndex((l) => l.startsWith(t("Gateway target: ")));
 
   const summaryLines = (detailsIdx >= 0 ? lines.slice(0, detailsIdx) : lines)
     .map((l) => l.trim())
@@ -39,7 +40,7 @@ export function formatHealthCheckFailure(err: unknown, opts: { rich?: boolean } 
   const detailLines = detailsIdx >= 0 ? lines.slice(detailsIdx) : [];
 
   const summary = summaryLines.length > 0 ? summaryLines.join(" ") : message;
-  const header = colorize(rich, theme.error.bold, "Health check failed");
+  const header = colorize(rich, theme.error.bold, t("Health check failed"));
 
   const out: string[] = [`${header}: ${summary}`];
   for (const line of detailLines) {

@@ -1,3 +1,5 @@
+import { t } from "../i18n/index.js";
+
 export type DurationMsParseOptions = {
   defaultUnit?: "ms" | "s" | "m" | "h" | "d";
 };
@@ -7,7 +9,7 @@ export function parseDurationMs(raw: string, opts?: DurationMsParseOptions): num
     .trim()
     .toLowerCase();
   if (!trimmed) {
-    throw new Error("invalid duration (empty)");
+    throw new Error(t("invalid duration (empty)"));
   }
 
   const m = /^(\d+(?:\.\d+)?)(ms|s|m|h|d)?$/.exec(trimmed);

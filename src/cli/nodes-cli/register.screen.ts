@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { NodesRpcOpts } from "./types.js";
 import { randomIdempotencyKey } from "../../gateway/call.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { shortenHomePath } from "../../utils.js";
 import {
@@ -15,21 +16,21 @@ import { callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
 export function registerNodesScreenCommands(nodes: Command) {
   const screen = nodes
     .command("screen")
-    .description("Capture screen recordings from a paired node");
+    .description(t("Capture screen recordings from a paired node"));
 
   nodesCallOpts(
     screen
       .command("record")
-      .description("Capture a short screen recording from a node (prints MEDIA:<path>)")
-      .requiredOption("--node <idOrNameOrIp>", "Node id, name, or IP")
-      .option("--screen <index>", "Screen index (0 = primary)", "0")
-      .option("--duration <ms|10s>", "Clip duration (ms or 10s)", "10000")
-      .option("--fps <fps>", "Frames per second", "10")
-      .option("--no-audio", "Disable microphone audio capture")
-      .option("--out <path>", "Output path")
-      .option("--invoke-timeout <ms>", "Node invoke timeout in ms (default 120000)", "120000")
+      .description(t("Capture a short screen recording from a node (prints MEDIA:<path>)"))
+      .requiredOption("--node <idOrNameOrIp>", t("Node id, name, or IP"))
+      .option("--screen <index>", t("Screen index (0 = primary)"), "0")
+      .option("--duration <ms|10s>", t("Clip duration (ms or 10s)"), "10000")
+      .option("--fps <fps>", t("Frames per second"), "10")
+      .option("--no-audio", t("Disable microphone audio capture"))
+      .option("--out <path>", t("Output path"))
+      .option("--invoke-timeout <ms>", t("Node invoke timeout in ms (default 120000)"), "120000")
       .action(async (opts: NodesRpcOpts & { out?: string }) => {
-        await runNodesCommand("screen record", async () => {
+        await runNodesCommand(t("screen record"), async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
           const durationMs = parseDurationMs(opts.duration ?? "");
           const screenIndex = Number.parseInt(String(opts.screen ?? "0"), 10);

@@ -3,6 +3,7 @@ import { resolveChannelDefaultAccountId } from "../channels/plugins/helpers.js";
 import { getChannelPlugin } from "../channels/plugins/index.js";
 import { loadConfig } from "../config/config.js";
 import { danger } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { resolveMessageChannelSelection } from "../infra/outbound/channel-selection.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
@@ -40,7 +41,7 @@ function buildRows(entries: Array<{ id: string; name?: string | undefined }>) {
 export function registerDirectoryCli(program: Command) {
   const directory = program
     .command("directory")
-    .description("Directory lookups (self, peers, groups) for channels that support it")
+    .description(t("Directory lookups (self, peers, groups) for channels that support it"))
     .addHelpText(
       "after",
       () =>
@@ -55,9 +56,9 @@ export function registerDirectoryCli(program: Command) {
 
   const withChannel = (cmd: Command) =>
     cmd
-      .option("--channel <name>", "Channel (auto when only one is configured)")
-      .option("--account <id>", "Account id (accountId)")
-      .option("--json", "Output JSON", false);
+      .option("--channel <name>", t("Channel (auto when only one is configured)"))
+      .option("--account <id>", t("Account id (accountId)"))
+      .option("--json", t("Output JSON"), false);
 
   const resolve = async (opts: { channel?: string; account?: string }) => {
     const cfg = loadConfig();
@@ -74,7 +75,7 @@ export function registerDirectoryCli(program: Command) {
     return { cfg, channelId, accountId, plugin };
   };
 
-  withChannel(directory.command("self").description("Show the current account user")).action(
+  withChannel(directory.command("self").description(t("Show the current account user"))).action(
     async (opts) => {
       try {
         const { cfg, channelId, accountId, plugin } = await resolve({
@@ -91,7 +92,7 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (!result) {
-          defaultRuntime.log(theme.muted("Not available."));
+          defaultRuntime.log(theme.muted(t("Not available.")));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
@@ -113,10 +114,10 @@ export function registerDirectoryCli(program: Command) {
     },
   );
 
-  const peers = directory.command("peers").description("Peer directory (contacts/users)");
-  withChannel(peers.command("list").description("List peers"))
-    .option("--query <text>", "Optional search query")
-    .option("--limit <n>", "Limit results")
+  const peers = directory.command("peers").description(t("Peer directory (contacts/users)"));
+  withChannel(peers.command("list").description(t("List peers")))
+    .option("--query <text>", t("Optional search query"))
+    .option("--limit <n>", t("Limit results"))
     .action(async (opts) => {
       try {
         const { cfg, channelId, accountId, plugin } = await resolve({
@@ -139,7 +140,7 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (result.length === 0) {
-          defaultRuntime.log(theme.muted("No peers found."));
+          defaultRuntime.log(theme.muted(t("No peers found.")));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
@@ -160,10 +161,10 @@ export function registerDirectoryCli(program: Command) {
       }
     });
 
-  const groups = directory.command("groups").description("Group directory");
-  withChannel(groups.command("list").description("List groups"))
-    .option("--query <text>", "Optional search query")
-    .option("--limit <n>", "Limit results")
+  const groups = directory.command("groups").description(t("Group directory"));
+  withChannel(groups.command("list").description(t("List groups")))
+    .option("--query <text>", t("Optional search query"))
+    .option("--limit <n>", t("Limit results"))
     .action(async (opts) => {
       try {
         const { cfg, channelId, accountId, plugin } = await resolve({
@@ -186,7 +187,7 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (result.length === 0) {
-          defaultRuntime.log(theme.muted("No groups found."));
+          defaultRuntime.log(theme.muted(t("No groups found.")));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
@@ -210,10 +211,10 @@ export function registerDirectoryCli(program: Command) {
   withChannel(
     groups
       .command("members")
-      .description("List group members")
-      .requiredOption("--group-id <id>", "Group id"),
+      .description(t("List group members"))
+      .requiredOption("--group-id <id>", t("Group id")),
   )
-    .option("--limit <n>", "Limit results")
+    .option("--limit <n>", t("Limit results"))
     .action(async (opts) => {
       try {
         const { cfg, channelId, accountId, plugin } = await resolve({
@@ -226,7 +227,7 @@ export function registerDirectoryCli(program: Command) {
         }
         const groupId = String(opts.groupId ?? "").trim();
         if (!groupId) {
-          throw new Error("Missing --group-id");
+          throw new Error(t("Missing --group-id"));
         }
         const result = await fn({
           cfg,
@@ -240,12 +241,12 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (result.length === 0) {
-          defaultRuntime.log(theme.muted("No group members found."));
+          defaultRuntime.log(theme.muted(t("No group members found.")));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
         defaultRuntime.log(
-          `${theme.heading("Group Members")} ${theme.muted(`(${result.length})`)}`,
+          `${theme.heading(t("Group Members"))} ${theme.muted(`(${result.length})`)}`,
         );
         defaultRuntime.log(
           renderTable({

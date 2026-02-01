@@ -5,6 +5,7 @@ import {
   select as clackSelect,
   text as clackText,
 } from "@clack/prompts";
+import { t } from "../i18n/index.js";
 import { stylePromptHint, stylePromptMessage, stylePromptTitle } from "../terminal/prompt-style.js";
 
 export const CONFIGURE_WIZARD_SECTIONS = [
@@ -32,25 +33,25 @@ export const CONFIGURE_SECTION_OPTIONS: Array<{
   label: string;
   hint: string;
 }> = [
-  { value: "workspace", label: "Workspace", hint: "Set workspace + sessions" },
-  { value: "model", label: "Model", hint: "Pick provider + credentials" },
-  { value: "web", label: "Web tools", hint: "Configure Brave search + fetch" },
-  { value: "gateway", label: "Gateway", hint: "Port, bind, auth, tailscale" },
+  { value: "workspace", label: t("Workspace"), hint: t("Set workspace + sessions") },
+  { value: "model", label: t("Model"), hint: t("Pick provider + credentials") },
+  { value: "web", label: t("Web tools"), hint: t("Configure Brave search + fetch") },
+  { value: "gateway", label: t("Gateway"), hint: t("Port, bind, auth, tailscale") },
   {
     value: "daemon",
-    label: "Daemon",
-    hint: "Install/manage the background service",
+    label: t("Daemon"),
+    hint: t("Install/manage the background service"),
   },
   {
     value: "channels",
-    label: "Channels",
-    hint: "Link WhatsApp/Telegram/etc and defaults",
+    label: t("Channels"),
+    hint: t("Link WhatsApp/Telegram/etc and defaults"),
   },
-  { value: "skills", label: "Skills", hint: "Install/enable workspace skills" },
+  { value: "skills", label: t("Skills"), hint: t("Install/enable workspace skills") },
   {
     value: "health",
-    label: "Health check",
-    hint: "Run gateway + channel checks",
+    label: t("Health check"),
+    hint: t("Run gateway + channel checks"),
   },
 ];
 

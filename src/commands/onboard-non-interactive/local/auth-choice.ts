@@ -4,6 +4,7 @@ import type { AuthChoice, OnboardOptions } from "../../onboard-types.js";
 import { upsertAuthProfile } from "../../../agents/auth-profiles.js";
 import { normalizeProviderId } from "../../../agents/model-selection.js";
 import { parseDurationMs } from "../../../cli/parse-duration.js";
+import { t } from "../../../i18n/index.js";
 import { upsertSharedEnvVar } from "../../../infra/env-file.js";
 import { shortenHomePath } from "../../../utils.js";
 import { buildTokenProfileId, validateAnthropicSetupToken } from "../../auth-token.js";
@@ -56,7 +57,7 @@ export async function applyNonInteractiveAuthChoice(params: {
     runtime.error(
       [
         `Auth choice "${authChoice}" is deprecated.`,
-        'Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".',
+        t('Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".'),
       ].join("\n"),
     );
     runtime.exit(1);
@@ -66,8 +67,8 @@ export async function applyNonInteractiveAuthChoice(params: {
   if (authChoice === "setup-token") {
     runtime.error(
       [
-        'Auth choice "setup-token" requires interactive mode.',
-        'Use "--auth-choice token" with --token and --token-provider anthropic.',
+        t('Auth choice "setup-token" requires interactive mode.'),
+        t('Use "--auth-choice token" with --token and --token-provider anthropic.'),
       ].join("\n"),
     );
     runtime.exit(1);
@@ -99,19 +100,19 @@ export async function applyNonInteractiveAuthChoice(params: {
   if (authChoice === "token") {
     const providerRaw = opts.tokenProvider?.trim();
     if (!providerRaw) {
-      runtime.error("Missing --token-provider for --auth-choice token.");
+      runtime.error(t("Missing --token-provider for --auth-choice token."));
       runtime.exit(1);
       return null;
     }
     const provider = normalizeProviderId(providerRaw);
     if (provider !== "anthropic") {
-      runtime.error("Only --token-provider anthropic is supported for --auth-choice token.");
+      runtime.error(t("Only --token-provider anthropic is supported for --auth-choice token."));
       runtime.exit(1);
       return null;
     }
     const tokenRaw = opts.token?.trim();
     if (!tokenRaw) {
-      runtime.error("Missing --token for --auth-choice token.");
+      runtime.error(t("Missing --token for --auth-choice token."));
       runtime.exit(1);
       return null;
     }
@@ -501,7 +502,7 @@ export async function applyNonInteractiveAuthChoice(params: {
       cfg: baseConfig,
       flagValue: opts.opencodeZenApiKey,
       flagName: "--opencode-zen-api-key",
-      envVar: "OPENCODE_API_KEY (or OPENCODE_ZEN_API_KEY)",
+      envVar: t("OPENCODE_API_KEY (or OPENCODE_ZEN_API_KEY)"),
       runtime,
     });
     if (!resolved) {
@@ -525,7 +526,7 @@ export async function applyNonInteractiveAuthChoice(params: {
     authChoice === "qwen-portal" ||
     authChoice === "minimax-portal"
   ) {
-    runtime.error("OAuth requires interactive mode.");
+    runtime.error(t("OAuth requires interactive mode."));
     runtime.exit(1);
     return null;
   }

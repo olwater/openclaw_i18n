@@ -4,6 +4,7 @@ import {
   isSystemdUserServiceAvailable,
   readSystemdUserLingerStatus,
 } from "../daemon/systemd.js";
+import { t } from "../i18n/index.js";
 import { note } from "../terminal/note.js";
 
 export type LingerPrompter = {
@@ -30,13 +31,16 @@ export async function ensureSystemdUserLingerInteractive(params: {
   const prompter = params.prompter ?? { note };
   const title = params.title ?? "Systemd";
   if (!(await isSystemdUserServiceAvailable())) {
-    await prompter.note("Systemd user services are unavailable. Skipping lingering checks.", title);
+    await prompter.note(
+      t("Systemd user services are unavailable. Skipping lingering checks."),
+      title,
+    );
     return;
   }
   const status = await readSystemdUserLingerStatus(env);
   if (!status) {
     await prompter.note(
-      "Unable to read loginctl linger status. Ensure systemd + loginctl are available.",
+      t("Unable to read loginctl linger status. Ensure systemd + loginctl are available."),
       title,
     );
     return;
@@ -47,10 +51,10 @@ export async function ensureSystemdUserLingerInteractive(params: {
 
   const reason =
     params.reason ??
-    "Systemd user services stop when you log out or go idle, which kills the Gateway.";
+    t("Systemd user services stop when you log out or go idle, which kills the Gateway.");
   const actionNote = params.requireConfirm
-    ? "We can enable lingering now (may require sudo; writes /var/lib/systemd/linger)."
-    : "Enabling lingering now (may require sudo; writes /var/lib/systemd/linger).";
+    ? t("We can enable lingering now (may require sudo; writes /var/lib/systemd/linger).")
+    : t("Enabling lingering now (may require sudo; writes /var/lib/systemd/linger).");
   await prompter.note(`${reason}\n${actionNote}`, title);
 
   if (params.requireConfirm && prompter.confirm) {
@@ -59,7 +63,7 @@ export async function ensureSystemdUserLingerInteractive(params: {
       initialValue: true,
     });
     if (!ok) {
-      await prompter.note("Without lingering, the Gateway will stop when you log out.", title);
+      await prompter.note(t("Without lingering, the Gateway will stop when you log out."), title);
       return;
     }
   }
@@ -84,7 +88,7 @@ export async function ensureSystemdUserLingerInteractive(params: {
   }
 
   params.runtime.error(
-    `Failed to enable lingering: ${result.stderr || result.stdout || "unknown error"}`,
+    `Failed to enable lingering: ${result.stderr || result.stdout || t("unknown error")}`,
   );
   await prompter.note(`Run manually: sudo loginctl enable-linger ${status.user}`, title);
 }

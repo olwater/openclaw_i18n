@@ -4,6 +4,7 @@ import type { ModelRow } from "./list.types.js";
 import { ensureAuthProfileStore } from "../../agents/auth-profiles.js";
 import { parseModelRef } from "../../agents/model-selection.js";
 import { loadConfig } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { resolveConfiguredEntries } from "./list.configured.js";
 import { loadModelRegistry, toModelRow } from "./list.registry.js";
 import { printModelTable } from "./list.table.js";
@@ -121,7 +122,7 @@ export async function modelsListCommand(
   }
 
   if (rows.length === 0) {
-    runtime.log("No models found.");
+    runtime.log(t("No models found."));
     return;
   }
 

@@ -1,6 +1,7 @@
 import type { RuntimeEnv } from "../runtime.js";
 import { hasBinary } from "../agents/skills.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import { t } from "../i18n/index.js";
 import { runCommandWithTimeout } from "../process/exec.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { isRich, theme } from "../terminal/theme.js";
@@ -32,7 +33,7 @@ function resolveNodeRunner(): NodeRunner {
   if (hasBinary("npx")) {
     return { cmd: "npx", args: ["-y"] };
   }
-  throw new Error("Missing pnpm or npx; install a Node package runner.");
+  throw new Error(t("Missing pnpm or npx; install a Node package runner."));
 }
 
 async function runNodeTool(tool: string, toolArgs: string[], options: ToolRunOptions = {}) {
@@ -119,7 +120,7 @@ function escapeMarkdown(text: string): string {
 function buildMarkdown(query: string, results: DocResult[]): string {
   const lines: string[] = [`# Docs search: ${escapeMarkdown(query)}`, ""];
   if (results.length === 0) {
-    lines.push("_No results._");
+    lines.push(t("_No results._"));
     return lines.join("\n");
   }
   for (const item of results) {
@@ -136,9 +137,9 @@ function formatLinkLabel(link: string): string {
 }
 
 function renderRichResults(query: string, results: DocResult[], runtime: RuntimeEnv) {
-  runtime.log(`${theme.heading("Docs search:")} ${theme.info(query)}`);
+  runtime.log(`${theme.heading(t("Docs search:"))} ${theme.info(query)}`);
   if (results.length === 0) {
-    runtime.log(theme.muted("No results."));
+    runtime.log(theme.muted(t("No results.")));
     return;
   }
   for (const item of results) {
@@ -163,10 +164,10 @@ export async function docsSearchCommand(queryParts: string[], runtime: RuntimeEn
     const docs = formatDocsLink("/", "docs.openclaw.ai");
     if (isRich()) {
       runtime.log(`${theme.muted("Docs:")} ${docs}`);
-      runtime.log(`${theme.muted("Search:")} ${formatCliCommand('openclaw docs "your query"')}`);
+      runtime.log(`${theme.muted("Search:")} ${formatCliCommand(t('openclaw docs "your query"'))}`);
     } else {
-      runtime.log("Docs: https://docs.openclaw.ai/");
-      runtime.log(`Search: ${formatCliCommand('openclaw docs "your query"')}`);
+      runtime.log(t("Docs: https://docs.openclaw.ai/"));
+      runtime.log(`Search: ${formatCliCommand(t('openclaw docs "your query"'))}`);
     }
     return;
   }

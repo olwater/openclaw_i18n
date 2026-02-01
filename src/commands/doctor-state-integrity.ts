@@ -11,6 +11,7 @@ import {
   resolveSessionTranscriptsDirForAgent,
   resolveStorePath,
 } from "../config/sessions.js";
+import { t } from "../i18n/index.js";
 import { note } from "../terminal/note.js";
 import { shortenHomePath } from "../utils.js";
 
@@ -245,9 +246,9 @@ export async function noteStateIntegrity(
 
   if (stateDirExists) {
     const dirCandidates = new Map<string, string>();
-    dirCandidates.set(sessionsDir, "Sessions dir");
-    dirCandidates.set(storeDir, "Session store dir");
-    dirCandidates.set(oauthDir, "OAuth dir");
+    dirCandidates.set(sessionsDir, t("Sessions dir"));
+    dirCandidates.set(storeDir, t("Session store dir"));
+    dirCandidates.set(oauthDir, t("OAuth dir"));
     const displayDirFor = (dir: string) => {
       if (dir === sessionsDir) {
         return displaySessionsDir;
@@ -369,10 +370,10 @@ export async function noteStateIntegrity(
   }
 
   if (warnings.length > 0) {
-    note(warnings.join("\n"), "State integrity");
+    note(warnings.join("\n"), t("State integrity"));
   }
   if (changes.length > 0) {
-    note(changes.join("\n"), "Doctor changes");
+    note(changes.join("\n"), t("Doctor changes"));
   }
 }
 

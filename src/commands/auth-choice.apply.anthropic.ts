@@ -1,5 +1,6 @@
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { upsertAuthProfile } from "../agents/auth-profiles.js";
+import { t } from "../i18n/index.js";
 import {
   formatApiKeyPreview,
   normalizeApiKeyInput,
@@ -18,21 +19,22 @@ export async function applyAuthChoiceAnthropic(
   ) {
     let nextConfig = params.config;
     await params.prompter.note(
-      ["Run `claude setup-token` in your terminal.", "Then paste the generated token below."].join(
-        "\n",
-      ),
-      "Anthropic setup-token",
+      [
+        t("Run `claude setup-token` in your terminal."),
+        t("Then paste the generated token below."),
+      ].join("\n"),
+      t("Anthropic setup-token"),
     );
 
     const tokenRaw = await params.prompter.text({
-      message: "Paste Anthropic setup-token",
+      message: t("Paste Anthropic setup-token"),
       validate: (value) => validateAnthropicSetupToken(String(value ?? "")),
     });
     const token = String(tokenRaw).trim();
 
     const profileNameRaw = await params.prompter.text({
-      message: "Token name (blank = default)",
-      placeholder: "default",
+      message: t("Token name (blank = default)"),
+      placeholder: t("default"),
     });
     const provider = "anthropic";
     const namedProfileId = buildTokenProfileId({
@@ -84,7 +86,7 @@ export async function applyAuthChoiceAnthropic(
     }
     if (!hasCredential) {
       const key = await params.prompter.text({
-        message: "Enter Anthropic API key",
+        message: t("Enter Anthropic API key"),
         validate: validateApiKeyInput,
       });
       await setAnthropicApiKey(normalizeApiKeyInput(String(key)), params.agentDir);

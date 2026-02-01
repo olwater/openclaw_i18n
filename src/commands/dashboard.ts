@@ -1,5 +1,6 @@
 import type { RuntimeEnv } from "../runtime.js";
 import { readConfigFileSnapshot, resolveGatewayPort } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { copyToClipboard } from "../infra/clipboard.js";
 import { defaultRuntime } from "../runtime.js";
 import {
@@ -51,11 +52,11 @@ export async function dashboardCommand(
       });
     }
   } else {
-    hint = "Browser launch disabled (--no-open). Use the URL above.";
+    hint = t("Browser launch disabled (--no-open). Use the URL above.");
   }
 
   if (opened) {
-    runtime.log("Opened in your browser. Keep that tab to control OpenClaw.");
+    runtime.log(t("Opened in your browser. Keep that tab to control OpenClaw."));
   } else if (hint) {
     runtime.log(hint);
   }

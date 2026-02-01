@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import type { ProgramContext } from "./context.js";
+import { t } from "../../i18n/index.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { isRich, theme } from "../../terminal/theme.js";
 import { formatCliBannerLine, hasEmittedCliBanner } from "../banner.js";
@@ -9,24 +10,30 @@ const CLI_NAME = resolveCliName();
 
 const EXAMPLES = [
   [
-    "openclaw channels login --verbose",
-    "Link personal WhatsApp Web and show QR + connection logs.",
+    t("openclaw channels login --verbose"),
+    t("Link personal WhatsApp Web and show QR + connection logs."),
   ],
   [
-    'openclaw message send --target +15555550123 --message "Hi" --json',
-    "Send via your web session and print JSON result.",
+    t('openclaw message send --target +15555550123 --message "Hi" --json'),
+    t("Send via your web session and print JSON result."),
   ],
-  ["openclaw gateway --port 18789", "Run the WebSocket Gateway locally."],
-  ["openclaw --dev gateway", "Run a dev Gateway (isolated state/config) on ws://127.0.0.1:19001."],
-  ["openclaw gateway --force", "Kill anything bound to the default gateway port, then start it."],
-  ["openclaw gateway ...", "Gateway control via WebSocket."],
+  [t("openclaw gateway --port 18789"), t("Run the WebSocket Gateway locally.")],
   [
-    'openclaw agent --to +15555550123 --message "Run summary" --deliver',
-    "Talk directly to the agent using the Gateway; optionally send the WhatsApp reply.",
+    t("openclaw --dev gateway"),
+    t("Run a dev Gateway (isolated state/config) on ws://127.0.0.1:19001."),
   ],
   [
-    'openclaw message send --channel telegram --target @mychat --message "Hi"',
-    "Send via your Telegram bot.",
+    t("openclaw gateway --force"),
+    t("Kill anything bound to the default gateway port, then start it."),
+  ],
+  [t("openclaw gateway ..."), t("Gateway control via WebSocket.")],
+  [
+    t('openclaw agent --to +15555550123 --message "Run summary" --deliver'),
+    t("Talk directly to the agent using the Gateway; optionally send the WhatsApp reply."),
+  ],
+  [
+    t('openclaw message send --channel telegram --target @mychat --message "Hi"'),
+    t("Send via your Telegram bot."),
   ],
 ] as const;
 
@@ -37,14 +44,18 @@ export function configureProgramHelp(program: Command, ctx: ProgramContext) {
     .version(ctx.programVersion)
     .option(
       "--dev",
-      "Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)",
+      t(
+        "Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)",
+      ),
     )
     .option(
       "--profile <name>",
-      "Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)",
+      t(
+        "Use a named profile (isolates OPENCLAW_STATE_DIR/OPENCLAW_CONFIG_PATH under ~/.openclaw-<name>)",
+      ),
     );
 
-  program.option("--no-color", "Disable ANSI colors", false);
+  program.option("--no-color", t("Disable ANSI colors"), false);
 
   program.configureHelp({
     // sort options and subcommands alphabetically

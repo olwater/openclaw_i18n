@@ -3,6 +3,7 @@ import type { RuntimeEnv } from "../../runtime.js";
 import { getChannelPlugin } from "../../channels/plugins/index.js";
 import { loadConfig } from "../../config/config.js";
 import { danger } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { resolveMessageChannelSelection } from "../../infra/outbound/channel-selection.js";
 
 export type ChannelsResolveOptions = {
@@ -71,7 +72,7 @@ export async function channelsResolveCommand(opts: ChannelsResolveOptions, runti
   const cfg = loadConfig();
   const entries = (opts.entries ?? []).map((entry) => entry.trim()).filter(Boolean);
   if (entries.length === 0) {
-    throw new Error("At least one entry is required.");
+    throw new Error(t("At least one entry is required."));
   }
 
   const selection = await resolveMessageChannelSelection({

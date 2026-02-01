@@ -1,4 +1,5 @@
 import type { GatewayBonjourBeacon } from "../../infra/bonjour-discovery.js";
+import { t } from "../../i18n/index.js";
 import { colorize, theme } from "../../terminal/theme.js";
 
 export type GatewayDiscoverOpts = {
@@ -17,7 +18,7 @@ export function parseDiscoverTimeoutMs(raw: unknown, fallbackMs: number): number
         ? String(raw)
         : null;
   if (value === null) {
-    throw new Error("invalid --timeout");
+    throw new Error(t("invalid --timeout"));
   }
   if (!value) {
     return fallbackMs;

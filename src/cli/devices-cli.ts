@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { callGateway } from "../gateway/call.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { renderTable } from "../terminal/table.js";
 import { theme } from "../terminal/theme.js";
@@ -68,11 +69,14 @@ function formatAge(msAgo: number) {
 
 const devicesCallOpts = (cmd: Command, defaults?: { timeoutMs?: number }) =>
   cmd
-    .option("--url <url>", "Gateway WebSocket URL (defaults to gateway.remote.url when configured)")
-    .option("--token <token>", "Gateway token (if required)")
-    .option("--password <password>", "Gateway password (password auth)")
-    .option("--timeout <ms>", "Timeout in ms", String(defaults?.timeoutMs ?? 10_000))
-    .option("--json", "Output JSON", false);
+    .option(
+      "--url <url>",
+      t("Gateway WebSocket URL (defaults to gateway.remote.url when configured)"),
+    )
+    .option("--token <token>", t("Gateway token (if required)"))
+    .option("--password <password>", t("Gateway password (password auth)"))
+    .option("--timeout <ms>", t("Timeout in ms"), String(defaults?.timeoutMs ?? 10_000))
+    .option("--json", t("Output JSON"), false);
 
 const callGatewayCli = async (method: string, opts: DevicesRpcOpts, params?: unknown) =>
   withProgress(
@@ -107,18 +111,18 @@ function formatTokenSummary(tokens: DeviceTokenSummary[] | undefined) {
     return "none";
   }
   const parts = tokens
-    .map((t) => `${t.role}${t.revokedAtMs ? " (revoked)" : ""}`)
+    .map((t) => `${t.role}${t.revokedAtMs ? t(" (revoked)") : ""}`)
     .toSorted((a, b) => a.localeCompare(b));
-  return parts.join(", ");
+  return parts.join(t(", "));
 }
 
 export function registerDevicesCli(program: Command) {
-  const devices = program.command("devices").description("Device pairing and auth tokens");
+  const devices = program.command("devices").description(t("Device pairing and auth tokens"));
 
   devicesCallOpts(
     devices
       .command("list")
-      .description("List pending and paired devices")
+      .description(t("List pending and paired devices"))
       .action(async (opts: DevicesRpcOpts) => {
         const result = await callGatewayCli("device.pair.list", opts, {});
         const list = parseDevicePairingList(result);
@@ -170,8 +174,8 @@ export function registerDevicesCli(program: Command) {
               ],
               rows: list.paired.map((device) => ({
                 Device: device.displayName || device.deviceId,
-                Roles: device.roles?.length ? device.roles.join(", ") : "",
-                Scopes: device.scopes?.length ? device.scopes.join(", ") : "",
+                Roles: device.roles?.length ? device.roles.join(t(", ")) : "",
+                Scopes: device.scopes?.length ? device.scopes.join(t(", ")) : "",
                 Tokens: formatTokenSummary(device.tokens),
                 IP: device.remoteIp ?? "",
               })),
@@ -179,7 +183,7 @@ export function registerDevicesCli(program: Command) {
           );
         }
         if (!list.pending?.length && !list.paired?.length) {
-          defaultRuntime.log(theme.muted("No device pairing entries."));
+          defaultRuntime.log(theme.muted(t("No device pairing entries.")));
         }
       }),
   );
@@ -187,8 +191,8 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("approve")
-      .description("Approve a pending device pairing request")
-      .argument("<requestId>", "Pending request id")
+      .description(t("Approve a pending device pairing request"))
+      .argument("<requestId>", t("Pending request id"))
       .action(async (requestId: string, opts: DevicesRpcOpts) => {
         const result = await callGatewayCli("device.pair.approve", opts, { requestId });
         if (opts.json) {
@@ -203,8 +207,8 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("reject")
-      .description("Reject a pending device pairing request")
-      .argument("<requestId>", "Pending request id")
+      .description(t("Reject a pending device pairing request"))
+      .argument("<requestId>", t("Pending request id"))
       .action(async (requestId: string, opts: DevicesRpcOpts) => {
         const result = await callGatewayCli("device.pair.reject", opts, { requestId });
         if (opts.json) {
@@ -212,22 +216,22 @@ export function registerDevicesCli(program: Command) {
           return;
         }
         const deviceId = (result as { deviceId?: string })?.deviceId;
-        defaultRuntime.log(`${theme.warn("Rejected")} ${theme.command(deviceId ?? "ok")}`);
+        defaultRuntime.log(`${theme.warn(t("Rejected"))} ${theme.command(deviceId ?? "ok")}`);
       }),
   );
 
   devicesCallOpts(
     devices
       .command("rotate")
-      .description("Rotate a device token for a role")
-      .requiredOption("--device <id>", "Device id")
-      .requiredOption("--role <role>", "Role name")
-      .option("--scope <scope...>", "Scopes to attach to the token (repeatable)")
+      .description(t("Rotate a device token for a role"))
+      .requiredOption("--device <id>", t("Device id"))
+      .requiredOption("--role <role>", t("Role name"))
+      .option("--scope <scope...>", t("Scopes to attach to the token (repeatable)"))
       .action(async (opts: DevicesRpcOpts) => {
         const deviceId = String(opts.device ?? "").trim();
         const role = String(opts.role ?? "").trim();
         if (!deviceId || !role) {
-          defaultRuntime.error("--device and --role required");
+          defaultRuntime.error(t("--device and --role required"));
           defaultRuntime.exit(1);
           return;
         }
@@ -243,14 +247,14 @@ export function registerDevicesCli(program: Command) {
   devicesCallOpts(
     devices
       .command("revoke")
-      .description("Revoke a device token for a role")
-      .requiredOption("--device <id>", "Device id")
-      .requiredOption("--role <role>", "Role name")
+      .description(t("Revoke a device token for a role"))
+      .requiredOption("--device <id>", t("Device id"))
+      .requiredOption("--role <role>", t("Role name"))
       .action(async (opts: DevicesRpcOpts) => {
         const deviceId = String(opts.device ?? "").trim();
         const role = String(opts.role ?? "").trim();
         if (!deviceId || !role) {
-          defaultRuntime.error("--device and --role required");
+          defaultRuntime.error(t("--device and --role required"));
           defaultRuntime.exit(1);
           return;
         }

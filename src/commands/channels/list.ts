@@ -3,6 +3,7 @@ import { loadAuthProfileStore } from "../../agents/auth-profiles.js";
 import { listChannelPlugins } from "../../channels/plugins/index.js";
 import { buildChannelAccountSnapshot } from "../../channels/plugins/status.js";
 import { withProgress } from "../../cli/progress.js";
+import { t } from "../../i18n/index.js";
 import { formatUsageReportLines, loadProviderUsageSummary } from "../../infra/provider-usage.js";
 import { defaultRuntime, type RuntimeEnv } from "../../runtime.js";
 import { formatDocsLink } from "../../terminal/links.js";
@@ -25,11 +26,11 @@ const colorValue = (value: string) => {
 };
 
 function formatEnabled(value: boolean | undefined): string {
-  return value === false ? theme.error("disabled") : theme.success("enabled");
+  return value === false ? theme.error(t("disabled")) : theme.success("enabled");
 }
 
 function formatConfigured(value: boolean): string {
-  return value ? theme.success("configured") : theme.warn("not configured");
+  return value ? theme.success("configured") : theme.warn(t("not configured"));
 }
 
 function formatTokenSource(source?: string): string {
@@ -43,7 +44,7 @@ function formatSource(label: string, source?: string): string {
 }
 
 function formatLinked(value: boolean): string {
-  return value ? theme.success("linked") : theme.warn("not linked");
+  return value ? theme.success("linked") : theme.warn(t("not linked"));
 }
 
 function shouldShowConfigured(channel: ChannelPlugin): boolean {
@@ -84,14 +85,14 @@ function formatAccountLine(params: {
   if (typeof snapshot.enabled === "boolean") {
     bits.push(formatEnabled(snapshot.enabled));
   }
-  return `- ${label}: ${bits.join(", ")}`;
+  return `- ${label}: ${bits.join(t(", "))}`;
 }
 async function loadUsageWithProgress(
   runtime: RuntimeEnv,
 ): Promise<Awaited<ReturnType<typeof loadProviderUsageSummary>> | null> {
   try {
     return await withProgress(
-      { label: "Fetching usage snapshot…", indeterminate: true, enabled: true },
+      { label: t("Fetching usage snapshot…"), indeterminate: true, enabled: true },
       async () => await loadProviderUsageSummary(),
     );
   } catch (err) {
@@ -131,7 +132,7 @@ export async function channelsListCommand(
   }
 
   const lines: string[] = [];
-  lines.push(theme.heading("Chat channels:"));
+  lines.push(theme.heading(t("Chat channels:")));
 
   for (const plugin of plugins) {
     const accounts = plugin.config.listAccountIds(cfg);
@@ -154,12 +155,12 @@ export async function channelsListCommand(
   }
 
   lines.push("");
-  lines.push(theme.heading("Auth providers (OAuth + API keys):"));
+  lines.push(theme.heading(t("Auth providers (OAuth + API keys):")));
   if (authProfiles.length === 0) {
     lines.push(theme.muted("- none"));
   } else {
     for (const profile of authProfiles) {
-      const external = profile.isExternal ? theme.muted(" (synced)") : "";
+      const external = profile.isExternal ? theme.muted(t(" (synced)")) : "";
       lines.push(`- ${theme.accent(profile.id)} (${theme.success(profile.type)}${external})`);
     }
   }

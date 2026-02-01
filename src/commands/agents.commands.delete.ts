@@ -3,6 +3,7 @@ import { resolveAgentDir, resolveAgentWorkspaceDir } from "../agents/agent-scope
 import { writeConfigFile } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
 import { resolveSessionTranscriptsDirForAgent } from "../config/sessions.js";
+import { t } from "../i18n/index.js";
 import { DEFAULT_AGENT_ID, normalizeAgentId } from "../routing/session-key.js";
 import { defaultRuntime } from "../runtime.js";
 import { createClackPrompter } from "../wizard/clack-prompter.js";
@@ -27,7 +28,7 @@ export async function agentsDeleteCommand(
 
   const input = opts.id?.trim();
   if (!input) {
-    runtime.error("Agent id is required.");
+    runtime.error(t("Agent id is required."));
     runtime.exit(1);
     return;
   }
@@ -50,7 +51,7 @@ export async function agentsDeleteCommand(
 
   if (!opts.force) {
     if (!process.stdin.isTTY) {
-      runtime.error("Non-interactive session. Re-run with --force.");
+      runtime.error(t("Non-interactive session. Re-run with --force."));
       runtime.exit(1);
       return;
     }

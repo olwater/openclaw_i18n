@@ -1,5 +1,6 @@
 import type { RuntimeEnv } from "../runtime.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
+import { t } from "../i18n/index.js";
 
 type OAuthPrompt = { message: string; placeholder?: string };
 
@@ -18,13 +19,13 @@ export function createVpsAwareOAuthHandlers(params: {
   onPrompt: (prompt: OAuthPrompt) => Promise<string>;
 } {
   const manualPromptMessage =
-    params.manualPromptMessage ?? "Paste the redirect URL (or authorization code)";
+    params.manualPromptMessage ?? t("Paste the redirect URL (or authorization code)");
   let manualCodePromise: Promise<string> | undefined;
 
   return {
     onAuth: async ({ url }) => {
       if (params.isRemote) {
-        params.spin.stop("OAuth URL ready");
+        params.spin.stop(t("OAuth URL ready"));
         params.runtime.log(`\nOpen this URL in your LOCAL browser:\n\n${url}\n`);
         manualCodePromise = params.prompter
           .text({

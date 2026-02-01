@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { t } from "../i18n/index.js";
 import { resolveLsofCommandSync } from "../infra/ports-lsof.js";
 import { sleep } from "../utils.js";
 
@@ -41,7 +42,7 @@ export function listPortListeners(port: number): PortProcess[] {
     const status = (err as { status?: number }).status;
     const code = (err as { code?: string }).code;
     if (code === "ENOENT") {
-      throw new Error("lsof not found; required for --force", { cause: err });
+      throw new Error(t("lsof not found; required for --force"), { cause: err });
     }
     if (status === 1) {
       return [];
@@ -131,6 +132,6 @@ export async function forceFreePortAndWait(
   }
 
   throw new Error(
-    `port ${port} still has listeners after --force: ${still.map((p) => p.pid).join(", ")}`,
+    `port ${port} still has listeners after --force: ${still.map((p) => p.pid).join(t(", "))}`,
   );
 }

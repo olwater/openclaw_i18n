@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { t } from "../i18n/index.js";
 import { WizardCancelledError, type WizardProgress, type WizardPrompter } from "./prompts.js";
 
 export type WizardStepOption = {
@@ -59,7 +60,7 @@ class WizardSessionPrompter implements WizardPrompter {
   async outro(message: string): Promise<void> {
     await this.prompt({
       type: "note",
-      title: "Done",
+      title: t("Done"),
       message,
       executor: "client",
     });
@@ -192,7 +193,7 @@ export class WizardSession {
   async answer(stepId: string, value: unknown): Promise<void> {
     const deferred = this.answerDeferred.get(stepId);
     if (!deferred) {
-      throw new Error("wizard: no pending step");
+      throw new Error(t("wizard: no pending step"));
     }
     this.answerDeferred.delete(stepId);
     this.currentStep = null;
@@ -237,7 +238,7 @@ export class WizardSession {
 
   async awaitAnswer(step: WizardStep): Promise<unknown> {
     if (this.status !== "running") {
-      throw new Error("wizard: session not running");
+      throw new Error(t("wizard: session not running"));
     }
     this.pushStep(step);
     const deferred = createDeferred<unknown>();

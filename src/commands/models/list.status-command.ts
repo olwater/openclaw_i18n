@@ -27,6 +27,7 @@ import {
 import { formatCliCommand } from "../../cli/command-format.js";
 import { withProgressTotals } from "../../cli/progress.js";
 import { CONFIG_PATH, loadConfig } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import {
   formatUsageWindowSummary,
   loadProviderUsageSummary,
@@ -70,7 +71,7 @@ export async function modelsStatusCommand(
 ) {
   ensureFlagCompatibility(opts);
   if (opts.plain && opts.probe) {
-    throw new Error("--probe cannot be used with --plain output.");
+    throw new Error(t("--probe cannot be used with --plain output."));
   }
   const cfg = loadConfig();
   const agentId = resolveKnownAgentId({ cfg, rawAgentId: opts.agent });
@@ -207,15 +208,15 @@ export async function modelsStatusCommand(
   })();
   const probeTimeoutMs = opts.probeTimeout ? Number(opts.probeTimeout) : 8000;
   if (!Number.isFinite(probeTimeoutMs) || probeTimeoutMs <= 0) {
-    throw new Error("--probe-timeout must be a positive number (ms).");
+    throw new Error(t("--probe-timeout must be a positive number (ms)."));
   }
   const probeConcurrency = opts.probeConcurrency ? Number(opts.probeConcurrency) : 2;
   if (!Number.isFinite(probeConcurrency) || probeConcurrency <= 0) {
-    throw new Error("--probe-concurrency must be > 0.");
+    throw new Error(t("--probe-concurrency must be > 0."));
   }
   const probeMaxTokens = opts.probeMaxTokens ? Number(opts.probeMaxTokens) : 8;
   if (!Number.isFinite(probeMaxTokens) || probeMaxTokens <= 0) {
-    throw new Error("--probe-max-tokens must be > 0.");
+    throw new Error(t("--probe-max-tokens must be > 0."));
   }
 
   const aliasIndex = buildModelAliasIndex({ cfg, defaultProvider: DEFAULT_PROVIDER });
@@ -241,7 +242,7 @@ export async function modelsStatusCommand(
   let probeSummary: AuthProbeSummary | undefined;
   if (opts.probe) {
     probeSummary = await withProgressTotals(
-      { label: "Probing auth profiles…", total: 1 },
+      { label: t("Probing auth profiles…"), total: 1 },
       async (update) => {
         return await runAuthProbes({
           cfg,
@@ -263,11 +264,15 @@ export async function modelsStatusCommand(
   const providersWithOauth = providerAuth
     .filter(
       (entry) =>
-        entry.profiles.oauth > 0 || entry.profiles.token > 0 || entry.env?.value === "OAuth (env)",
+        entry.profiles.oauth > 0 ||
+        entry.profiles.token > 0 ||
+        entry.env?.value === t("OAuth (env)"),
     )
     .map((entry) => {
       const count =
-        entry.profiles.oauth + entry.profiles.token + (entry.env?.value === "OAuth (env)" ? 1 : 0);
+        entry.profiles.oauth +
+        entry.profiles.token +
+        (entry.env?.value === t("OAuth (env)") ? 1 : 0);
       return `${entry.provider} (${count})`;
     });
 
@@ -397,7 +402,7 @@ export async function modelsStatusCommand(
     `${label("Config")}${colorize(rich, theme.muted, ":")} ${colorize(rich, theme.info, shortenHomePath(CONFIG_PATH))}`,
   );
   runtime.log(
-    `${label("Agent dir")}${colorize(rich, theme.muted, ":")} ${colorize(
+    `${label(t("Agent dir"))}${colorize(rich, theme.muted, ":")} ${colorize(
       rich,
       theme.info,
       shortenHomePath(agentDir),
@@ -417,11 +422,11 @@ export async function modelsStatusCommand(
     )}${colorize(rich, theme.muted, ":")} ${colorize(
       rich,
       fallbacks.length ? theme.warn : theme.muted,
-      fallbacks.length ? fallbacks.join(", ") : "-",
+      fallbacks.length ? fallbacks.join(t(", ")) : "-",
     )}`,
   );
   runtime.log(
-    `${labelWithSource("Image model", agentId ? "defaults" : undefined)}${colorize(
+    `${labelWithSource(t("Image model"), agentId ? "defaults" : undefined)}${colorize(
       rich,
       theme.muted,
       ":",
@@ -434,7 +439,7 @@ export async function modelsStatusCommand(
     )}${colorize(rich, theme.muted, ":")} ${colorize(
       rich,
       imageFallbacks.length ? theme.accentBright : theme.muted,
-      imageFallbacks.length ? imageFallbacks.join(", ") : "-",
+      imageFallbacks.length ? imageFallbacks.join(t(", ")) : "-",
     )}`,
   );
   runtime.log(
@@ -448,7 +453,7 @@ export async function modelsStatusCommand(
                 ? `${theme.accentDim(alias)} ${theme.muted("->")} ${theme.info(target)}`
                 : `${alias} -> ${target}`,
             )
-            .join(", ")
+            .join(t(", "))
         : "-",
     )}`,
   );
@@ -456,25 +461,25 @@ export async function modelsStatusCommand(
     `${label(`Configured models (${allowed.length || 0})`)}${colorize(rich, theme.muted, ":")} ${colorize(
       rich,
       allowed.length ? theme.info : theme.muted,
-      allowed.length ? allowed.join(", ") : "all",
+      allowed.length ? allowed.join(t(", ")) : "all",
     )}`,
   );
 
   runtime.log("");
-  runtime.log(colorize(rich, theme.heading, "Auth overview"));
+  runtime.log(colorize(rich, theme.heading, t("Auth overview")));
   runtime.log(
-    `${label("Auth store")}${colorize(rich, theme.muted, ":")} ${colorize(
+    `${label(t("Auth store"))}${colorize(rich, theme.muted, ":")} ${colorize(
       rich,
       theme.info,
       shortenHomePath(resolveAuthStorePathForDisplay(agentDir)),
     )}`,
   );
   runtime.log(
-    `${label("Shell env")}${colorize(rich, theme.muted, ":")} ${colorize(
+    `${label(t("Shell env"))}${colorize(rich, theme.muted, ":")} ${colorize(
       rich,
       shellFallbackEnabled ? theme.success : theme.muted,
       shellFallbackEnabled ? "on" : "off",
-    )}${applied.length ? colorize(rich, theme.muted, ` (applied: ${applied.join(", ")})`) : ""}`,
+    )}${applied.length ? colorize(rich, theme.muted, ` (applied: ${applied.join(t(", "))})`) : ""}`,
   );
   runtime.log(
     `${label(`Providers w/ OAuth/tokens (${providersWithOauth.length || 0})`)}${colorize(
@@ -484,14 +489,14 @@ export async function modelsStatusCommand(
     )} ${colorize(
       rich,
       providersWithOauth.length ? theme.info : theme.muted,
-      providersWithOauth.length ? providersWithOauth.join(", ") : "-",
+      providersWithOauth.length ? providersWithOauth.join(t(", ")) : "-",
     )}`,
   );
 
   const formatKey = (key: string) => colorize(rich, theme.warn, key);
   const formatKeyValue = (key: string, value: string) =>
     `${formatKey(key)}=${colorize(rich, theme.info, value)}`;
-  const formatSeparator = () => colorize(rich, theme.muted, " | ");
+  const formatSeparator = () => colorize(rich, theme.muted, t(" | "));
 
   for (const entry of providerAuth) {
     const separator = formatSeparator();
@@ -514,7 +519,7 @@ export async function modelsStatusCommand(
         ),
       );
       if (entry.profiles.labels.length > 0) {
-        bits.push(colorize(rich, theme.info, entry.profiles.labels.join(", ")));
+        bits.push(colorize(rich, theme.info, entry.profiles.labels.join(t(", "))));
       }
     }
     if (entry.env) {
@@ -538,18 +543,18 @@ export async function modelsStatusCommand(
 
   if (missingProvidersInUse.length > 0) {
     runtime.log("");
-    runtime.log(colorize(rich, theme.heading, "Missing auth"));
+    runtime.log(colorize(rich, theme.heading, t("Missing auth")));
     for (const provider of missingProvidersInUse) {
       const hint =
         provider === "anthropic"
-          ? `Run \`claude setup-token\`, then \`${formatCliCommand("openclaw models auth setup-token")}\` or \`${formatCliCommand("openclaw configure")}\`.`
-          : `Run \`${formatCliCommand("openclaw configure")}\` or set an API key env var.`;
+          ? `Run \`claude setup-token\`, then \`${formatCliCommand(t("openclaw models auth setup-token"))}\` or \`${formatCliCommand(t("openclaw configure"))}\`.`
+          : `Run \`${formatCliCommand(t("openclaw configure"))}\` or set an API key env var.`;
       runtime.log(`- ${theme.heading(provider)} ${hint}`);
     }
   }
 
   runtime.log("");
-  runtime.log(colorize(rich, theme.heading, "OAuth/token status"));
+  runtime.log(colorize(rich, theme.heading, t("OAuth/token status")));
   if (oauthProfiles.length === 0) {
     runtime.log(colorize(rich, theme.muted, "- none"));
   } else {
@@ -623,7 +628,7 @@ export async function modelsStatusCommand(
             ? ""
             : profile.expiresAt
               ? ` expires in ${formatRemainingShort(profile.remainingMs)}`
-              : " expires unknown";
+              : t(" expires unknown");
         runtime.log(`  - ${label} ${status}${expiry}`);
       }
     }
@@ -631,7 +636,7 @@ export async function modelsStatusCommand(
 
   if (probeSummary) {
     runtime.log("");
-    runtime.log(colorize(rich, theme.heading, "Auth probes"));
+    runtime.log(colorize(rich, theme.heading, t("Auth probes")));
     if (probeSummary.results.length === 0) {
       runtime.log(colorize(rich, theme.muted, "- none"));
     } else {

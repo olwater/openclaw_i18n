@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { messageCommand } from "../../../commands/message.js";
 import { danger, setVerbose } from "../../../globals.js";
+import { t } from "../../../i18n/index.js";
 import { CHANNEL_TARGET_DESCRIPTION } from "../../../infra/outbound/channel-target.js";
 import { defaultRuntime } from "../../../runtime.js";
 import { runCommandWithRuntime } from "../../cli-utils.js";
@@ -21,10 +22,10 @@ export function createMessageCliHelpers(
   const withMessageBase = (command: Command) =>
     command
       .option("--channel <channel>", `Channel: ${messageChannelOptions}`)
-      .option("--account <id>", "Channel account id (accountId)")
-      .option("--json", "Output result as JSON", false)
-      .option("--dry-run", "Print payload and skip sending", false)
-      .option("--verbose", "Verbose logging", false);
+      .option("--account <id>", t("Channel account id (accountId)"))
+      .option("--json", t("Output result as JSON"), false)
+      .option("--dry-run", t("Print payload and skip sending"), false)
+      .option("--verbose", t("Verbose logging"), false);
 
   const withMessageTarget = (command: Command) =>
     command.option("-t, --target <dest>", CHANNEL_TARGET_DESCRIPTION);

@@ -1,5 +1,6 @@
 import { Box, Container, Markdown, Spacer, Text } from "@mariozechner/pi-tui";
 import { formatToolDetail, resolveToolDisplay } from "../../agents/tool-display.js";
+import { t } from "../../i18n/index.js";
 import { markdownTheme, theme } from "../theme/theme.js";
 
 type ToolResultContent = {
@@ -44,7 +45,7 @@ function extractText(result?: ToolResult): string {
     } else if (entry.type === "image") {
       const mime = entry.mimeType ?? "image";
       const size = entry.bytes ? ` ${Math.round(entry.bytes / 1024)}kb` : "";
-      const omitted = entry.omitted ? " (omitted)" : "";
+      const omitted = entry.omitted ? t(" (omitted)") : "";
       lines.push(`[${mime}${size}${omitted}]`);
     }
   }
@@ -116,7 +117,7 @@ export class ToolExecutionComponent extends Container {
       name: this.toolName,
       args: this.args,
     });
-    const title = `${display.emoji} ${display.label}${this.isPartial ? " (running)" : ""}`;
+    const title = `${display.emoji} ${display.label}${this.isPartial ? t(" (running)") : ""}`;
     this.header.setText(theme.toolTitle(theme.bold(title)));
 
     const argLine = formatArgs(this.toolName, this.args);

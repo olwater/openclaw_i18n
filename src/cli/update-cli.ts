@@ -15,6 +15,7 @@ import {
   resolveUpdateAvailability,
 } from "../commands/status.update.js";
 import { readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
 import { trimLogTail } from "../infra/restart-sentinel.js";
 import { parseSemver } from "../infra/runtime-guard.js";
@@ -1168,7 +1169,7 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
   });
 
   const pickedChannel = await selectStyled({
-    message: "Update channel",
+    message: t("Update channel"),
     options: [
       {
         value: "keep",
@@ -1191,7 +1192,7 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
         hint: "Git main",
       },
     ],
-    initialValue: "keep",
+    initialValue: t("keep"),
   });
 
   if (isCancel(pickedChannel)) {

@@ -19,10 +19,11 @@ import {
   resolveSessionTranscriptPath,
   resolveSessionTranscriptsDirForAgent,
 } from "../../config/sessions/paths.js";
+import { t } from "../../i18n/index.js";
 import { redactSecrets } from "../status-all/format.js";
 import { DEFAULT_PROVIDER, formatMs } from "./shared.js";
 
-const PROBE_PROMPT = "Reply with OK. Do not use tools.";
+const PROBE_PROMPT = t("Reply with OK. Do not use tools.");
 
 export type AuthProbeStatus =
   | "ok"
@@ -204,7 +205,7 @@ function buildProbeTargets(params: {
               source: "profile",
               mode,
               status: "unknown",
-              error: "Excluded by auth.order for this provider.",
+              error: t("Excluded by auth.order for this provider."),
             });
             continue;
           }
@@ -217,7 +218,7 @@ function buildProbeTargets(params: {
               source: "profile",
               mode,
               status: "unknown",
-              error: "Auth profile credentials are missing or expired.",
+              error: t("Auth profile credentials are missing or expired."),
             });
             continue;
           }
@@ -230,7 +231,7 @@ function buildProbeTargets(params: {
               source: "profile",
               mode,
               status: "no_model",
-              error: "No model available for probe",
+              error: t("No model available for probe"),
             });
             continue;
           }
@@ -268,7 +269,7 @@ function buildProbeTargets(params: {
           source,
           mode,
           status: "no_model",
-          error: "No model available for probe",
+          error: t("No model available for probe"),
         });
         continue;
       }
@@ -306,7 +307,7 @@ async function probeTarget(params: {
       source: target.source,
       mode: target.mode,
       status: "no_model",
-      error: "No model available for probe",
+      error: t("No model available for probe"),
     };
   }
 
@@ -489,7 +490,7 @@ export function sortProbeResults(results: AuthProbeResult[]): AuthProbeResult[] 
 
 export function describeProbeSummary(summary: AuthProbeSummary): string {
   if (summary.totalTargets === 0) {
-    return "No probe targets.";
+    return t("No probe targets.");
   }
   return `Probed ${summary.totalTargets} target${summary.totalTargets === 1 ? "" : "s"} in ${formatMs(summary.durationMs)}`;
 }

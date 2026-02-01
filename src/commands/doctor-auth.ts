@@ -15,6 +15,7 @@ import {
 } from "../agents/auth-profiles.js";
 import { updateAuthProfileStoreWithLock } from "../agents/auth-profiles/store.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import { t } from "../i18n/index.js";
 import { note } from "../terminal/note.js";
 
 export async function maybeRepairAnthropicOAuthProfileId(
@@ -32,9 +33,9 @@ export async function maybeRepairAnthropicOAuthProfileId(
     return cfg;
   }
 
-  note(repair.changes.map((c) => `- ${c}`).join("\n"), "Auth profiles");
+  note(repair.changes.map((c) => `- ${c}`).join("\n"), t("Auth profiles"));
   const apply = await prompter.confirm({
-    message: "Update Anthropic OAuth profile id in config now?",
+    message: t("Update Anthropic OAuth profile id in config now?"),
     initialValue: true,
   });
   if (!apply) {
@@ -126,23 +127,23 @@ export async function maybeRemoveDeprecatedCliAuthProfiles(
     return cfg;
   }
 
-  const lines = ["Deprecated external CLI auth profiles detected (no longer supported):"];
+  const lines = [t("Deprecated external CLI auth profiles detected (no longer supported):")];
   if (deprecated.has(CLAUDE_CLI_PROFILE_ID)) {
     lines.push(
-      `- ${CLAUDE_CLI_PROFILE_ID} (Anthropic): use setup-token → ${formatCliCommand("openclaw models auth setup-token")}`,
+      `- ${CLAUDE_CLI_PROFILE_ID} (Anthropic): use setup-token → ${formatCliCommand(t("openclaw models auth setup-token"))}`,
     );
   }
   if (deprecated.has(CODEX_CLI_PROFILE_ID)) {
     lines.push(
       `- ${CODEX_CLI_PROFILE_ID} (OpenAI Codex): use OAuth → ${formatCliCommand(
-        "openclaw models auth login --provider openai-codex",
+        t("openclaw models auth login --provider openai-codex"),
       )}`,
     );
   }
-  note(lines.join("\n"), "Auth profiles");
+  note(lines.join("\n"), t("Auth profiles"));
 
   const shouldRemove = await prompter.confirmRepair({
-    message: "Remove deprecated CLI auth profiles now?",
+    message: t("Remove deprecated CLI auth profiles now?"),
     initialValue: true,
   });
   if (!shouldRemove) {
@@ -193,7 +194,7 @@ export async function maybeRemoveDeprecatedCliAuthProfiles(
       Array.from(deprecated.values())
         .map((id) => `- removed ${id} from config`)
         .join("\n"),
-      "Doctor changes",
+      t("Doctor changes"),
     );
   }
   return pruned.next;
@@ -208,16 +209,16 @@ type AuthIssue = {
 
 function formatAuthIssueHint(issue: AuthIssue): string | null {
   if (issue.provider === "anthropic" && issue.profileId === CLAUDE_CLI_PROFILE_ID) {
-    return `Deprecated profile. Use ${formatCliCommand("openclaw models auth setup-token")} or ${formatCliCommand(
-      "openclaw configure",
+    return `Deprecated profile. Use ${formatCliCommand(t("openclaw models auth setup-token"))} or ${formatCliCommand(
+      t("openclaw configure"),
     )}.`;
   }
   if (issue.provider === "openai-codex" && issue.profileId === CODEX_CLI_PROFILE_ID) {
     return `Deprecated profile. Use ${formatCliCommand(
-      "openclaw models auth login --provider openai-codex",
-    )} or ${formatCliCommand("openclaw configure")}.`;
+      t("openclaw models auth login --provider openai-codex"),
+    )} or ${formatCliCommand(t("openclaw configure"))}.`;
   }
-  return `Re-auth via \`${formatCliCommand("openclaw configure")}\` or \`${formatCliCommand("openclaw onboard")}\`.`;
+  return `Re-auth via \`${formatCliCommand(t("openclaw configure"))}\` or \`${formatCliCommand(t("openclaw onboard"))}\`.`;
 }
 
 function formatAuthIssueLine(issue: AuthIssue): string {
@@ -250,15 +251,15 @@ export async function noteAuthProfileHealth(params: {
           ? `disabled${stats.disabledReason ? `:${stats.disabledReason}` : ""}`
           : "cooldown";
       const hint = kind.startsWith("disabled:billing")
-        ? "Top up credits (provider billing) or switch provider."
-        : "Wait for cooldown or switch provider.";
+        ? t("Top up credits (provider billing) or switch provider.")
+        : t("Wait for cooldown or switch provider.");
       out.push(`- ${profileId}: ${kind} (${remaining})${hint ? ` — ${hint}` : ""}`);
     }
     return out;
   })();
 
   if (unusable.length > 0) {
-    note(unusable.join("\n"), "Auth profile cooldowns");
+    note(unusable.join("\n"), t("Auth profile cooldowns"));
   }
 
   let summary = buildAuthHealthSummary({
@@ -282,7 +283,7 @@ export async function noteAuthProfileHealth(params: {
   }
 
   const shouldRefresh = await params.prompter.confirmRepair({
-    message: "Refresh expiring OAuth tokens now? (static tokens need re-auth)",
+    message: t("Refresh expiring OAuth tokens now? (static tokens need re-auth)"),
     initialValue: true,
   });
 
@@ -304,7 +305,7 @@ export async function noteAuthProfileHealth(params: {
       }
     }
     if (errors.length > 0) {
-      note(errors.join("\n"), "OAuth refresh errors");
+      note(errors.join("\n"), t("OAuth refresh errors"));
     }
     summary = buildAuthHealthSummary({
       store: ensureAuthProfileStore(undefined, {
@@ -328,7 +329,7 @@ export async function noteAuthProfileHealth(params: {
           }),
         )
         .join("\n"),
-      "Model auth",
+      t("Model auth"),
     );
   }
 }

@@ -2,6 +2,7 @@ import type { AgentBinding } from "../config/types.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { AgentSummary } from "./agents.config.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import { t } from "../i18n/index.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import { defaultRuntime } from "../runtime.js";
 import { shortenHomePath } from "../utils.js";
@@ -20,7 +21,7 @@ type AgentsListOptions = {
 };
 
 function formatSummary(summary: AgentSummary) {
-  const defaultTag = summary.isDefault ? " (default)" : "";
+  const defaultTag = summary.isDefault ? t(" (default)") : "";
   const header =
     summary.name && summary.name !== summary.id
       ? `${summary.id}${defaultTag} (${summary.name})`
@@ -53,17 +54,17 @@ function formatSummary(summary: AgentSummary) {
   lines.push(`  Routing rules: ${summary.bindings}`);
 
   if (summary.routes?.length) {
-    lines.push(`  Routing: ${summary.routes.join(", ")}`);
+    lines.push(`  Routing: ${summary.routes.join(t(", "))}`);
   }
   if (summary.providers?.length) {
-    lines.push("  Providers:");
+    lines.push(t("  Providers:"));
     for (const provider of summary.providers) {
       lines.push(`    - ${provider}`);
     }
   }
 
   if (summary.bindingDetails?.length) {
-    lines.push("  Routing rules:");
+    lines.push(t("  Routing rules:"));
     for (const binding of summary.bindingDetails) {
       lines.push(`    - ${binding}`);
     }
@@ -106,7 +107,7 @@ export async function agentsListCommand(
     if (routes.length > 0) {
       summary.routes = routes;
     } else if (summary.isDefault) {
-      summary.routes = ["default (no explicit rules)"];
+      summary.routes = [t("default (no explicit rules)")];
     }
 
     const providerLines = listProvidersForAgent({
@@ -126,9 +127,11 @@ export async function agentsListCommand(
   }
 
   const lines = ["Agents:", ...summaries.map(formatSummary)];
-  lines.push("Routing rules map channel/account/peer to an agent. Use --bindings for full rules.");
   lines.push(
-    `Channel status reflects local config/creds. For live health: ${formatCliCommand("openclaw channels status --probe")}.`,
+    t("Routing rules map channel/account/peer to an agent. Use --bindings for full rules."),
+  );
+  lines.push(
+    `Channel status reflects local config/creds. For live health: ${formatCliCommand(t("openclaw channels status --probe"))}.`,
   );
   runtime.log(lines.join("\n"));
 }

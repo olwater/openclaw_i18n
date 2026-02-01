@@ -6,6 +6,7 @@ import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "../agents/defaults.js";
 import { getCustomProviderApiKey, resolveEnvApiKey } from "../agents/model-auth.js";
 import { loadModelCatalog } from "../agents/model-catalog.js";
 import { resolveConfiguredModelRef } from "../agents/model-selection.js";
+import { t } from "../i18n/index.js";
 import { OPENAI_CODEX_DEFAULT_MODEL } from "./openai-codex-model-default.js";
 
 export async function warnIfModelConfigLooksOff(
@@ -75,6 +76,6 @@ export async function warnIfModelConfigLooksOff(
   }
 
   if (warnings.length > 0) {
-    await prompter.note(warnings.join("\n"), "Model check");
+    await prompter.note(warnings.join("\n"), t("Model check"));
   }
 }

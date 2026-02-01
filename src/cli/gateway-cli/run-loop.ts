@@ -1,5 +1,6 @@
 import type { startGatewayServer } from "../../gateway/server.js";
 import type { defaultRuntime } from "../../runtime.js";
+import { t } from "../../i18n/index.js";
 import { acquireGatewayLock } from "../../infra/gateway-lock.js";
 import {
   consumeGatewaySigusr1RestartAuthorization,
@@ -33,10 +34,10 @@ export async function runGatewayLoop(params: {
     }
     shuttingDown = true;
     const isRestart = action === "restart";
-    gatewayLog.info(`received ${signal}; ${isRestart ? "restarting" : "shutting down"}`);
+    gatewayLog.info(`received ${signal}; ${isRestart ? "restarting" : t("shutting down")}`);
 
     const forceExitTimer = setTimeout(() => {
-      gatewayLog.error("shutdown timed out; exiting without full cleanup");
+      gatewayLog.error(t("shutdown timed out; exiting without full cleanup"));
       cleanupSignals();
       params.runtime.exit(0);
     }, 5000);
@@ -44,7 +45,7 @@ export async function runGatewayLoop(params: {
     void (async () => {
       try {
         await server?.close({
-          reason: isRestart ? "gateway restarting" : "gateway stopping",
+          reason: isRestart ? t("gateway restarting") : t("gateway stopping"),
           restartExpectedMs: isRestart ? 1500 : null,
         });
       } catch (err) {
@@ -64,19 +65,19 @@ export async function runGatewayLoop(params: {
   };
 
   const onSigterm = () => {
-    gatewayLog.info("signal SIGTERM received");
+    gatewayLog.info(t("signal SIGTERM received"));
     request("stop", "SIGTERM");
   };
   const onSigint = () => {
-    gatewayLog.info("signal SIGINT received");
+    gatewayLog.info(t("signal SIGINT received"));
     request("stop", "SIGINT");
   };
   const onSigusr1 = () => {
-    gatewayLog.info("signal SIGUSR1 received");
+    gatewayLog.info(t("signal SIGUSR1 received"));
     const authorized = consumeGatewaySigusr1RestartAuthorization();
     if (!authorized && !isGatewaySigusr1RestartExternallyAllowed()) {
       gatewayLog.warn(
-        "SIGUSR1 restart ignored (not authorized; enable commands.restart or use gateway tool).",
+        t("SIGUSR1 restart ignored (not authorized; enable commands.restart or use gateway tool)."),
       );
       return;
     }

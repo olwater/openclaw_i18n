@@ -1,4 +1,5 @@
 import type { ProgressReporter } from "../../cli/progress.js";
+import { t } from "../../i18n/index.js";
 import { renderTable } from "../../terminal/table.js";
 import { isRich, theme } from "../../terminal/theme.js";
 import { appendStatusAllDiagnosis } from "./diagnosis.js";
@@ -145,7 +146,7 @@ export async function buildStatusAllReportLines(params: {
   });
 
   const lines: string[] = [];
-  lines.push(heading("OpenClaw status --all"));
+  lines.push(heading(t("OpenClaw status --all")));
   lines.push("");
   lines.push(heading("Overview"));
   lines.push(overview.trimEnd());
@@ -179,7 +180,7 @@ export async function buildStatusAllReportLines(params: {
   lines.push(heading("Agents"));
   lines.push(agentsTable.trimEnd());
   lines.push("");
-  lines.push(heading("Diagnosis (read-only)"));
+  lines.push(heading(t("Diagnosis (read-only)")));
 
   await appendStatusAllDiagnosis({
     lines,

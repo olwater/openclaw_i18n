@@ -44,6 +44,7 @@ import {
   type SessionEntry,
   updateSessionStore,
 } from "../config/sessions.js";
+import { t } from "../i18n/index.js";
 import {
   clearAgentRunContext,
   emitAgentEvent,
@@ -68,10 +69,10 @@ export async function agentCommand(
 ) {
   const body = (opts.message ?? "").trim();
   if (!body) {
-    throw new Error("Message (--message) is required");
+    throw new Error(t("Message (--message) is required"));
   }
   if (!opts.to && !opts.sessionId && !opts.sessionKey && !opts.agentId) {
-    throw new Error("Pass --to <E.164>, --session-id, or --agent to choose a session");
+    throw new Error(t("Pass --to <E.164>, --session-id, or --agent to choose a session"));
   }
 
   const cfg = loadConfig();
@@ -81,7 +82,7 @@ export async function agentCommand(
     const knownAgents = listAgentIds(cfg);
     if (!knownAgents.includes(agentIdOverride)) {
       throw new Error(
-        `Unknown agent id "${agentIdOverrideRaw}". Use "${formatCliCommand("openclaw agents list")}" to see configured agents.`,
+        `Unknown agent id "${agentIdOverrideRaw}". Use "${formatCliCommand(t("openclaw agents list"))}" to see configured agents.`,
       );
     }
   }
@@ -120,7 +121,7 @@ export async function agentCommand(
 
   const verboseOverride = normalizeVerboseLevel(opts.verbose);
   if (opts.verbose && !verboseOverride) {
-    throw new Error('Invalid verbose level. Use "on", "full", or "off".');
+    throw new Error(t('Invalid verbose level. Use "on", "full", or "off".'));
   }
 
   const timeoutSecondsRaw =
@@ -129,7 +130,7 @@ export async function agentCommand(
     timeoutSecondsRaw !== undefined &&
     (Number.isNaN(timeoutSecondsRaw) || timeoutSecondsRaw <= 0)
   ) {
-    throw new Error("--timeout must be a positive integer (seconds)");
+    throw new Error(t("--timeout must be a positive integer (seconds)"));
   }
   const timeoutMs = resolveAgentTimeoutMs({
     cfg,
@@ -167,7 +168,7 @@ export async function agentCommand(
         chatType: sessionEntry?.chatType,
       });
       if (sendPolicy === "deny") {
-        throw new Error("send blocked by session policy");
+        throw new Error(t("send blocked by session policy"));
       }
     }
 

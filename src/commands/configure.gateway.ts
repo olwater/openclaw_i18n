@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { resolveGatewayPort } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { findTailscaleBinary } from "../infra/tailscale.js";
 import { note } from "../terminal/note.js";
 import { buildGatewayAuthConfig } from "./configure.gateway-auth.js";
@@ -19,9 +20,9 @@ export async function promptGatewayConfig(
 }> {
   const portRaw = guardCancel(
     await text({
-      message: "Gateway port",
+      message: t("Gateway port"),
       initialValue: String(resolveGatewayPort(cfg)),
-      validate: (value) => (Number.isFinite(Number(value)) ? undefined : "Invalid port"),
+      validate: (value) => (Number.isFinite(Number(value)) ? undefined : t("Invalid port")),
     }),
     runtime,
   );
@@ -29,32 +30,32 @@ export async function promptGatewayConfig(
 
   let bind = guardCancel(
     await select({
-      message: "Gateway bind mode",
+      message: t("Gateway bind mode"),
       options: [
         {
           value: "loopback",
-          label: "Loopback (Local only)",
-          hint: "Bind to 127.0.0.1 - secure, local-only access",
+          label: t("Loopback (Local only)"),
+          hint: t("Bind to 127.0.0.1 - secure, local-only access"),
         },
         {
           value: "tailnet",
-          label: "Tailnet (Tailscale IP)",
-          hint: "Bind to your Tailscale IP only (100.x.x.x)",
+          label: t("Tailnet (Tailscale IP)"),
+          hint: t("Bind to your Tailscale IP only (100.x.x.x)"),
         },
         {
           value: "auto",
-          label: "Auto (Loopback → LAN)",
-          hint: "Prefer loopback; fall back to all interfaces if unavailable",
+          label: t("Auto (Loopback → LAN)"),
+          hint: t("Prefer loopback; fall back to all interfaces if unavailable"),
         },
         {
           value: "lan",
-          label: "LAN (All interfaces)",
-          hint: "Bind to 0.0.0.0 - accessible from anywhere on your network",
+          label: t("LAN (All interfaces)"),
+          hint: t("Bind to 0.0.0.0 - accessible from anywhere on your network"),
         },
         {
           value: "custom",
-          label: "Custom IP",
-          hint: "Specify a specific IP address, with 0.0.0.0 fallback if unavailable",
+          label: t("Custom IP"),
+          hint: t("Specify a specific IP address, with 0.0.0.0 fallback if unavailable"),
         },
       ],
     }),
@@ -65,16 +66,16 @@ export async function promptGatewayConfig(
   if (bind === "custom") {
     const input = guardCancel(
       await text({
-        message: "Custom IP address",
-        placeholder: "192.168.1.100",
+        message: t("Custom IP address"),
+        placeholder: t("192.168.1.100"),
         validate: (value) => {
           if (!value) {
-            return "IP address is required for custom bind mode";
+            return t("IP address is required for custom bind mode");
           }
           const trimmed = value.trim();
           const parts = trimmed.split(".");
           if (parts.length !== 4) {
-            return "Invalid IPv4 address (e.g., 192.168.1.100)";
+            return t("Invalid IPv4 address (e.g., 192.168.1.100)");
           }
           if (
             parts.every((part) => {
@@ -84,7 +85,7 @@ export async function promptGatewayConfig(
           ) {
             return undefined;
           }
-          return "Invalid IPv4 address (each octet must be 0-255)";
+          return t("Invalid IPv4 address (each octet must be 0-255)");
         },
       }),
       runtime,
@@ -94,30 +95,30 @@ export async function promptGatewayConfig(
 
   let authMode = guardCancel(
     await select({
-      message: "Gateway auth",
+      message: t("Gateway auth"),
       options: [
-        { value: "token", label: "Token", hint: "Recommended default" },
-        { value: "password", label: "Password" },
+        { value: "token", label: t("Token"), hint: t("Recommended default") },
+        { value: "password", label: t("Password") },
       ],
-      initialValue: "token",
+      initialValue: t("token"),
     }),
     runtime,
   ) as GatewayAuthChoice;
 
   const tailscaleMode = guardCancel(
     await select({
-      message: "Tailscale exposure",
+      message: t("Tailscale exposure"),
       options: [
-        { value: "off", label: "Off", hint: "No Tailscale exposure" },
+        { value: "off", label: t("Off"), hint: t("No Tailscale exposure") },
         {
           value: "serve",
-          label: "Serve",
-          hint: "Private HTTPS for your tailnet (devices on Tailscale)",
+          label: t("Serve"),
+          hint: t("Private HTTPS for your tailnet (devices on Tailscale)"),
         },
         {
           value: "funnel",
-          label: "Funnel",
-          hint: "Public HTTPS via Tailscale Funnel (internet)",
+          label: t("Funnel"),
+          hint: t("Public HTTPS via Tailscale Funnel (internet)"),
         },
       ],
     }),
@@ -130,13 +131,13 @@ export async function promptGatewayConfig(
     if (!tailscaleBin) {
       note(
         [
-          "Tailscale binary not found in PATH or /Applications.",
-          "Ensure Tailscale is installed from:",
-          "  https://tailscale.com/download/mac",
+          t("Tailscale binary not found in PATH or /Applications."),
+          t("Ensure Tailscale is installed from:"),
+          t("  https://tailscale.com/download/mac"),
           "",
-          "You can continue setup, but serve/funnel will fail at runtime.",
+          t("You can continue setup, but serve/funnel will fail at runtime."),
         ].join("\n"),
-        "Tailscale Warning",
+        t("Tailscale Warning"),
       );
     }
   }
@@ -152,7 +153,7 @@ export async function promptGatewayConfig(
     tailscaleResetOnExit = Boolean(
       guardCancel(
         await confirm({
-          message: "Reset Tailscale serve/funnel on exit?",
+          message: t("Reset Tailscale serve/funnel on exit?"),
           initialValue: false,
         }),
         runtime,
@@ -161,12 +162,12 @@ export async function promptGatewayConfig(
   }
 
   if (tailscaleMode !== "off" && bind !== "loopback") {
-    note("Tailscale requires bind=loopback. Adjusting bind to loopback.", "Note");
+    note(t("Tailscale requires bind=loopback. Adjusting bind to loopback."), "Note");
     bind = "loopback";
   }
 
   if (tailscaleMode === "funnel" && authMode !== "password") {
-    note("Tailscale funnel requires password auth.", "Note");
+    note(t("Tailscale funnel requires password auth."), "Note");
     authMode = "password";
   }
 
@@ -177,7 +178,7 @@ export async function promptGatewayConfig(
   if (authMode === "token") {
     const tokenInput = guardCancel(
       await text({
-        message: "Gateway token (blank to generate)",
+        message: t("Gateway token (blank to generate)"),
         initialValue: randomToken(),
       }),
       runtime,
@@ -188,7 +189,7 @@ export async function promptGatewayConfig(
   if (authMode === "password") {
     const password = guardCancel(
       await text({
-        message: "Gateway password",
+        message: t("Gateway password"),
         validate: (value) => (value?.trim() ? undefined : "Required"),
       }),
       runtime,

@@ -1,4 +1,5 @@
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
+import { t } from "../i18n/index.js";
 import { githubCopilotLoginCommand } from "../providers/github-copilot-auth.js";
 import { applyAuthProfileConfig } from "./onboard-auth.js";
 
@@ -13,16 +14,16 @@ export async function applyAuthChoiceGitHubCopilot(
 
   await params.prompter.note(
     [
-      "This will open a GitHub device login to authorize Copilot.",
-      "Requires an active GitHub Copilot subscription.",
+      t("This will open a GitHub device login to authorize Copilot."),
+      t("Requires an active GitHub Copilot subscription."),
     ].join("\n"),
-    "GitHub Copilot",
+    t("GitHub Copilot"),
   );
 
   if (!process.stdin.isTTY) {
     await params.prompter.note(
-      "GitHub Copilot login requires an interactive TTY.",
-      "GitHub Copilot",
+      t("GitHub Copilot login requires an interactive TTY."),
+      t("GitHub Copilot"),
     );
     return { config: nextConfig };
   }
@@ -30,7 +31,7 @@ export async function applyAuthChoiceGitHubCopilot(
   try {
     await githubCopilotLoginCommand({ yes: true }, params.runtime);
   } catch (err) {
-    await params.prompter.note(`GitHub Copilot login failed: ${String(err)}`, "GitHub Copilot");
+    await params.prompter.note(`GitHub Copilot login failed: ${String(err)}`, t("GitHub Copilot"));
     return { config: nextConfig };
   }
 
@@ -57,7 +58,7 @@ export async function applyAuthChoiceGitHubCopilot(
         },
       },
     };
-    await params.prompter.note(`Default model set to ${model}`, "Model configured");
+    await params.prompter.note(`Default model set to ${model}`, t("Model configured"));
   }
 
   return { config: nextConfig };

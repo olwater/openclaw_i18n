@@ -1,5 +1,6 @@
 import type { Component, SelectItem } from "@mariozechner/pi-tui";
 import { spawn } from "node:child_process";
+import { t } from "../i18n/index.js";
 import { createSearchableSelectList } from "./components/selectors.js";
 
 type LocalShellDeps = {
@@ -43,15 +44,17 @@ export function createLocalShellRunner(deps: LocalShellDeps) {
     localExecAsked = true;
 
     return await new Promise<boolean>((resolve) => {
-      deps.chatLog.addSystem("Allow local shell commands for this session?");
+      deps.chatLog.addSystem(t("Allow local shell commands for this session?"));
       deps.chatLog.addSystem(
-        "This runs commands on YOUR machine (not the gateway) and may delete files or reveal secrets.",
+        t(
+          "This runs commands on YOUR machine (not the gateway) and may delete files or reveal secrets.",
+        ),
       );
-      deps.chatLog.addSystem("Select Yes/No (arrows + Enter), Esc to cancel.");
+      deps.chatLog.addSystem(t("Select Yes/No (arrows + Enter), Esc to cancel."));
       const selector = createSelector(
         [
-          { value: "no", label: "No" },
-          { value: "yes", label: "Yes" },
+          { value: "no", label: t("No") },
+          { value: "yes", label: t("Yes") },
         ],
         2,
       );
@@ -59,17 +62,17 @@ export function createLocalShellRunner(deps: LocalShellDeps) {
         deps.closeOverlay();
         if (item.value === "yes") {
           localExecAllowed = true;
-          deps.chatLog.addSystem("local shell: enabled for this session");
+          deps.chatLog.addSystem(t("local shell: enabled for this session"));
           resolve(true);
         } else {
-          deps.chatLog.addSystem("local shell: not enabled");
+          deps.chatLog.addSystem(t("local shell: not enabled"));
           resolve(false);
         }
         deps.tui.requestRender();
       };
       selector.onCancel = () => {
         deps.closeOverlay();
-        deps.chatLog.addSystem("local shell: cancelled");
+        deps.chatLog.addSystem(t("local shell: cancelled"));
         deps.tui.requestRender();
         resolve(false);
       };
@@ -87,7 +90,7 @@ export function createLocalShellRunner(deps: LocalShellDeps) {
     }
 
     if (localExecAsked && !localExecAllowed) {
-      deps.chatLog.addSystem("local shell: not enabled for this session");
+      deps.chatLog.addSystem(t("local shell: not enabled for this session"));
       deps.tui.requestRender();
       return;
     }

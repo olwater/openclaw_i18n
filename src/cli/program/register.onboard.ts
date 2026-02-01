@@ -8,6 +8,7 @@ import type {
   TailscaleMode,
 } from "../../commands/onboard-types.js";
 import { onboardCommand } from "../../commands/onboard.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
@@ -40,34 +41,36 @@ function resolveInstallDaemonFlag(
 export function registerOnboardCommand(program: Command) {
   program
     .command("onboard")
-    .description("Interactive wizard to set up the gateway, workspace, and skills")
+    .description(t("Interactive wizard to set up the gateway, workspace, and skills"))
     .addHelpText(
       "after",
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/onboard", "docs.openclaw.ai/cli/onboard")}\n`,
     )
-    .option("--workspace <dir>", "Agent workspace directory (default: ~/.openclaw/workspace)")
-    .option("--reset", "Reset config + credentials + sessions + workspace before running wizard")
-    .option("--non-interactive", "Run without prompts", false)
+    .option("--workspace <dir>", t("Agent workspace directory (default: ~/.openclaw/workspace)"))
+    .option("--reset", t("Reset config + credentials + sessions + workspace before running wizard"))
+    .option("--non-interactive", t("Run without prompts"), false)
     .option(
       "--accept-risk",
-      "Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)",
+      t(
+        "Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)",
+      ),
       false,
     )
-    .option("--flow <flow>", "Wizard flow: quickstart|advanced|manual")
-    .option("--mode <mode>", "Wizard mode: local|remote")
+    .option("--flow <flow>", t("Wizard flow: quickstart|advanced|manual"))
+    .option("--mode <mode>", t("Wizard mode: local|remote"))
     .option(
       "--auth-choice <choice>",
       "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|cloudflare-ai-gateway-api-key|moonshot-api-key|moonshot-api-key-cn|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|xai-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
     )
     .option(
       "--token-provider <id>",
-      "Token provider id (non-interactive; used with --auth-choice token)",
+      t("Token provider id (non-interactive; used with --auth-choice token)"),
     )
-    .option("--token <token>", "Token value (non-interactive; used with --auth-choice token)")
+    .option("--token <token>", t("Token value (non-interactive; used with --auth-choice token)"))
     .option(
       "--token-profile-id <id>",
-      "Auth profile id (non-interactive; default: <provider>:manual)",
+      t("Auth profile id (non-interactive; default: <provider>:manual)"),
     )
     .option("--token-expires-in <duration>", "Optional token expiry duration (e.g. 365d, 12h)")
     .option("--anthropic-api-key <key>", "Anthropic API key")

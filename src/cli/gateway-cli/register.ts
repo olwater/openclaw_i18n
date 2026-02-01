@@ -4,6 +4,7 @@ import type { GatewayDiscoverOpts } from "./discover.js";
 import { gatewayStatusCommand } from "../../commands/gateway-status.js";
 import { formatHealthChannelLines, type HealthSummary } from "../../commands/health.js";
 import { loadConfig } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import { discoverGatewayBeacons } from "../../infra/bonjour-discovery.js";
 import { resolveWideAreaDiscoveryDomain } from "../../infra/widearea-dns.js";
 import { defaultRuntime } from "../../runtime.js";
@@ -58,11 +59,11 @@ function styleHealthChannelLine(line: string, rich: boolean): string {
   if (normalized.startsWith("configured")) {
     return applyPrefix("configured", theme.success);
   }
-  if (normalized.startsWith("not linked")) {
-    return applyPrefix("not linked", theme.warn);
+  if (normalized.startsWith(t("not linked"))) {
+    return applyPrefix(t("not linked"), theme.warn);
   }
-  if (normalized.startsWith("not configured")) {
-    return applyPrefix("not configured", theme.muted);
+  if (normalized.startsWith(t("not configured"))) {
+    return applyPrefix(t("not configured"), theme.muted);
   }
   if (normalized.startsWith("unknown")) {
     return applyPrefix("unknown", theme.warn);
@@ -102,7 +103,7 @@ function renderCostUsageSummary(summary: CostUsageSummary, days: number, rich: b
 
   if (summary.totals.missingCostEntries > 0) {
     lines.push(
-      `${colorize(rich, theme.muted, "Missing entries:")} ${summary.totals.missingCostEntries}`,
+      `${colorize(rich, theme.muted, t("Missing entries:"))} ${summary.totals.missingCostEntries}`,
     );
   }
 
@@ -111,7 +112,7 @@ function renderCostUsageSummary(summary: CostUsageSummary, days: number, rich: b
     const latestCost = formatUsd(latest.totalCost) ?? "$0.00";
     const latestTokens = formatTokenCount(latest.totalTokens) ?? "0";
     lines.push(
-      `${colorize(rich, theme.muted, "Latest day:")} ${latest.date} · ${latestCost} · ${latestTokens} tokens`,
+      `${colorize(rich, theme.muted, t("Latest day:"))} ${latest.date} · ${latestCost} · ${latestTokens} tokens`,
     );
   }
 
@@ -122,7 +123,7 @@ export function registerGatewayCli(program: Command) {
   const gateway = addGatewayRunCommand(
     program
       .command("gateway")
-      .description("Run the WebSocket Gateway")
+      .description(t("Run the WebSocket Gateway"))
       .addHelpText(
         "after",
         () =>
@@ -131,19 +132,19 @@ export function registerGatewayCli(program: Command) {
   );
 
   addGatewayRunCommand(
-    gateway.command("run").description("Run the WebSocket Gateway (foreground)"),
+    gateway.command("run").description(t("Run the WebSocket Gateway (foreground)")),
   );
 
   gateway
     .command("status")
-    .description("Show gateway service status + probe the Gateway")
-    .option("--url <url>", "Gateway WebSocket URL (defaults to config/remote/local)")
-    .option("--token <token>", "Gateway token (if required)")
-    .option("--password <password>", "Gateway password (password auth)")
-    .option("--timeout <ms>", "Timeout in ms", "10000")
-    .option("--no-probe", "Skip RPC probe")
-    .option("--deep", "Scan system-level services", false)
-    .option("--json", "Output JSON", false)
+    .description(t("Show gateway service status + probe the Gateway"))
+    .option("--url <url>", t("Gateway WebSocket URL (defaults to config/remote/local)"))
+    .option("--token <token>", t("Gateway token (if required)"))
+    .option("--password <password>", t("Gateway password (password auth)"))
+    .option("--timeout <ms>", t("Timeout in ms"), "10000")
+    .option("--no-probe", t("Skip RPC probe"))
+    .option("--deep", t("Scan system-level services"), false)
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runDaemonStatus({
         rpc: opts,
@@ -155,44 +156,44 @@ export function registerGatewayCli(program: Command) {
 
   gateway
     .command("install")
-    .description("Install the Gateway service (launchd/systemd/schtasks)")
-    .option("--port <port>", "Gateway port")
-    .option("--runtime <runtime>", "Daemon runtime (node|bun). Default: node")
-    .option("--token <token>", "Gateway token (token auth)")
-    .option("--force", "Reinstall/overwrite if already installed", false)
-    .option("--json", "Output JSON", false)
+    .description(t("Install the Gateway service (launchd/systemd/schtasks)"))
+    .option("--port <port>", t("Gateway port"))
+    .option("--runtime <runtime>", t("Daemon runtime (node|bun). Default: node"))
+    .option("--token <token>", t("Gateway token (token auth)"))
+    .option("--force", t("Reinstall/overwrite if already installed"), false)
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runDaemonInstall(opts);
     });
 
   gateway
     .command("uninstall")
-    .description("Uninstall the Gateway service (launchd/systemd/schtasks)")
-    .option("--json", "Output JSON", false)
+    .description(t("Uninstall the Gateway service (launchd/systemd/schtasks)"))
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runDaemonUninstall(opts);
     });
 
   gateway
     .command("start")
-    .description("Start the Gateway service (launchd/systemd/schtasks)")
-    .option("--json", "Output JSON", false)
+    .description(t("Start the Gateway service (launchd/systemd/schtasks)"))
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runDaemonStart(opts);
     });
 
   gateway
     .command("stop")
-    .description("Stop the Gateway service (launchd/systemd/schtasks)")
-    .option("--json", "Output JSON", false)
+    .description(t("Stop the Gateway service (launchd/systemd/schtasks)"))
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runDaemonStop(opts);
     });
 
   gateway
     .command("restart")
-    .description("Restart the Gateway service (launchd/systemd/schtasks)")
-    .option("--json", "Output JSON", false)
+    .description(t("Restart the Gateway service (launchd/systemd/schtasks)"))
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runDaemonRestart(opts);
     });
@@ -200,9 +201,9 @@ export function registerGatewayCli(program: Command) {
   gatewayCallOpts(
     gateway
       .command("call")
-      .description("Call a Gateway method")
-      .argument("<method>", "Method name (health/status/system-presence/cron.*)")
-      .option("--params <json>", "JSON object string for params", "{}")
+      .description(t("Call a Gateway method"))
+      .argument("<method>", t("Method name (health/status/system-presence/cron.*)"))
+      .option("--params <json>", t("JSON object string for params"), "{}")
       .action(async (method, opts) => {
         await runGatewayCommand(async () => {
           const params = JSON.parse(String(opts.params ?? "{}"));
@@ -213,18 +214,18 @@ export function registerGatewayCli(program: Command) {
           }
           const rich = isRich();
           defaultRuntime.log(
-            `${colorize(rich, theme.heading, "Gateway call")}: ${colorize(rich, theme.muted, String(method))}`,
+            `${colorize(rich, theme.heading, t("Gateway call"))}: ${colorize(rich, theme.muted, String(method))}`,
           );
           defaultRuntime.log(JSON.stringify(result, null, 2));
-        }, "Gateway call failed");
+        }, t("Gateway call failed"));
       }),
   );
 
   gatewayCallOpts(
     gateway
       .command("usage-cost")
-      .description("Fetch usage cost summary from session logs")
-      .option("--days <days>", "Number of days to include", "30")
+      .description(t("Fetch usage cost summary from session logs"))
+      .option("--days <days>", t("Number of days to include"), "30")
       .action(async (opts) => {
         await runGatewayCommand(async () => {
           const days = parseDaysOption(opts.days);
@@ -238,14 +239,14 @@ export function registerGatewayCli(program: Command) {
           for (const line of renderCostUsageSummary(summary, days, rich)) {
             defaultRuntime.log(line);
           }
-        }, "Gateway usage cost failed");
+        }, t("Gateway usage cost failed"));
       }),
   );
 
   gatewayCallOpts(
     gateway
       .command("health")
-      .description("Fetch Gateway health")
+      .description(t("Fetch Gateway health"))
       .action(async (opts) => {
         await runGatewayCommand(async () => {
           const result = await callGatewayCli("health", opts);
@@ -256,7 +257,7 @@ export function registerGatewayCli(program: Command) {
           const rich = isRich();
           const obj: Record<string, unknown> = result && typeof result === "object" ? result : {};
           const durationMs = typeof obj.durationMs === "number" ? obj.durationMs : null;
-          defaultRuntime.log(colorize(rich, theme.heading, "Gateway Health"));
+          defaultRuntime.log(colorize(rich, theme.heading, t("Gateway Health")));
           defaultRuntime.log(
             `${colorize(rich, theme.success, "OK")}${durationMs != null ? ` (${durationMs}ms)` : ""}`,
           );
@@ -271,15 +272,20 @@ export function registerGatewayCli(program: Command) {
 
   gateway
     .command("probe")
-    .description("Show gateway reachability + discovery + health + status summary (local + remote)")
-    .option("--url <url>", "Explicit Gateway WebSocket URL (still probes localhost)")
-    .option("--ssh <target>", "SSH target for remote gateway tunnel (user@host or user@host:port)")
-    .option("--ssh-identity <path>", "SSH identity file path")
-    .option("--ssh-auto", "Try to derive an SSH target from Bonjour discovery", false)
-    .option("--token <token>", "Gateway token (applies to all probes)")
-    .option("--password <password>", "Gateway password (applies to all probes)")
-    .option("--timeout <ms>", "Overall probe budget in ms", "3000")
-    .option("--json", "Output JSON", false)
+    .description(
+      t("Show gateway reachability + discovery + health + status summary (local + remote)"),
+    )
+    .option("--url <url>", t("Explicit Gateway WebSocket URL (still probes localhost)"))
+    .option(
+      "--ssh <target>",
+      t("SSH target for remote gateway tunnel (user@host or user@host:port)"),
+    )
+    .option("--ssh-identity <path>", t("SSH identity file path"))
+    .option("--ssh-auto", t("Try to derive an SSH target from Bonjour discovery"), false)
+    .option("--token <token>", t("Gateway token (applies to all probes)"))
+    .option("--password <password>", t("Gateway password (applies to all probes)"))
+    .option("--timeout <ms>", t("Overall probe budget in ms"), "3000")
+    .option("--json", t("Output JSON"), false)
     .action(async (opts) => {
       await runGatewayCommand(async () => {
         await gatewayStatusCommand(opts, defaultRuntime);
@@ -288,9 +294,9 @@ export function registerGatewayCli(program: Command) {
 
   gateway
     .command("discover")
-    .description("Discover gateways via Bonjour (local + wide-area if configured)")
-    .option("--timeout <ms>", "Per-command timeout in ms", "2000")
-    .option("--json", "Output JSON", false)
+    .description(t("Discover gateways via Bonjour (local + wide-area if configured)"))
+    .option("--timeout <ms>", t("Per-command timeout in ms"), "2000")
+    .option("--json", t("Output JSON"), false)
     .action(async (opts: GatewayDiscoverOpts) => {
       await runGatewayCommand(async () => {
         const cfg = loadConfig();
@@ -301,7 +307,7 @@ export function registerGatewayCli(program: Command) {
         const domains = ["local.", ...(wideAreaDomain ? [wideAreaDomain] : [])];
         const beacons = await withProgress(
           {
-            label: "Scanning for gateways…",
+            label: t("Scanning for gateways…"),
             indeterminate: true,
             enabled: opts.json !== true,
             delayMs: 0,
@@ -337,12 +343,12 @@ export function registerGatewayCli(program: Command) {
         }
 
         const rich = isRich();
-        defaultRuntime.log(colorize(rich, theme.heading, "Gateway Discovery"));
+        defaultRuntime.log(colorize(rich, theme.heading, t("Gateway Discovery")));
         defaultRuntime.log(
           colorize(
             rich,
             theme.muted,
-            `Found ${deduped.length} gateway(s) · domains: ${domains.join(", ")}`,
+            `Found ${deduped.length} gateway(s) · domains: ${domains.join(t(", "))}`,
           ),
         );
         if (deduped.length === 0) {
@@ -354,6 +360,6 @@ export function registerGatewayCli(program: Command) {
             defaultRuntime.log(line);
           }
         }
-      }, "gateway discover failed");
+      }, t("gateway discover failed"));
     });
 }

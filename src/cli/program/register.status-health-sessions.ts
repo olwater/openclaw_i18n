@@ -3,6 +3,7 @@ import { healthCommand } from "../../commands/health.js";
 import { sessionsCommand } from "../../commands/sessions.js";
 import { statusCommand } from "../../commands/status.js";
 import { setVerbose } from "../../globals.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
@@ -17,7 +18,7 @@ function resolveVerbose(opts: { verbose?: boolean; debug?: boolean }): boolean {
 function parseTimeoutMs(timeout: unknown): number | null | undefined {
   const parsed = parsePositiveIntOrUndefined(timeout);
   if (timeout !== undefined && parsed === undefined) {
-    defaultRuntime.error("--timeout must be a positive integer (milliseconds)");
+    defaultRuntime.error(t("--timeout must be a positive integer (milliseconds)"));
     defaultRuntime.exit(1);
     return null;
   }
@@ -27,27 +28,31 @@ function parseTimeoutMs(timeout: unknown): number | null | undefined {
 export function registerStatusHealthSessionsCommands(program: Command) {
   program
     .command("status")
-    .description("Show channel health and recent session recipients")
-    .option("--json", "Output JSON instead of text", false)
-    .option("--all", "Full diagnosis (read-only, pasteable)", false)
-    .option("--usage", "Show model provider usage/quota snapshots", false)
-    .option("--deep", "Probe channels (WhatsApp Web + Telegram + Discord + Slack + Signal)", false)
-    .option("--timeout <ms>", "Probe timeout in milliseconds", "10000")
-    .option("--verbose", "Verbose logging", false)
-    .option("--debug", "Alias for --verbose", false)
+    .description(t("Show channel health and recent session recipients"))
+    .option("--json", t("Output JSON instead of text"), false)
+    .option("--all", t("Full diagnosis (read-only, pasteable)"), false)
+    .option("--usage", t("Show model provider usage/quota snapshots"), false)
+    .option(
+      "--deep",
+      t("Probe channels (WhatsApp Web + Telegram + Discord + Slack + Signal)"),
+      false,
+    )
+    .option("--timeout <ms>", t("Probe timeout in milliseconds"), "10000")
+    .option("--verbose", t("Verbose logging"), false)
+    .option("--debug", t("Alias for --verbose"), false)
     .addHelpText(
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw status", "Show channel health + session summary."],
-          ["openclaw status --all", "Full diagnosis (read-only)."],
-          ["openclaw status --json", "Machine-readable output."],
-          ["openclaw status --usage", "Show model provider usage/quota snapshots."],
+          [t("openclaw status"), t("Show channel health + session summary.")],
+          [t("openclaw status --all"), t("Full diagnosis (read-only).")],
+          [t("openclaw status --json"), t("Machine-readable output.")],
+          [t("openclaw status --usage"), t("Show model provider usage/quota snapshots.")],
           [
-            "openclaw status --deep",
-            "Run channel probes (WA + Telegram + Discord + Slack + Signal).",
+            t("openclaw status --deep"),
+            t("Run channel probes (WA + Telegram + Discord + Slack + Signal)."),
           ],
-          ["openclaw status --deep --timeout 5000", "Tighten probe timeout."],
+          [t("openclaw status --deep --timeout 5000"), t("Tighten probe timeout.")],
         ])}`,
     )
     .addHelpText(
@@ -79,11 +84,11 @@ export function registerStatusHealthSessionsCommands(program: Command) {
 
   program
     .command("health")
-    .description("Fetch health from the running gateway")
-    .option("--json", "Output JSON instead of text", false)
-    .option("--timeout <ms>", "Connection timeout in milliseconds", "10000")
-    .option("--verbose", "Verbose logging", false)
-    .option("--debug", "Alias for --verbose", false)
+    .description(t("Fetch health from the running gateway"))
+    .option("--json", t("Output JSON instead of text"), false)
+    .option("--timeout <ms>", t("Connection timeout in milliseconds"), "10000")
+    .option("--verbose", t("Verbose logging"), false)
+    .option("--debug", t("Alias for --verbose"), false)
     .addHelpText(
       "after",
       () =>
@@ -110,21 +115,23 @@ export function registerStatusHealthSessionsCommands(program: Command) {
 
   program
     .command("sessions")
-    .description("List stored conversation sessions")
-    .option("--json", "Output as JSON", false)
-    .option("--verbose", "Verbose logging", false)
-    .option("--store <path>", "Path to session store (default: resolved from config)")
-    .option("--active <minutes>", "Only show sessions updated within the past N minutes")
+    .description(t("List stored conversation sessions"))
+    .option("--json", t("Output as JSON"), false)
+    .option("--verbose", t("Verbose logging"), false)
+    .option("--store <path>", t("Path to session store (default: resolved from config)"))
+    .option("--active <minutes>", t("Only show sessions updated within the past N minutes"))
     .addHelpText(
       "after",
       () =>
         `\n${theme.heading("Examples:")}\n${formatHelpExamples([
-          ["openclaw sessions", "List all sessions."],
-          ["openclaw sessions --active 120", "Only last 2 hours."],
-          ["openclaw sessions --json", "Machine-readable output."],
-          ["openclaw sessions --store ./tmp/sessions.json", "Use a specific session store."],
+          [t("openclaw sessions"), t("List all sessions.")],
+          [t("openclaw sessions --active 120"), t("Only last 2 hours.")],
+          [t("openclaw sessions --json"), t("Machine-readable output.")],
+          [t("openclaw sessions --store ./tmp/sessions.json"), t("Use a specific session store.")],
         ])}\n\n${theme.muted(
-          "Shows token usage per session when the agent reports it; set agents.defaults.contextTokens to cap the window and show %.",
+          t(
+            "Shows token usage per session when the agent reports it; set agents.defaults.contextTokens to see % of your model window.",
+          ),
         )}`,
     )
     .addHelpText(

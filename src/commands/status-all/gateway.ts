@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { t } from "../../i18n/index.js";
 
 export async function readFileTailLines(filePath: string, maxLines: number): Promise<string[]> {
   const raw = await fs.readFile(filePath, "utf8").catch(() => "");
@@ -117,8 +118,8 @@ export function summarizeLogTail(rawLines: string[], opts?: { maxLines?: number 
         const code = parsed?.error?.code?.trim() || null;
         const msg = parsed?.error?.message?.trim() || null;
         const msgShort = msg
-          ? msg.toLowerCase().includes("signing in again")
-            ? "re-auth required"
+          ? msg.toLowerCase().includes(t("signing in again"))
+            ? t("re-auth required")
             : shorten(msg, 52)
           : null;
         const base = `[${tag}] token refresh ${status}${code ? ` ${code}` : ""}${msgShort ? ` · ${msgShort}` : ""}`;
@@ -141,7 +142,7 @@ export function summarizeLogTail(rawLines: string[], opts?: { maxLines?: number 
     if (
       line.startsWith("[gws]") &&
       line.includes("errorCode=UNAVAILABLE") &&
-      line.includes("OAuth token refresh failed")
+      line.includes(t("OAuth token refresh failed"))
     ) {
       const normalized = normalizeGwsLine(line);
       addGroup(`gws:${normalized}`, normalized);

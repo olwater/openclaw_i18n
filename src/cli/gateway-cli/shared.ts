@@ -4,6 +4,7 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../../daemon/constants.js";
 import { resolveGatewayService } from "../../daemon/service.js";
+import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatCliCommand } from "../command-format.js";
 
@@ -57,10 +58,10 @@ export function describeUnknownError(err: unknown): string {
     try {
       return JSON.stringify(err);
     } catch {
-      return "Unknown error";
+      return t("Unknown error");
     }
   }
-  return "Unknown error";
+  return t("Unknown error");
 }
 
 export function extractGatewayMiskeys(parsed: unknown): {
@@ -86,21 +87,21 @@ export function renderGatewayServiceStopHints(env: NodeJS.ProcessEnv = process.e
   switch (process.platform) {
     case "darwin":
       return [
-        `Tip: ${formatCliCommand("openclaw gateway stop")}`,
+        `Tip: ${formatCliCommand(t("openclaw gateway stop"))}`,
         `Or: launchctl bootout gui/$UID/${resolveGatewayLaunchAgentLabel(profile)}`,
       ];
     case "linux":
       return [
-        `Tip: ${formatCliCommand("openclaw gateway stop")}`,
+        `Tip: ${formatCliCommand(t("openclaw gateway stop"))}`,
         `Or: systemctl --user stop ${resolveGatewaySystemdServiceName(profile)}.service`,
       ];
     case "win32":
       return [
-        `Tip: ${formatCliCommand("openclaw gateway stop")}`,
+        `Tip: ${formatCliCommand(t("openclaw gateway stop"))}`,
         `Or: schtasks /End /TN "${resolveGatewayWindowsTaskName(profile)}"`,
       ];
     default:
-      return [`Tip: ${formatCliCommand("openclaw gateway stop")}`];
+      return [`Tip: ${formatCliCommand(t("openclaw gateway stop"))}`];
   }
 }
 
@@ -118,7 +119,7 @@ export async function maybeExplainGatewayServiceStop() {
   defaultRuntime.error(
     loaded
       ? `Gateway service appears ${service.loadedText}. Stop it first.`
-      : "Gateway service status unknown; if supervised, stop it first.",
+      : t("Gateway service status unknown; if supervised, stop it first."),
   );
   for (const hint of renderGatewayServiceStopHints()) {
     defaultRuntime.error(hint);

@@ -8,6 +8,7 @@ import { loadConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
 import { resolveSessionTranscriptsDirForAgent } from "../config/sessions/paths.js";
 import { setVerbose } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { getMemorySearchManager, type MemorySearchManagerResult } from "../memory/index.js";
 import { listMemoryFiles, normalizeExtraMemoryPaths } from "../memory/internal.js";
 import { defaultRuntime } from "../runtime.js";
@@ -255,7 +256,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
   for (const agentId of agentIds) {
     await withManager<MemoryManager>({
       getManager: () => getMemorySearchManager({ cfg, agentId }),
-      onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
+      onMissing: (error) => defaultRuntime.log(error ?? t("Memory search disabled.")),
       onCloseError: (err) =>
         defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
       close: async (manager) => {
@@ -269,18 +270,18 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         let indexError: string | undefined;
         const syncFn = manager.sync ? manager.sync.bind(manager) : undefined;
         if (deep) {
-          await withProgress({ label: "Checking memory…", total: 2 }, async (progress) => {
-            progress.setLabel("Probing vector…");
+          await withProgress({ label: t("Checking memory…"), total: 2 }, async (progress) => {
+            progress.setLabel(t("Probing vector…"));
             await manager.probeVectorAvailability();
             progress.tick();
-            progress.setLabel("Probing embeddings…");
+            progress.setLabel(t("Probing embeddings…"));
             embeddingProbe = await manager.probeEmbeddingAvailability();
             progress.tick();
           });
           if (opts.index && syncFn) {
             await withProgressTotals(
               {
-                label: "Indexing memory…",
+                label: t("Indexing memory…"),
                 total: 0,
                 fallback: opts.verbose ? "line" : undefined,
               },
@@ -355,7 +356,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         ? `${filesIndexed}/? files · ${chunksIndexed} chunks`
         : `${filesIndexed}/${totalFiles} files · ${chunksIndexed} chunks`;
     if (opts.index) {
-      const line = indexError ? `Memory index failed: ${indexError}` : "Memory index complete.";
+      const line = indexError ? `Memory index failed: ${indexError}` : t("Memory index complete.");
       defaultRuntime.log(line);
     }
     const requestedProvider = status.requestedProvider ?? status.provider;
@@ -382,11 +383,11 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
       const stateColor = embeddingProbe.ok ? theme.success : theme.warn;
       lines.push(`${label("Embeddings")} ${colorize(rich, stateColor, state)}`);
       if (embeddingProbe.error) {
-        lines.push(`${label("Embeddings error")} ${warn(embeddingProbe.error)}`);
+        lines.push(`${label(t("Embeddings error"))} ${warn(embeddingProbe.error)}`);
       }
     }
     if (status.sourceCounts?.length) {
-      lines.push(label("By source"));
+      lines.push(label(t("By source")));
       for (const entry of status.sourceCounts) {
         const total = scan?.sources?.find(
           (scanEntry) => scanEntry.source === entry.source,
@@ -417,13 +418,15 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
             : theme.muted;
       lines.push(`${label("Vector")} ${colorize(rich, vectorColor, vectorState)}`);
       if (status.vector.dims) {
-        lines.push(`${label("Vector dims")} ${info(String(status.vector.dims))}`);
+        lines.push(`${label(t("Vector dims"))} ${info(String(status.vector.dims))}`);
       }
       if (status.vector.extensionPath) {
-        lines.push(`${label("Vector path")} ${info(shortenHomePath(status.vector.extensionPath))}`);
+        lines.push(
+          `${label(t("Vector path"))} ${info(shortenHomePath(status.vector.extensionPath))}`,
+        );
       }
       if (status.vector.loadError) {
-        lines.push(`${label("Vector error")} ${warn(status.vector.loadError)}`);
+        lines.push(`${label(t("Vector error"))} ${warn(status.vector.loadError)}`);
       }
     }
     if (status.fts) {
@@ -440,7 +443,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
             : theme.muted;
       lines.push(`${label("FTS")} ${colorize(rich, ftsColor, ftsState)}`);
       if (status.fts.error) {
-        lines.push(`${label("FTS error")} ${warn(status.fts.error)}`);
+        lines.push(`${label(t("FTS error"))} ${warn(status.fts.error)}`);
       }
     }
     if (status.cache) {
@@ -450,9 +453,11 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         status.cache.enabled && typeof status.cache.entries === "number"
           ? ` (${status.cache.entries} entries)`
           : "";
-      lines.push(`${label("Embedding cache")} ${colorize(rich, cacheColor, cacheState)}${suffix}`);
+      lines.push(
+        `${label(t("Embedding cache"))} ${colorize(rich, cacheColor, cacheState)}${suffix}`,
+      );
       if (status.cache.enabled && typeof status.cache.maxEntries === "number") {
-        lines.push(`${label("Cache cap")} ${info(String(status.cache.maxEntries))}`);
+        lines.push(`${label(t("Cache cap"))} ${info(String(status.cache.maxEntries))}`);
       }
     }
     if (status.batch) {
@@ -463,14 +468,14 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         `${label("Batch")} ${colorize(rich, batchColor, batchState)}${muted(batchSuffix)}`,
       );
       if (status.batch.lastError) {
-        lines.push(`${label("Batch error")} ${warn(status.batch.lastError)}`);
+        lines.push(`${label(t("Batch error"))} ${warn(status.batch.lastError)}`);
       }
     }
     if (status.fallback?.reason) {
       lines.push(muted(status.fallback.reason));
     }
     if (indexError) {
-      lines.push(`${label("Index error")} ${warn(indexError)}`);
+      lines.push(`${label(t("Index error"))} ${warn(indexError)}`);
     }
     if (scan?.issues.length) {
       lines.push(label("Issues"));
@@ -486,7 +491,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
 export function registerMemoryCli(program: Command) {
   const memory = program
     .command("memory")
-    .description("Memory search tools")
+    .description(t("Memory search tools"))
     .addHelpText(
       "after",
       () =>
@@ -518,7 +523,7 @@ export function registerMemoryCli(program: Command) {
       for (const agentId of agentIds) {
         await withManager<MemoryManager>({
           getManager: () => getMemorySearchManager({ cfg, agentId }),
-          onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
+          onMissing: (error) => defaultRuntime.log(error ?? t("Memory search disabled.")),
           onCloseError: (err) =>
             defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
           close: async (manager) => {
@@ -544,16 +549,16 @@ export function registerMemoryCli(program: Command) {
                 const requestedProvider = status.requestedProvider ?? status.provider;
                 const modelLabel = status.model ?? status.provider;
                 const lines = [
-                  `${heading("Memory Index")} ${muted(`(${agentId})`)}`,
+                  `${heading(t("Memory Index"))} ${muted(`(${agentId})`)}`,
                   `${label("Provider")} ${info(status.provider)} ${muted(
                     `(requested: ${requestedProvider})`,
                   )}`,
                   `${label("Model")} ${info(modelLabel)}`,
                   sourceLabels.length
-                    ? `${label("Sources")} ${info(sourceLabels.join(", "))}`
+                    ? `${label("Sources")} ${info(sourceLabels.join(t(", ")))}`
                     : null,
                   extraPaths.length
-                    ? `${label("Extra paths")} ${info(extraPaths.join(", "))}`
+                    ? `${label(t("Extra paths"))} ${info(extraPaths.join(t(", ")))}`
                     : null,
                 ].filter(Boolean) as string[];
                 if (status.fallback) {
@@ -563,7 +568,7 @@ export function registerMemoryCli(program: Command) {
                 defaultRuntime.log("");
               }
               const startedAt = Date.now();
-              let lastLabel = "Indexing memory…";
+              let lastLabel = t("Indexing memory…");
               let lastCompleted = 0;
               let lastTotal = 0;
               const formatElapsed = () => {
@@ -601,7 +606,7 @@ export function registerMemoryCli(program: Command) {
               }
               await withProgressTotals(
                 {
-                  label: "Indexing memory…",
+                  label: t("Indexing memory…"),
                   total: 0,
                   fallback: opts.verbose ? "line" : undefined,
                 },
@@ -645,12 +650,12 @@ export function registerMemoryCli(program: Command) {
 
   memory
     .command("search")
-    .description("Search memory files")
-    .argument("<query>", "Search query")
-    .option("--agent <id>", "Agent id (default: default agent)")
-    .option("--max-results <n>", "Max results", (value: string) => Number(value))
-    .option("--min-score <n>", "Minimum score", (value: string) => Number(value))
-    .option("--json", "Print JSON")
+    .description(t("Search memory files"))
+    .argument("<query>", t("Search query"))
+    .option("--agent <id>", t("Agent id (default: default agent)"))
+    .option("--max-results <n>", t("Max results"), (value: string) => Number(value))
+    .option("--min-score <n>", t("Minimum score"), (value: string) => Number(value))
+    .option("--json", t("Print JSON"))
     .action(
       async (
         query: string,
@@ -663,7 +668,7 @@ export function registerMemoryCli(program: Command) {
         const agentId = resolveAgent(cfg, opts.agent);
         await withManager<MemoryManager>({
           getManager: () => getMemorySearchManager({ cfg, agentId }),
-          onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
+          onMissing: (error) => defaultRuntime.log(error ?? t("Memory search disabled.")),
           onCloseError: (err) =>
             defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
           close: async (manager) => {
@@ -687,7 +692,7 @@ export function registerMemoryCli(program: Command) {
               return;
             }
             if (results.length === 0) {
-              defaultRuntime.log("No matches.");
+              defaultRuntime.log(t("No matches."));
               return;
             }
             const rich = isRich();

@@ -14,6 +14,7 @@ import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
 import { resolveNodeService } from "../../daemon/node-service.js";
 import { renderSystemdUnavailableHints } from "../../daemon/systemd-hints.js";
 import { isSystemdUserServiceAvailable } from "../../daemon/systemd.js";
+import { t } from "../../i18n/index.js";
 import { isWSL } from "../../infra/wsl.js";
 import { loadNodeHostConfig } from "../../node-host/config.js";
 import { defaultRuntime } from "../../runtime.js";
@@ -47,7 +48,10 @@ type NodeDaemonStatusOptions = {
 };
 
 function renderNodeServiceStartHints(): string[] {
-  const base = [formatCliCommand("openclaw node install"), formatCliCommand("openclaw node start")];
+  const base = [
+    formatCliCommand(t("openclaw node install")),
+    formatCliCommand(t("openclaw node start")),
+  ];
   switch (process.platform) {
     case "darwin":
       return [
@@ -138,20 +142,20 @@ export async function runNodeDaemonInstall(opts: NodeDaemonInstallOptions) {
   };
 
   if (resolveIsNixMode(process.env)) {
-    fail("Nix mode detected; service install is disabled.");
+    fail(t("Nix mode detected; service install is disabled."));
     return;
   }
 
   const config = await loadNodeHostConfig();
   const { host, port } = resolveNodeDefaults(opts, config);
   if (!Number.isFinite(port ?? NaN) || (port ?? 0) <= 0) {
-    fail("Invalid port");
+    fail(t("Invalid port"));
     return;
   }
 
   const runtimeRaw = opts.runtime ? String(opts.runtime) : DEFAULT_NODE_DAEMON_RUNTIME;
   if (!isNodeDaemonRuntime(runtimeRaw)) {
-    fail('Invalid --runtime (use "node" or "bun")');
+    fail(t('Invalid --runtime (use "node" or "bun")'));
     return;
   }
 
@@ -173,7 +177,7 @@ export async function runNodeDaemonInstall(opts: NodeDaemonInstallOptions) {
     });
     if (!json) {
       defaultRuntime.log(`Node service already ${service.loadedText}.`);
-      defaultRuntime.log(`Reinstall with: ${formatCliCommand("openclaw node install --force")}`);
+      defaultRuntime.log(`Reinstall with: ${formatCliCommand(t("openclaw node install --force"))}`);
     }
     return;
   }
@@ -257,7 +261,7 @@ export async function runNodeDaemonUninstall(opts: NodeDaemonLifecycleOptions = 
   };
 
   if (resolveIsNixMode(process.env)) {
-    fail("Nix mode detected; service uninstall is disabled.");
+    fail(t("Nix mode detected; service uninstall is disabled."));
     return;
   }
 
@@ -554,10 +558,10 @@ export async function runNodeDaemonStatus(opts: NodeDaemonStatusOptions = {}) {
     defaultRuntime.log(`${label("Command:")} ${infoText(command.programArguments.join(" "))}`);
   }
   if (command?.sourcePath) {
-    defaultRuntime.log(`${label("Service file:")} ${infoText(command.sourcePath)}`);
+    defaultRuntime.log(`${label(t("Service file:"))} ${infoText(command.sourcePath)}`);
   }
   if (command?.workingDirectory) {
-    defaultRuntime.log(`${label("Working dir:")} ${infoText(command.workingDirectory)}`);
+    defaultRuntime.log(`${label(t("Working dir:"))} ${infoText(command.workingDirectory)}`);
   }
 
   const runtimeLine = formatRuntimeStatus(runtime);
@@ -577,7 +581,7 @@ export async function runNodeDaemonStatus(opts: NodeDaemonStatusOptions = {}) {
   if (!loaded) {
     defaultRuntime.log("");
     for (const hint of renderNodeServiceStartHints()) {
-      defaultRuntime.log(`${warnText("Start with:")} ${infoText(hint)}`);
+      defaultRuntime.log(`${warnText(t("Start with:"))} ${infoText(hint)}`);
     }
     return;
   }
@@ -592,7 +596,7 @@ export async function runNodeDaemonStatus(opts: NodeDaemonStatusOptions = {}) {
   } as NodeJS.ProcessEnv;
 
   if (runtime?.missingUnit) {
-    defaultRuntime.error(errorText("Service unit not found."));
+    defaultRuntime.error(errorText(t("Service unit not found.")));
     for (const hint of buildNodeRuntimeHints(hintEnv)) {
       defaultRuntime.error(errorText(hint));
     }
@@ -600,7 +604,7 @@ export async function runNodeDaemonStatus(opts: NodeDaemonStatusOptions = {}) {
   }
 
   if (runtime?.status === "stopped") {
-    defaultRuntime.error(errorText("Service is loaded but not running."));
+    defaultRuntime.error(errorText(t("Service is loaded but not running.")));
     for (const hint of buildNodeRuntimeHints(hintEnv)) {
       defaultRuntime.error(errorText(hint));
     }

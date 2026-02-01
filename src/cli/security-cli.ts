@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { loadConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { runSecurityAudit } from "../security/audit.js";
 import { fixSecurityFootguns } from "../security/fix.js";
@@ -23,13 +24,13 @@ function formatSummary(summary: { critical: number; warn: number; info: number }
   parts.push(rich ? theme.error(`${c} critical`) : `${c} critical`);
   parts.push(rich ? theme.warn(`${w} warn`) : `${w} warn`);
   parts.push(rich ? theme.muted(`${i} info`) : `${i} info`);
-  return parts.join(" · ");
+  return parts.join(t(" · "));
 }
 
 export function registerSecurityCli(program: Command) {
   const security = program
     .command("security")
-    .description("Security tools (audit)")
+    .description(t("Security tools (audit)"))
     .addHelpText(
       "after",
       () =>
@@ -38,10 +39,10 @@ export function registerSecurityCli(program: Command) {
 
   security
     .command("audit")
-    .description("Audit config + local state for common security foot-guns")
-    .option("--deep", "Attempt live Gateway probe (best-effort)", false)
-    .option("--fix", "Apply safe fixes (tighten defaults + chmod state/config)", false)
-    .option("--json", "Print JSON", false)
+    .description(t("Audit config + local state for common security foot-guns"))
+    .option("--deep", t("Attempt live Gateway probe (best-effort)"), false)
+    .option("--fix", t("Apply safe fixes (tighten defaults + chmod state/config)"), false)
+    .option("--json", t("Print JSON"), false)
     .action(async (opts: SecurityAuditOptions) => {
       const fixResult = opts.fix ? await fixSecurityFootguns().catch((_err) => null) : null;
 
@@ -65,20 +66,20 @@ export function registerSecurityCli(program: Command) {
       const muted = (text: string) => (rich ? theme.muted(text) : text);
 
       const lines: string[] = [];
-      lines.push(heading("OpenClaw security audit"));
+      lines.push(heading(t("OpenClaw security audit")));
       lines.push(muted(`Summary: ${formatSummary(report.summary)}`));
-      lines.push(muted(`Run deeper: ${formatCliCommand("openclaw security audit --deep")}`));
+      lines.push(muted(`Run deeper: ${formatCliCommand(t("openclaw security audit --deep"))}`));
 
       if (opts.fix) {
-        lines.push(muted(`Fix: ${formatCliCommand("openclaw security audit --fix")}`));
+        lines.push(muted(`Fix: ${formatCliCommand(t("openclaw security audit --fix"))}`));
         if (!fixResult) {
-          lines.push(muted("Fixes: failed to apply (unexpected error)"));
+          lines.push(muted(t("Fixes: failed to apply (unexpected error)")));
         } else if (
           fixResult.errors.length === 0 &&
           fixResult.changes.length === 0 &&
           fixResult.actions.every((a) => !a.ok)
         ) {
-          lines.push(muted("Fixes: no changes applied"));
+          lines.push(muted(t("Fixes: no changes applied")));
         } else {
           lines.push("");
           lines.push(heading("FIX"));
@@ -129,11 +130,11 @@ export function registerSecurityCli(program: Command) {
         const label =
           sev === "critical"
             ? rich
-              ? theme.error("CRITICAL")
+              ? theme.error(t("CRITICAL"))
               : "CRITICAL"
             : sev === "warn"
               ? rich
-                ? theme.warn("WARN")
+                ? theme.warn(t("WARN"))
                 : "WARN"
               : rich
                 ? theme.muted("INFO")

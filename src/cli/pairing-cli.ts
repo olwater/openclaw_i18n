@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { normalizeChannelId } from "../channels/plugins/index.js";
 import { listPairingChannels, notifyPairingApproved } from "../channels/plugins/pairing.js";
 import { loadConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import { resolvePairingIdLabel } from "../pairing/pairing-labels.js";
 import {
   approveChannelPairingCode,
@@ -26,7 +27,7 @@ function parseChannel(raw: unknown, channels: PairingChannel[]): PairingChannel 
     .trim()
     .toLowerCase();
   if (!value) {
-    throw new Error("Channel required");
+    throw new Error(t("Channel required"));
   }
 
   const normalized = normalizeChannelId(value);
@@ -53,7 +54,7 @@ export function registerPairingCli(program: Command) {
   const channels = listPairingChannels();
   const pairing = program
     .command("pairing")
-    .description("Secure DM pairing (approve inbound requests)")
+    .description(t("Secure DM pairing (approve inbound requests)"))
     .addHelpText(
       "after",
       () =>
@@ -62,15 +63,15 @@ export function registerPairingCli(program: Command) {
 
   pairing
     .command("list")
-    .description("List pending pairing requests")
-    .option("--channel <channel>", `Channel (${channels.join(", ")})`)
-    .argument("[channel]", `Channel (${channels.join(", ")})`)
-    .option("--json", "Print JSON", false)
+    .description(t("List pending pairing requests"))
+    .option("--channel <channel>", `Channel (${channels.join(t(", "))})`)
+    .argument("[channel]", `Channel (${channels.join(t(", "))})`)
+    .option("--json", t("Print JSON"), false)
     .action(async (channelArg, opts) => {
       const channelRaw = opts.channel ?? channelArg;
       if (!channelRaw) {
         throw new Error(
-          `Channel required. Use --channel <channel> or pass it as the first argument (expected one of: ${channels.join(", ")})`,
+          `Channel required. Use --channel <channel> or pass it as the first argument (expected one of: ${channels.join(t(", "))})`,
         );
       }
       const channel = parseChannel(channelRaw, channels);
@@ -86,7 +87,7 @@ export function registerPairingCli(program: Command) {
       const idLabel = resolvePairingIdLabel(channel);
       const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
       defaultRuntime.log(
-        `${theme.heading("Pairing requests")} ${theme.muted(`(${requests.length})`)}`,
+        `${theme.heading(t("Pairing requests"))} ${theme.muted(`(${requests.length})`)}`,
       );
       defaultRuntime.log(
         renderTable({
@@ -109,22 +110,22 @@ export function registerPairingCli(program: Command) {
 
   pairing
     .command("approve")
-    .description("Approve a pairing code and allow that sender")
-    .option("--channel <channel>", `Channel (${channels.join(", ")})`)
-    .argument("<codeOrChannel>", "Pairing code (or channel when using 2 args)")
-    .argument("[code]", "Pairing code (when channel is passed as the 1st arg)")
-    .option("--notify", "Notify the requester on the same channel", false)
+    .description(t("Approve a pairing code and allow that sender"))
+    .option("--channel <channel>", `Channel (${channels.join(t(", "))})`)
+    .argument("<codeOrChannel>", t("Pairing code (or channel when using 2 args)"))
+    .argument("[code]", t("Pairing code (when channel is passed as the 1st arg)"))
+    .option("--notify", t("Notify the requester on the same channel"), false)
     .action(async (codeOrChannel, code, opts) => {
       const channelRaw = opts.channel ?? codeOrChannel;
       const resolvedCode = opts.channel ? codeOrChannel : code;
       if (!opts.channel && !code) {
         throw new Error(
-          `Usage: ${formatCliCommand("openclaw pairing approve <channel> <code>")} (or: ${formatCliCommand("openclaw pairing approve --channel <channel> <code>")})`,
+          `Usage: ${formatCliCommand(t("openclaw pairing approve <channel> <code>"))} (or: ${formatCliCommand(t("openclaw pairing approve --channel <channel> <code>"))})`,
         );
       }
       if (opts.channel && code != null) {
         throw new Error(
-          `Too many arguments. Use: ${formatCliCommand("openclaw pairing approve --channel <channel> <code>")}`,
+          `Too many arguments. Use: ${formatCliCommand(t("openclaw pairing approve --channel <channel> <code>"))}`,
         );
       }
       const channel = parseChannel(channelRaw, channels);

@@ -1,4 +1,5 @@
 import type { OpenClawConfig } from "../config/config.js";
+import { t } from "../i18n/index.js";
 import {
   buildMinimaxApiModelDefinition,
   buildMinimaxModelDefinition,
@@ -32,7 +33,7 @@ export function applyMinimaxProviderConfig(cfg: OpenClawConfig): OpenClawConfig 
       models: [
         buildMinimaxModelDefinition({
           id: "minimax-m2.1-gs32",
-          name: "MiniMax M2.1 GS32",
+          name: t("MiniMax M2.1 GS32"),
           reasoning: false,
           cost: MINIMAX_LM_STUDIO_COST,
           contextWindow: 196608,

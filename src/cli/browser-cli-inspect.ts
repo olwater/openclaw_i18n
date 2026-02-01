@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import type { SnapshotResult } from "../browser/client.js";
 import { loadConfig } from "../config/config.js";
 import { danger } from "../globals.js";
+import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { shortenHomePath } from "../utils.js";
 import { callBrowserRequest, type BrowserParentOpts } from "./browser-cli-shared.js";
@@ -12,12 +13,12 @@ export function registerBrowserInspectCommands(
 ) {
   browser
     .command("screenshot")
-    .description("Capture a screenshot (MEDIA:<path>)")
-    .argument("[targetId]", "CDP target id (or unique prefix)")
-    .option("--full-page", "Capture full scrollable page", false)
-    .option("--ref <ref>", "ARIA ref from ai snapshot")
-    .option("--element <selector>", "CSS selector for element screenshot")
-    .option("--type <png|jpeg>", "Output type (default: png)", "png")
+    .description(t("Capture a screenshot (MEDIA:<path>)"))
+    .argument("[targetId]", t("CDP target id (or unique prefix)"))
+    .option("--full-page", t("Capture full scrollable page"), false)
+    .option("--ref <ref>", t("ARIA ref from ai snapshot"))
+    .option("--element <selector>", t("CSS selector for element screenshot"))
+    .option("--type <png|jpeg>", t("Output type (default: png)"), "png")
     .action(async (targetId: string | undefined, opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -51,19 +52,19 @@ export function registerBrowserInspectCommands(
 
   browser
     .command("snapshot")
-    .description("Capture a snapshot (default: ai; aria is the accessibility tree)")
-    .option("--format <aria|ai>", "Snapshot format (default: ai)", "ai")
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
-    .option("--limit <n>", "Max nodes (default: 500/800)", (v: string) => Number(v))
-    .option("--mode <efficient>", "Snapshot preset (efficient)")
-    .option("--efficient", "Use the efficient snapshot preset", false)
-    .option("--interactive", "Role snapshot: interactive elements only", false)
-    .option("--compact", "Role snapshot: compact output", false)
-    .option("--depth <n>", "Role snapshot: max depth", (v: string) => Number(v))
-    .option("--selector <sel>", "Role snapshot: scope to CSS selector")
-    .option("--frame <sel>", "Role snapshot: scope to an iframe selector")
-    .option("--labels", "Include viewport label overlay screenshot", false)
-    .option("--out <path>", "Write snapshot to a file")
+    .description(t("Capture a snapshot (default: ai; aria is the accessibility tree)"))
+    .option("--format <aria|ai>", t("Snapshot format (default: ai)"), "ai")
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
+    .option("--limit <n>", t("Max nodes (default: 500/800)"), (v: string) => Number(v))
+    .option("--mode <efficient>", t("Snapshot preset (efficient)"))
+    .option("--efficient", t("Use the efficient snapshot preset"), false)
+    .option("--interactive", t("Role snapshot: interactive elements only"), false)
+    .option("--compact", t("Role snapshot: compact output"), false)
+    .option("--depth <n>", t("Role snapshot: max depth"), (v: string) => Number(v))
+    .option("--selector <sel>", t("Role snapshot: scope to CSS selector"))
+    .option("--frame <sel>", t("Role snapshot: scope to an iframe selector"))
+    .option("--labels", t("Include viewport label overlay screenshot"), false)
+    .option("--out <path>", t("Write snapshot to a file"))
     .action(async (opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -145,7 +146,7 @@ export function registerBrowserInspectCommands(
         defaultRuntime.log(
           nodes
             .map((n) => {
-              const indent = "  ".repeat(Math.min(20, n.depth));
+              const indent = t("  ").repeat(Math.min(20, n.depth));
               const name = n.name ? ` "${n.name}"` : "";
               const value = n.value ? ` = "${n.value}"` : "";
               return `${indent}- ${n.role}${name}${value}`;
