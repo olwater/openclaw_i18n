@@ -14,7 +14,7 @@ type ProviderAccountStatus = {
   provider: ChannelId;
   accountId: string;
   name?: string;
-  state: "linked" | "not linked" | "configured" | "not configured" | "enabled" | "disabled";
+  state: string;
   enabled?: boolean;
   configured?: boolean;
 };
@@ -73,16 +73,16 @@ export async function buildProviderStatusIndex(
         (typeof snapshot?.linked === "boolean"
           ? snapshot.linked
             ? "linked"
-            : (t("not linked") as any)
+            : t("not linked")
           : resolvedConfigured
             ? "configured"
-            : (t("not configured") as any));
+            : t("not configured"));
       const name = snapshot?.name ?? (account as { name?: string }).name;
       map.set(providerAccountKey(plugin.id, accountId), {
         provider: plugin.id,
         accountId,
         name,
-        state: state as any,
+        state,
         enabled,
         configured,
       });
