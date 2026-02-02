@@ -11,14 +11,14 @@ This skill provides guidelines and common pitfalls for internationalization (i18
 
 1.  **Duplicate Keys**: Locale files (e.g., `zh_CN.ts`) must NOT contain duplicate keys. This causes TypeScript errors and makes maintenance difficult.
 2.  **Syntax Errors in Locales**:
-    *   Always ensure proper quoting.
-    *   Escape special characters (backslashes, newlines, quotes).
-    *   Ensure every key-value pair ends with a comma.
-    *   Maintain the `export default { ... };` structure.
+    - Always ensure proper quoting.
+    - Escape special characters (backslashes, newlines, quotes).
+    - Ensure every key-value pair ends with a comma.
+    - Maintain the `export default { ... };` structure.
 3.  **Type Mismatches**:
-    *   `t("string")` returns a generic `string`.
-    *   If a function or property expects a specific string literal (e.g., `"web" | "tui"`), using `t()` will cause a type error.
-    *   **Solution**: Use `as any` or a specific type assertion, OR avoid translating internal logic values like `initialValue` for selects.
+    - `t("string")` returns a generic `string`.
+    - If a function or property expects a specific string literal (e.g., `"web" | "tui"`), using `t()` will cause a type error.
+    - **Solution**: Use `as any` or a specific type assertion, OR avoid translating internal logic values like `initialValue` for selects.
 4.  **Variable Shadowing**: Avoid using `t` as a variable name in scopes where the translation function `t()` is needed (e.g., in `.map((t) => ...)`). Use `tok`, `item`, or other descriptive names instead.
 5.  **Global Keywords**: Avoid using reserved or global-like keys as raw identifiers (e.g., `global: global`). Use quoted keys and string values: `"global": "global"`.
 
@@ -32,6 +32,7 @@ This skill provides guidelines and common pitfalls for internationalization (i18
 ## Automation Script Requirements
 
 Any auto-i18n script must:
+
 - Globalize keys to prevent duplicates.
 - Filter out string literals that are part of Type Aliases or Enums.
 - Correctly handle imports of the `t` function.
