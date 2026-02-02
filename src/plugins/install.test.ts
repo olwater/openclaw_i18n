@@ -186,6 +186,7 @@ describe("installPluginFromArchive", () => {
       }),
     );
     zip.file("package/dist/index.js", "export {};");
+    zip.folder("__MACOSX"); // Simulate macOS zip
     const buffer = await zip.generateAsync({ type: "nodebuffer" });
     fs.writeFileSync(archivePath, buffer);
 
