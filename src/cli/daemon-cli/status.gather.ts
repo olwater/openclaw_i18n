@@ -37,7 +37,7 @@ type GatewayStatusSummary = {
   bindHost: string;
   customBindHost?: string;
   port: number;
-  portSource: "service args" | "env/config";
+  portSource: string;
   probeUrl: string;
   probeNote?: string;
 };
@@ -168,7 +168,7 @@ export async function gatherDaemonStatus(
   const portFromArgs = parsePortFromArgs(command?.programArguments);
   const daemonPort = portFromArgs ?? resolveGatewayPort(daemonCfg, mergedDaemonEnv);
   const portSource: GatewayStatusSummary["portSource"] = portFromArgs
-    ? (t("service args") as any as any)
+    ? t("service args")
     : "env/config";
 
   const bindMode = (daemonCfg.gateway?.bind ?? "loopback") as
