@@ -35,7 +35,9 @@ export async function resolvePackedRootDir(extractDir: string): Promise<string> 
   }
 
   const entries = await fs.readdir(extractDir, { withFileTypes: true });
-  const dirs = entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+  const dirs = entries
+    .filter((entry) => entry.isDirectory() && entry.name !== "__MACOSX")
+    .map((entry) => entry.name);
   if (dirs.length !== 1) {
     throw new Error(`unexpected archive layout (dirs: ${dirs.join(", ")})`);
   }
