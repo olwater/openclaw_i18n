@@ -176,6 +176,41 @@ const zh_CN: TranslationMap = {
   "Agent id to update": "要更新的 Agent ID",
   "Agent message payload": "Agent 消息载荷",
   "Agent name": "Agent 名称",
+  "Vietnam-focused messaging platform with Bot API.":
+    "专注于越南市场的即时通讯平台，支持 Bot API。",
+  "Vietnam-focused messaging platform with Personal Account.":
+    "专注于越南市场的即时通讯平台，支持个人账户。",
+  "You can add channels later via {command}": "您可以稍后通过 {command} 添加频道",
+  "Zalo (Bot API)": "Zalo (Bot API)",
+  "Zalo (Personal Account)": "Zalo (个人账户)",
+  "decentralized messaging on Urbit; install the plugin to enable.":
+    "Urbit 上的去中心化通讯；安装插件后启用。",
+  "register a bot with @BotFather and get going.": "注册一个机器人并开始使用。",
+  "simplest way to get started — register a bot with @BotFather and get going.":
+    "最简单的入门方式 —— 通过 @BotFather 注册机器人即可开始。",
+  "works with your own number; recommend a separate phone + eSIM.":
+    "使用您自己的号码；建议使用独立的手机和 eSIM。",
+  "very well supported right now.": "目前支持得非常好。",
+  "Google Workspace Chat app with HTTP webhook.":
+    "支持 HTTP webhook 的 Google Workspace Chat 应用。",
+  "supported (Socket Mode).": "支持 (Socket Mode)。",
+  'signal-cli linked device; more setup (David Reagans: "Hop on Discord.").':
+    "signal-cli 链接设备；需要更多设置（David Reagans：“去 Discord 看看吧。”）。",
+  "this is still a work in progress.": "这仍在开发中。",
+  "Decentralized protocol; encrypted DMs via NIP-04.": "去中心化协议；通过 NIP-04 进行加密私聊。",
+  "Decentralized networking protocol; encrypted DMs via NIP-04.":
+    "去中心化网络协议；通过 NIP-04 进行加密私聊。",
+  "Bot Framework; enterprise support.": "Bot Framework；企业级支持。",
+  "self-hosted Slack-style chat; install the plugin to enable.":
+    "自托管的类 Slack 聊天；安装插件后启用。",
+  "Self-hosted chat via Nextcloud Talk webhook bots.":
+    "通过 Nextcloud Talk webhook 机器人实现的自托管聊天。",
+  "open protocol; install the plugin to enable.": "开放协议；安装插件后启用。",
+  "iMessage via the BlueBubbles mac app + REST API.":
+    "通过 BlueBubbles Mac 应用和 REST API 实现的 iMessage。",
+  "LINE Messaging API bot for Japan/Taiwan/Thailand markets.":
+    "面向日本/台湾/泰国市场的 LINE Messaging API 机器人。",
+  "Zalo personal account via QR code login.": "通过二维码登录的 Zalo 个人账户。",
   "Agent name is required in non-interactive mode.": "非交互模式下必须提供 Agent 名称。",
   "Agent state directory for this agent": "此 Agent 的状态目录",
   "Agent timeout in ms (defaults to agents.defaults.timeoutSeconds)":
@@ -527,12 +562,12 @@ const zh_CN: TranslationMap = {
     "Deprecated external CLI auth profiles detected (no longer supported):",
   "Describe a node (capabilities + supported invoke commands)": "描述节点 (功能 + 支持的调用命令)",
   "Desired accuracy (default: balanced/precise depending on node setting)":
-    'Desired accuracy (default: balanced/precise depending on node setting)": balanced/precise depending on node setting)',
+    "Desired accuracy (default: balanced/precise depending on node setting)",
   "Detected A2UI v0.9 JSONL (createSurface). OpenClaw currently supports v0.8 only.":
     "Detected A2UI v0.9 JSONL (createSurface). OpenClaw currently supports v0.8 only.",
   Dev: "开发版",
   "Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)":
-    'Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)": isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)',
+    "Dev profile: isolate state under ~/.openclaw-dev, default gateway port 19001, and shift derived ports (browser/canvas)",
   "Device id": "设备 ID",
   "Device name (Playwright devices)": "设备名称 (Playwright 设备)",
   "Device pairing + token management": "设备配对 + Token 管理",
@@ -1115,7 +1150,10 @@ const zh_CN: TranslationMap = {
   "Latest day:": "最新一天:",
   "LaunchAgent is listed but not loaded in launchd.": "LaunchAgent 已列出但未在 launchd 中加载。",
   "Learn more: https://docs.openclaw.ai/hooks": "了解更多：https://docs.openclaw.ai/hooks",
-  "Leave blank to keep current": "留空以保持当前设置",
+  "Leave blank to ": "留空以",
+  "Keep current ({model})": "保持当前 ({model})",
+  "Keep current (default: {model})": "保持当前 (默认: {model})",
+  "Keep current allowFrom": "保持当前 allowFrom",
   "Legacy config keys detected": "检测到旧版配置键：",
   "Legacy config keys detected:": "检测到旧版配置键:",
   "Legacy gateway cleanup skipped": "已跳过旧版 Gateway 清理。",
@@ -1672,7 +1710,7 @@ const zh_CN: TranslationMap = {
   "Pub/Sub topic name": "Pub/Sub 主题名称",
   "Pub/Sub topic path (projects/.../topics/..)": "Pub/Sub 主题路径 (projects/.../topics/..)",
   'Public DMs require dmPolicy="open" + allowFrom=["*"].':
-    'Public DMs require dmPolicy="open" + allowFrom=["*"].',
+    '公开私聊需要设置 dmPolicy="open" 且 allowFrom=["*"]。',
   "Public HTTPS via Tailscale Funnel (internet)": "通过 Tailscale Funnel (互联网) 提供公共 HTTPS",
   "Push A2UI JSONL to the canvas": "将 A2UI JSONL 推送至画布",
   "Push token for gog watch serve": "gog watch serve 的推送 Token",

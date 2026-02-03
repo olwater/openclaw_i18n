@@ -651,7 +651,10 @@ export async function setupChannels(
         {
           value: "__skip__",
           label: t("Skip for now"),
-          hint: `You can add channels later via \`${formatCliCommand(t("openclaw channels add"))}\``,
+          hint: t("You can add channels later via {command}").replace(
+            "{command}",
+            `\`${formatCliCommand(t("openclaw channels add"))}\``,
+          ),
         },
       ],
       initialValue: quickstartDefault,
