@@ -1,4 +1,4 @@
-import { TranslationMap } from "../translations.js";
+import type { TranslationMap } from "../types.js";
 
 const en_US: TranslationMap = {
   "  ": "  ",
