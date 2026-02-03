@@ -92,7 +92,7 @@ export async function resetCommand(runtime: RuntimeEnv, opts: ResetOptions) {
           hint: t("state dir + workspace"),
         },
       ],
-      initialValue: t("config+creds+sessions") as any,
+      initialValue: "config+creds+sessions",
     });
     if (isCancel(selection)) {
       cancel(stylePromptTitle(t("Reset cancelled.")) ?? t("Reset cancelled."));

@@ -331,7 +331,7 @@ export async function finalizeOnboardingWizard(
         { value: "later", label: t("Do this later") },
       ],
       initialValue: "tui",
-    })) as any;
+    })) as unknown as "tui" | "web" | "later";
 
     if (hatchChoice === "tui") {
       restoreTerminalState("pre-onboarding tui");

@@ -139,7 +139,7 @@ function shouldTranslate(node: Node): boolean {
     if (Node.isPropertyAccessExpression(expr)) {
       const name = expr.getName();
       const args = parent.getArguments();
-      const argIndex = args.indexOf(node as any);
+      const argIndex = args.indexOf(node as unknown as Node);
 
       // commander: .description("...") -> arg 0
       if (name === "description" && argIndex === 0) {

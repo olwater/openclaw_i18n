@@ -179,18 +179,18 @@ export async function isCompletionInstalled(
 export function registerCompletionCli(program: Command) {
   program
     .command("completion")
-    .description(t("Generate shell completion script") as any)
+    .description(t("Generate shell completion script") as unknown as string)
     .addOption(
-      new Option("-s, --shell <shell>", t("Shell to generate completion for") as any)
+      new Option("-s, --shell <shell>", t("Shell to generate completion for") as unknown as string)
         .choices(COMPLETION_SHELLS)
         .default("zsh"),
     )
-    .option("-i, --install", t("Install completion script to shell profile") as any)
+    .option("-i, --install", t("Install completion script to shell profile") as unknown as string)
     .option(
       "--write-state",
       t("Write completion scripts to $OPENCLAW_STATE_DIR/completions (no stdout)"),
     )
-    .option("-y, --yes", t("Skip confirmation (non-interactive)") as any, false)
+    .option("-y, --yes", t("Skip confirmation (non-interactive)") as unknown as string, false)
     .action(async (options) => {
       const shell = options.shell ?? "zsh";
       // Eagerly register all subcommands to build the full tree
@@ -314,7 +314,7 @@ _${rootCmd}_root_completion() {
   case $state in
     (args)
       case $line[1] in
-        ${program.commands.map((cmd) => `(${cmd.name()}) _${rootCmd}_${cmd.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as any)}
+        ${program.commands.map((cmd) => `(${cmd.name()}) _${rootCmd}_${cmd.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as unknown as string)}
       esac
       ;;
   esac
@@ -344,7 +344,7 @@ function generateZshArgs(cmd: Command): string {
       }
       return `"${name}[${desc}]"`;
     })
-    .join(t(" \\\n    ") as any);
+    .join(t(" \\\n    ") as unknown as string);
 }
 
 function generateZshSubcmdList(cmd: Command): string {
@@ -386,7 +386,7 @@ ${funcName}() {
   case $state in
     (args)
       case $line[1] in
-        ${subCommands.map((sub) => `(${sub.name()}) ${funcName}_${sub.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as any)}
+        ${subCommands.map((sub) => `(${sub.name()}) ${funcName}_${sub.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as unknown as string)}
       esac
       ;;
   esac
@@ -422,7 +422,7 @@ _${rootCmd}_completion() {
     opts="${program.commands.map((c) => c.name()).join(" ")} ${program.options.map((o) => o.flags.split(" ")[0]).join(" ")}"
     
     case "\${prev}" in
-      ${program.commands.map((cmd) => generateBashSubcommand(cmd)).join(t("\n      ") as any)}
+      ${program.commands.map((cmd) => generateBashSubcommand(cmd)).join(t("\n      ") as unknown as string)}
     esac
 
     if [[ \${cur} == -* ]] ; then

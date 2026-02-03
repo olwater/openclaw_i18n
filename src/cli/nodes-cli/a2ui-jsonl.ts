@@ -65,7 +65,7 @@ export function validateA2UIJsonl(jsonl: string) {
     const actionKeys = A2UI_ACTION_KEYS.filter((key) => key in record);
     if (actionKeys.length !== 1) {
       errors.push(
-        `line ${idx + 1}: expected exactly one action key (${A2UI_ACTION_KEYS.join(t(", ") as any)})`,
+        `line ${idx + 1}: expected exactly one action key (${A2UI_ACTION_KEYS.join(t(", ") as unknown as string)})`,
       );
       return;
     }
@@ -77,13 +77,13 @@ export function validateA2UIJsonl(jsonl: string) {
   });
 
   if (messageCount === 0) {
-    errors.push(t("no JSONL messages found") as any);
+    errors.push(t("no JSONL messages found") as unknown as string);
   }
   if (sawV08 && sawV09) {
-    errors.push(t("mixed A2UI v0.8 and v0.9 messages in one file") as any);
+    errors.push(t("mixed A2UI v0.8 and v0.9 messages in one file") as unknown as string);
   }
   if (errors.length > 0) {
-    throw new Error(`Invalid A2UI JSONL:\n- ${errors.join(t("\n- ") as any)}`);
+    throw new Error(`Invalid A2UI JSONL:\n- ${errors.join(t("\n- ") as unknown as string)}`);
   }
 
   const version: A2UIVersion = sawV09 ? "v0.9" : "v0.8";

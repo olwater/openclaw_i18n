@@ -1133,7 +1133,7 @@ const zh_CN: TranslationMap = {
   "Kill any existing listener on the target port before starting":
     "Kill any existing listener on the target port before starting",
   "Kill anything bound to the default gateway port, then start it.":
-    "Kill anything bound to the default gateway port, then start it.",
+    "终止任何占用默认网关端口的进程，然后启动它。",
   "Kimi Coding": "Kimi Coding",
   "Kimi Coding API key": "Kimi Coding API 密钥",
   "Kimi Coding uses a dedicated endpoint and API key.": "Kimi Coding 使用专门的端点和 API 密钥。",
