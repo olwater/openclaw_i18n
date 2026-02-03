@@ -465,7 +465,7 @@ export function registerHooksCli(program: Command): void {
     });
 
   hooks
-    .command(t("info <name>"))
+    .command("info <name>")
     .description(t("Show detailed information about a hook"))
     .option("--json", t("Output as JSON"), false)
     .action(async (name, opts) => {
@@ -499,7 +499,7 @@ export function registerHooksCli(program: Command): void {
     });
 
   hooks
-    .command(t("enable <name>"))
+    .command("enable <name>")
     .description(t("Enable a hook"))
     .action(async (name) => {
       try {
@@ -513,8 +513,9 @@ export function registerHooksCli(program: Command): void {
     });
 
   hooks
-    .command(t("disable <name>"))
+    .command("disable <name>")
     .description(t("Disable a hook"))
+
     .action(async (name) => {
       try {
         await disableHook(name);

@@ -19,6 +19,7 @@ import { createConfigIO } from "../config/config.js";
 import { INCLUDE_KEY, MAX_INCLUDE_DEPTH } from "../config/includes.js";
 import { resolveOAuthDir } from "../config/paths.js";
 import { resolveGatewayAuth } from "../gateway/auth.js";
+import { t } from "../i18n/index.js";
 import { normalizeAgentId } from "../routing/session-key.js";
 import {
   formatPermissionDetail,
@@ -102,7 +103,7 @@ export function collectAttackSurfaceSummaryFindings(cfg: OpenClawConfig): Securi
     {
       checkId: "summary.attack_surface",
       severity: "info",
-      title: "Attack surface summary",
+      title: t("Attack surface summary"),
       detail,
     },
   ];
@@ -128,9 +129,14 @@ export function collectSyncedFolderFindings(params: {
     findings.push({
       checkId: "fs.synced_dir",
       severity: "warn",
-      title: "State/config path looks like a synced folder",
-      detail: `stateDir=${params.stateDir}, configPath=${params.configPath}. Synced folders (iCloud/Dropbox/OneDrive/Google Drive) can leak tokens and transcripts onto other devices.`,
-      remediation: `Keep OPENCLAW_STATE_DIR on a local-only volume and re-run "${formatCliCommand("openclaw security audit --fix")}".`,
+      title: t("State/config path looks like a synced folder"),
+      detail: t(
+        "stateDir={{stateDir}}, configPath={{configPath}}. Synced folders (iCloud/Dropbox/OneDrive/Google Drive) can leak tokens and transcripts onto other devices.",
+        { stateDir: params.stateDir, configPath: params.configPath },
+      ),
+      remediation: t('Keep OPENCLAW_STATE_DIR on a local-only volume and re-run "{{command}}".', {
+        command: formatCliCommand("openclaw security audit --fix"),
+      }),
     });
   }
   return findings;
@@ -149,11 +155,13 @@ export function collectSecretsInConfigFindings(cfg: OpenClawConfig): SecurityAud
     findings.push({
       checkId: "config.secrets.gateway_password_in_config",
       severity: "warn",
-      title: "Gateway password is stored in config",
-      detail:
+      title: t("Gateway password is stored in config"),
+      detail: t(
         "gateway.auth.password is set in the config file; prefer environment variables for secrets when possible.",
-      remediation:
+      ),
+      remediation: t(
         "Prefer OPENCLAW_GATEWAY_PASSWORD (env) and remove gateway.auth.password from disk.",
+      ),
     });
   }
 
@@ -162,9 +170,10 @@ export function collectSecretsInConfigFindings(cfg: OpenClawConfig): SecurityAud
     findings.push({
       checkId: "config.secrets.hooks_token_in_config",
       severity: "info",
-      title: "Hooks token is stored in config",
-      detail:
+      title: t("Hooks token is stored in config"),
+      detail: t(
         "hooks.token is set in the config file; keep config perms tight and treat it like an API secret.",
+      ),
     });
   }
 
@@ -182,8 +191,10 @@ export function collectHooksHardeningFindings(cfg: OpenClawConfig): SecurityAudi
     findings.push({
       checkId: "hooks.token_too_short",
       severity: "warn",
-      title: "Hooks token looks short",
-      detail: `hooks.token is ${token.length} chars; prefer a long random token.`,
+      title: t("Hooks token looks short"),
+      detail: t("hooks.token is {{length}} chars; prefer a long random token.", {
+        length: String(token.length),
+      }),
     });
   }
 
@@ -201,10 +212,11 @@ export function collectHooksHardeningFindings(cfg: OpenClawConfig): SecurityAudi
     findings.push({
       checkId: "hooks.token_reuse_gateway_token",
       severity: "warn",
-      title: "Hooks token reuses the Gateway token",
-      detail:
+      title: t("Hooks token reuses the Gateway token"),
+      detail: t(
         "hooks.token matches gateway.auth token; compromise of hooks expands blast radius to the Gateway API.",
-      remediation: "Use a separate hooks.token dedicated to hook ingress.",
+      ),
+      remediation: t("Use a separate hooks.token dedicated to hook ingress."),
     });
   }
 
@@ -213,9 +225,9 @@ export function collectHooksHardeningFindings(cfg: OpenClawConfig): SecurityAudi
     findings.push({
       checkId: "hooks.path_root",
       severity: "critical",
-      title: "Hooks base path is '/'",
-      detail: "hooks.path='/' would shadow other HTTP endpoints and is unsafe.",
-      remediation: "Use a dedicated path like '/hooks'.",
+      title: t("Hooks base path is '/'"),
+      detail: t("hooks.path='/' would shadow other HTTP endpoints and is unsafe."),
+      remediation: t("Use a dedicated path like '/hooks'."),
     });
   }
 
@@ -372,12 +384,12 @@ export function collectModelHygieneFindings(cfg: OpenClawConfig): SecurityAuditF
     findings.push({
       checkId: "models.legacy",
       severity: "warn",
-      title: "Some configured models look legacy",
+      title: t("Some configured models look legacy"),
       detail:
-        "Older/legacy models can be less robust against prompt injection and tool misuse.\n" +
+        t("Older/legacy models can be less robust against prompt injection and tool misuse.\n") +
         lines +
         more,
-      remediation: "Prefer modern, instruction-hardened models for any bot that can run tools.",
+      remediation: t("Prefer modern, instruction-hardened models for any bot that can run tools."),
     });
   }
 
@@ -390,13 +402,16 @@ export function collectModelHygieneFindings(cfg: OpenClawConfig): SecurityAuditF
     findings.push({
       checkId: "models.weak_tier",
       severity: "warn",
-      title: "Some configured models are below recommended tiers",
+      title: t("Some configured models are below recommended tiers"),
       detail:
-        "Smaller/older models are generally more susceptible to prompt injection and tool misuse.\n" +
+        t(
+          "Smaller/older models are generally more susceptible to prompt injection and tool misuse.\n",
+        ) +
         lines +
         more,
-      remediation:
+      remediation: t(
         "Use the latest, top-tier model for any bot with tools or untrusted inboxes. Avoid Haiku tiers; prefer GPT-5+ and Claude 4.5+.",
+      ),
     });
   }
 
@@ -569,16 +584,19 @@ export function collectSmallModelRiskFindings(params: {
   findings.push({
     checkId: "models.small_params",
     severity: hasUnsafe ? "critical" : "info",
-    title: "Small models require sandboxing and web tools disabled",
+    title: t("Small models require sandboxing and web tools disabled"),
     detail:
-      `Small models (<=${SMALL_MODEL_PARAM_B_MAX}B params) detected:\n` +
+      t("Small models (<={{size}}B params) detected:\n", {
+        size: String(SMALL_MODEL_PARAM_B_MAX),
+      }) +
       modelLines.join("\n") +
       `\n` +
       exposureDetail +
       `\n` +
-      "Small models are not recommended for untrusted inputs.",
-    remediation:
+      t("Small models are not recommended for untrusted inputs."),
+    remediation: t(
       'If you must use small models, enable sandboxing for all sessions (agents.defaults.sandbox.mode="all") and disable web_search/web_fetch/browser (tools.deny=["group:web","browser"]).',
+    ),
   });
 
   return findings;
@@ -671,13 +689,19 @@ export async function collectPluginsTrustFindings(params: {
     findings.push({
       checkId: "plugins.extensions_no_allowlist",
       severity: skillCommandsLikelyExposed ? "critical" : "warn",
-      title: "Extensions exist but plugins.allow is not set",
+      title: t("Extensions exist but plugins.allow is not set"),
       detail:
-        `Found ${pluginDirs.length} extension(s) under ${extensionsDir}. Without plugins.allow, any discovered plugin id may load (depending on config and plugin behavior).` +
+        t(
+          "Found {{count}} extension(s) under {{dir}}. Without plugins.allow, any discovered plugin id may load (depending on config and plugin behavior).",
+          { count: String(pluginDirs.length), dir: extensionsDir },
+        ) +
         (skillCommandsLikelyExposed
-          ? "\nNative skill commands are enabled on at least one configured chat surface; treat unpinned/unallowlisted extensions as high risk."
+          ? "\n" +
+            t(
+              "Native skill commands are enabled on at least one configured chat surface; treat unpinned/unallowlisted extensions as high risk.",
+            )
           : ""),
-      remediation: "Set plugins.allow to an explicit list of plugin ids you trust.",
+      remediation: t("Set plugins.allow to an explicit list of plugin ids you trust."),
     });
   }
 
@@ -800,8 +824,10 @@ export async function collectIncludeFilePermFindings(params: {
       findings.push({
         checkId: "fs.config_include.perms_writable",
         severity: "critical",
-        title: "Config include file is writable by others",
-        detail: `${formatPermissionDetail(p, perms)}; another user could influence your effective config.`,
+        title: t("Config include file is writable by others"),
+        detail: t("{{detail}}; another user could influence your effective config.", {
+          detail: formatPermissionDetail(p, perms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: p,
           perms,
@@ -814,8 +840,10 @@ export async function collectIncludeFilePermFindings(params: {
       findings.push({
         checkId: "fs.config_include.perms_world_readable",
         severity: "critical",
-        title: "Config include file is world-readable",
-        detail: `${formatPermissionDetail(p, perms)}; include files can contain tokens and private settings.`,
+        title: t("Config include file is world-readable"),
+        detail: t("{{detail}}; include files can contain tokens and private settings.", {
+          detail: formatPermissionDetail(p, perms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: p,
           perms,
@@ -828,8 +856,10 @@ export async function collectIncludeFilePermFindings(params: {
       findings.push({
         checkId: "fs.config_include.perms_group_readable",
         severity: "warn",
-        title: "Config include file is group-readable",
-        detail: `${formatPermissionDetail(p, perms)}; include files can contain tokens and private settings.`,
+        title: t("Config include file is group-readable"),
+        detail: t("{{detail}}; include files can contain tokens and private settings.", {
+          detail: formatPermissionDetail(p, perms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: p,
           perms,
@@ -864,8 +894,10 @@ export async function collectStateDeepFilesystemFindings(params: {
       findings.push({
         checkId: "fs.credentials_dir.perms_writable",
         severity: "critical",
-        title: "Credentials dir is writable by others",
-        detail: `${formatPermissionDetail(oauthDir, oauthPerms)}; another user could drop/modify credential files.`,
+        title: t("Credentials dir is writable by others"),
+        detail: t("{{detail}}; another user could drop/modify credential files.", {
+          detail: formatPermissionDetail(oauthDir, oauthPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: oauthDir,
           perms: oauthPerms,
@@ -878,8 +910,10 @@ export async function collectStateDeepFilesystemFindings(params: {
       findings.push({
         checkId: "fs.credentials_dir.perms_readable",
         severity: "warn",
-        title: "Credentials dir is readable by others",
-        detail: `${formatPermissionDetail(oauthDir, oauthPerms)}; credentials and allowlists can be sensitive.`,
+        title: t("Credentials dir is readable by others"),
+        detail: t("{{detail}}; credentials and allowlists can be sensitive.", {
+          detail: formatPermissionDetail(oauthDir, oauthPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: oauthDir,
           perms: oauthPerms,
@@ -913,8 +947,10 @@ export async function collectStateDeepFilesystemFindings(params: {
         findings.push({
           checkId: "fs.auth_profiles.perms_writable",
           severity: "critical",
-          title: "auth-profiles.json is writable by others",
-          detail: `${formatPermissionDetail(authPath, authPerms)}; another user could inject credentials.`,
+          title: t("auth-profiles.json is writable by others"),
+          detail: t("{{detail}}; another user could inject credentials.", {
+            detail: formatPermissionDetail(authPath, authPerms),
+          }),
           remediation: formatPermissionRemediation({
             targetPath: authPath,
             perms: authPerms,
@@ -927,8 +963,10 @@ export async function collectStateDeepFilesystemFindings(params: {
         findings.push({
           checkId: "fs.auth_profiles.perms_readable",
           severity: "warn",
-          title: "auth-profiles.json is readable by others",
-          detail: `${formatPermissionDetail(authPath, authPerms)}; auth-profiles.json contains API keys and OAuth tokens.`,
+          title: t("auth-profiles.json is readable by others"),
+          detail: t("{{detail}}; auth-profiles.json contains API keys and OAuth tokens.", {
+            detail: formatPermissionDetail(authPath, authPerms),
+          }),
           remediation: formatPermissionRemediation({
             targetPath: authPath,
             perms: authPerms,
@@ -952,8 +990,10 @@ export async function collectStateDeepFilesystemFindings(params: {
         findings.push({
           checkId: "fs.sessions_store.perms_readable",
           severity: "warn",
-          title: "sessions.json is readable by others",
-          detail: `${formatPermissionDetail(storePath, storePerms)}; routing and transcript metadata can be sensitive.`,
+          title: t("sessions.json is readable by others"),
+          detail: t("{{detail}}; routing and transcript metadata can be sensitive.", {
+            detail: formatPermissionDetail(storePath, storePerms),
+          }),
           remediation: formatPermissionRemediation({
             targetPath: storePath,
             perms: storePerms,
@@ -982,8 +1022,10 @@ export async function collectStateDeepFilesystemFindings(params: {
           findings.push({
             checkId: "fs.log_file.perms_readable",
             severity: "warn",
-            title: "Log file is readable by others",
-            detail: `${formatPermissionDetail(logPath, logPerms)}; logs can contain private messages and tool output.`,
+            title: t("Log file is readable by others"),
+            detail: t("{{detail}}; logs can contain private messages and tool output.", {
+              detail: formatPermissionDetail(logPath, logPerms),
+            }),
             remediation: formatPermissionRemediation({
               targetPath: logPath,
               perms: logPerms,
@@ -1042,11 +1084,15 @@ export function collectExposureMatrixFindings(cfg: OpenClawConfig): SecurityAudi
     findings.push({
       checkId: "security.exposure.open_groups_with_elevated",
       severity: "critical",
-      title: "Open groupPolicy with elevated tools enabled",
+      title: t("Open groupPolicy with elevated tools enabled"),
       detail:
-        `Found groupPolicy="open" at:\n${openGroups.map((p) => `- ${p}`).join("\n")}\n` +
-        "With tools.elevated enabled, a prompt injection in those rooms can become a high-impact incident.",
-      remediation: `Set groupPolicy="allowlist" and keep elevated allowlists extremely tight.`,
+        t('Found groupPolicy="open" at:\n') +
+        openGroups.map((p) => `- ${p}`).join("\n") +
+        "\n" +
+        t(
+          "With tools.elevated enabled, a prompt injection in those rooms can become a high-impact incident.",
+        ),
+      remediation: t('Set groupPolicy="allowlist" and keep elevated allowlists extremely tight.'),
     });
   }
 

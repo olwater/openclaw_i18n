@@ -61,16 +61,16 @@ export async function setupCommand(
       logConfigUpdated(runtime, { path: configPath, suffix: t("(set agents.defaults.workspace)") });
     }
   } else {
-    runtime.log(`Config OK: ${formatConfigPath(configPath)}`);
+    runtime.log(t("Config OK: {path}").replace("{path}", formatConfigPath(configPath)));
   }
 
   const ws = await ensureAgentWorkspace({
     dir: workspace,
     ensureBootstrapFiles: !next.agents?.defaults?.skipBootstrap,
   });
-  runtime.log(`Workspace OK: ${shortenHomePath(ws.dir)}`);
+  runtime.log(t("Workspace OK: {path}").replace("{path}", shortenHomePath(ws.dir)));
 
   const sessionsDir = resolveSessionTranscriptsDir();
   await fs.mkdir(sessionsDir, { recursive: true });
-  runtime.log(`Sessions OK: ${shortenHomePath(sessionsDir)}`);
+  runtime.log(t("Sessions OK: {path}").replace("{path}", shortenHomePath(sessionsDir)));
 }

@@ -10,6 +10,7 @@ import { resolveConfigPath, resolveStateDir } from "../config/paths.js";
 import { resolveGatewayAuth } from "../gateway/auth.js";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
 import { probeGateway } from "../gateway/probe.js";
+import { t } from "../i18n/index.js";
 import { readChannelAllowFromStore } from "../pairing/pairing-store.js";
 import {
   collectAttackSurfaceSummaryFindings,
@@ -29,6 +30,9 @@ import {
   formatPermissionRemediation,
   inspectPathPermissions,
 } from "./audit-fs.js";
+
+// ... (skipping types for brevity, will rely on file content context)
+// Re-implementing functions with t() wrappers. Assuming types exist.
 
 export type SecurityAuditSeverity = "info" | "warn" | "critical";
 
@@ -142,16 +146,20 @@ async function collectFilesystemFindings(params: {
       findings.push({
         checkId: "fs.state_dir.symlink",
         severity: "warn",
-        title: "State dir is a symlink",
-        detail: `${params.stateDir} is a symlink; treat this as an extra trust boundary.`,
+        title: t("State dir is a symlink"),
+        detail: t("{{stateDir}} is a symlink; treat this as an extra trust boundary.", {
+          stateDir: params.stateDir,
+        }),
       });
     }
     if (stateDirPerms.worldWritable) {
       findings.push({
         checkId: "fs.state_dir.perms_world_writable",
         severity: "critical",
-        title: "State dir is world-writable",
-        detail: `${formatPermissionDetail(params.stateDir, stateDirPerms)}; other users can write into your OpenClaw state.`,
+        title: t("State dir is world-writable"),
+        detail: t("{{detail}}; other users can write into your OpenClaw state.", {
+          detail: formatPermissionDetail(params.stateDir, stateDirPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: params.stateDir,
           perms: stateDirPerms,
@@ -164,8 +172,10 @@ async function collectFilesystemFindings(params: {
       findings.push({
         checkId: "fs.state_dir.perms_group_writable",
         severity: "warn",
-        title: "State dir is group-writable",
-        detail: `${formatPermissionDetail(params.stateDir, stateDirPerms)}; group users can write into your OpenClaw state.`,
+        title: t("State dir is group-writable"),
+        detail: t("{{detail}}; group users can write into your OpenClaw state.", {
+          detail: formatPermissionDetail(params.stateDir, stateDirPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: params.stateDir,
           perms: stateDirPerms,
@@ -178,8 +188,10 @@ async function collectFilesystemFindings(params: {
       findings.push({
         checkId: "fs.state_dir.perms_readable",
         severity: "warn",
-        title: "State dir is readable by others",
-        detail: `${formatPermissionDetail(params.stateDir, stateDirPerms)}; consider restricting to 700.`,
+        title: t("State dir is readable by others"),
+        detail: t("{{detail}}; consider restricting to 700.", {
+          detail: formatPermissionDetail(params.stateDir, stateDirPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: params.stateDir,
           perms: stateDirPerms,
@@ -201,16 +213,20 @@ async function collectFilesystemFindings(params: {
       findings.push({
         checkId: "fs.config.symlink",
         severity: "warn",
-        title: "Config file is a symlink",
-        detail: `${params.configPath} is a symlink; make sure you trust its target.`,
+        title: t("Config file is a symlink"),
+        detail: t("{{configPath}} is a symlink; make sure you trust its target.", {
+          configPath: params.configPath,
+        }),
       });
     }
     if (configPerms.worldWritable || configPerms.groupWritable) {
       findings.push({
         checkId: "fs.config.perms_writable",
         severity: "critical",
-        title: "Config file is writable by others",
-        detail: `${formatPermissionDetail(params.configPath, configPerms)}; another user could change gateway/auth/tool policies.`,
+        title: t("Config file is writable by others"),
+        detail: t("{{detail}}; another user could change gateway/auth/tool policies.", {
+          detail: formatPermissionDetail(params.configPath, configPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: params.configPath,
           perms: configPerms,
@@ -223,8 +239,10 @@ async function collectFilesystemFindings(params: {
       findings.push({
         checkId: "fs.config.perms_world_readable",
         severity: "critical",
-        title: "Config file is world-readable",
-        detail: `${formatPermissionDetail(params.configPath, configPerms)}; config can contain tokens and private settings.`,
+        title: t("Config file is world-readable"),
+        detail: t("{{detail}}; config can contain tokens and private settings.", {
+          detail: formatPermissionDetail(params.configPath, configPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: params.configPath,
           perms: configPerms,
@@ -237,8 +255,10 @@ async function collectFilesystemFindings(params: {
       findings.push({
         checkId: "fs.config.perms_group_readable",
         severity: "warn",
-        title: "Config file is group-readable",
-        detail: `${formatPermissionDetail(params.configPath, configPerms)}; config can contain tokens and private settings.`,
+        title: t("Config file is group-readable"),
+        detail: t("{{detail}}; config can contain tokens and private settings.", {
+          detail: formatPermissionDetail(params.configPath, configPerms),
+        }),
         remediation: formatPermissionRemediation({
           targetPath: params.configPath,
           perms: configPerms,
@@ -277,9 +297,11 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.bind_no_auth",
       severity: "critical",
-      title: "Gateway binds beyond loopback without auth",
-      detail: `gateway.bind="${bind}" but no gateway.auth token/password is configured.`,
-      remediation: `Set gateway.auth (token recommended) or bind to loopback.`,
+      title: t("Gateway binds beyond loopback without auth"),
+      detail: t('gateway.bind="{{bind}}" but no gateway.auth token/password is configured.', {
+        bind,
+      }),
+      remediation: t("Set gateway.auth (token recommended) or bind to loopback."),
     });
   }
 
@@ -287,13 +309,13 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.trusted_proxies_missing",
       severity: "warn",
-      title: "Reverse proxy headers are not trusted",
-      detail:
-        "gateway.bind is loopback and gateway.trustedProxies is empty. " +
-        "If you expose the Control UI through a reverse proxy, configure trusted proxies " +
-        "so local-client checks cannot be spoofed.",
-      remediation:
+      title: t("Reverse proxy headers are not trusted"),
+      detail: t(
+        "gateway.bind is loopback and gateway.trustedProxies is empty. If you expose the Control UI through a reverse proxy, configure trusted proxies so local-client checks cannot be spoofed.",
+      ),
+      remediation: t(
         "Set gateway.trustedProxies to your proxy IPs or keep the Control UI local-only.",
+      ),
     });
   }
 
@@ -301,11 +323,11 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.loopback_no_auth",
       severity: "critical",
-      title: "Gateway auth missing on loopback",
-      detail:
-        "gateway.bind is loopback but no gateway auth secret is configured. " +
-        "If the Control UI is exposed through a reverse proxy, unauthenticated access is possible.",
-      remediation: "Set gateway.auth (token recommended) or keep the Control UI local-only.",
+      title: t("Gateway auth missing on loopback"),
+      detail: t(
+        "gateway.bind is loopback but no gateway auth secret is configured. If the Control UI is exposed through a reverse proxy, unauthenticated access is possible.",
+      ),
+      remediation: t("Set gateway.auth (token recommended) or keep the Control UI local-only."),
     });
   }
 
@@ -313,16 +335,20 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.tailscale_funnel",
       severity: "critical",
-      title: "Tailscale Funnel exposure enabled",
-      detail: `gateway.tailscale.mode="funnel" exposes the Gateway publicly; keep auth strict and treat it as internet-facing.`,
-      remediation: `Prefer tailscale.mode="serve" (tailnet-only) or set tailscale.mode="off".`,
+      title: t("Tailscale Funnel exposure enabled"),
+      detail: t(
+        'gateway.tailscale.mode="funnel" exposes the Gateway publicly; keep auth strict and treat it as internet-facing.',
+      ),
+      remediation: t('Prefer tailscale.mode="serve" (tailnet-only) or set tailscale.mode="off".'),
     });
   } else if (tailscaleMode === "serve") {
     findings.push({
       checkId: "gateway.tailscale_serve",
       severity: "info",
-      title: "Tailscale Serve exposure enabled",
-      detail: `gateway.tailscale.mode="serve" exposes the Gateway to your tailnet (loopback behind Tailscale).`,
+      title: t("Tailscale Serve exposure enabled"),
+      detail: t(
+        'gateway.tailscale.mode="serve" exposes the Gateway to your tailnet (loopback behind Tailscale).',
+      ),
     });
   }
 
@@ -330,10 +356,11 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.control_ui.insecure_auth",
       severity: "critical",
-      title: "Control UI allows insecure HTTP auth",
-      detail:
+      title: t("Control UI allows insecure HTTP auth"),
+      detail: t(
         "gateway.controlUi.allowInsecureAuth=true allows token-only auth over HTTP and skips device identity.",
-      remediation: "Disable it or switch to HTTPS (Tailscale Serve) or localhost.",
+      ),
+      remediation: t("Disable it or switch to HTTPS (Tailscale Serve) or localhost."),
     });
   }
 
@@ -341,10 +368,11 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.control_ui.device_auth_disabled",
       severity: "critical",
-      title: "DANGEROUS: Control UI device auth disabled",
-      detail:
+      title: t("DANGEROUS: Control UI device auth disabled"),
+      detail: t(
         "gateway.controlUi.dangerouslyDisableDeviceAuth=true disables device identity checks for the Control UI.",
-      remediation: "Disable it unless you are in a short-lived break-glass scenario.",
+      ),
+      remediation: t("Disable it unless you are in a short-lived break-glass scenario."),
     });
   }
 
@@ -354,8 +382,10 @@ function collectGatewayConfigFindings(
     findings.push({
       checkId: "gateway.token_too_short",
       severity: "warn",
-      title: "Gateway token looks short",
-      detail: `gateway auth token is ${token.length} chars; prefer a long random token.`,
+      title: t("Gateway token looks short"),
+      detail: t("gateway auth token is {{length}} chars; prefer a long random token.", {
+        length: String(token.length),
+      }),
     });
   }
 
