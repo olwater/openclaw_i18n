@@ -75,7 +75,7 @@ export async function sandboxRecreateCommand(
   const filtered = await fetchAndFilterContainers(opts);
 
   if (filtered.containers.length + filtered.browsers.length === 0) {
-    runtime.log(t("No containers found matching the criteria.") as any);
+    runtime.log(t("No containers found matching the criteria.") as unknown as string);
     return;
   }
 
@@ -98,14 +98,14 @@ export async function sandboxRecreateCommand(
 
 function validateRecreateOptions(opts: SandboxRecreateOptions, runtime: RuntimeEnv): boolean {
   if (!opts.all && !opts.session && !opts.agent) {
-    runtime.error(t("Please specify --all, --session <key>, or --agent <id>") as any);
+    runtime.error(t("Please specify --all, --session <key>, or --agent <id>") as unknown as string);
     runtime.exit(1);
     return false;
   }
 
   const exclusiveCount = [opts.all, opts.session, opts.agent].filter(Boolean).length;
   if (exclusiveCount > 1) {
-    runtime.error(t("Please specify only one of: --all, --session, --agent") as any);
+    runtime.error(t("Please specify only one of: --all, --session, --agent") as unknown as string);
     runtime.exit(1);
     return false;
   }
@@ -144,7 +144,7 @@ function createAgentMatcher(agentId: string) {
 
 async function confirmRecreate(): Promise<boolean> {
   const result = await clackConfirm({
-    message: t("This will stop and remove these containers. Continue?") as any,
+    message: t("This will stop and remove these containers. Continue?") as unknown as string,
     initialValue: false,
   });
 
@@ -155,7 +155,7 @@ async function removeContainers(
   filtered: FilteredContainers,
   runtime: RuntimeEnv,
 ): Promise<{ successCount: number; failCount: number }> {
-  runtime.log(t("\nRemoving containers...\n") as any);
+  runtime.log(t("\nRemoving containers...\n") as unknown as string);
 
   let successCount = 0;
   let failCount = 0;

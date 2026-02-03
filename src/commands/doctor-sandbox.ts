@@ -3,11 +3,7 @@ import path from "node:path";
 import type { OpenClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import type { DoctorPrompter } from "./doctor-prompter.js";
-import {
-  DEFAULT_SANDBOX_BROWSER_IMAGE,
-  DEFAULT_SANDBOX_IMAGE,
-  resolveSandboxConfigForAgent,
-} from "../agents/sandbox.js";
+import { resolveSandboxConfigForAgent } from "../agents/sandbox.js";
 import { t } from "../i18n/index.js";
 import { runCommandWithTimeout, runExec } from "../process/exec.js";
 import { note } from "../terminal/note.js";
@@ -89,16 +85,6 @@ async function dockerImageExists(image: string): Promise<boolean> {
     }
     throw error;
   }
-}
-
-function resolveSandboxDockerImage(cfg: OpenClawConfig): string {
-  const image = cfg.agents?.defaults?.sandbox?.docker?.image?.trim();
-  return image ? image : DEFAULT_SANDBOX_IMAGE;
-}
-
-function resolveSandboxBrowserImage(cfg: OpenClawConfig): string {
-  const image = cfg.agents?.defaults?.sandbox?.browser?.image?.trim();
-  return image ? image : DEFAULT_SANDBOX_BROWSER_IMAGE;
 }
 
 function updateSandboxDockerImage(cfg: OpenClawConfig, image: string): OpenClawConfig {

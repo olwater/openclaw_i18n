@@ -72,7 +72,7 @@ export async function appendStatusAllDiagnosis(params: {
   };
 
   lines.push("");
-  lines.push(`${muted(t("Gateway connection details:"))}`);
+  lines.push(muted(t("Gateway connection details:")));
   for (const line of redactSecrets(params.connectionDetailsForReport)
     .split("\n")
     .map((l) => l.trimEnd())) {
@@ -117,7 +117,7 @@ export async function appendStatusAllDiagnosis(params: {
   const isTrivialLastErr = lastErrClean.length < 8 || lastErrClean === "}" || lastErrClean === "{";
   if (lastErrClean && !isTrivialLastErr) {
     lines.push("");
-    lines.push(`${muted(t("Gateway last log line:"))}`);
+    lines.push(muted(t("Gateway last log line:")));
     lines.push(`  ${muted(redactSecrets(lastErrClean))}`);
   }
 
