@@ -20,8 +20,13 @@ export function getLocale(): Locale {
   if (currentLocale) {
     return currentLocale;
   }
-  const envLocale = process.env.LANG || process.env.LC_ALL || process.env.LC_MESSAGES;
-  if (envLocale?.includes("zh_CN")) {
+  const envLocale = (
+    process.env.LANG ||
+    process.env.LC_ALL ||
+    process.env.LC_MESSAGES ||
+    ""
+  ).toLowerCase();
+  if (envLocale.includes("zh_cn") || envLocale.includes("zh-cn")) {
     return "zh_CN";
   }
   return "en_US";

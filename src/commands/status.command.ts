@@ -190,7 +190,7 @@ export async function statusCommand(
     runtime.log("");
   }
 
-  const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
+  const tableWidth = Math.max(60, (process.stdout.columns ?? 100) - 1);
 
   const dashboard = (() => {
     const controlUiEnabled = cfg.gateway?.controlUi?.enabled ?? true;
@@ -411,7 +411,7 @@ export async function statusCommand(
       width: tableWidth,
       columns: [
         { key: "Item", header: "Item", minWidth: 12 },
-        { key: "Value", header: "Value", flex: true, minWidth: 32 },
+        { key: "Value", header: "Value", flex: true, minWidth: 32, maxWidth: 80 },
       ],
       rows: overviewRows,
     }).trimEnd(),
@@ -485,7 +485,7 @@ export async function statusCommand(
         { key: "Channel", header: "Channel", minWidth: 10 },
         { key: "Enabled", header: "Enabled", minWidth: 7 },
         { key: "State", header: "State", minWidth: 8 },
-        { key: "Detail", header: "Detail", flex: true, minWidth: 24 },
+        { key: "Detail", header: "Detail", flex: true, minWidth: 24, maxWidth: 60 },
       ],
       rows: channels.rows.map((row) => {
         const issues = channelIssuesByChannel.get(row.id) ?? [];
@@ -517,7 +517,7 @@ export async function statusCommand(
     renderTable({
       width: tableWidth,
       columns: [
-        { key: "Key", header: "Key", minWidth: 20, flex: true },
+        { key: "Key", header: "Key", minWidth: 20, flex: true, maxWidth: 40 },
         { key: "Kind", header: "Kind", minWidth: 6 },
         { key: "Age", header: "Age", minWidth: 9 },
         { key: "Model", header: "Model", minWidth: 14 },

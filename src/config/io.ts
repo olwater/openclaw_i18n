@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import type { OpenClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
-import { setLocale } from "../i18n/index.js";
+import { setLocale, t } from "../i18n/index.js";
 import {
   loadShellEnvFallback,
   resolveShellEnvFallbackTimeoutMs,
@@ -157,7 +157,9 @@ function warnIfConfigFromFuture(cfg: OpenClawConfig, logger: Pick<typeof console
   }
   if (cmp < 0) {
     logger.warn(
-      `Config was last written by a newer OpenClaw (${touched}); current version is ${VERSION}.`,
+      t("Config was last written by a newer OpenClaw ({touched}); current version is {version}.")
+        .replace("{touched}", touched)
+        .replace("{version}", VERSION),
     );
   }
 }

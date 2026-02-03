@@ -106,9 +106,11 @@ export async function doctorCommand(
       `Or set directly: ${formatCliCommand(t("openclaw config set gateway.mode local"))}`,
     ];
     if (!fs.existsSync(configPath)) {
-      lines.push(`Missing config: run ${formatCliCommand(t("openclaw setup"))} first.`);
+      lines.push(
+        `${t("Missing config: run")} ${formatCliCommand("openclaw setup")} ${t("first.")}`,
+      );
     }
-    note(lines.join("\n"), "Gateway");
+    note(lines.join("\n"), t("Gateway"));
   }
 
   cfg = await maybeRepairAnthropicOAuthProfileId(cfg, prompter);
@@ -120,7 +122,7 @@ export async function doctorCommand(
   });
   const gatewayDetails = buildGatewayConnectionDetails({ config: cfg });
   if (gatewayDetails.remoteFallbackNote) {
-    note(gatewayDetails.remoteFallbackNote, "Gateway");
+    note(gatewayDetails.remoteFallbackNote, t("Gateway"));
   }
   if (resolveMode(cfg) === "local") {
     const auth = resolveGatewayAuth({

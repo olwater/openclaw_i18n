@@ -1,4 +1,5 @@
 import type { GatewayServiceRuntime } from "./service-runtime.js";
+import { t } from "../i18n/index.js";
 import {
   installLaunchAgent,
   isLaunchAgentLoaded,
@@ -67,8 +68,8 @@ export function resolveGatewayService(): GatewayService {
   if (process.platform === "darwin") {
     return {
       label: "LaunchAgent",
-      loadedText: "loaded",
-      notLoadedText: "not loaded",
+      loadedText: t("loaded"),
+      notLoadedText: t("not loaded"),
       install: async (args) => {
         await installLaunchAgent(args);
       },
@@ -96,8 +97,8 @@ export function resolveGatewayService(): GatewayService {
   if (process.platform === "linux") {
     return {
       label: "systemd",
-      loadedText: "enabled",
-      notLoadedText: "disabled",
+      loadedText: t("enabled"),
+      notLoadedText: t("disabled"),
       install: async (args) => {
         await installSystemdService(args);
       },
@@ -125,8 +126,8 @@ export function resolveGatewayService(): GatewayService {
   if (process.platform === "win32") {
     return {
       label: "Scheduled Task",
-      loadedText: "registered",
-      notLoadedText: "missing",
+      loadedText: t("registered"),
+      notLoadedText: t("missing"),
       install: async (args) => {
         await installScheduledTask(args);
       },
