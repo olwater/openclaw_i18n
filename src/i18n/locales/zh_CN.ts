@@ -3008,6 +3008,7 @@ const zh_CN: TranslationMap = {
     "OpenClaw 使用 Brave Search 作为 {tool} 工具的后端。如果没有 Brave Search API 密钥，网页搜索将无法工作。",
   "Enable web_search and paste your Brave Search API key":
     "启用 web_search 并粘贴您的 Brave Search API 密钥",
+  "i18n edition maintained by @olwater": "中文版由 @olwater 维护",
 };
 
 export default zh_CN;
