@@ -8,7 +8,7 @@
     "让您的终端长出钳子 —— 个人 AI 助手，现已精通中文。"
     <br/>
     <br/>
-    <a href="https://qm.qq.com/q/123456" target="_blank"><img src="https://img.shields.io/badge/QQ%E7%BE%A4-1080150682-blue?style=flat-square&logo=tencent-qq&logoColor=white" alt="QQ Group"></a>
+    <a href="https://qm.qq.com/q/1080150682" target="_blank"><img src="https://img.shields.io/badge/QQ%E7%BE%A4-1080150682-blue?style=flat-square&logo=tencent-qq&logoColor=white" alt="QQ Group"></a>
 </p>
 
 ## 🌏 i18n 版本特色

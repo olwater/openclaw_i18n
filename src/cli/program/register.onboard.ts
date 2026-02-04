@@ -62,7 +62,7 @@ export function registerOnboardCommand(program: Command) {
     .option(
       "--auth-choice <choice>",
       t(
-        "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
+        "Auth: setup-token|token|chutes|openai-codex|openai-api-key|openrouter-api-key|ai-gateway-api-key|cloudflare-ai-gateway-api-key|moonshot-api-key|moonshot-api-key-cn|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
       ),
     )
     .option(
@@ -79,6 +79,9 @@ export function registerOnboardCommand(program: Command) {
     .option("--openai-api-key <key>", t("OpenAI API key"))
     .option("--openrouter-api-key <key>", t("OpenRouter API key"))
     .option("--ai-gateway-api-key <key>", t("Vercel AI Gateway API key"))
+    .option("--cloudflare-ai-gateway-account-id <id>", t("Cloudflare Account ID"))
+    .option("--cloudflare-ai-gateway-gateway-id <id>", t("Cloudflare AI Gateway ID"))
+    .option("--cloudflare-ai-gateway-api-key <key>", t("Cloudflare AI Gateway API key"))
     .option("--moonshot-api-key <key>", t("Moonshot API key"))
     .option("--kimi-code-api-key <key>", t("Kimi Coding API key"))
     .option("--gemini-api-key <key>", t("Gemini API key"))
@@ -130,6 +133,9 @@ export function registerOnboardCommand(program: Command) {
             openaiApiKey: opts.openaiApiKey as string | undefined,
             openrouterApiKey: opts.openrouterApiKey as string | undefined,
             aiGatewayApiKey: opts.aiGatewayApiKey as string | undefined,
+            cloudflareAiGatewayAccountId: opts.cloudflareAiGatewayAccountId as string | undefined,
+            cloudflareAiGatewayGatewayId: opts.cloudflareAiGatewayGatewayId as string | undefined,
+            cloudflareAiGatewayApiKey: opts.cloudflareAiGatewayApiKey as string | undefined,
             moonshotApiKey: opts.moonshotApiKey as string | undefined,
             kimiCodeApiKey: opts.kimiCodeApiKey as string | undefined,
             geminiApiKey: opts.geminiApiKey as string | undefined,

@@ -47,22 +47,31 @@ export function formatCliBannerLine(version: string, options: BannerOptions = {}
   const fitsOnOneLine = visibleWidth(plainFullLine) <= columns;
   if (rich) {
     if (fitsOnOneLine) {
-      return `${theme.heading(title)} ${theme.info(version)} ${theme.muted(
+      const line1 = `${theme.heading(title)} ${theme.info(version)} ${theme.muted(
         `(${commitLabel})`,
       )} ${theme.muted("—")} ${theme.accentDim(tagline)}`;
+      const attribution = `${" ".repeat(prefix.length)}${theme.success(
+        t("i18n edition maintained by @olwater"),
+      )}`;
+      return `${line1}\n${attribution}`;
     }
     const line1 = `${theme.heading(title)} ${theme.info(version)} ${theme.muted(
       `(${commitLabel})`,
     )}`;
+    const attribution = `${" ".repeat(prefix.length)}${theme.success(
+      t("i18n edition maintained by @olwater"),
+    )}`;
     const line2 = `${" ".repeat(prefix.length)}${theme.accentDim(tagline)}`;
-    return `${line1}\n${line2}`;
+    return `${line1}\n${attribution}\n${line2}`;
   }
   if (fitsOnOneLine) {
-    return plainFullLine;
+    const attribution = `${" ".repeat(prefix.length)}${t("i18n edition maintained by @olwater")}`;
+    return `${plainFullLine}\n${attribution}`;
   }
   const line1 = `${title} ${version} (${commitLabel})`;
+  const attribution = `${" ".repeat(prefix.length)}${t("i18n edition maintained by @olwater")}`;
   const line2 = `${" ".repeat(prefix.length)}${tagline}`;
-  return `${line1}\n${line2}`;
+  return `${line1}\n${attribution}\n${line2}`;
 }
 
 const LOBSTER_ASCII = [

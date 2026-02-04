@@ -19,7 +19,7 @@ export function addGatewayClientOptions(cmd: Command) {
       t("Gateway WebSocket URL (defaults to gateway.remote.url when configured)"),
     )
     .option("--token <token>", t("Gateway token (if required)"))
-    .option("--timeout <ms>", t("Timeout in ms"), "10000")
+    .option("--timeout <ms>", t("Timeout in ms"), "30000")
     .option("--expect-final", t("Wait for final response (agent)"), false);
 }
 

@@ -9,7 +9,7 @@ import { addGatewayClientOptions, callGatewayFromCli } from "../gateway-rpc.js";
 import { parsePositiveIntOrUndefined } from "../program/helpers.js";
 import {
   getCronChannelOptions,
-  parseAtMs,
+  parseAt,
   parseDurationMs,
   printCronList,
   warnIfCronSchedulerDisabled,
@@ -69,8 +69,9 @@ export function registerCronAddCommand(cron: Command) {
       .option("--description <text>", t("Optional description"))
       .option("--disabled", t("Create job disabled"), false)
       .option("--delete-after-run", t("Delete one-shot job after it succeeds"), false)
+      .option("--keep-after-run", t("Keep one-shot job after it succeeds"), false)
       .option("--agent <id>", t("Agent id for this job"))
-      .option("--session <target>", t("Session target (main|isolated)"), "main")
+      .option("--session <target>", t("Session target (main|isolated)"))
       .option("--wake <mode>", t("Wake mode (now|next-heartbeat)"), "next-heartbeat")
       .option("--at <when>", t("Run once at time (ISO) or +duration (e.g. 20m)"))
       .option("--every <duration>", t("Run every duration (e.g. 10m, 1h)"))
@@ -84,11 +85,9 @@ export function registerCronAddCommand(cron: Command) {
       )
       .option("--model <model>", t("Model override for agent jobs (provider/model or alias)"))
       .option("--timeout-seconds <n>", t("Timeout seconds for agent jobs"))
-      .option(
-        "--deliver",
-        t("Deliver agent output (required when using last-route delivery without --to)"),
-        false,
-      )
+      .option("--announce", t("Announce summary to a chat (subagent-style)"), false)
+      .option("--deliver", t("Deprecated (use --announce). Announces a summary to a chat."))
+      .option("--no-deliver", t("Disable announce delivery and skip main-session summary"))
       .option("--channel <channel>", `Delivery channel (${getCronChannelOptions()})`, "last")
       .option(
         "--to <dest>",
@@ -103,7 +102,7 @@ export function registerCronAddCommand(cron: Command) {
       )
       .option("--post-max-chars <n>", t("Max chars when --post-mode=full (default 8000)"), "8000")
       .option("--json", t("Output JSON"), false)
-      .action(async (opts: GatewayRpcOpts & Record<string, unknown>) => {
+      .action(async (opts: GatewayRpcOpts & Record<string, unknown>, cmd?: Command) => {
         try {
           const schedule = (() => {
             const at = typeof opts.at === "string" ? opts.at : "";
@@ -114,11 +113,11 @@ export function registerCronAddCommand(cron: Command) {
               throw new Error(t("Choose exactly one schedule: --at, --every, or --cron"));
             }
             if (at) {
-              const atMs = parseAtMs(at);
-              if (!atMs) {
+              const atIso = parseAt(at);
+              if (!atIso) {
                 throw new Error(t("Invalid --at; use ISO time or duration like 20m"));
               }
-              return { kind: "at" as const, atMs };
+              return { kind: "at" as const, at: atIso };
             }
             if (every) {
               const everyMs = parseDurationMs(every);
@@ -135,10 +134,8 @@ export function registerCronAddCommand(cron: Command) {
           })();
 
           const sessionTargetRaw = typeof opts.session === "string" ? opts.session : "main";
-          const sessionTarget = sessionTargetRaw.trim() || "main";
-          if (sessionTarget !== "main" && sessionTarget !== "isolated") {
-            throw new Error(t("--session must be main or isolated"));
-          }
+          const _sessionTarget = sessionTargetRaw.trim() || "main"; // unused but keeping for logic ref
+          // Upstream logic uses `sessionSource` below to determine default.
 
           const wakeModeRaw = typeof opts.wake === "string" ? opts.wake : "next-heartbeat";
           const wakeMode = wakeModeRaw.trim() || "next-heartbeat";
@@ -150,6 +147,13 @@ export function registerCronAddCommand(cron: Command) {
             typeof opts.agent === "string" && opts.agent.trim()
               ? sanitizeAgentId(opts.agent.trim())
               : undefined;
+
+          const hasAnnounce = Boolean(opts.announce) || opts.deliver === true;
+          const hasNoDeliver = opts.deliver === false;
+          const deliveryFlagCount = [hasAnnounce, hasNoDeliver].filter(Boolean).length;
+          if (deliveryFlagCount > 1) {
+            throw new Error(t("Choose at most one of --announce or --no-deliver"));
+          }
 
           const payload = (() => {
             const systemEvent = typeof opts.systemEvent === "string" ? opts.systemEvent.trim() : "";
@@ -173,12 +177,25 @@ export function registerCronAddCommand(cron: Command) {
                   : undefined,
               timeoutSeconds:
                 timeoutSeconds && Number.isFinite(timeoutSeconds) ? timeoutSeconds : undefined,
-              deliver: opts.deliver ? true : undefined,
-              channel: typeof opts.channel === "string" ? opts.channel : "last",
-              to: typeof opts.to === "string" && opts.to.trim() ? opts.to.trim() : undefined,
-              bestEffortDeliver: opts.bestEffortDeliver ? true : undefined,
             };
           })();
+
+          const optionSource =
+            typeof cmd?.getOptionValueSource === "function"
+              ? (name: string) => cmd.getOptionValueSource(name)
+              : () => undefined;
+          const sessionSource = optionSource("session");
+          const sessionTargetRaw2 = typeof opts.session === "string" ? opts.session.trim() : "";
+          const inferredSessionTarget = payload.kind === "agentTurn" ? "isolated" : "main";
+          const sessionTarget =
+            sessionSource === "cli" ? sessionTargetRaw2 || "" : inferredSessionTarget;
+          if (sessionTarget !== "main" && sessionTarget !== "isolated") {
+            throw new Error(t("--session must be main or isolated"));
+          }
+
+          if (opts.deleteAfterRun && opts.keepAfterRun) {
+            throw new Error(t("Choose --delete-after-run or --keep-after-run, not both"));
+          }
 
           if (sessionTarget === "main" && payload.kind !== "systemEvent") {
             throw new Error(t("Main jobs require --system-event (systemEvent)."));
@@ -186,23 +203,20 @@ export function registerCronAddCommand(cron: Command) {
           if (sessionTarget === "isolated" && payload.kind !== "agentTurn") {
             throw new Error(t("Isolated jobs require --message (agentTurn)."));
           }
+          if (
+            (opts.announce || typeof opts.deliver === "boolean") &&
+            (sessionTarget !== "isolated" || payload.kind !== "agentTurn")
+          ) {
+            throw new Error(t("--announce/--no-deliver require --session isolated."));
+          }
 
-          const isolation =
-            sessionTarget === "isolated"
-              ? {
-                  postToMainPrefix:
-                    typeof opts.postPrefix === "string" && opts.postPrefix.trim()
-                      ? opts.postPrefix.trim()
-                      : "Cron",
-                  postToMainMode:
-                    opts.postMode === "full" || opts.postMode === "summary"
-                      ? opts.postMode
-                      : undefined,
-                  postToMainMaxChars:
-                    typeof opts.postMaxChars === "string" && /^\d+$/.test(opts.postMaxChars)
-                      ? Number.parseInt(opts.postMaxChars, 10)
-                      : undefined,
-                }
+          const deliveryMode =
+            sessionTarget === "isolated" && payload.kind === "agentTurn"
+              ? hasAnnounce
+                ? "announce"
+                : hasNoDeliver
+                  ? "none"
+                  : "announce"
               : undefined;
 
           const nameRaw = typeof opts.name === "string" ? opts.name : "";
@@ -220,13 +234,23 @@ export function registerCronAddCommand(cron: Command) {
             name,
             description,
             enabled: !opts.disabled,
-            deleteAfterRun: Boolean(opts.deleteAfterRun),
+            deleteAfterRun: opts.deleteAfterRun ? true : opts.keepAfterRun ? false : undefined,
             agentId,
             schedule,
             sessionTarget,
             wakeMode,
             payload,
-            isolation,
+            delivery: deliveryMode
+              ? {
+                  mode: deliveryMode,
+                  channel:
+                    typeof opts.channel === "string" && opts.channel.trim()
+                      ? opts.channel.trim()
+                      : undefined,
+                  to: typeof opts.to === "string" && opts.to.trim() ? opts.to.trim() : undefined,
+                  bestEffort: opts.bestEffortDeliver ? true : undefined,
+                }
+              : undefined,
           };
 
           const res = await callGatewayFromCli("cron.add", opts, params);
