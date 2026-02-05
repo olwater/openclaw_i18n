@@ -1,5 +1,6 @@
 import { html, nothing } from "lit";
 import type { ConfigUiHints } from "../types.ts";
+import { t } from "../i18n/index.ts";
 import { icons } from "../icons.ts";
 import { renderNode } from "./config-form.node.ts";
 import { hintForPath, humanize, schemaType, type JsonSchema } from "./config-form.shared.ts";
@@ -239,39 +240,39 @@ const sectionIcons = {
 // Section metadata
 export const SECTION_META: Record<string, { label: string; description: string }> = {
   env: {
-    label: "Environment Variables",
-    description: "Environment variables passed to the gateway process",
+    label: t("Environment Variables"),
+    description: t("Environment variables passed to the gateway process"),
   },
-  update: { label: "Updates", description: "Auto-update settings and release channel" },
-  agents: { label: "Agents", description: "Agent configurations, models, and identities" },
-  auth: { label: "Authentication", description: "API keys and authentication profiles" },
+  update: { label: t("Updates"), description: t("Auto-update settings and release channel") },
+  agents: { label: t("Agents"), description: t("Agent configurations, models, and identities") },
+  auth: { label: t("Authentication"), description: t("API keys and authentication profiles") },
   channels: {
-    label: "Channels",
-    description: "Messaging channels (Telegram, Discord, Slack, etc.)",
+    label: t("Channels"),
+    description: t("Messaging channels (Telegram, Discord, Slack, etc.)"),
   },
-  messages: { label: "Messages", description: "Message handling and routing settings" },
-  commands: { label: "Commands", description: "Custom slash commands" },
-  hooks: { label: "Hooks", description: "Webhooks and event hooks" },
-  skills: { label: "Skills", description: "Skill packs and capabilities" },
-  tools: { label: "Tools", description: "Tool configurations (browser, search, etc.)" },
-  gateway: { label: "Gateway", description: "Gateway server settings (port, auth, binding)" },
-  wizard: { label: "Setup Wizard", description: "Setup wizard state and history" },
+  messages: { label: t("Messages"), description: t("Message handling and routing settings") },
+  commands: { label: t("Commands"), description: t("Custom slash commands") },
+  hooks: { label: t("Hooks"), description: t("Webhooks and event hooks") },
+  skills: { label: t("Skills"), description: t("Skill packs and capabilities") },
+  tools: { label: t("Tools"), description: t("Tool configurations (browser, search, etc.)") },
+  gateway: { label: t("Gateway"), description: t("Gateway server settings (port, auth, binding)") },
+  wizard: { label: t("Setup Wizard"), description: t("Setup wizard state and history") },
   // Additional sections
-  meta: { label: "Metadata", description: "Gateway metadata and version information" },
-  logging: { label: "Logging", description: "Log levels and output configuration" },
-  browser: { label: "Browser", description: "Browser automation settings" },
-  ui: { label: "UI", description: "User interface preferences" },
-  models: { label: "Models", description: "AI model configurations and providers" },
-  bindings: { label: "Bindings", description: "Key bindings and shortcuts" },
-  broadcast: { label: "Broadcast", description: "Broadcast and notification settings" },
-  audio: { label: "Audio", description: "Audio input/output settings" },
-  session: { label: "Session", description: "Session management and persistence" },
-  cron: { label: "Cron", description: "Scheduled tasks and automation" },
-  web: { label: "Web", description: "Web server and API settings" },
-  discovery: { label: "Discovery", description: "Service discovery and networking" },
-  canvasHost: { label: "Canvas Host", description: "Canvas rendering and display" },
-  talk: { label: "Talk", description: "Voice and speech settings" },
-  plugins: { label: "Plugins", description: "Plugin management and extensions" },
+  meta: { label: t("Metadata"), description: t("Gateway metadata and version information") },
+  logging: { label: t("Logging"), description: t("Log levels and output configuration") },
+  browser: { label: t("Browser"), description: t("Browser automation settings") },
+  ui: { label: t("UI"), description: t("User interface preferences") },
+  models: { label: t("Models"), description: t("AI model configurations and providers") },
+  bindings: { label: t("Bindings"), description: t("Key bindings and shortcuts") },
+  broadcast: { label: t("Broadcast"), description: t("Broadcast and notification settings") },
+  audio: { label: t("Audio"), description: t("Audio input/output settings") },
+  session: { label: t("Session"), description: t("Session management and persistence") },
+  cron: { label: t("Cron"), description: t("Scheduled tasks and automation") },
+  web: { label: t("Web"), description: t("Web server and API settings") },
+  discovery: { label: t("Discovery"), description: t("Service discovery and networking") },
+  canvasHost: { label: t("Canvas Host"), description: t("Canvas rendering and display") },
+  talk: { label: t("Talk"), description: t("Voice and speech settings") },
+  plugins: { label: t("Plugins"), description: t("Plugin management and extensions") },
 };
 
 function getSectionIcon(key: string) {
@@ -355,14 +356,14 @@ function schemaMatches(schema: JsonSchema, query: string): boolean {
 export function renderConfigForm(props: ConfigFormProps) {
   if (!props.schema) {
     return html`
-      <div class="muted">Schema unavailable.</div>
+      <div class="muted">${t("Schema unavailable.")}</div>
     `;
   }
   const schema = props.schema;
   const value = props.value ?? {};
   if (schemaType(schema) !== "object" || !schema.properties) {
     return html`
-      <div class="callout danger">Unsupported schema. Use Raw.</div>
+      <div class="callout danger">${t("Unsupported schema. Use Raw.")}</div>
     `;
   }
   const unsupported = new Set(props.unsupportedPaths ?? []);
@@ -413,7 +414,7 @@ export function renderConfigForm(props: ConfigFormProps) {
       <div class="config-empty">
         <div class="config-empty__icon">${icons.search}</div>
         <div class="config-empty__text">
-          ${searchQuery ? `No settings match "${searchQuery}"` : "No settings in this section"}
+          ${searchQuery ? t('No settings match "{query}"').replace("{query}", searchQuery) : t("No settings in this section")}
         </div>
       </div>
     `;
@@ -426,7 +427,7 @@ export function renderConfigForm(props: ConfigFormProps) {
           ? (() => {
               const { sectionKey, subsectionKey, schema: node } = subsectionContext;
               const hint = hintForPath([sectionKey, subsectionKey], props.uiHints);
-              const label = hint?.label ?? node.title ?? humanize(subsectionKey);
+              const label = t(hint?.label ?? node.title ?? humanize(subsectionKey));
               const description = hint?.help ?? node.description ?? "";
               const sectionValue = value[sectionKey];
               const scopedValue =
@@ -464,7 +465,7 @@ export function renderConfigForm(props: ConfigFormProps) {
             })()
           : filteredEntries.map(([key, node]) => {
               const meta = SECTION_META[key] ?? {
-                label: key.charAt(0).toUpperCase() + key.slice(1),
+                label: t(key.charAt(0).toUpperCase() + key.slice(1)),
                 description: node.description ?? "",
               };
 

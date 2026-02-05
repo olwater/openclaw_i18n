@@ -472,7 +472,7 @@ function buildChatItems(props: ChatProps): Array<ChatItem | MessageGroup> {
       key: "chat:history:notice",
       message: {
         role: "system",
-        content: `Showing last ${CHAT_HISTORY_RENDER_LIMIT} messages (${historyStart} hidden).`,
+        content: `${t("Showing last")} ${CHAT_HISTORY_RENDER_LIMIT} ${t("messages")} (${historyStart} ${t("hidden")}).`,
         timestamp: Date.now(),
       },
     });
