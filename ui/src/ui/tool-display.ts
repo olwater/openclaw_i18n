@@ -1,4 +1,5 @@
 import type { IconName } from "./icons.ts";
+import { t } from "./i18n/index.ts";
 import rawConfig from "./tool-display.json" with { type: "json" };
 
 type ToolDisplayActionSpec = {
@@ -40,7 +41,7 @@ function normalizeToolName(name?: string): string {
 function defaultTitle(name: string): string {
   const cleaned = name.replace(/_/g, " ").trim();
   if (!cleaned) {
-    return "Tool";
+    return t("Tool");
   }
   return cleaned
     .split(/\s+/)

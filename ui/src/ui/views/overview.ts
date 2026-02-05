@@ -2,6 +2,7 @@ import { html } from "lit";
 import type { GatewayHelloOk } from "../gateway.ts";
 import type { UiSettings } from "../storage.ts";
 import { formatAgo, formatDurationMs } from "../format.ts";
+import { t } from "../i18n/index.ts";
 import { formatNextRun } from "../presenter.ts";
 
 export type OverviewProps = {
@@ -42,7 +43,7 @@ export function renderOverview(props: OverviewProps) {
     if (!hasToken && !hasPassword) {
       return html`
         <div class="muted" style="margin-top: 8px">
-          This gateway requires auth. Add a token or password, then click Connect.
+          ${t("This gateway requires auth. Add a token or password, then click Connect.")}
           <div style="margin-top: 6px">
             <span class="mono">openclaw dashboard --no-open</span> → tokenized URL<br />
             <span class="mono">openclaw doctor --generate-gateway-token</span> → set token
@@ -53,8 +54,8 @@ export function renderOverview(props: OverviewProps) {
               href="https://docs.openclaw.ai/web/dashboard"
               target="_blank"
               rel="noreferrer"
-              title="Control UI auth docs (opens in new tab)"
-              >Docs: Control UI auth</a
+              title="${t("Control UI auth docs (opens in new tab)")}"
+              >${t("Docs: Control UI auth")}</a
             >
           </div>
         </div>
@@ -62,16 +63,16 @@ export function renderOverview(props: OverviewProps) {
     }
     return html`
       <div class="muted" style="margin-top: 8px">
-        Auth failed. Re-copy a tokenized URL with
-        <span class="mono">openclaw dashboard --no-open</span>, or update the token, then click Connect.
+        ${t("Auth failed. Re-copy a tokenized URL with")}
+        <span class="mono">openclaw dashboard --no-open</span>, ${t("or update the token, then click Connect.")}
         <div style="margin-top: 6px">
           <a
             class="session-link"
             href="https://docs.openclaw.ai/web/dashboard"
             target="_blank"
             rel="noreferrer"
-            title="Control UI auth docs (opens in new tab)"
-            >Docs: Control UI auth</a
+            title="${t("Control UI auth docs (opens in new tab)")}"
+            >${t("Docs: Control UI auth")}</a
           >
         </div>
       </div>
@@ -91,10 +92,10 @@ export function renderOverview(props: OverviewProps) {
     }
     return html`
       <div class="muted" style="margin-top: 8px">
-        This page is HTTP, so the browser blocks device identity. Use HTTPS (Tailscale Serve) or open
-        <span class="mono">http://127.0.0.1:18789</span> on the gateway host.
+        ${t("This page is HTTP, so the browser blocks device identity. Use HTTPS (Tailscale Serve) or open")}
+        <span class="mono">http://127.0.0.1:18789</span> ${t("on the gateway host.")}
         <div style="margin-top: 6px">
-          If you must stay on HTTP, set
+          ${t("If you must stay on HTTP, set")}
           <span class="mono">gateway.controlUi.allowInsecureAuth: true</span> (token-only).
         </div>
         <div style="margin-top: 6px">
@@ -103,8 +104,8 @@ export function renderOverview(props: OverviewProps) {
             href="https://docs.openclaw.ai/gateway/tailscale"
             target="_blank"
             rel="noreferrer"
-            title="Tailscale Serve docs (opens in new tab)"
-            >Docs: Tailscale Serve</a
+            title="${t("Tailscale Serve docs (opens in new tab)")}"
+            >${t("Docs: Tailscale Serve")}</a
           >
           <span class="muted"> · </span>
           <a
@@ -112,8 +113,8 @@ export function renderOverview(props: OverviewProps) {
             href="https://docs.openclaw.ai/web/control-ui#insecure-http"
             target="_blank"
             rel="noreferrer"
-            title="Insecure HTTP docs (opens in new tab)"
-            >Docs: Insecure HTTP</a
+            title="${t("Insecure HTTP docs (opens in new tab)")}"
+            >${t("Docs: Insecure HTTP")}</a
           >
         </div>
       </div>
@@ -123,11 +124,11 @@ export function renderOverview(props: OverviewProps) {
   return html`
     <section class="grid grid-cols-2">
       <div class="card">
-        <div class="card-title">Gateway Access</div>
-        <div class="card-sub">Where the dashboard connects and how it authenticates.</div>
+        <div class="card-title">${t("Gateway Access")}</div>
+        <div class="card-sub">${t("Where the dashboard connects and how it authenticates.")}</div>
         <div class="form-grid" style="margin-top: 16px;">
           <label class="field">
-            <span>WebSocket URL</span>
+            <span>${t("WebSocket URL")}</span>
             <input
               .value=${props.settings.gatewayUrl}
               @input=${(e: Event) => {
@@ -138,7 +139,7 @@ export function renderOverview(props: OverviewProps) {
             />
           </label>
           <label class="field">
-            <span>Gateway Token</span>
+            <span>${t("Gateway Token")}</span>
             <input
               .value=${props.settings.token}
               @input=${(e: Event) => {
@@ -149,7 +150,7 @@ export function renderOverview(props: OverviewProps) {
             />
           </label>
           <label class="field">
-            <span>Password (not stored)</span>
+            <span>${t("Password (not stored)")}</span>
             <input
               type="password"
               .value=${props.password}
@@ -157,11 +158,11 @@ export function renderOverview(props: OverviewProps) {
                 const v = (e.target as HTMLInputElement).value;
                 props.onPasswordChange(v);
               }}
-              placeholder="system or shared password"
+              placeholder="${t("system or shared password")}"
             />
           </label>
           <label class="field">
-            <span>Default Session Key</span>
+            <span>${t("Default Session Key")}</span>
             <input
               .value=${props.settings.sessionKey}
               @input=${(e: Event) => {
@@ -170,34 +171,49 @@ export function renderOverview(props: OverviewProps) {
               }}
             />
           </label>
+          <label class="field">
+            <span>${t("Language")}</span>
+            <select
+              .value=${props.settings.locale}
+              @change=${(e: Event) => {
+                const v = (e.target as HTMLSelectElement).value;
+                props.onSettingsChange({ ...props.settings, locale: v });
+                // Reload is needed because many strings are rendered once
+                window.location.reload();
+              }}
+            >
+              <option value="en">English</option>
+              <option value="zh-CN">简体中文</option>
+            </select>
+          </label>
         </div>
         <div class="row" style="margin-top: 14px;">
-          <button class="btn" @click=${() => props.onConnect()}>Connect</button>
-          <button class="btn" @click=${() => props.onRefresh()}>Refresh</button>
-          <span class="muted">Click Connect to apply connection changes.</span>
+          <button class="btn" @click=${() => props.onConnect()}>${t("Connect")}</button>
+          <button class="btn" @click=${() => props.onRefresh()}>${t("Refresh")}</button>
+          <span class="muted">${t("Click Connect to apply connection changes.")}</span>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title">Snapshot</div>
-        <div class="card-sub">Latest gateway handshake information.</div>
+        <div class="card-title">${t("Snapshot")}</div>
+        <div class="card-sub">${t("Latest gateway handshake information.")}</div>
         <div class="stat-grid" style="margin-top: 16px;">
           <div class="stat">
-            <div class="stat-label">Status</div>
+            <div class="stat-label">${t("Status")}</div>
             <div class="stat-value ${props.connected ? "ok" : "warn"}">
-              ${props.connected ? "Connected" : "Disconnected"}
+              ${props.connected ? t("Connected") : t("Disconnected")}
             </div>
           </div>
           <div class="stat">
-            <div class="stat-label">Uptime</div>
+            <div class="stat-label">${t("Uptime")}</div>
             <div class="stat-value">${uptime}</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Tick Interval</div>
+            <div class="stat-label">${t("Tick Interval")}</div>
             <div class="stat-value">${tick}</div>
           </div>
           <div class="stat">
-            <div class="stat-label">Last Channels Refresh</div>
+            <div class="stat-label">${t("Last Channels Refresh")}</div>
             <div class="stat-value">
               ${props.lastChannelsRefresh ? formatAgo(props.lastChannelsRefresh) : "n/a"}
             </div>
@@ -212,7 +228,7 @@ export function renderOverview(props: OverviewProps) {
             </div>`
             : html`
                 <div class="callout" style="margin-top: 14px">
-                  Use Channels to link WhatsApp, Telegram, Discord, Signal, or iMessage.
+                  ${t("Use Channels to link WhatsApp, Telegram, Discord, Signal, or iMessage.")}
                 </div>
               `
         }
@@ -221,41 +237,41 @@ export function renderOverview(props: OverviewProps) {
 
     <section class="grid grid-cols-3" style="margin-top: 18px;">
       <div class="card stat-card">
-        <div class="stat-label">Instances</div>
+        <div class="stat-label">${t("Instances")}</div>
         <div class="stat-value">${props.presenceCount}</div>
-        <div class="muted">Presence beacons in the last 5 minutes.</div>
+        <div class="muted">${t("Presence beacons in the last 5 minutes.")}</div>
       </div>
       <div class="card stat-card">
-        <div class="stat-label">Sessions</div>
+        <div class="stat-label">${t("Sessions")}</div>
         <div class="stat-value">${props.sessionsCount ?? "n/a"}</div>
-        <div class="muted">Recent session keys tracked by the gateway.</div>
+        <div class="muted">${t("Recent session keys tracked by the gateway.")}</div>
       </div>
       <div class="card stat-card">
-        <div class="stat-label">Cron</div>
+        <div class="stat-label">${t("Cron")}</div>
         <div class="stat-value">
-          ${props.cronEnabled == null ? "n/a" : props.cronEnabled ? "Enabled" : "Disabled"}
+          ${props.cronEnabled == null ? "n/a" : props.cronEnabled ? t("Enabled") : t("Disabled")}
         </div>
-        <div class="muted">Next wake ${formatNextRun(props.cronNext)}</div>
+        <div class="muted">${t("Next wake")} ${formatNextRun(props.cronNext)}</div>
       </div>
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <div class="card-title">Notes</div>
-      <div class="card-sub">Quick reminders for remote control setups.</div>
+      <div class="card-title">${t("Notes")}</div>
+      <div class="card-sub">${t("Quick reminders for remote control setups.")}</div>
       <div class="note-grid" style="margin-top: 14px;">
         <div>
-          <div class="note-title">Tailscale serve</div>
+          <div class="note-title">${t("Tailscale serve")}</div>
           <div class="muted">
-            Prefer serve mode to keep the gateway on loopback with tailnet auth.
+            ${t("Prefer serve mode to keep the gateway on loopback with tailnet auth.")}
           </div>
         </div>
         <div>
-          <div class="note-title">Session hygiene</div>
-          <div class="muted">Use /new or sessions.patch to reset context.</div>
+          <div class="note-title">${t("Session hygiene")}</div>
+          <div class="muted">${t("Use /new or sessions.patch to reset context.")}</div>
         </div>
         <div>
-          <div class="note-title">Cron reminders</div>
-          <div class="muted">Use isolated sessions for recurring runs.</div>
+          <div class="note-title">${t("Cron reminders")}</div>
+          <div class="muted">${t("Use isolated sessions for recurring runs.")}</div>
         </div>
       </div>
     </section>
