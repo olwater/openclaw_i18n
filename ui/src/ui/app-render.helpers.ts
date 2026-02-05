@@ -8,6 +8,7 @@ import { refreshChat } from "./app-chat.ts";
 import { syncUrlWithSessionKey } from "./app-settings.ts";
 import { OpenClawApp } from "./app.ts";
 import { ChatState, loadChatHistory } from "./controllers/chat.ts";
+import { t } from "./i18n/index.ts";
 import { icons } from "./icons.ts";
 import { iconForTab, pathForTab, titleForTab, type Tab } from "./navigation.ts";
 
@@ -130,7 +131,7 @@ export function renderChatControls(state: AppViewState) {
           (state as unknown as OpenClawApp).resetToolStream();
           void refreshChat(state as unknown as Parameters<typeof refreshChat>[0]);
         }}
-        title="Refresh chat data"
+        title="${t("Refresh chat data")}"
       >
         ${refreshIcon}
       </button>
@@ -150,8 +151,8 @@ export function renderChatControls(state: AppViewState) {
         aria-pressed=${showThinking}
         title=${
           disableThinkingToggle
-            ? "Disabled during onboarding"
-            : "Toggle assistant thinking/working output"
+            ? t("Disabled during onboarding")
+            : t("Toggle assistant thinking/working output")
         }
       >
         ${icons.brain}
@@ -171,8 +172,8 @@ export function renderChatControls(state: AppViewState) {
         aria-pressed=${focusActive}
         title=${
           disableFocusToggle
-            ? "Disabled during onboarding"
-            : "Toggle focus mode (hide sidebar + page header)"
+            ? t("Disabled during onboarding")
+            : t("Toggle focus mode (hide sidebar + page header)")
         }
       >
         ${focusIcon}
@@ -278,14 +279,14 @@ export function renderThemeToggle(state: AppViewState) {
 
   return html`
     <div class="theme-toggle" style="--theme-index: ${index};">
-      <div class="theme-toggle__track" role="group" aria-label="Theme">
+      <div class="theme-toggle__track" role="group" aria-label="${t("Theme")}">
         <span class="theme-toggle__indicator"></span>
         <button
           class="theme-toggle__button ${state.theme === "system" ? "active" : ""}"
           @click=${applyTheme("system")}
           aria-pressed=${state.theme === "system"}
-          aria-label="System theme"
-          title="System"
+          aria-label="${t("System theme")}"
+          title="${t("System")}"
         >
           ${renderMonitorIcon()}
         </button>
@@ -293,8 +294,8 @@ export function renderThemeToggle(state: AppViewState) {
           class="theme-toggle__button ${state.theme === "light" ? "active" : ""}"
           @click=${applyTheme("light")}
           aria-pressed=${state.theme === "light"}
-          aria-label="Light theme"
-          title="Light"
+          aria-label="${t("Light theme")}"
+          title="${t("Light")}"
         >
           ${renderSunIcon()}
         </button>
@@ -302,8 +303,8 @@ export function renderThemeToggle(state: AppViewState) {
           class="theme-toggle__button ${state.theme === "dark" ? "active" : ""}"
           @click=${applyTheme("dark")}
           aria-pressed=${state.theme === "dark"}
-          aria-label="Dark theme"
-          title="Dark"
+          aria-label="${t("Dark theme")}"
+          title="${t("Dark")}"
         >
           ${renderMoonIcon()}
         </button>

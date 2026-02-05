@@ -17,6 +17,7 @@ import {
   resolveToolProfilePolicy,
 } from "../../../../src/agents/tool-policy.js";
 import { formatAgo } from "../format.ts";
+import { t } from "../i18n/index.ts";
 import {
   formatCronPayload,
   formatCronSchedule,
@@ -85,92 +86,92 @@ export type AgentsProps = {
 const TOOL_SECTIONS = [
   {
     id: "fs",
-    label: "Files",
+    label: t("Files"),
     tools: [
-      { id: "read", label: "read", description: "Read file contents" },
-      { id: "write", label: "write", description: "Create or overwrite files" },
-      { id: "edit", label: "edit", description: "Make precise edits" },
-      { id: "apply_patch", label: "apply_patch", description: "Patch files (OpenAI)" },
+      { id: "read", label: "read", description: t("Read file contents") },
+      { id: "write", label: "write", description: t("Create or overwrite files") },
+      { id: "edit", label: "edit", description: t("Make precise edits") },
+      { id: "apply_patch", label: "apply_patch", description: t("Patch files (OpenAI)") },
     ],
   },
   {
     id: "runtime",
-    label: "Runtime",
+    label: t("Runtime"),
     tools: [
-      { id: "exec", label: "exec", description: "Run shell commands" },
-      { id: "process", label: "process", description: "Manage background processes" },
+      { id: "exec", label: "exec", description: t("Run shell commands") },
+      { id: "process", label: "process", description: t("Manage background processes") },
     ],
   },
   {
     id: "web",
-    label: "Web",
+    label: t("Web"),
     tools: [
-      { id: "web_search", label: "web_search", description: "Search the web" },
-      { id: "web_fetch", label: "web_fetch", description: "Fetch web content" },
+      { id: "web_search", label: "web_search", description: t("Search the web") },
+      { id: "web_fetch", label: "web_fetch", description: t("Fetch web content") },
     ],
   },
   {
     id: "memory",
-    label: "Memory",
+    label: t("Memory"),
     tools: [
-      { id: "memory_search", label: "memory_search", description: "Semantic search" },
-      { id: "memory_get", label: "memory_get", description: "Read memory files" },
+      { id: "memory_search", label: "memory_search", description: t("Semantic search") },
+      { id: "memory_get", label: "memory_get", description: t("Read memory files") },
     ],
   },
   {
     id: "sessions",
-    label: "Sessions",
+    label: t("Sessions"),
     tools: [
-      { id: "sessions_list", label: "sessions_list", description: "List sessions" },
-      { id: "sessions_history", label: "sessions_history", description: "Session history" },
-      { id: "sessions_send", label: "sessions_send", description: "Send to session" },
-      { id: "sessions_spawn", label: "sessions_spawn", description: "Spawn sub-agent" },
-      { id: "session_status", label: "session_status", description: "Session status" },
+      { id: "sessions_list", label: "sessions_list", description: t("List sessions") },
+      { id: "sessions_history", label: "sessions_history", description: t("Session history") },
+      { id: "sessions_send", label: "sessions_send", description: t("Send to session") },
+      { id: "sessions_spawn", label: "sessions_spawn", description: t("Spawn sub-agent") },
+      { id: "session_status", label: "session_status", description: t("Session status") },
     ],
   },
   {
     id: "ui",
-    label: "UI",
+    label: t("UI"),
     tools: [
-      { id: "browser", label: "browser", description: "Control web browser" },
-      { id: "canvas", label: "canvas", description: "Control canvases" },
+      { id: "browser", label: "browser", description: t("Control web browser") },
+      { id: "canvas", label: "canvas", description: t("Control canvases") },
     ],
   },
   {
     id: "messaging",
-    label: "Messaging",
-    tools: [{ id: "message", label: "message", description: "Send messages" }],
+    label: t("Messaging"),
+    tools: [{ id: "message", label: "message", description: t("Send messages") }],
   },
   {
     id: "automation",
-    label: "Automation",
+    label: t("Automation"),
     tools: [
-      { id: "cron", label: "cron", description: "Schedule tasks" },
-      { id: "gateway", label: "gateway", description: "Gateway control" },
+      { id: "cron", label: "cron", description: t("Schedule tasks") },
+      { id: "gateway", label: "gateway", description: t("Gateway control") },
     ],
   },
   {
     id: "nodes",
-    label: "Nodes",
-    tools: [{ id: "nodes", label: "nodes", description: "Nodes + devices" }],
+    label: t("Nodes"),
+    tools: [{ id: "nodes", label: "nodes", description: t("Nodes + devices") }],
   },
   {
     id: "agents",
-    label: "Agents",
-    tools: [{ id: "agents_list", label: "agents_list", description: "List agents" }],
+    label: t("Agents"),
+    tools: [{ id: "agents_list", label: "agents_list", description: t("List agents") }],
   },
   {
     id: "media",
-    label: "Media",
-    tools: [{ id: "image", label: "image", description: "Image understanding" }],
+    label: t("Media"),
+    tools: [{ id: "image", label: "image", description: t("Image understanding") }],
   },
 ];
 
 const PROFILE_OPTIONS = [
-  { id: "minimal", label: "Minimal" },
-  { id: "coding", label: "Coding" },
-  { id: "messaging", label: "Messaging" },
-  { id: "full", label: "Full" },
+  { id: "minimal", label: t("Minimal") },
+  { id: "coding", label: t("Coding") },
+  { id: "messaging", label: t("Messaging") },
+  { id: "full", label: t("Full") },
 ] as const;
 
 type ToolPolicy = {
@@ -547,11 +548,11 @@ export function renderAgents(props: AgentsProps) {
       <section class="card agents-sidebar">
         <div class="row" style="justify-content: space-between;">
           <div>
-            <div class="card-title">Agents</div>
-            <div class="card-sub">${agents.length} configured.</div>
+            <div class="card-title">${t("Agents")}</div>
+            <div class="card-sub">${agents.length} ${t("configured.")}</div>
           </div>
           <button class="btn btn--sm" ?disabled=${props.loading} @click=${props.onRefresh}>
-            ${props.loading ? "Loading…" : "Refresh"}
+            ${props.loading ? t("Loading…") : t("Refresh")}
           </button>
         </div>
         ${
@@ -563,7 +564,7 @@ export function renderAgents(props: AgentsProps) {
           ${
             agents.length === 0
               ? html`
-                  <div class="muted">No agents found.</div>
+                  <div class="muted">${t("No agents found.")}</div>
                 `
               : agents.map((agent) => {
                   const badge = agentBadgeText(agent.id, defaultId);
@@ -593,8 +594,8 @@ export function renderAgents(props: AgentsProps) {
           !selectedAgent
             ? html`
                 <div class="card">
-                  <div class="card-title">Select an agent</div>
-                  <div class="card-sub">Pick an agent to inspect its workspace and tools.</div>
+                  <div class="card-title">${t("Select an agent")}</div>
+                  <div class="card-sub">${t("Pick an agent to inspect its workspace and tools.")}</div>
                 </div>
               `
             : html`

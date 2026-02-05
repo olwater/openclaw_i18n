@@ -15,6 +15,7 @@ import type {
 } from "../types.ts";
 import type { ChannelKey, ChannelsChannelData, ChannelsProps } from "./channels.types.ts";
 import { formatAgo } from "../format.ts";
+import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 import { renderDiscordCard } from "./channels.discord.ts";
 import { renderGoogleChatCard } from "./channels.googlechat.ts";
@@ -260,25 +261,25 @@ function hasRecentActivity(account: ChannelAccountSnapshot): boolean {
 
 function deriveRunningStatus(account: ChannelAccountSnapshot): "Yes" | "No" | "Active" {
   if (account.running) {
-    return "Yes";
+    return t("Yes") as "Yes";
   }
   // If we have recent inbound activity, the channel is effectively running
   if (hasRecentActivity(account)) {
-    return "Active";
+    return t("Active") as "Active";
   }
-  return "No";
+  return t("No") as "No";
 }
 
 function deriveConnectedStatus(account: ChannelAccountSnapshot): "Yes" | "No" | "Active" | "n/a" {
   if (account.connected === true) {
-    return "Yes";
+    return t("Yes") as "Yes";
   }
   if (account.connected === false) {
-    return "No";
+    return t("No") as "No";
   }
   // If connected is null/undefined but we have recent activity, show as active
   if (hasRecentActivity(account)) {
-    return "Active";
+    return t("Active") as "Active";
   }
   return "n/a";
 }
@@ -295,19 +296,19 @@ function renderGenericAccount(account: ChannelAccountSnapshot) {
       </div>
       <div class="status-list account-card-status">
         <div>
-          <span class="label">Running</span>
+          <span class="label">${t("Running")}</span>
           <span>${runningStatus}</span>
         </div>
         <div>
-          <span class="label">Configured</span>
-          <span>${account.configured ? "Yes" : "No"}</span>
+          <span class="label">${t("Configured")}</span>
+          <span>${account.configured ? t("Yes") : t("No")}</span>
         </div>
         <div>
-          <span class="label">Connected</span>
+          <span class="label">${t("Connected")}</span>
           <span>${connectedStatus}</span>
         </div>
         <div>
-          <span class="label">Last inbound</span>
+          <span class="label">${t("Last inbound")}</span>
           <span>${account.lastInboundAt ? formatAgo(account.lastInboundAt) : "n/a"}</span>
         </div>
         ${

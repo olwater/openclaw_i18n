@@ -1,6 +1,7 @@
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { truncateText } from "./format.ts";
+import { t } from "./i18n/index.ts";
 
 marked.setOptions({
   gfm: true,
@@ -98,7 +99,7 @@ export function toSanitizedMarkdownHtml(markdown: string): string {
   }
   const truncated = truncateText(input, MARKDOWN_CHAR_LIMIT);
   const suffix = truncated.truncated
-    ? `\n\n… truncated (${truncated.total} chars, showing first ${truncated.text.length}).`
+    ? `\n\n… ${t("truncated")} (${truncated.total} ${t("chars")}, ${t("showing first")} ${truncated.text.length}).`
     : "";
   if (truncated.text.length > MARKDOWN_PARSE_LIMIT) {
     const escaped = escapeHtml(`${truncated.text}${suffix}`);
