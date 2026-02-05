@@ -22,7 +22,7 @@ import { loadNodes } from "./controllers/nodes.ts";
 import { loadPresence } from "./controllers/presence.ts";
 import { loadSessions } from "./controllers/sessions.ts";
 import { loadSkills } from "./controllers/skills.ts";
-import { setLocale, t } from "./i18n/index.ts";
+import { setLocale } from "./i18n/index.ts";
 import {
   inferBasePathFromPathname,
   normalizeBasePath,
