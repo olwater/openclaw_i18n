@@ -3009,6 +3009,34 @@ const zh_CN: TranslationMap = {
   "Enable web_search and paste your Brave Search API key":
     "启用 web_search 并粘贴您的 Brave Search API 密钥",
   "i18n edition maintained by @olwater": "中文版由 @olwater 维护",
+  // TUI Status
+  agent: "代理",
+  session: "会话",
+  think: "思考",
+  verbose: "详细",
+  reasoning: "推理",
+  "reasoning:stream": "推理流",
+  tokens: "Token",
+  left: "剩余",
+  idle: "空闲",
+  connecting: "连接中",
+  connected: "已连接",
+  disconnected: "已断开",
+  streaming: "生成中",
+  //"error": "错误", // Duplicate
+  aborted: "已中止",
+  running: "运行中",
+  //"cleared input": "已清除输入", // Duplicate
+  //"press ctrl+c again to exit": "再次按 Ctrl+C 退出", // Duplicate
+  //"tools expanded": "工具栏已展开", // Duplicate
+  //"tools collapsed": "工具栏已折叠", // Duplicate
+  "gateway disconnected": "网关已断开",
+  "event gap": "事件丢失",
+  expected: "期望",
+  got: "实际",
+  HEARTBEAT_OK: "心跳正常",
+  Activity: "活动",
+  Connection: "连接",
 };
 
 export default zh_CN;
