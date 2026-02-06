@@ -95,7 +95,7 @@ function renderExtraChannelFields(value: Record<string, unknown>) {
       ${entries.map(
         ([field, raw]) => html`
           <div>
-            <span class="label">${field}</span>
+            <span class="label">${t(field)}</span>
             <span>${formatExtraValue(raw)}</span>
           </div>
         `,

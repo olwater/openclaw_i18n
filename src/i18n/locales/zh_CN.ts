@@ -925,8 +925,8 @@ const zh_CN: TranslationMap = {
   "Hanukkah: Eight nights, eight retries, zero shame—may your gateway stay lit and your deployments stay peaceful.":
     "光明节：八个夜晚，八次重试，毫不丢人——愿你的 Gateway 长明，部署平安。",
   "Hatch in TUI (recommended)": "进入 TUI 模式 (推荐)",
-  "Have you run `claude setup-token` and copied the token?":
-    "您是否已运行 `claude setup-token` 并复制了 Token？",
+  "Have you run `claude setup - token` and copied the token?":
+    "您是否已运行 `claude setup - token` 并复制了 Token？",
   "Health check": "健康检查",
   "Health check failed": "健康检查失败",
   "Health check help": "健康检查帮助",
@@ -1563,7 +1563,7 @@ const zh_CN: TranslationMap = {
   "Other gateway-like services detected": "检测到其他类 Gateway 服务",
   "Other gateway-like services detected (best effort):": "检测到其他类 Gateway 服务 (尽力而为):",
   "Output JSON": "输出 JSON",
-  "Output JSON (alias for `models status --json`)": "输出为 JSON（`models status --json` 的别名）",
+  "Output JSON (alias for `models status--json`)": "输出为 JSON（`models status--json` 的别名）",
   "Output JSON instead of text": "输出 JSON 而不是文本",
   "Output JSON summary": "输出 JSON 摘要",
   "Output as JSON": "输出为 JSON",
@@ -1599,7 +1599,8 @@ const zh_CN: TranslationMap = {
   Password: "密码",
   "Password for auth mode=password": "auth mode=password 的密码",
   "Paste Anthropic setup-token": "粘贴 Anthropic setup-token",
-  "Paste a setup-token from `claude setup-token`": "粘贴来自 `claude setup-token` 的 setup-token",
+  "Paste a setup-token from `claude setup - token`":
+    "粘贴来自 `claude setup - token` 的 setup-token",
   "Paste a token into auth-profiles.json and update config":
     "将 Token 粘贴到 auth-profiles.json 并更新配置",
   "Paste the redirect URL (or authorization code)": "粘贴重定向 URL (或授权码)",
@@ -1632,7 +1633,7 @@ const zh_CN: TranslationMap = {
   "Placement y coordinate": "放置 y 坐标",
   "Plain line output": "单行文本输出",
   "Plain output": "纯文本输出",
-  "Plain output (alias for `models status --plain`)": "纯文本输出 (`models status --plain` 的别名)",
+  "Plain output (alias for `models status--plain`)": "纯文本输出 (`models status--plain` 的别名)",
   "Plain text output (no ANSI styling)": "纯文本输出（无 ANSI 样式）",
   "Please specify --all, --session <key>, or --agent <id>":
     "Please specify --all, --session <key>, or --agent <id>",
@@ -1885,7 +1886,7 @@ const zh_CN: TranslationMap = {
   "Routing unchanged. Add bindings when you're ready.": "路由未更改。准备好后即可添加绑定。",
   'Run "openclaw doctor --fix" to remove these keys.':
     '运行 "openclaw doctor --fix" 以移除这些键。',
-  "Run `claude setup-token` in your terminal.": "在终端运行 `claude setup-token`。",
+  "Run `claude setup - token` in your terminal.": "在终端运行 `claude setup - token`。",
   "Run a cron job now (debug)": "立即运行定时任务 (调试)",
   "Run a dev Gateway (isolated state/config) on ws://127.0.0.1:19001.":
     "在 ws://127.0.0.1:19001 上运行开发版 Gateway (隔离状态/配置)。",
@@ -2212,8 +2213,8 @@ const zh_CN: TranslationMap = {
     "Systemd 用户服务不可用。跳过常驻检查。",
   "Systemd user services are unavailable; skipping service install.":
     "Systemd 用户服务不可用；跳过服务安装。",
-  "Systemd user services are unavailable; skipping service install. Use your container supervisor or `docker compose up -d`。":
-    "Systemd 用户服务不可用；跳过服务安装。请使用您的容器管理器或 `docker compose up -d`。",
+  "Systemd user services are unavailable; skipping service install. Use your container supervisor or `docker compose up - d`。":
+    "Systemd 用户服务不可用；跳过服务安装。请使用您的容器管理器或 `docker compose up - d`。",
   "Systemd user services stop when you log out or go idle, which kills the Gateway.":
     "Systemd 用户服务在您注销或空闲时会停止，这将导致 Gateway 终止。",
   "Tab index (1-based)": "标签页索引 (从1开始)",
@@ -2399,8 +2400,8 @@ const zh_CN: TranslationMap = {
   "Update result": "更新结果",
   "Update values": "修改配置项",
   "Update without restarting the service": "不重启服务进行更新",
-  "Update wizard requires a TTY. Use `openclaw update --channel <stable|beta|dev>` instead.":
-    "更新向导需要 TTY。请改用 `openclaw update --channel <stable|beta|dev>`。",
+  "Update wizard requires a TTY. Use `openclaw update--channel <stable | beta | dev>` instead.":
+    "更新向导需要 TTY。请改用 `openclaw update--channel <stable | beta | dev>`。",
   "Updating OpenClaw...": "正在更新 OpenClaw...",
   "Updating plugins...": "正在更新插件...",
   "Updating via package manager": "正在通过包管理器更新",
@@ -2927,8 +2928,8 @@ const zh_CN: TranslationMap = {
   "ref is required": "需要 ref",
   "remove <pattern>": "移除 <模式>",
   "risk not accepted": "未确认风险",
-  "run `claude setup-token` elsewhere, then paste the token here":
-    "在其他地方运行 `claude setup-token`，然后将 Token 粘贴到此处",
+  "run `claude setup - token` elsewhere, then paste the token here":
+    "在其他地方运行 `claude setup - token`，然后将 Token 粘贴到此处",
   "run aborted": "运行已中止",
   "run timed out": "运行超时",
   s: "s",
@@ -3037,6 +3038,16 @@ const zh_CN: TranslationMap = {
   HEARTBEAT_OK: "心跳正常",
   Activity: "活动",
   Connection: "连接",
+  flibbertigibbeting: "胡言乱语",
+  kerfuffling: "慌乱",
+  dillydallying: "磨蹭",
+  "twiddling thumbs": "闲得发慌",
+  noodling: "瞎琢磨",
+  bamboozling: "忽悠",
+  moseying: "闲逛",
+  hobnobbing: "攀谈",
+  pondering: "沉思",
+  conjuring: "变戏法",
 };
 
 export default zh_CN;
