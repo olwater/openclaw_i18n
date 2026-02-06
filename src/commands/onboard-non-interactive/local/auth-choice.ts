@@ -22,6 +22,7 @@ import {
   applySyntheticConfig,
   applyVeniceConfig,
   applyVercelAiGatewayConfig,
+  applyXaiConfig,
   applyXiaomiConfig,
   applyZaiConfig,
   setAnthropicApiKey,
@@ -33,11 +34,13 @@ import {
   setOpencodeZenApiKey,
   setOpenrouterApiKey,
   setSyntheticApiKey,
+  setXaiApiKey,
   setVeniceApiKey,
   setVercelAiGatewayApiKey,
   setXiaomiApiKey,
   setZaiApiKey,
 } from "../../onboard-auth.js";
+import { applyOpenAIConfig } from "../../openai-model-default.js";
 import { resolveNonInteractiveApiKey } from "../api-keys.js";
 
 export async function applyNonInteractiveAuthChoice(params: {
@@ -218,6 +221,29 @@ export async function applyNonInteractiveAuthChoice(params: {
     return applyXiaomiConfig(nextConfig);
   }
 
+  if (authChoice === "xai-api-key") {
+    const resolved = await resolveNonInteractiveApiKey({
+      provider: "xai",
+      cfg: baseConfig,
+      flagValue: opts.xaiApiKey,
+      flagName: "--xai-api-key",
+      envVar: "XAI_API_KEY",
+      runtime,
+    });
+    if (!resolved) {
+      return null;
+    }
+    if (resolved.source !== "profile") {
+      setXaiApiKey(resolved.key);
+    }
+    nextConfig = applyAuthProfileConfig(nextConfig, {
+      profileId: "xai:default",
+      provider: "xai",
+      mode: "api_key",
+    });
+    return applyXaiConfig(nextConfig);
+  }
+
   if (authChoice === "openai-api-key") {
     const resolved = await resolveNonInteractiveApiKey({
       provider: "openai",
@@ -235,7 +261,7 @@ export async function applyNonInteractiveAuthChoice(params: {
     const result = upsertSharedEnvVar({ key: "OPENAI_API_KEY", value: key });
     process.env.OPENAI_API_KEY = key;
     runtime.log(`Saved OPENAI_API_KEY to ${shortenHomePath(result.path)}`);
-    return nextConfig;
+    return applyOpenAIConfig(nextConfig);
   }
 
   if (authChoice === "openrouter-api-key") {

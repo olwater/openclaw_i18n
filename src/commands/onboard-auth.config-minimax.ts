@@ -15,9 +15,9 @@ import {
 
 export function applyMinimaxProviderConfig(cfg: OpenClawConfig): OpenClawConfig {
   const models = { ...cfg.agents?.defaults?.models };
-  models["anthropic/claude-opus-4-5"] = {
-    ...models["anthropic/claude-opus-4-5"],
-    alias: models["anthropic/claude-opus-4-5"]?.alias ?? t("Opus"),
+  models["anthropic/claude-opus-4-6"] = {
+    ...models["anthropic/claude-opus-4-6"],
+    alias: models["anthropic/claude-opus-4-6"]?.alias ?? "Opus",
   };
   models["lmstudio/minimax-m2.1-gs32"] = {
     ...models["lmstudio/minimax-m2.1-gs32"],

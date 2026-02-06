@@ -45,7 +45,7 @@ export function renderOverview(props: OverviewProps) {
         <div class="muted" style="margin-top: 8px">
           ${t("This gateway requires auth. Add a token or password, then click Connect.")}
           <div style="margin-top: 6px">
-            <span class="mono">openclaw dashboard --no-open</span> → tokenized URL<br />
+            <span class="mono">openclaw dashboard --no-open</span> → open the Control UI<br />
             <span class="mono">openclaw doctor --generate-gateway-token</span> → set token
           </div>
           <div style="margin-top: 6px">
@@ -63,8 +63,7 @@ export function renderOverview(props: OverviewProps) {
     }
     return html`
       <div class="muted" style="margin-top: 8px">
-        ${t("Auth failed. Re-copy a tokenized URL with")}
-        <span class="mono">openclaw dashboard --no-open</span>, ${t("or update the token, then click Connect.")}
+        Auth failed. Update the token or password in Control UI settings, then click Connect.
         <div style="margin-top: 6px">
           <a
             class="session-link"

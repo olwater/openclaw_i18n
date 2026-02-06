@@ -96,6 +96,7 @@ export async function runTui(opts: TuiOptions) {
   let wasDisconnected = false;
   let toolsExpanded = false;
   let showThinking = false;
+  const localRunIds = new Set<string>();
 
   const deliverDefault = opts.deliver ?? false;
   const autoMessage = opts.message?.trim();
@@ -103,7 +104,7 @@ export async function runTui(opts: TuiOptions) {
   let sessionInfo: SessionInfo = {};
   let lastCtrlCAt = 0;
   let activityStatus = "idle";
-  let connectionStatus = "connecting";
+  let connectionStatus = t("connecting");
   let statusTimeout: NodeJS.Timeout | null = null;
   let statusTimer: NodeJS.Timeout | null = null;
   let statusStartedAt: number | null = null;
@@ -224,6 +225,29 @@ export async function runTui(opts: TuiOptions) {
     set lastCtrlCAt(value) {
       lastCtrlCAt = value;
     },
+  };
+
+  const noteLocalRunId = (runId: string) => {
+    if (!runId) {
+      return;
+    }
+    localRunIds.add(runId);
+    if (localRunIds.size > 200) {
+      const [first] = localRunIds;
+      if (first) {
+        localRunIds.delete(first);
+      }
+    }
+  };
+
+  const forgetLocalRunId = (runId: string) => {
+    localRunIds.delete(runId);
+  };
+
+  const isLocalRunId = (runId: string) => localRunIds.has(runId);
+
+  const clearLocalRunIds = () => {
+    localRunIds.clear();
   };
 
   const client = new GatewayChatClient({
@@ -370,7 +394,7 @@ export async function runTui(opts: TuiOptions) {
       return;
     }
 
-    statusLoader.setMessage(`${activityStatus} • ${elapsed} | ${connectionStatus}`);
+    statusLoader.setMessage(`${t(activityStatus)} • ${elapsed} | ${connectionStatus}`);
   };
 
   const startStatusTimer = () => {
@@ -445,7 +469,7 @@ export async function runTui(opts: TuiOptions) {
       statusLoader?.stop();
       statusLoader = null;
       ensureStatusText();
-      const text = activityStatus ? `${connectionStatus} | ${activityStatus}` : connectionStatus;
+      const text = activityStatus ? `${connectionStatus} | ${t(activityStatus)}` : connectionStatus;
       statusText?.setText(theme.dim(text));
     }
     lastActivityStatus = activityStatus;
@@ -459,7 +483,7 @@ export async function runTui(opts: TuiOptions) {
     }
     if (ttlMs && ttlMs > 0) {
       statusTimeout = setTimeout(() => {
-        connectionStatus = isConnected ? "connected" : "disconnected";
+        connectionStatus = isConnected ? t("connected") : t("disconnected");
         renderStatus();
       }, ttlMs);
     }
@@ -486,13 +510,13 @@ export async function runTui(opts: TuiOptions) {
     const verbose = sessionInfo.verboseLevel ?? "off";
     const reasoning = sessionInfo.reasoningLevel ?? "off";
     const reasoningLabel =
-      reasoning === "on" ? "reasoning" : reasoning === "stream" ? "reasoning:stream" : null;
+      reasoning === "on" ? t("reasoning") : reasoning === "stream" ? t("reasoning:stream") : null;
     const footerParts = [
-      `agent ${agentLabel}`,
-      `session ${sessionLabel}`,
+      `${t("agent")} ${agentLabel}`,
+      `${t("session")} ${sessionLabel}`,
       modelLabel,
-      think !== "off" ? `think ${think}` : null,
-      verbose !== "off" ? `verbose ${verbose}` : null,
+      think !== "off" ? `${t("think")} ${think}` : null,
+      verbose !== "off" ? `${t("verbose")} ${verbose}` : null,
       reasoningLabel,
       tokens,
     ].filter(Boolean);
@@ -523,9 +547,16 @@ export async function runTui(opts: TuiOptions) {
     updateFooter,
     updateAutocompleteProvider,
     setActivityStatus,
+    clearLocalRunIds,
   });
-  const { refreshAgents, refreshSessionInfo, loadHistory, setSession, abortActive } =
-    sessionActions;
+  const {
+    refreshAgents,
+    refreshSessionInfo,
+    applySessionInfoFromPatch,
+    loadHistory,
+    setSession,
+    abortActive,
+  } = sessionActions;
 
   const { handleChatEvent, handleAgentEvent } = createEventHandlers({
     chatLog,
@@ -533,6 +564,10 @@ export async function runTui(opts: TuiOptions) {
     state,
     setActivityStatus,
     refreshSessionInfo,
+    loadHistory,
+    isLocalRunId,
+    forgetLocalRunId,
+    clearLocalRunIds,
   });
 
   const { handleCommand, sendMessage, openModelSelector, openAgentSelector, openSessionSelector } =
@@ -546,12 +581,15 @@ export async function runTui(opts: TuiOptions) {
       openOverlay,
       closeOverlay,
       refreshSessionInfo,
+      applySessionInfoFromPatch,
       loadHistory,
       setSession,
       refreshAgents,
       abortActive,
       setActivityStatus,
       formatSessionKey,
+      noteLocalRunId,
+      forgetLocalRunId,
     });
 
   const { runLocalShellLine } = createLocalShellRunner({
@@ -646,20 +684,23 @@ export async function runTui(opts: TuiOptions) {
     isConnected = false;
     wasDisconnected = true;
     historyLoaded = false;
-    const reasonLabel = reason?.trim() ? reason.trim() : "closed";
-    setConnectionStatus(`gateway disconnected: ${reasonLabel}`, 5000);
+    const reasonLabel = reason?.trim() ? reason.trim() : t("closed");
+    setConnectionStatus(`${t("gateway disconnected")}: ${reasonLabel}`, 5000);
     setActivityStatus("idle");
     updateFooter();
     tui.requestRender();
   };
 
   client.onGap = (info) => {
-    setConnectionStatus(`event gap: expected ${info.expected}, got ${info.received}`, 5000);
+    setConnectionStatus(
+      `${t("event gap")}: ${t("expected")} ${info.expected}, ${t("got")} ${info.received}`,
+      5000,
+    );
     tui.requestRender();
   };
 
   updateHeader();
-  setConnectionStatus("connecting");
+  setConnectionStatus(t("connecting"));
   updateFooter();
   tui.start();
   client.start();

@@ -13,6 +13,7 @@ import {
 } from "../agents/model-selection.js";
 import { t } from "../i18n/index.js";
 import { formatTokenK } from "./models/shared.js";
+import { OPENAI_CODEX_DEFAULT_MODEL } from "./openai-codex-model-default.js";
 
 const KEEP_VALUE = "__keep__";
 const MANUAL_VALUE = "__manual__";
@@ -337,9 +338,9 @@ export async function promptModelAllowlist(params: {
     const raw = await params.prompter.text({
       message:
         params.message ??
-        t("Allowlist models (comma-separated provider/model; blank to keep current)"),
-      initialValue: existingKeys.join(t(", ")),
-      placeholder: t("openai-codex/gpt-5.2, anthropic/claude-opus-4-5"),
+        "Allowlist models (comma-separated provider/model; blank to keep current)",
+      initialValue: existingKeys.join(", "),
+      placeholder: `${OPENAI_CODEX_DEFAULT_MODEL}, anthropic/claude-opus-4-6`,
     });
     const parsed = String(raw ?? "")
       .split(",")

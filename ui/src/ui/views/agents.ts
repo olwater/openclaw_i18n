@@ -259,7 +259,7 @@ function resolveAgentEmoji(
 }
 
 function agentBadgeText(agentId: string, defaultId: string | null) {
-  return defaultId && agentId === defaultId ? "default" : null;
+  return defaultId && agentId === defaultId ? t("default") : null;
 }
 
 function formatBytes(bytes?: number) {
@@ -328,7 +328,7 @@ function buildAgentContext(
     model: modelLabel,
     identityName,
     identityEmoji,
-    skillsLabel: skillFilter ? `${skillCount} selected` : "all skills",
+    skillsLabel: skillFilter ? `${skillCount} ${t("selected")}` : t("all skills"),
     isDefault: Boolean(defaultId && agent.id === defaultId),
   };
 }
@@ -345,7 +345,7 @@ function resolveModelLabel(model?: unknown): string {
     const primary = record.primary?.trim();
     if (primary) {
       const fallbackCount = Array.isArray(record.fallbacks) ? record.fallbacks.length : 0;
-      return fallbackCount > 0 ? `${primary} (+${fallbackCount} fallback)` : primary;
+      return fallbackCount > 0 ? `${primary} (+${fallbackCount} ${t("fallback")})` : primary;
     }
   }
   return "-";
@@ -442,11 +442,11 @@ function buildModelOptions(configForm: Record<string, unknown> | null, current?:
   const options = resolveConfiguredModels(configForm);
   const hasCurrent = current ? options.some((option) => option.value === current) : false;
   if (current && !hasCurrent) {
-    options.unshift({ value: current, label: `Current (${current})` });
+    options.unshift({ value: current, label: `${t("Current")} (${current})` });
   }
   if (options.length === 0) {
     return html`
-      <option value="" disabled>No configured models</option>
+      <option value="" disabled>${t("No configured models")}</option>
     `;
   }
   return options.map((option) => html`<option value=${option.value}>${option.label}</option>`);
@@ -728,7 +728,7 @@ function renderAgentHeader(
 ) {
   const badge = agentBadgeText(agent.id, defaultId);
   const displayName = normalizeAgentLabel(agent);
-  const subtitle = agent.identity?.theme?.trim() || "Agent workspace and routing.";
+  const subtitle = agent.identity?.theme?.trim() || t("Agent workspace and routing.");
   const emoji = resolveAgentEmoji(agent, agentIdentity);
   return html`
     <section class="card agent-header">
@@ -751,12 +751,12 @@ function renderAgentHeader(
 
 function renderAgentTabs(active: AgentsPanel, onSelect: (panel: AgentsPanel) => void) {
   const tabs: Array<{ id: AgentsPanel; label: string }> = [
-    { id: "overview", label: "Overview" },
-    { id: "files", label: "Files" },
-    { id: "tools", label: "Tools" },
-    { id: "skills", label: "Skills" },
-    { id: "channels", label: "Channels" },
-    { id: "cron", label: "Cron Jobs" },
+    { id: "overview", label: t("Overview") },
+    { id: "files", label: t("Files") },
+    { id: "tools", label: t("Tools") },
+    { id: "skills", label: t("Skills") },
+    { id: "channels", label: t("Channels") },
+    { id: "cron", label: t("Cron Jobs") },
   ];
   return html`
     <div class="agent-tabs">
@@ -876,16 +876,24 @@ function renderAgentOverview(params: {
         <div class="label">Model Selection</div>
         <div class="row" style="gap: 12px; flex-wrap: wrap;">
           <label class="field" style="min-width: 260px; flex: 1;">
-            <span>Primary model</span>
+            <span>Primary model${isDefault ? " (default)" : ""}</span>
             <select
               .value=${effectivePrimary ?? ""}
               ?disabled=${!configForm || configLoading || configSaving}
               @change=${(e: Event) =>
                 onModelChange(agent.id, (e.target as HTMLSelectElement).value || null)}
             >
-              <option value="">
-                ${defaultPrimary ? `Inherit default (${defaultPrimary})` : "Inherit default"}
-              </option>
+              ${
+                isDefault
+                  ? nothing
+                  : html`
+                      <option value="">
+                        ${
+                          defaultPrimary ? `Inherit default (${defaultPrimary})` : "Inherit default"
+                        }
+                      </option>
+                    `
+              }
               ${buildModelOptions(configForm, effectivePrimary ?? undefined)}
             </select>
           </label>

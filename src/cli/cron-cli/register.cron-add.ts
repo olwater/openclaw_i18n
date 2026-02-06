@@ -64,44 +64,34 @@ export function registerCronAddCommand(cron: Command) {
     cron
       .command("add")
       .alias("create")
-      .description(t("Add a cron job"))
-      .requiredOption("--name <name>", t("Job name"))
-      .option("--description <text>", t("Optional description"))
-      .option("--disabled", t("Create job disabled"), false)
-      .option("--delete-after-run", t("Delete one-shot job after it succeeds"), false)
-      .option("--keep-after-run", t("Keep one-shot job after it succeeds"), false)
-      .option("--agent <id>", t("Agent id for this job"))
-      .option("--session <target>", t("Session target (main|isolated)"))
-      .option("--wake <mode>", t("Wake mode (now|next-heartbeat)"), "next-heartbeat")
-      .option("--at <when>", t("Run once at time (ISO) or +duration (e.g. 20m)"))
-      .option("--every <duration>", t("Run every duration (e.g. 10m, 1h)"))
-      .option("--cron <expr>", t("Cron expression (5-field)"))
-      .option("--tz <iana>", t("Timezone for cron expressions (IANA)"), "")
-      .option("--system-event <text>", t("System event payload (main session)"))
-      .option("--message <text>", t("Agent message payload"))
-      .option(
-        "--thinking <level>",
-        t("Thinking level for agent jobs (off|minimal|low|medium|high)"),
-      )
-      .option("--model <model>", t("Model override for agent jobs (provider/model or alias)"))
-      .option("--timeout-seconds <n>", t("Timeout seconds for agent jobs"))
-      .option("--announce", t("Announce summary to a chat (subagent-style)"), false)
-      .option("--deliver", t("Deprecated (use --announce). Announces a summary to a chat."))
-      .option("--no-deliver", t("Disable announce delivery and skip main-session summary"))
+      .description("Add a cron job")
+      .requiredOption("--name <name>", "Job name")
+      .option("--description <text>", "Optional description")
+      .option("--disabled", "Create job disabled", false)
+      .option("--delete-after-run", "Delete one-shot job after it succeeds", false)
+      .option("--keep-after-run", "Keep one-shot job after it succeeds", false)
+      .option("--agent <id>", "Agent id for this job")
+      .option("--session <target>", "Session target (main|isolated)")
+      .option("--wake <mode>", "Wake mode (now|next-heartbeat)", "next-heartbeat")
+      .option("--at <when>", "Run once at time (ISO) or +duration (e.g. 20m)")
+      .option("--every <duration>", "Run every duration (e.g. 10m, 1h)")
+      .option("--cron <expr>", "Cron expression (5-field)")
+      .option("--tz <iana>", "Timezone for cron expressions (IANA)", "")
+      .option("--system-event <text>", "System event payload (main session)")
+      .option("--message <text>", "Agent message payload")
+      .option("--thinking <level>", "Thinking level for agent jobs (off|minimal|low|medium|high)")
+      .option("--model <model>", "Model override for agent jobs (provider/model or alias)")
+      .option("--timeout-seconds <n>", "Timeout seconds for agent jobs")
+      .option("--announce", "Announce summary to a chat (subagent-style)", false)
+      .option("--deliver", "Deprecated (use --announce). Announces a summary to a chat.")
+      .option("--no-deliver", "Disable announce delivery and skip main-session summary")
       .option("--channel <channel>", `Delivery channel (${getCronChannelOptions()})`, "last")
       .option(
         "--to <dest>",
         t("Delivery destination (E.164, Telegram chatId, or Discord channel/user)"),
       )
-      .option("--best-effort-deliver", t("Do not fail the job if delivery fails"), false)
-      .option("--post-prefix <prefix>", t("Prefix for main-session post"), "Cron")
-      .option(
-        "--post-mode <mode>",
-        t("What to post back to main for isolated jobs (summary|full)"),
-        "summary",
-      )
-      .option("--post-max-chars <n>", t("Max chars when --post-mode=full (default 8000)"), "8000")
-      .option("--json", t("Output JSON"), false)
+      .option("--best-effort-deliver", "Do not fail the job if delivery fails", false)
+      .option("--json", "Output JSON", false)
       .action(async (opts: GatewayRpcOpts & Record<string, unknown>, cmd?: Command) => {
         try {
           const schedule = (() => {
@@ -115,7 +105,7 @@ export function registerCronAddCommand(cron: Command) {
             if (at) {
               const atIso = parseAt(at);
               if (!atIso) {
-                throw new Error(t("Invalid --at; use ISO time or duration like 20m"));
+                throw new Error("Invalid --at; use ISO time or duration like 20m");
               }
               return { kind: "at" as const, at: atIso };
             }
@@ -133,10 +123,6 @@ export function registerCronAddCommand(cron: Command) {
             };
           })();
 
-          const sessionTargetRaw = typeof opts.session === "string" ? opts.session : "main";
-          const _sessionTarget = sessionTargetRaw.trim() || "main"; // unused but keeping for logic ref
-          // Upstream logic uses `sessionSource` below to determine default.
-
           const wakeModeRaw = typeof opts.wake === "string" ? opts.wake : "next-heartbeat";
           const wakeMode = wakeModeRaw.trim() || "next-heartbeat";
           if (wakeMode !== "now" && wakeMode !== "next-heartbeat") {
@@ -152,7 +138,7 @@ export function registerCronAddCommand(cron: Command) {
           const hasNoDeliver = opts.deliver === false;
           const deliveryFlagCount = [hasAnnounce, hasNoDeliver].filter(Boolean).length;
           if (deliveryFlagCount > 1) {
-            throw new Error(t("Choose at most one of --announce or --no-deliver"));
+            throw new Error("Choose at most one of --announce or --no-deliver");
           }
 
           const payload = (() => {
@@ -185,16 +171,16 @@ export function registerCronAddCommand(cron: Command) {
               ? (name: string) => cmd.getOptionValueSource(name)
               : () => undefined;
           const sessionSource = optionSource("session");
-          const sessionTargetRaw2 = typeof opts.session === "string" ? opts.session.trim() : "";
+          const sessionTargetRaw = typeof opts.session === "string" ? opts.session.trim() : "";
           const inferredSessionTarget = payload.kind === "agentTurn" ? "isolated" : "main";
           const sessionTarget =
-            sessionSource === "cli" ? sessionTargetRaw2 || "" : inferredSessionTarget;
+            sessionSource === "cli" ? sessionTargetRaw || "" : inferredSessionTarget;
           if (sessionTarget !== "main" && sessionTarget !== "isolated") {
-            throw new Error(t("--session must be main or isolated"));
+            throw new Error("--session must be main or isolated");
           }
 
           if (opts.deleteAfterRun && opts.keepAfterRun) {
-            throw new Error(t("Choose --delete-after-run or --keep-after-run, not both"));
+            throw new Error("Choose --delete-after-run or --keep-after-run, not both");
           }
 
           if (sessionTarget === "main" && payload.kind !== "systemEvent") {
@@ -207,7 +193,7 @@ export function registerCronAddCommand(cron: Command) {
             (opts.announce || typeof opts.deliver === "boolean") &&
             (sessionTarget !== "isolated" || payload.kind !== "agentTurn")
           ) {
-            throw new Error(t("--announce/--no-deliver require --session isolated."));
+            throw new Error("--announce/--no-deliver require --session isolated.");
           }
 
           const deliveryMode =

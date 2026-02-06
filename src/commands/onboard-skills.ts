@@ -156,33 +156,29 @@ export async function setupSkills(
         installId,
         config: next,
       });
+      const warnings = result.warnings ?? [];
       if (result.ok) {
-        spin.stop(t("Installed {name}").replace("{name}", name));
-      } else {
-        const exitSuffix =
-          result.code == null
-            ? ""
-            : ` (${t("exit {code}").replace("{code}", String(result.code))})`;
-        const detail = summarizeInstallFailure(result.message);
-        spin.stop(
-          t("Install failed: {name}{suffix}{detail}")
-            .replace("{name}", name)
-            .replace("{suffix}", exitSuffix)
-            .replace("{detail}", detail ? ` — ${detail}` : ""),
-        );
-        if (result.stderr) {
-          runtime.log(result.stderr.trim());
-        } else if (result.stdout) {
-          runtime.log(result.stdout.trim());
+        spin.stop(warnings.length > 0 ? `Installed ${name} (with warnings)` : `Installed ${name}`);
+        for (const warning of warnings) {
+          runtime.log(warning);
         }
-        runtime.log(
-          t("Tip: run {command} to review skills + requirements.").replace(
-            "{command}",
-            formatCliCommand(t("openclaw doctor")),
-          ),
-        );
-        runtime.log(t("Docs: {link}").replace("{link}", "https://docs.openclaw.ai/skills"));
+        continue;
       }
+      const code = result.code == null ? "" : ` (exit ${result.code})`;
+      const detail = summarizeInstallFailure(result.message);
+      spin.stop(`Install failed: ${name}${code}${detail ? ` — ${detail}` : ""}`);
+      for (const warning of warnings) {
+        runtime.log(warning);
+      }
+      if (result.stderr) {
+        runtime.log(result.stderr.trim());
+      } else if (result.stdout) {
+        runtime.log(result.stdout.trim());
+      }
+      runtime.log(
+        `Tip: run \`${formatCliCommand("openclaw doctor")}\` to review skills + requirements.`,
+      );
+      runtime.log("Docs: https://docs.openclaw.ai/skills");
     }
   }
 

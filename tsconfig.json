@@ -19,13 +19,6 @@
     "target": "es2023",
     "useDefineForClassFields": false
   },
-  "include": ["src/**/*"],
-  "exclude": [
-    "ui",
-    "node_modules",
-    "dist",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/**/test-helpers.ts"
-  ]
+  "include": ["src/**/*", "ui/**/*"],
+  "exclude": ["node_modules", "dist", "src/**/*.test.ts"]
 }

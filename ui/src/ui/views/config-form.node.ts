@@ -1,5 +1,6 @@
 import { html, nothing, type TemplateResult } from "lit";
 import type { ConfigUiHints } from "../types.ts";
+import { t } from "../i18n/index.ts";
 import {
   defaultValue,
   hintForPath,
@@ -109,14 +110,14 @@ export function renderNode(params: {
   const showLabel = params.showLabel ?? true;
   const type = schemaType(schema);
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
   const key = pathKey(path);
 
   if (unsupported.has(key)) {
     return html`<div class="cfg-field cfg-field--error">
       <div class="cfg-field__label">${label}</div>
-      <div class="cfg-field__error">Unsupported schema node. Use Raw mode.</div>
+      <div class="cfg-field__error">${t("Unsupported schema node. Use Raw mode.")}</div>
     </div>`;
   }
 
@@ -287,7 +288,7 @@ export function renderNode(params: {
   return html`
     <div class="cfg-field cfg-field--error">
       <div class="cfg-field__label">${label}</div>
-      <div class="cfg-field__error">Unsupported type: ${type}. Use Raw mode.</div>
+      <div class="cfg-field__error">${t("Unsupported type: ${type}. Use Raw mode.").replace("${type}", String(type))}</div>
     </div>
   `;
 }
@@ -305,7 +306,7 @@ function renderTextInput(params: {
   const { schema, value, path, hints, disabled, onPatch, inputType } = params;
   const showLabel = params.showLabel ?? true;
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
   const isSensitive = hint?.sensitive ?? isSensitivePath(path);
   const placeholder =
@@ -314,7 +315,7 @@ function renderTextInput(params: {
     (isSensitive
       ? "••••"
       : schema.default !== undefined
-        ? `Default: ${String(schema.default)}`
+        ? `${t("Default: ")}${String(schema.default)}`
         : "");
   const displayValue = value ?? "";
 
@@ -356,7 +357,7 @@ function renderTextInput(params: {
           <button
             type="button"
             class="cfg-input__reset"
-            title="Reset to default"
+            title="${t("Reset to default")}"
             ?disabled=${disabled}
             @click=${() => onPatch(path, schema.default)}
           >↺</button>
@@ -380,7 +381,7 @@ function renderNumberInput(params: {
   const { schema, value, path, hints, disabled, onPatch } = params;
   const showLabel = params.showLabel ?? true;
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
   const displayValue = value ?? schema.default ?? "";
   const numValue = typeof displayValue === "number" ? displayValue : 0;
@@ -431,7 +432,7 @@ function renderSelect(params: {
   const { schema, value, path, hints, disabled, options, onPatch } = params;
   const showLabel = params.showLabel ?? true;
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
   const resolvedValue = value ?? schema.default;
   const currentIndex = options.findIndex(
@@ -452,7 +453,7 @@ function renderSelect(params: {
           onPatch(path, val === unset ? undefined : options[Number(val)]);
         }}
       >
-        <option value=${unset}>Select...</option>
+        <option value=${unset}>${t("Select...")}</option>
         ${options.map(
           (opt, idx) => html`
           <option value=${String(idx)}>${String(opt)}</option>
@@ -475,7 +476,7 @@ function renderObject(params: {
 }): TemplateResult {
   const { schema, value, path, hints, unsupported, disabled, onPatch } = params;
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
 
   const fallback = value ?? schema.default;
@@ -585,7 +586,7 @@ function renderArray(params: {
   const { schema, value, path, hints, unsupported, disabled, onPatch } = params;
   const showLabel = params.showLabel ?? true;
   const hint = hintForPath(path, hints);
-  const label = hint?.label ?? schema.title ?? humanize(String(path.at(-1)));
+  const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
 
   const itemsSchema = Array.isArray(schema.items) ? schema.items[0] : schema.items;
@@ -593,7 +594,7 @@ function renderArray(params: {
     return html`
       <div class="cfg-field cfg-field--error">
         <div class="cfg-field__label">${label}</div>
-        <div class="cfg-field__error">Unsupported array schema. Use Raw mode.</div>
+        <div class="cfg-field__error">${t("Unsupported array schema. Use Raw mode.")}</div>
       </div>
     `;
   }
@@ -615,7 +616,7 @@ function renderArray(params: {
           }}
         >
           <span class="cfg-array__add-icon">${icons.plus}</span>
-          Add
+          ${t("Add")}
         </button>
       </div>
       ${help ? html`<div class="cfg-array__help">${help}</div>` : nothing}
@@ -623,7 +624,7 @@ function renderArray(params: {
       ${
         arr.length === 0
           ? html`
-              <div class="cfg-array__empty">No items yet. Click "Add" to create one.</div>
+              <div class="cfg-array__empty">${t('No items yet. Click "Add" to create one.')}</div>
             `
           : html`
         <div class="cfg-array__items">
@@ -635,7 +636,7 @@ function renderArray(params: {
                 <button
                   type="button"
                   class="cfg-array__item-remove"
-                  title="Remove item"
+                  title="${t("Remove item")}"
                   ?disabled=${disabled}
                   @click=${() => {
                     const next = [...arr];
@@ -685,7 +686,7 @@ function renderMapField(params: {
   return html`
     <div class="cfg-map">
       <div class="cfg-map__header">
-        <span class="cfg-map__label">Custom entries</span>
+        <span class="cfg-map__label">${t("Custom entries")}</span>
         <button
           type="button"
           class="cfg-map__add"
@@ -703,14 +704,14 @@ function renderMapField(params: {
           }}
         >
           <span class="cfg-map__add-icon">${icons.plus}</span>
-          Add Entry
+          ${t("Add Entry")}
         </button>
       </div>
 
       ${
         entries.length === 0
           ? html`
-              <div class="cfg-map__empty">No custom entries.</div>
+              <div class="cfg-map__empty">${t("No custom entries.")}</div>
             `
           : html`
         <div class="cfg-map__items">
@@ -723,7 +724,7 @@ function renderMapField(params: {
                   <input
                     type="text"
                     class="cfg-input cfg-input--sm"
-                    placeholder="Key"
+                    placeholder="${t("Key")}"
                     .value=${key}
                     ?disabled=${disabled}
                     @change=${(e: Event) => {
@@ -747,7 +748,7 @@ function renderMapField(params: {
                       ? html`
                         <textarea
                           class="cfg-textarea cfg-textarea--sm"
-                          placeholder="JSON value"
+                          placeholder="${t("JSON value")}"
                           rows="2"
                           .value=${fallback}
                           ?disabled=${disabled}
@@ -781,7 +782,7 @@ function renderMapField(params: {
                 <button
                   type="button"
                   class="cfg-map__item-remove"
-                  title="Remove entry"
+                  title="${t("Remove entry")}"
                   ?disabled=${disabled}
                   @click=${() => {
                     const next = { ...value };

@@ -26,38 +26,37 @@ export function registerCronEditCommand(cron: Command) {
   addGatewayClientOptions(
     cron
       .command("edit")
-      .description(t("Edit a cron job (patch fields)"))
-      .argument("<id>", t("Job id"))
-      .option("--name <name>", t("Set name"))
-      .option("--description <text>", t("Set description"))
-      .option("--enable", t("Enable job"), false)
-      .option("--disable", t("Disable job"), false)
-      .option("--delete-after-run", t("Delete one-shot job after it succeeds"), false)
-      .option("--keep-after-run", t("Keep one-shot job after it succeeds"), false)
-      .option("--session <target>", t("Session target (main|isolated)"))
-      .option("--agent <id>", t("Set agent id"))
-      .option("--clear-agent", t("Unset agent and use default"), false)
-      .option("--wake <mode>", t("Wake mode (now|next-heartbeat)"))
-      .option("--at <when>", t("Set one-shot time (ISO) or duration like 20m"))
-      .option("--every <duration>", t("Set interval duration like 10m"))
-      .option("--cron <expr>", t("Set cron expression"))
-      .option("--tz <iana>", t("Timezone for cron expressions (IANA)"))
-      .option("--system-event <text>", t("Set systemEvent payload"))
-      .option("--message <text>", t("Set agentTurn payload message"))
-      .option("--thinking <level>", t("Thinking level for agent jobs"))
-      .option("--model <model>", t("Model override for agent jobs"))
-      .option("--timeout-seconds <n>", t("Timeout seconds for agent jobs"))
-      .option("--announce", t("Announce summary to a chat (subagent-style)"))
-      .option("--deliver", t("Deprecated (use --announce). Announces a summary to a chat."))
-      .option("--no-deliver", t("Disable announce delivery"))
+      .description("Edit a cron job (patch fields)")
+      .argument("<id>", "Job id")
+      .option("--name <name>", "Set name")
+      .option("--description <text>", "Set description")
+      .option("--enable", "Enable job", false)
+      .option("--disable", "Disable job", false)
+      .option("--delete-after-run", "Delete one-shot job after it succeeds", false)
+      .option("--keep-after-run", "Keep one-shot job after it succeeds", false)
+      .option("--session <target>", "Session target (main|isolated)")
+      .option("--agent <id>", "Set agent id")
+      .option("--clear-agent", "Unset agent and use default", false)
+      .option("--wake <mode>", "Wake mode (now|next-heartbeat)")
+      .option("--at <when>", "Set one-shot time (ISO) or duration like 20m")
+      .option("--every <duration>", "Set interval duration like 10m")
+      .option("--cron <expr>", "Set cron expression")
+      .option("--tz <iana>", "Timezone for cron expressions (IANA)")
+      .option("--system-event <text>", "Set systemEvent payload")
+      .option("--message <text>", "Set agentTurn payload message")
+      .option("--thinking <level>", "Thinking level for agent jobs")
+      .option("--model <model>", "Model override for agent jobs")
+      .option("--timeout-seconds <n>", "Timeout seconds for agent jobs")
+      .option("--announce", "Announce summary to a chat (subagent-style)")
+      .option("--deliver", "Deprecated (use --announce). Announces a summary to a chat.")
+      .option("--no-deliver", "Disable announce delivery")
       .option("--channel <channel>", `Delivery channel (${getCronChannelOptions()})`)
       .option(
         "--to <dest>",
         t("Delivery destination (E.164, Telegram chatId, or Discord channel/user)"),
       )
-      .option("--best-effort-deliver", t("Do not fail job if delivery fails"))
-      .option("--no-best-effort-deliver", t("Fail job when delivery fails"))
-      .option("--post-prefix <prefix>", t("Prefix for summary system event"))
+      .option("--best-effort-deliver", "Do not fail job if delivery fails")
+      .option("--no-best-effort-deliver", "Fail job when delivery fails")
       .action(async (id, opts) => {
         try {
           if (opts.session === "main" && opts.message) {
@@ -71,10 +70,7 @@ export function registerCronEditCommand(cron: Command) {
             );
           }
           if (opts.announce && typeof opts.deliver === "boolean") {
-            throw new Error(t("Choose --announce or --no-deliver (not multiple)."));
-          }
-          if (opts.session === "main" && typeof opts.postPrefix === "string") {
-            throw new Error(t("--post-prefix only applies to isolated jobs."));
+            throw new Error("Choose --announce or --no-deliver (not multiple).");
           }
 
           const patch: Record<string, unknown> = {};
@@ -125,7 +121,7 @@ export function registerCronEditCommand(cron: Command) {
           if (opts.at) {
             const atIso = parseAt(String(opts.at));
             if (!atIso) {
-              throw new Error(t("Invalid --at"));
+              throw new Error("Invalid --at");
             }
             patch.schedule = { kind: "at", at: atIso };
           } else if (opts.every) {

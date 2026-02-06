@@ -184,13 +184,13 @@ export function formatTokens(total?: number | null, context?: number | null) {
   }
   const totalLabel = total == null ? "?" : formatTokenCount(total);
   if (context == null) {
-    return `tokens ${totalLabel}`;
+    return `${t("tokens")} ${totalLabel}`;
   }
   const pct =
     typeof total === "number" && context > 0
       ? Math.min(999, Math.round((total / context) * 100))
       : null;
-  return `tokens ${totalLabel}/${formatTokenCount(context)}${pct !== null ? ` (${pct}%)` : ""}`;
+  return `${t("tokens")} ${totalLabel}/${formatTokenCount(context)}${pct !== null ? ` (${pct}%)` : ""}`;
 }
 
 export function formatContextUsageLine(params: {
@@ -203,10 +203,12 @@ export function formatContextUsageLine(params: {
   const ctxLabel = typeof params.context === "number" ? formatTokenCount(params.context) : "?";
   const pct = typeof params.percent === "number" ? Math.min(999, Math.round(params.percent)) : null;
   const remainingLabel =
-    typeof params.remaining === "number" ? `${formatTokenCount(params.remaining)} left` : null;
+    typeof params.remaining === "number"
+      ? `${formatTokenCount(params.remaining)} ${t("left")}`
+      : null;
   const pctLabel = pct !== null ? `${pct}%` : null;
   const extra = [remainingLabel, pctLabel].filter(Boolean).join(t(", "));
-  return `tokens ${totalLabel}/${ctxLabel}${extra ? ` (${extra})` : ""}`;
+  return `${t("tokens")} ${totalLabel}/${ctxLabel}${extra ? ` (${extra})` : ""}`;
 }
 
 export function asString(value: unknown, fallback = ""): string {

@@ -778,9 +778,9 @@ export async function applyAuthChoiceApiProviders(
     if (!hasCredential) {
       await params.prompter.note(
         [
-          t("OpenCode Zen provides access to Claude, GPT, Gemini, and more models."),
-          t("Get your API key at: https://opencode.ai/auth"),
-          t("Requires an active OpenCode Zen subscription."),
+          "OpenCode Zen provides access to Claude, GPT, Gemini, and more models.",
+          "Get your API key at: https://opencode.ai/auth",
+          "OpenCode Zen bills per request. Check your OpenCode dashboard for details.",
         ].join("\n"),
         t("OpenCode Zen"),
       );
