@@ -20,7 +20,7 @@ function normalizeBase(input: string): string {
 
 export default defineConfig(() => {
   const envBase = process.env.OPENCLAW_CONTROL_UI_BASE_PATH?.trim();
-  const base = envBase ? normalizeBase(envBase) : "./";
+  const base = envBase ? normalizeBase(envBase) : "/";
   return {
     base,
     publicDir: path.resolve(here, "public"),
