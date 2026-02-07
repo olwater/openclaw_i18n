@@ -167,9 +167,9 @@ export function titleForTab(tab: Tab) {
     case "instances":
       return t("Instances");
     case "sessions":
-      return "Sessions";
+      return t("Sessions");
     case "usage":
-      return "Usage";
+      return t("Usage");
     case "cron":
       return t("Cron Jobs");
     case "skills":
@@ -200,7 +200,7 @@ export function subtitleForTab(tab: Tab) {
     case "instances":
       return t("Presence beacons from connected clients and nodes.");
     case "sessions":
-      return "Inspect active sessions and adjust per-session defaults.";
+      return t("Inspect active sessions and adjust per-session defaults.");
     case "usage":
       return "";
     case "cron":

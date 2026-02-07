@@ -1,6 +1,6 @@
 ---
 name: gemini
-description: Gemini CLI for one-shot Q&A, summaries, and generation.
+description: 用于一次性问答、总结和生成的 Gemini CLI。
 homepage: https://ai.google.dev/
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "brew",
               "formula": "gemini-cli",
               "bins": ["gemini"],
-              "label": "Install Gemini CLI (brew)",
+              "label": "安装 Gemini CLI (brew)",
             },
           ],
       },
@@ -24,20 +24,20 @@ metadata:
 
 # Gemini CLI
 
-Use Gemini in one-shot mode with a positional prompt (avoid interactive mode).
+使用 Gemini 的一次性模式（one-shot mode）并在位置参数中提供提示词（避免使用交互模式）。
 
-Quick start
+快速开始
 
 - `gemini "Answer this question..."`
 - `gemini --model <name> "Prompt..."`
 - `gemini --output-format json "Return JSON"`
 
-Extensions
+扩展
 
-- List: `gemini --list-extensions`
-- Manage: `gemini extensions <command>`
+- 列表: `gemini --list-extensions`
+- 管理: `gemini extensions <command>`
 
-Notes
+注意
 
-- If auth is required, run `gemini` once interactively and follow the login flow.
-- Avoid `--yolo` for safety.
+- 如果需要认证，请先交互式运行一次 `gemini` 并按照登录流程操作。
+- 为了安全起见，避免使用 `--yolo`。

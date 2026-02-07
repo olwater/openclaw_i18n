@@ -38,13 +38,27 @@ This workflow helps you synchronize the `feature/i18n-chinese` branch with the u
      - **DO NOT** delete existing `t("...")` wrappers just because upstream changed the string. Update the English key inside `t()` to match upstream if necessary, then update the translation.
    - **Imports**: Ensure `import { t } from "../i18n/index.js";` is preserved in conflicting files (like CLI commands).
 
-4. **Update Translations**
-   After resolving conflicts, check for new untranslated strings.
+4. **Sync Lockfile (MANDATORY)**
+   Git merging updates `package.json` but often fails to update `pnpm-lock.yaml` correctly, causing CI/Docker failures. You MUST run this manually.
+
+   ```bash
+   # Regenerate lockfile to match package.json
+   pnpm install
+
+   # If lockfile changed, commit it immediately
+   if ! git diff --quiet pnpm-lock.yaml; then
+       git add pnpm-lock.yaml package.json
+       git commit -m "chore: sync lockfile with package.json"
+   fi
+   ```
+
+5. **Update Translations**
+   After resolving conflicts and fixing dependencies, check for new untranslated strings.
    - Run a search for new `t("...")` keys you added.
    - Add them to `src/i18n/locales/zh_CN.ts` if they are missing.
    - **Tip**: New features often introduce new files. Check the `git log` or merge output for new `.ts` files in `src/commands` or `src/cli` and see if they need `t()` wrappers.
 
-5. **Verify and Push**
+6. **Verify and Push**
    Build to ensure no syntax errors were introduced during merge.
    ```bash
    npm run build
