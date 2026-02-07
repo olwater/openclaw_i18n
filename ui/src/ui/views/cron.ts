@@ -204,7 +204,7 @@ export function renderCron(props: CronProps) {
             ? html`
                 <div class="form-grid" style="margin-top: 12px;">
                   <label class="field">
-                    <span>Delivery</span>
+                    <span>${t("Delivery")}</span>
                     <select
                       .value=${props.form.deliveryMode}
                       @change=${(e: Event) =>
@@ -213,8 +213,8 @@ export function renderCron(props: CronProps) {
                             .value as CronFormState["deliveryMode"],
                         })}
                     >
-                      <option value="announce">Announce summary (default)</option>
-                      <option value="none">None (internal)</option>
+                      <option value="announce">${t("Announce summary (default)")}</option>
+                      <option value="none">${t("None (internal)")}</option>
                     </select>
                   </label>
                   <label class="field">
@@ -248,7 +248,7 @@ export function renderCron(props: CronProps) {
                             </select>
                           </label>
                           <label class="field">
-                            <span>To</span>
+                            <span>${t("To")}</span>
                             <input
                               .value=${props.form.deliveryTo}
                               @input=${(e: Event) =>
@@ -452,7 +452,7 @@ function renderJob(job: CronJob, props: CronProps) {
 function renderJobPayload(job: CronJob) {
   if (job.payload.kind === "systemEvent") {
     return html`<div class="cron-job-detail">
-      <span class="cron-job-detail-label">System</span>
+      <span class="cron-job-detail-label">${t("System")}</span>
       <span class="muted cron-job-detail-value">${job.payload.text}</span>
     </div>`;
   }
@@ -465,13 +465,13 @@ function renderJobPayload(job: CronJob) {
 
   return html`
     <div class="cron-job-detail">
-      <span class="cron-job-detail-label">Prompt</span>
+      <span class="cron-job-detail-label">${t("Prompt")}</span>
       <span class="muted cron-job-detail-value">${job.payload.message}</span>
     </div>
     ${
       delivery
         ? html`<div class="cron-job-detail">
-            <span class="cron-job-detail-label">Delivery</span>
+            <span class="cron-job-detail-label">${t("Delivery")}</span>
             <span class="muted cron-job-detail-value">${delivery.mode}${deliveryTarget}</span>
           </div>`
         : nothing
@@ -481,13 +481,13 @@ function renderJobPayload(job: CronJob) {
 
 function formatStateRelative(ms?: number) {
   if (typeof ms !== "number" || !Number.isFinite(ms)) {
-    return "n/a";
+    return t("n/a");
   }
   return formatAgo(ms);
 }
 
 function renderJobState(job: CronJob) {
-  const status = job.state?.lastStatus ?? "n/a";
+  const status = job.state?.lastStatus ?? t("n/a");
   const statusClass =
     status === "ok"
       ? "cron-job-status-ok"
@@ -502,17 +502,17 @@ function renderJobState(job: CronJob) {
   return html`
     <div class="cron-job-state">
       <div class="cron-job-state-row">
-        <span class="cron-job-state-key">Status</span>
+        <span class="cron-job-state-key">${t("Status")}</span>
         <span class=${`cron-job-status-pill ${statusClass}`}>${status}</span>
       </div>
       <div class="cron-job-state-row">
-        <span class="cron-job-state-key">Next</span>
+        <span class="cron-job-state-key">${t("Next")}</span>
         <span class="cron-job-state-value" title=${formatMs(nextRunAtMs)}>
           ${formatStateRelative(nextRunAtMs)}
         </span>
       </div>
       <div class="cron-job-state-row">
-        <span class="cron-job-state-key">Last</span>
+        <span class="cron-job-state-key">${t("Last")}</span>
         <span class="cron-job-state-value" title=${formatMs(lastRunAtMs)}>
           ${formatStateRelative(lastRunAtMs)}
         </span>
@@ -537,7 +537,7 @@ function renderRun(entry: CronRunLogEntry, basePath: string) {
         <div class="muted">${entry.durationMs ?? 0}ms</div>
         ${
           chatUrl
-            ? html`<div><a class="session-link" href=${chatUrl}>Open run chat</a></div>`
+            ? html`<div><a class="session-link" href=${chatUrl}>${t("Open run chat")}</a></div>`
             : nothing
         }
         ${entry.error ? html`<div class="muted">${entry.error}</div>` : nothing}

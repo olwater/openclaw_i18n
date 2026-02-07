@@ -4089,14 +4089,14 @@ function renderTimeSeriesCompact(
   if (loading) {
     return html`
       <div class="session-timeseries-compact">
-        <div class="muted" style="padding: 20px; text-align: center">Loading...</div>
+        <div class="muted" style="padding: 20px; text-align: center">${t("Loading")}...</div>
       </div>
     `;
   }
   if (!timeSeries || timeSeries.points.length < 2) {
     return html`
       <div class="session-timeseries-compact">
-        <div class="muted" style="padding: 20px; text-align: center">No timeline data</div>
+        <div class="muted" style="padding: 20px; text-align: center">${t("No timeline data")}</div>
       </div>
     `;
   }
@@ -4121,7 +4121,7 @@ function renderTimeSeriesCompact(
   if (points.length < 2) {
     return html`
       <div class="session-timeseries-compact">
-        <div class="muted" style="padding: 20px; text-align: center">No data in range</div>
+        <div class="muted" style="padding: 20px; text-align: center">${t("No data in range")}</div>
       </div>
     `;
   }
@@ -4163,20 +4163,20 @@ function renderTimeSeriesCompact(
   return html`
     <div class="session-timeseries-compact">
       <div class="timeseries-header-row">
-        <div class="card-title" style="font-size: 13px;">Usage Over Time</div>
+        <div class="card-title" style="font-size: 13px;">${t("Usage Over Time")}</div>
         <div class="timeseries-controls">
           <div class="chart-toggle small">
             <button
               class="toggle-btn ${!isCumulative ? "active" : ""}"
               @click=${() => onModeChange("per-turn")}
             >
-              Per Turn
+              ${t("Per Turn")}
             </button>
             <button
               class="toggle-btn ${isCumulative ? "active" : ""}"
               @click=${() => onModeChange("cumulative")}
             >
-              Cumulative
+              ${t("Cumulative")}
             </button>
           </div>
           ${
@@ -4187,13 +4187,13 @@ function renderTimeSeriesCompact(
                       class="toggle-btn ${breakdownMode === "total" ? "active" : ""}"
                       @click=${() => onBreakdownChange("total")}
                     >
-                      Total
+                      ${t("Total")}
                     </button>
                     <button
                       class="toggle-btn ${breakdownMode === "by-type" ? "active" : ""}"
                       @click=${() => onBreakdownChange("by-type")}
                     >
-                      By Type
+                      ${t("By Type")}
                     </button>
                   </div>
                 `
@@ -4235,10 +4235,10 @@ function renderTimeSeriesCompact(
             `${formatTokens(val)} tokens`,
           ];
           if (breakdownByType) {
-            tooltipLines.push(`Output ${formatTokens(p.output)}`);
-            tooltipLines.push(`Input ${formatTokens(p.input)}`);
-            tooltipLines.push(`Cache write ${formatTokens(p.cacheWrite)}`);
-            tooltipLines.push(`Cache read ${formatTokens(p.cacheRead)}`);
+            tooltipLines.push(`${t("Output")} ${formatTokens(p.output)}`);
+            tooltipLines.push(`${t("Input")} ${formatTokens(p.input)}`);
+            tooltipLines.push(`${t("Cache Write")} ${formatTokens(p.cacheWrite)}`);
+            tooltipLines.push(`${t("Cache Read")} ${formatTokens(p.cacheRead)}`);
           }
           const tooltip = tooltipLines.join(" · ");
           if (!breakdownByType) {
@@ -4268,7 +4268,7 @@ function renderTimeSeriesCompact(
         breakdownByType
           ? html`
               <div style="margin-top: 8px;">
-                <div class="card-title" style="font-size: 12px; margin-bottom: 6px;">Tokens by Type</div>
+                <div class="card-title" style="font-size: 12px; margin-bottom: 6px;">${t("Tokens by Type")}</div>
                 <div class="cost-breakdown-bar" style="height: 18px;">
                   <div class="cost-segment output" style="width: ${pct(sumOutput, totalTypeTokens).toFixed(1)}%"></div>
                   <div class="cost-segment input" style="width: ${pct(sumInput, totalTypeTokens).toFixed(1)}%"></div>
@@ -4277,19 +4277,19 @@ function renderTimeSeriesCompact(
                 </div>
                 <div class="cost-breakdown-legend">
                   <div class="legend-item" title="Assistant output tokens">
-                    <span class="legend-dot output"></span>Output ${formatTokens(sumOutput)}
+                    <span class="legend-dot output"></span>${t("Output")} ${formatTokens(sumOutput)}
                   </div>
                   <div class="legend-item" title="User + tool input tokens">
-                    <span class="legend-dot input"></span>Input ${formatTokens(sumInput)}
+                    <span class="legend-dot input"></span>${t("Input")} ${formatTokens(sumInput)}
                   </div>
                   <div class="legend-item" title="Tokens written to cache">
-                    <span class="legend-dot cache-write"></span>Cache Write ${formatTokens(sumCacheWrite)}
+                    <span class="legend-dot cache-write"></span>${t("Cache Write")} ${formatTokens(sumCacheWrite)}
                   </div>
                   <div class="legend-item" title="Tokens read from cache">
-                    <span class="legend-dot cache-read"></span>Cache Read ${formatTokens(sumCacheRead)}
+                    <span class="legend-dot cache-read"></span>${t("Cache Read")} ${formatTokens(sumCacheRead)}
                   </div>
                 </div>
-                <div class="cost-breakdown-total">Total: ${formatTokens(totalTypeTokens)}</div>
+                <div class="cost-breakdown-total">${t("Total")}: ${formatTokens(totalTypeTokens)}</div>
               </div>
             `
           : nothing
@@ -4358,7 +4358,7 @@ function renderContextPanel(
             : nothing
         }
       </div>
-      <p class="context-weight-desc">${contextPct || "Base context per message"}</p>
+      <p class="context-weight-desc">${contextPct || t("Base context per message")}</p>
       <div class="context-stacked-bar">
         <div class="context-segment system" style="width: ${pct(systemTokens, totalContextTokens).toFixed(1)}%" title="System: ~${formatTokens(systemTokens)}"></div>
         <div class="context-segment skills" style="width: ${pct(skillsTokens, totalContextTokens).toFixed(1)}%" title="Skills: ~${formatTokens(skillsTokens)}"></div>
@@ -4371,7 +4371,7 @@ function renderContextPanel(
         <span class="legend-item"><span class="legend-dot tools"></span>Tools ~${formatTokens(toolsTokens)}</span>
         <span class="legend-item"><span class="legend-dot files"></span>Files ~${formatTokens(filesTokens)}</span>
       </div>
-      <div class="context-total">Total: ~${formatTokens(totalContextTokens)}</div>
+      <div class="context-total">${t("Total")}: ~${formatTokens(totalContextTokens)}</div>
       <div class="context-breakdown-grid">
         ${
           skillsList.length > 0
@@ -4487,8 +4487,8 @@ function renderSessionLogsCompact(
   if (!logs || logs.length === 0) {
     return html`
       <div class="session-logs-compact">
-        <div class="session-logs-header">Conversation</div>
-        <div class="muted" style="padding: 20px; text-align: center">No messages</div>
+        <div class="session-logs-header">${t("Conversation")}</div>
+        <div class="muted" style="padding: 20px; text-align: center">${t("No messages")}</div>
       </div>
     `;
   }
@@ -4534,9 +4534,9 @@ function renderSessionLogsCompact(
   return html`
     <div class="session-logs-compact">
       <div class="session-logs-header">
-        <span>Conversation <span style="font-weight: normal; color: var(--text-muted);">(${displayedCount} messages)</span></span>
+        <span>${t("Conversation")} <span style="font-weight: normal; color: var(--text-muted);">(${displayedCount} ${t("messages")})</span></span>
         <button class="btn btn-sm usage-action-btn usage-secondary-btn" @click=${onToggleExpandedAll}>
-          ${expandedAll ? "Collapse All" : "Expand All"}
+          ${expandedAll ? t("Collapse All") : t("Expand All")}
         </button>
       </div>
       <div class="usage-filters-inline" style="margin: 10px 12px;">
@@ -4550,10 +4550,10 @@ function renderSessionLogsCompact(
               ),
             )}
         >
-          <option value="user" ?selected=${roleSelected.has("user")}>User</option>
-          <option value="assistant" ?selected=${roleSelected.has("assistant")}>Assistant</option>
-          <option value="tool" ?selected=${roleSelected.has("tool")}>Tool</option>
-          <option value="toolResult" ?selected=${roleSelected.has("toolResult")}>Tool result</option>
+          <option value="user" ?selected=${roleSelected.has("user")}>${t("User")}</option>
+          <option value="assistant" ?selected=${roleSelected.has("assistant")}>${t("Assistant")}</option>
+          <option value="tool" ?selected=${roleSelected.has("tool")}>${t("Tool")}</option>
+          <option value="toolResult" ?selected=${roleSelected.has("toolResult")}>${t("Tool result")}</option>
         </select>
         <select
           multiple
@@ -4577,16 +4577,16 @@ function renderSessionLogsCompact(
             @change=${(event: Event) =>
               onFilterHasToolsChange((event.target as HTMLInputElement).checked)}
           />
-          Has tools
+          ${t("Has tools")}
         </label>
         <input
           type="text"
-          placeholder="Search conversation"
+          placeholder="${t("Search conversation")}"
           .value=${filters.query}
           @input=${(event: Event) => onFilterQueryChange((event.target as HTMLInputElement).value)}
         />
         <button class="btn btn-sm usage-action-btn usage-secondary-btn" @click=${onFilterClear}>
-          Clear
+          ${t("Clear")}
         </button>
       </div>
       <div class="session-logs-list">
@@ -4625,7 +4625,7 @@ function renderSessionLogsCompact(
         ${
           filteredEntries.length === 0
             ? html`
-                <div class="muted" style="padding: 12px">No messages match the filters.</div>
+                <div class="muted" style="padding: 12px">${t("No messages match the filters.")}</div>
               `
             : nothing
         }
@@ -4652,7 +4652,7 @@ export function renderUsage(props: UsageProps) {
         <div class="row" style="justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
           <div style="flex: 1; min-width: 250px;">
             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 2px;">
-              <div class="card-title" style="margin: 0;">Token Usage</div>
+              <div class="card-title" style="margin: 0;">${t("Token Usage")}</div>
               <span style="
                 display: inline-flex;
                 align-items: center;
@@ -4671,14 +4671,14 @@ export function renderUsage(props: UsageProps) {
                   border-radius: 50%;
                   animation: initial-spin 0.6s linear infinite;
                 "></span>
-                Loading
+                ${t("Loading")}
               </span>
             </div>
           </div>
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
             <div style="display: flex; gap: 8px; align-items: center;">
               <input type="date" .value=${props.startDate} disabled style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px; opacity: 0.6;" />
-              <span style="color: var(--text-muted);">to</span>
+              <span style="color: var(--text-muted);">${t("to")}</span>
               <input type="date" .value=${props.endDate} disabled style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px; opacity: 0.6;" />
             </div>
           </div>

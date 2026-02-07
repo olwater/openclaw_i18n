@@ -27,8 +27,8 @@ export function renderOverview(props: OverviewProps) {
   const snapshot = props.hello?.snapshot as
     | { uptimeMs?: number; policy?: { tickIntervalMs?: number } }
     | undefined;
-  const uptime = snapshot?.uptimeMs ? formatDurationMs(snapshot.uptimeMs) : "n/a";
-  const tick = snapshot?.policy?.tickIntervalMs ? `${snapshot.policy.tickIntervalMs}ms` : "n/a";
+  const uptime = snapshot?.uptimeMs ? formatDurationMs(snapshot.uptimeMs) : t("n/a");
+  const tick = snapshot?.policy?.tickIntervalMs ? `${snapshot.policy.tickIntervalMs}ms` : t("n/a");
   const authHint = (() => {
     if (props.connected || !props.lastError) {
       return null;
@@ -214,7 +214,7 @@ export function renderOverview(props: OverviewProps) {
           <div class="stat">
             <div class="stat-label">${t("Last Channels Refresh")}</div>
             <div class="stat-value">
-              ${props.lastChannelsRefresh ? formatAgo(props.lastChannelsRefresh) : "n/a"}
+              ${props.lastChannelsRefresh ? formatAgo(props.lastChannelsRefresh) : t("n/a")}
             </div>
           </div>
         </div>
@@ -242,13 +242,13 @@ export function renderOverview(props: OverviewProps) {
       </div>
       <div class="card stat-card">
         <div class="stat-label">${t("Sessions")}</div>
-        <div class="stat-value">${props.sessionsCount ?? "n/a"}</div>
+        <div class="stat-value">${props.sessionsCount ?? t("n/a")}</div>
         <div class="muted">${t("Recent session keys tracked by the gateway.")}</div>
       </div>
       <div class="card stat-card">
         <div class="stat-label">${t("Cron")}</div>
         <div class="stat-value">
-          ${props.cronEnabled == null ? "n/a" : props.cronEnabled ? t("Enabled") : t("Disabled")}
+          ${props.cronEnabled == null ? t("n/a") : props.cronEnabled ? t("Enabled") : t("Disabled")}
         </div>
         <div class="muted">${t("Next wake")} ${formatNextRun(props.cronNext)}</div>
       </div>

@@ -186,7 +186,7 @@ export function renderSessions(props: SessionsProps) {
       }
 
       <div class="muted" style="margin-top: 12px;">
-        ${props.result ? `Store: ${props.result.path}` : ""}
+        ${props.result ? `${t("Store")}: ${props.result.path}` : ""}
       </div>
 
       <div class="table" style="margin-top: 16px;">
@@ -222,7 +222,7 @@ function renderRow(
   onDelete: SessionsProps["onDelete"],
   disabled: boolean,
 ) {
-  const updated = row.updatedAt ? formatAgo(row.updatedAt) : "n/a";
+  const updated = row.updatedAt ? formatAgo(row.updatedAt) : t("n/a");
   const rawThinking = row.thinkingLevel ?? "";
   const isBinaryThinking = isBinaryThinkingProvider(row.modelProvider);
   const thinking = resolveThinkLevelDisplay(rawThinking, isBinaryThinking);

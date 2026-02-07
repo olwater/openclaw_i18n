@@ -834,49 +834,49 @@ function renderAgentOverview(params: {
   const skillFilter = Array.isArray(config.entry?.skills) ? config.entry?.skills : null;
   const skillCount = skillFilter?.length ?? null;
   const identityStatus = agentIdentityLoading
-    ? "Loading…"
+    ? t("Loading…")
     : agentIdentityError
-      ? "Unavailable"
+      ? t("Unavailable")
       : "";
   const isDefault = Boolean(params.defaultId && agent.id === params.defaultId);
 
   return html`
     <section class="card">
-      <div class="card-title">Overview</div>
-      <div class="card-sub">Workspace paths and identity metadata.</div>
+      <div class="card-title">${t("Overview")}</div>
+      <div class="card-sub">${t("Workspace paths and identity metadata.")}</div>
       <div class="agents-overview-grid" style="margin-top: 16px;">
         <div class="agent-kv">
-          <div class="label">Workspace</div>
+          <div class="label">${t("Workspace")}</div>
           <div class="mono">${workspace}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Primary Model</div>
+          <div class="label">${t("Primary Model")}</div>
           <div class="mono">${model}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Identity Name</div>
+          <div class="label">${t("Identity Name")}</div>
           <div>${identityName}</div>
           ${identityStatus ? html`<div class="agent-kv-sub muted">${identityStatus}</div>` : nothing}
         </div>
         <div class="agent-kv">
-          <div class="label">Default</div>
-          <div>${isDefault ? "yes" : "no"}</div>
+          <div class="label">${t("Default")}</div>
+          <div>${isDefault ? t("yes") : t("no")}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Identity Emoji</div>
+          <div class="label">${t("Identity Emoji")}</div>
           <div>${identityEmoji}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Skills Filter</div>
-          <div>${skillFilter ? `${skillCount} selected` : "all skills"}</div>
+          <div class="label">${t("Skills Filter")}</div>
+          <div>${skillFilter ? `${skillCount} ${t("selected")}` : t("all skills")}</div>
         </div>
       </div>
 
       <div class="agent-model-select" style="margin-top: 20px;">
-        <div class="label">Model Selection</div>
+        <div class="label">${t("Model Selection")}</div>
         <div class="row" style="gap: 12px; flex-wrap: wrap;">
           <label class="field" style="min-width: 260px; flex: 1;">
-            <span>Primary model${isDefault ? " (default)" : ""}</span>
+            <span>${t("Primary model")}${isDefault ? ` (${t("default")})` : ""}</span>
             <select
               .value=${effectivePrimary ?? ""}
               ?disabled=${!configForm || configLoading || configSaving}
@@ -889,7 +889,9 @@ function renderAgentOverview(params: {
                   : html`
                       <option value="">
                         ${
-                          defaultPrimary ? `Inherit default (${defaultPrimary})` : "Inherit default"
+                          defaultPrimary
+                            ? `${t("Inherit default")} (${defaultPrimary})`
+                            : t("Inherit default")
                         }
                       </option>
                     `
@@ -898,7 +900,7 @@ function renderAgentOverview(params: {
             </select>
           </label>
           <label class="field" style="min-width: 260px; flex: 1;">
-            <span>Fallbacks (comma-separated)</span>
+            <span>${t("Fallbacks (comma-separated)")}</span>
             <input
               .value=${fallbackText}
               ?disabled=${!configForm || configLoading || configSaving}
@@ -917,14 +919,14 @@ function renderAgentOverview(params: {
             ?disabled=${configLoading}
             @click=${onConfigReload}
           >
-            Reload Config
+            ${t("Reload Config")}
           </button>
           <button
             class="btn btn--sm primary"
             ?disabled=${configSaving || !configDirty}
             @click=${onConfigSave}
           >
-            ${configSaving ? "Saving…" : "Save"}
+            ${configSaving ? t("Saving…") : t("Save")}
           </button>
         </div>
       </div>
@@ -935,32 +937,32 @@ function renderAgentOverview(params: {
 function renderAgentContextCard(context: AgentContext, subtitle: string) {
   return html`
     <section class="card">
-      <div class="card-title">Agent Context</div>
+      <div class="card-title">${t("Agent Context")}</div>
       <div class="card-sub">${subtitle}</div>
       <div class="agents-overview-grid" style="margin-top: 16px;">
         <div class="agent-kv">
-          <div class="label">Workspace</div>
+          <div class="label">${t("Workspace")}</div>
           <div class="mono">${context.workspace}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Primary Model</div>
+          <div class="label">${t("Primary Model")}</div>
           <div class="mono">${context.model}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Identity Name</div>
+          <div class="label">${t("Identity Name")}</div>
           <div>${context.identityName}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Identity Emoji</div>
+          <div class="label">${t("Identity Emoji")}</div>
           <div>${context.identityEmoji}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Skills Filter</div>
+          <div class="label">${t("Skills Filter")}</div>
           <div>${context.skillsLabel}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Default</div>
-          <div>${context.isDefault ? "yes" : "no"}</div>
+          <div class="label">${t("Default")}</div>
+          <div>${context.isDefault ? t("yes") : t("no")}</div>
         </div>
       </div>
     </section>
@@ -1037,7 +1039,7 @@ function resolveChannelConfigValue(
 
 function formatChannelExtraValue(raw: unknown): string {
   if (raw == null) {
-    return "n/a";
+    return t("n/a");
   }
   if (typeof raw === "string" || typeof raw === "number" || typeof raw === "boolean") {
     return String(raw);
@@ -1045,7 +1047,7 @@ function formatChannelExtraValue(raw: unknown): string {
   try {
     return JSON.stringify(raw);
   } catch {
-    return "n/a";
+    return t("n/a");
   }
 }
 
@@ -1113,22 +1115,22 @@ function renderAgentChannels(params: {
     params.agentIdentity,
   );
   const entries = resolveChannelEntries(params.snapshot);
-  const lastSuccessLabel = params.lastSuccess ? formatAgo(params.lastSuccess) : "never";
+  const lastSuccessLabel = params.lastSuccess ? formatAgo(params.lastSuccess) : t("never");
   return html`
     <section class="grid grid-cols-2">
-      ${renderAgentContextCard(context, "Workspace, identity, and model configuration.")}
+      ${renderAgentContextCard(context, t("Workspace, identity, and model configuration."))}
       <section class="card">
         <div class="row" style="justify-content: space-between;">
           <div>
-            <div class="card-title">Channels</div>
-            <div class="card-sub">Gateway-wide channel status snapshot.</div>
+            <div class="card-title">${t("Channels")}</div>
+            <div class="card-sub">${t("Gateway-wide channel status snapshot.")}</div>
           </div>
           <button class="btn btn--sm" ?disabled=${params.loading} @click=${params.onRefresh}>
-            ${params.loading ? "Refreshing…" : "Refresh"}
+            ${params.loading ? t("Refreshing…") : t("Refresh")}
           </button>
         </div>
         <div class="muted" style="margin-top: 8px;">
-          Last refresh: ${lastSuccessLabel}
+          ${t("Last refresh: ")}${lastSuccessLabel}
         </div>
         ${
           params.error
@@ -1138,26 +1140,28 @@ function renderAgentChannels(params: {
         ${
           !params.snapshot
             ? html`
-                <div class="callout info" style="margin-top: 12px">Load channels to see live status.</div>
+                <div class="callout info" style="margin-top: 12px">${t("Load channels to see live status.")}</div>
               `
             : nothing
         }
         ${
           entries.length === 0
             ? html`
-                <div class="muted" style="margin-top: 16px">No channels found.</div>
+                <div class="muted" style="margin-top: 16px">${t("No channels found.")}</div>
               `
             : html`
               <div class="list" style="margin-top: 16px;">
                 ${entries.map((entry) => {
                   const summary = summarizeChannelAccounts(entry.accounts);
                   const status = summary.total
-                    ? `${summary.connected}/${summary.total} connected`
-                    : "no accounts";
+                    ? `${summary.connected}/${summary.total} ${t("connected")}`
+                    : t("no accounts");
                   const config = summary.configured
-                    ? `${summary.configured} configured`
-                    : "not configured";
-                  const enabled = summary.total ? `${summary.enabled} enabled` : "disabled";
+                    ? `${summary.configured} ${t("configured")}`
+                    : t("not configured");
+                  const enabled = summary.total
+                    ? `${summary.enabled} ${t("enabled")}`
+                    : t("disabled");
                   const extras = resolveChannelExtras(params.configForm, entry.id);
                   return html`
                     <div class="list-item">
@@ -1216,7 +1220,7 @@ function renderAgentCron(params: {
             <div class="card-sub">Gateway cron status.</div>
           </div>
           <button class="btn btn--sm" ?disabled=${params.loading} @click=${params.onRefresh}>
-            ${params.loading ? "Refreshing…" : "Refresh"}
+            ${params.loading ? t("Refreshing…") : t("Refresh")}
           </button>
         </div>
         <div class="stat-grid" style="margin-top: 16px;">
@@ -1307,18 +1311,18 @@ function renderAgentFiles(params: {
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Core Files</div>
-          <div class="card-sub">Bootstrap persona, identity, and tool guidance.</div>
+          <div class="card-title">${t("Core Files")}</div>
+          <div class="card-sub">${t("Bootstrap persona, identity, and tool guidance.")}</div>
         </div>
         <button
           class="btn btn--sm"
           ?disabled=${params.agentFilesLoading}
           @click=${() => params.onLoadFiles(params.agentId)}
         >
-          ${params.agentFilesLoading ? "Loading…" : "Refresh"}
+          ${params.agentFilesLoading ? t("Loading…") : t("Refresh")}
         </button>
       </div>
-      ${list ? html`<div class="muted mono" style="margin-top: 8px;">Workspace: ${list.workspace}</div>` : nothing}
+      ${list ? html`<div class="muted mono" style="margin-top: 8px;">${t("Workspace: ")}${list.workspace}</div>` : nothing}
       ${
         params.agentFilesError
           ? html`<div class="callout danger" style="margin-top: 12px;">${
@@ -1330,7 +1334,7 @@ function renderAgentFiles(params: {
         !list
           ? html`
               <div class="callout info" style="margin-top: 12px">
-                Load the agent workspace files to edit core instructions.
+                ${t("Load the agent workspace files to edit core instructions.")}
               </div>
             `
           : html`
@@ -1339,7 +1343,7 @@ function renderAgentFiles(params: {
                   ${
                     files.length === 0
                       ? html`
-                          <div class="muted">No files found.</div>
+                          <div class="muted">${t("No files found.")}</div>
                         `
                       : files.map((file) =>
                           renderAgentFileRow(file, active, () => params.onSelectFile(file.name)),
@@ -1350,7 +1354,7 @@ function renderAgentFiles(params: {
                   ${
                     !activeEntry
                       ? html`
-                          <div class="muted">Select a file to edit.</div>
+                          <div class="muted">${t("Select a file to edit.")}</div>
                         `
                       : html`
                           <div class="agent-file-header">
@@ -1364,14 +1368,14 @@ function renderAgentFiles(params: {
                                 ?disabled=${!isDirty}
                                 @click=${() => params.onFileReset(activeEntry.name)}
                               >
-                                Reset
+                                ${t("Reset")}
                               </button>
                               <button
                                 class="btn btn--sm primary"
                                 ?disabled=${params.agentFileSaving || !isDirty}
                                 @click=${() => params.onFileSave(activeEntry.name)}
                               >
-                                ${params.agentFileSaving ? "Saving…" : "Save"}
+                                ${params.agentFileSaving ? t("Saving…") : t("Save")}
                               </button>
                             </div>
                           </div>
@@ -1379,13 +1383,13 @@ function renderAgentFiles(params: {
                             activeEntry.missing
                               ? html`
                                   <div class="callout info" style="margin-top: 10px">
-                                    This file is missing. Saving will create it in the agent workspace.
+                                    ${t("This file is missing. Saving will create it in the agent workspace.")}
                                   </div>
                                 `
                               : nothing
                           }
                           <label class="field" style="margin-top: 12px;">
-                            <span>Content</span>
+                            <span>${t("Content")}</span>
                             <textarea
                               .value=${draft}
                               @input=${(e: Event) =>
@@ -1407,7 +1411,7 @@ function renderAgentFiles(params: {
 
 function renderAgentFileRow(file: AgentFileEntry, active: string | null, onSelect: () => void) {
   const status = file.missing
-    ? "Missing"
+    ? t("Missing")
     : `${formatBytes(file.size)} · ${formatAgo(file.updatedAtMs ?? null)}`;
   return html`
     <button
@@ -1422,7 +1426,7 @@ function renderAgentFileRow(file: AgentFileEntry, active: string | null, onSelec
       ${
         file.missing
           ? html`
-              <span class="agent-pill warn">missing</span>
+              <span class="agent-pill warn">${t("missing")}</span>
             `
           : nothing
       }
@@ -1446,10 +1450,10 @@ function renderAgentTools(params: {
   const globalTools = config.globalTools ?? {};
   const profile = agentTools.profile ?? globalTools.profile ?? "full";
   const profileSource = agentTools.profile
-    ? "agent override"
+    ? t("agent override")
     : globalTools.profile
-      ? "global default"
-      : "default";
+      ? t("global default")
+      : t("default");
   const hasAgentAllow = Array.isArray(agentTools.allow) && agentTools.allow.length > 0;
   const hasGlobalAllow = Array.isArray(globalTools.allow) && globalTools.allow.length > 0;
   const editable =
@@ -1526,10 +1530,10 @@ function renderAgentTools(params: {
     <section class="card">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">Tool Access</div>
+          <div class="card-title">${t("Tool Access")}</div>
           <div class="card-sub">
-            Profile + per-tool overrides for this agent.
-            <span class="mono">${enabledCount}/${toolIds.length}</span> enabled.
+            ${t("Profile + per-tool overrides for this agent.")}
+            <span class="mono">${enabledCount}/${toolIds.length}</span> ${t("enabled")}.
           </div>
         </div>
         <div class="row" style="gap: 8px;">
@@ -1538,28 +1542,28 @@ function renderAgentTools(params: {
             ?disabled=${!editable}
             @click=${() => updateAll(true)}
           >
-            Enable All
+            ${t("Enable All")}
           </button>
           <button
             class="btn btn--sm"
             ?disabled=${!editable}
             @click=${() => updateAll(false)}
           >
-            Disable All
+            ${t("Disable All")}
           </button>
           <button
             class="btn btn--sm"
             ?disabled=${params.configLoading}
             @click=${params.onConfigReload}
           >
-            Reload Config
+            ${t("Reload Config")}
           </button>
           <button
             class="btn btn--sm primary"
             ?disabled=${params.configSaving || !params.configDirty}
             @click=${params.onConfigSave}
           >
-            ${params.configSaving ? "Saving…" : "Save"}
+            ${params.configSaving ? t("Saving…") : t("Save")}
           </button>
         </div>
       </div>
@@ -1568,7 +1572,7 @@ function renderAgentTools(params: {
         !params.configForm
           ? html`
               <div class="callout info" style="margin-top: 12px">
-                Load the gateway config to adjust tool profiles.
+                ${t("Load the gateway config to adjust tool profiles.")}
               </div>
             `
           : nothing
@@ -1577,7 +1581,7 @@ function renderAgentTools(params: {
         hasAgentAllow
           ? html`
               <div class="callout info" style="margin-top: 12px">
-                This agent is using an explicit allowlist in config. Tool overrides are managed in the Config tab.
+                ${t("This agent is using an explicit allowlist in config. Tool overrides are managed in the Config tab.")}
               </div>
             `
           : nothing
@@ -1586,7 +1590,7 @@ function renderAgentTools(params: {
         hasGlobalAllow
           ? html`
               <div class="callout info" style="margin-top: 12px">
-                Global tools.allow is set. Agent overrides cannot enable tools that are globally blocked.
+                ${t("Global tools.allow is set. Agent overrides cannot enable tools that are globally blocked.")}
               </div>
             `
           : nothing
@@ -1594,19 +1598,19 @@ function renderAgentTools(params: {
 
       <div class="agent-tools-meta" style="margin-top: 16px;">
         <div class="agent-kv">
-          <div class="label">Profile</div>
+          <div class="label">${t("Profile")}</div>
           <div class="mono">${profile}</div>
         </div>
         <div class="agent-kv">
-          <div class="label">Source</div>
+          <div class="label">${t("Source")}</div>
           <div>${profileSource}</div>
         </div>
         ${
           params.configDirty
             ? html`
                 <div class="agent-kv">
-                  <div class="label">Status</div>
-                  <div class="mono">unsaved</div>
+                  <div class="label">${t("Status")}</div>
+                  <div class="mono">${t("unsaved")}</div>
                 </div>
               `
             : nothing
@@ -1614,7 +1618,7 @@ function renderAgentTools(params: {
       </div>
 
       <div class="agent-tools-presets" style="margin-top: 16px;">
-        <div class="label">Quick Presets</div>
+        <div class="label">${t("Quick Presets")}</div>
         <div class="agent-tools-buttons">
           ${PROFILE_OPTIONS.map(
             (option) => html`
@@ -1632,7 +1636,7 @@ function renderAgentTools(params: {
             ?disabled=${!editable}
             @click=${() => params.onProfileChange(params.agentId, null, false)}
           >
-            Inherit
+            ${t("Inherit")}
           </button>
         </div>
       </div>
@@ -1681,10 +1685,10 @@ type SkillGroup = {
 };
 
 const SKILL_SOURCE_GROUPS: Array<{ id: string; label: string; sources: string[] }> = [
-  { id: "workspace", label: "Workspace Skills", sources: ["openclaw-workspace"] },
-  { id: "built-in", label: "Built-in Skills", sources: ["openclaw-bundled"] },
-  { id: "installed", label: "Installed Skills", sources: ["openclaw-managed"] },
-  { id: "extra", label: "Extra Skills", sources: ["openclaw-extra"] },
+  { id: "workspace", label: t("Workspace Skills"), sources: ["openclaw-workspace"] },
+  { id: "built-in", label: t("Built-in Skills"), sources: ["openclaw-bundled"] },
+  { id: "installed", label: t("Installed Skills"), sources: ["openclaw-managed"] },
+  { id: "extra", label: t("Extra Skills"), sources: ["openclaw-extra"] },
 ];
 
 function groupSkills(skills: SkillStatusEntry[]): SkillGroup[] {
@@ -1693,7 +1697,7 @@ function groupSkills(skills: SkillStatusEntry[]): SkillGroup[] {
     groups.set(def.id, { id: def.id, label: def.label, skills: [] });
   }
   const builtInGroup = SKILL_SOURCE_GROUPS.find((group) => group.id === "built-in");
-  const other: SkillGroup = { id: "other", label: "Other Skills", skills: [] };
+  const other: SkillGroup = { id: "other", label: t("Other Skills"), skills: [] };
   for (const skill of skills) {
     const match = skill.bundled
       ? builtInGroup
@@ -1757,33 +1761,33 @@ function renderAgentSkills(params: {
         <div>
           <div class="card-title">Skills</div>
           <div class="card-sub">
-            Per-agent skill allowlist and workspace skills.
+            ${t("Per-agent skill allowlist and workspace skills.")}
             ${totalCount > 0 ? html`<span class="mono">${enabledCount}/${totalCount}</span>` : nothing}
           </div>
         </div>
         <div class="row" style="gap: 8px;">
           <button class="btn btn--sm" ?disabled=${!editable} @click=${() => params.onClear(params.agentId)}>
-            Use All
+            ${t("Use All")}
           </button>
           <button class="btn btn--sm" ?disabled=${!editable} @click=${() => params.onDisableAll(params.agentId)}>
-            Disable All
+            ${t("Disable All")}
           </button>
           <button
             class="btn btn--sm"
             ?disabled=${params.configLoading}
             @click=${params.onConfigReload}
           >
-            Reload Config
+            ${t("Reload Config")}
           </button>
           <button class="btn btn--sm" ?disabled=${params.loading} @click=${params.onRefresh}>
-            ${params.loading ? "Loading…" : "Refresh"}
+            ${params.loading ? t("Loading…") : t("Refresh")}
           </button>
           <button
             class="btn btn--sm primary"
             ?disabled=${params.configSaving || !params.configDirty}
             @click=${params.onConfigSave}
           >
-            ${params.configSaving ? "Saving…" : "Save"}
+            ${params.configSaving ? t("Saving…") : t("Save")}
           </button>
         </div>
       </div>
@@ -1792,7 +1796,7 @@ function renderAgentSkills(params: {
         !params.configForm
           ? html`
               <div class="callout info" style="margin-top: 12px">
-                Load the gateway config to set per-agent skills.
+                ${t("Load the gateway config to set per-agent skills.")}
               </div>
             `
           : nothing
@@ -1800,11 +1804,11 @@ function renderAgentSkills(params: {
       ${
         usingAllowlist
           ? html`
-              <div class="callout info" style="margin-top: 12px">This agent uses a custom skill allowlist.</div>
+              <div class="callout info" style="margin-top: 12px">${t("This agent uses a custom skill allowlist.")}</div>
             `
           : html`
               <div class="callout info" style="margin-top: 12px">
-                All skills are enabled. Disabling any skill will create a per-agent allowlist.
+                ${t("All skills are enabled. Disabling any skill will create a per-agent allowlist.")}
               </div>
             `
       }
@@ -1812,7 +1816,7 @@ function renderAgentSkills(params: {
         !reportReady && !params.loading
           ? html`
               <div class="callout info" style="margin-top: 12px">
-                Load skills for this agent to view workspace-specific entries.
+                ${t("Load skills for this agent to view workspace-specific entries.")}
               </div>
             `
           : nothing
@@ -1825,20 +1829,20 @@ function renderAgentSkills(params: {
 
       <div class="filters" style="margin-top: 14px;">
         <label class="field" style="flex: 1;">
-          <span>Filter</span>
+          <span>${t("Filter")}</span>
           <input
             .value=${params.filter}
             @input=${(e: Event) => params.onFilterChange((e.target as HTMLInputElement).value)}
-            placeholder="Search skills"
+            placeholder="${t("Search skills")}"
           />
         </label>
-        <div class="muted">${filtered.length} shown</div>
+        <div class="muted">${filtered.length} ${t("shown")}</div>
       </div>
 
       ${
         filtered.length === 0
           ? html`
-              <div class="muted" style="margin-top: 16px">No skills found.</div>
+              <div class="muted" style="margin-top: 16px">${t("No skills found.")}</div>
             `
           : html`
               <div class="agent-skills-groups" style="margin-top: 16px;">
@@ -1909,10 +1913,10 @@ function renderAgentSkillRow(
   ];
   const reasons: string[] = [];
   if (skill.disabled) {
-    reasons.push("disabled");
+    reasons.push(t("disabled"));
   }
   if (skill.blockedByAllowlist) {
-    reasons.push("blocked by allowlist");
+    reasons.push(t("blocked by allowlist"));
   }
   return html`
     <div class="list-item agent-skill-row">
@@ -1924,24 +1928,24 @@ function renderAgentSkillRow(
         <div class="chip-row" style="margin-top: 6px;">
           <span class="chip">${skill.source}</span>
           <span class="chip ${skill.eligible ? "chip-ok" : "chip-warn"}">
-            ${skill.eligible ? "eligible" : "blocked"}
+            ${skill.eligible ? t("eligible") : t("blocked")}
           </span>
           ${
             skill.disabled
               ? html`
-                  <span class="chip chip-warn">disabled</span>
+                  <span class="chip chip-warn">${t("disabled")}</span>
                 `
               : nothing
           }
         </div>
         ${
           missing.length > 0
-            ? html`<div class="muted" style="margin-top: 6px;">Missing: ${missing.join(", ")}</div>`
+            ? html`<div class="muted" style="margin-top: 6px;">${t("Missing")}: ${missing.join(", ")}</div>`
             : nothing
         }
         ${
           reasons.length > 0
-            ? html`<div class="muted" style="margin-top: 6px;">Reason: ${reasons.join(", ")}</div>`
+            ? html`<div class="muted" style="margin-top: 6px;">${t("Reason")}: ${reasons.join(", ")}</div>`
             : nothing
         }
       </div>

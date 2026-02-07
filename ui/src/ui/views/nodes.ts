@@ -131,9 +131,9 @@ function renderDevices(props: NodesProps) {
 
 function renderPendingDevice(req: PendingDevice, props: NodesProps) {
   const name = req.displayName?.trim() || req.deviceId;
-  const age = typeof req.ts === "number" ? formatAgo(req.ts) : "n/a";
-  const role = req.role?.trim() ? `role: ${req.role}` : "role: -";
-  const repair = req.isRepair ? " · repair" : "";
+  const age = typeof req.ts === "number" ? formatAgo(req.ts) : t("n/a");
+  const role = req.role?.trim() ? `${t("Role")}: ${req.role}` : `${t("Role")}: -`;
+  const repair = req.isRepair ? ` · ${t("repair")}` : "";
   const ip = req.remoteIp ? ` · ${req.remoteIp}` : "";
   return html`
     <div class="list-item">
@@ -141,7 +141,7 @@ function renderPendingDevice(req: PendingDevice, props: NodesProps) {
         <div class="list-title">${name}</div>
         <div class="list-sub">${req.deviceId}${ip}</div>
         <div class="muted" style="margin-top: 6px;">
-          ${role} · requested ${age}${repair}
+          ${role} · ${t("requested")} ${age}${repair}
         </div>
       </div>
       <div class="list-meta">
@@ -161,8 +161,8 @@ function renderPendingDevice(req: PendingDevice, props: NodesProps) {
 function renderPairedDevice(device: PairedDevice, props: NodesProps) {
   const name = device.displayName?.trim() || device.deviceId;
   const ip = device.remoteIp ? ` · ${device.remoteIp}` : "";
-  const roles = `roles: ${formatList(device.roles)}`;
-  const scopes = `scopes: ${formatList(device.scopes)}`;
+  const roles = `${t("Roles")}: ${formatList(device.roles)}`;
+  const scopes = `${t("Scopes")}: ${formatList(device.scopes)}`;
   const tokens = Array.isArray(device.tokens) ? device.tokens : [];
   return html`
     <div class="list-item">
@@ -188,8 +188,8 @@ function renderPairedDevice(device: PairedDevice, props: NodesProps) {
 }
 
 function renderTokenRow(deviceId: string, token: DeviceTokenSummary, props: NodesProps) {
-  const status = token.revokedAtMs ? "revoked" : "active";
-  const scopes = `scopes: ${formatList(token.scopes)}`;
+  const status = token.revokedAtMs ? t("revoked") : t("active");
+  const scopes = `${t("Scopes")}: ${formatList(token.scopes)}`;
   const when = formatAgo(token.rotatedAtMs ?? token.createdAtMs ?? token.lastUsedAtMs ?? null);
   return html`
     <div class="row" style="justify-content: space-between; gap: 8px;">
@@ -535,7 +535,7 @@ function renderBindings(state: BindingState) {
                   ${
                     !supportsBinding
                       ? html`
-                          <div class="muted">No nodes with system.run available.</div>
+                          <div class="muted">${t("No nodes with system.run available.")}</div>
                         `
                       : nothing
                   }
@@ -545,7 +545,7 @@ function renderBindings(state: BindingState) {
               ${
                 state.agents.length === 0
                   ? html`
-                      <div class="muted">No agents found.</div>
+                      <div class="muted">${t("No agents found.")}</div>
                     `
                   : state.agents.map((agent) => renderAgentBinding(agent, state))
               }
@@ -582,9 +582,9 @@ function renderExecApprovals(state: ExecApprovalsState) {
       ${
         !ready
           ? html`<div class="row" style="margin-top: 12px; gap: 12px;">
-            <div class="muted">Load exec approvals to edit allowlists.</div>
+            <div class="muted">${t("Load exec approvals to edit allowlists.")}</div>
             <button class="btn" ?disabled=${state.loading || !targetReady} @click=${state.onLoad}>
-              ${state.loading ? "Loading…" : "Load approvals"}
+              ${state.loading ? t("Loading…") : t("Load approvals")}
             </button>
           </div>`
           : html`
