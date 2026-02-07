@@ -721,4 +721,16 @@ export default {
     "所有技能已启用。禁用任何技能将创建代理白名单。",
   "Load skills for this agent to view workspace-specific entries.":
     "加载此代理的技能以查看特定于工作区的条目。",
+  disconnected: "已断开",
+  "no reason": "无原因",
+  "event gap detected": "检测到事件间隔",
+  expected: "期望",
+  received: "收到",
+  "refresh recommended": "建议刷新",
+  "This gateway requires auth. Add a token or password, then click Connect.":
+    "此网关需要验证。添加令牌或密码，然后点击连接。",
+  "open the Control UI": "打开控制台 UI",
+  "set token": "设置令牌",
+  "Auth failed. Update the token or password in Control UI settings, then click Connect.":
+    "验证失败。在控制台 UI 设置中更新令牌或密码，然后点击连接。",
 } as Record<string, string>;

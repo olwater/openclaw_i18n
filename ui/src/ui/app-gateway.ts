@@ -27,6 +27,7 @@ import {
 import { loadNodes } from "./controllers/nodes.ts";
 import { loadSessions } from "./controllers/sessions.ts";
 import { GatewayBrowserClient } from "./gateway.ts";
+import { t } from "./i18n/index.ts";
 
 type GatewayHost = {
   settings: UiSettings;
@@ -149,13 +150,14 @@ export function connectGateway(host: GatewayHost) {
     onClose: ({ code, reason }) => {
       host.connected = false;
       // Code 1012 = Service Restart (expected during config saves, don't show as error)
+
       if (code !== 1012) {
-        host.lastError = `disconnected (${code}): ${reason || "no reason"}`;
+        host.lastError = `${t("disconnected")} (${code}): ${reason || t("no reason")}`;
       }
     },
     onEvent: (evt) => handleGatewayEvent(host, evt),
     onGap: ({ expected, received }) => {
-      host.lastError = `event gap detected (expected seq ${expected}, got ${received}); refresh recommended`;
+      host.lastError = `${t("event gap detected")} (${t("expected")} ${expected}, ${t("received")} ${received}); ${t("refresh recommended")}`;
     },
   });
   host.client.start();
