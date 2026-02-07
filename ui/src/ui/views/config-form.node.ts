@@ -111,7 +111,7 @@ export function renderNode(params: {
   const type = schemaType(schema);
   const hint = hintForPath(path, hints);
   const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
-  const help = hint?.help ?? schema.description;
+  const help = hint?.help ?? t(schema.description ?? "");
   const key = pathKey(path);
 
   if (unsupported.has(key)) {

@@ -733,4 +733,38 @@ export default {
   "set token": "设置令牌",
   "Auth failed. Update the token or password in Control UI settings, then click Connect.":
     "验证失败。在控制台 UI 设置中更新令牌或密码，然后点击连接。",
+
+  // Usage view translations
+  "Daily Usage": "每日用量",
+  "No data": "暂无数据",
+  total: "总计",
+  avg: "平均",
+  "avg session": "平均会话时长",
+  errors: "错误",
+
+  // Config schema translations
+  "Block Streaming": "禁止流式输出",
+  "Idle Ms": "空闲时间 (毫秒)",
+  "Max Chars": "最大字符数",
+  bot_token: "机器人令牌",
+  token: "令牌",
+  "Agent running – controls disabled": "代理运行中 – 控制已禁用",
+  "Simplest way to get started. Create a bot with @BotFather, get the token.":
+    "最简单的开始方式。使用 @BotFather 创建机器人，获取令牌。",
+
+  // Channel descriptions
+  "Chat API webhook status and channel configuration.": "聊天 API Webhook 状态和频道配置。",
+  "Socket mode status and channel configuration.": "Socket 模式状态和频道配置。",
+  "signal-cli status and channel configuration.": "signal-cli 状态和频道配置。",
+  "macOS bridge status and channel configuration.": "macOS 桥接状态和频道配置。",
+  "Decentralized DMs via Nostr relays (NIP-04).": "通过 Nostr 中继的去中心化私信 (NIP-04)。",
+
+  // More labels
+  Credential: "凭证",
+  Audience: "受众",
+  "Base URL": "基础 URL",
+  "Public Key": "公钥",
+  About: "关于",
+  'No profile set. Click "Edit Profile" to add your name, bio, and avatar.':
+    "未设置个人资料。点击“编辑资料”添加您的姓名、简介和头像。",
 } as Record<string, string>;

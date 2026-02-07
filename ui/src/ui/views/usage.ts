@@ -3216,8 +3216,8 @@ function renderDailyChartCompact(
   if (!daily.length) {
     return html`
       <div class="daily-chart-compact">
-        <div class="sessions-panel-title">Daily Usage</div>
-        <div class="muted" style="padding: 20px; text-align: center">No data</div>
+        <div class="sessions-panel-title">${t("Daily Usage")}</div>
+        <div class="muted" style="padding: 20px; text-align: center">${t("No data")}</div>
       </div>
     `;
   }
@@ -3238,16 +3238,16 @@ function renderDailyChartCompact(
             class="toggle-btn ${dailyChartMode === "total" ? "active" : ""}"
             @click=${() => onDailyChartModeChange("total")}
           >
-            Total
+            ${t("Total")}
           </button>
           <button
             class="toggle-btn ${dailyChartMode === "by-type" ? "active" : ""}"
             @click=${() => onDailyChartModeChange("by-type")}
           >
-            By Type
+            ${t("By Type")}
           </button>
         </div>
-        <div class="card-title">Daily ${isTokenMode ? "Token" : "Cost"} Usage</div>
+        <div class="card-title">${t("Daily Usage")} (${isTokenMode ? t("Token") : t("Cost")})</div>
       </div>
       <div class="daily-chart">
         <div class="daily-chart-bars" style="--bar-max-width: ${barMaxWidth}px">
@@ -3587,7 +3587,7 @@ function renderUsageInsights(
           </div>
           <div class="usage-summary-value ${errorRatePct > 5 ? "bad" : errorRatePct > 1 ? "warn" : "good"}">${errorRatePct.toFixed(2)}%</div>
           <div class="usage-summary-sub">
-            ${aggregates.messages.errors} errors · ${avgDurationLabel} avg session
+            ${aggregates.messages.errors} ${t("errors")} · ${avgDurationLabel} ${t("avg session")}
           </div>
         </div>
         <div class="usage-summary-card">
@@ -3734,13 +3734,13 @@ function renderSessionsCard(
       <div class="sessions-card-header">
         <div class="card-title">${t("Sessions")}</div>
         <div class="sessions-card-count">
-          ${sessions.length} shown${totalSessions !== sessions.length ? ` · ${totalSessions} total` : ""}
+          ${sessions.length} ${t("shown")}${totalSessions !== sessions.length ? ` · ${totalSessions} ${t("total")}` : ""}
         </div>
       </div>
       <div class="sessions-card-meta">
         <div class="sessions-card-stats">
-          <span>${isTokenMode ? formatTokens(avgValue) : formatCost(avgValue)} avg</span>
-          <span>${totalErrors} errors</span>
+          <span>${isTokenMode ? formatTokens(avgValue) : formatCost(avgValue)} ${t("avg")}</span>
+          <span>${totalErrors} ${t("errors")}</span>
         </div>
         <div class="chart-toggle small">
           <button

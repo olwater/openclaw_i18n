@@ -145,7 +145,7 @@ export function renderChannelConfigSection(params: { channelId: string; props: C
       ${
         props.configSchemaLoading
           ? html`
-              <div class="muted">Loading config schema…</div>
+              <div class="muted">${t("Loading config schema…")}</div>
             `
           : renderChannelConfigForm({
               channelId,

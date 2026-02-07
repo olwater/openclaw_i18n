@@ -195,7 +195,7 @@ function renderGenericChannelCard(
   return html`
     <div class="card">
       <div class="card-title">${label}</div>
-      <div class="card-sub">Channel status and configuration.</div>
+      <div class="card-sub">${t("Channel status and configuration.")}</div>
       ${accountCountLabel}
 
       ${
@@ -209,15 +209,15 @@ function renderGenericChannelCard(
             <div class="status-list" style="margin-top: 16px;">
               <div>
                 <span class="label">${t("Configured")}</span>
-                <span>${configured == null ? "n/a" : configured ? t("Yes") : t("No")}</span>
+                <span>${configured == null ? t("n/a") : configured ? t("Yes") : t("No")}</span>
               </div>
               <div>
                 <span class="label">${t("Running")}</span>
-                <span>${running == null ? "n/a" : running ? t("Yes") : t("No")}</span>
+                <span>${running == null ? t("n/a") : running ? t("Yes") : t("No")}</span>
               </div>
               <div>
                 <span class="label">${t("Connected")}</span>
-                <span>${connected == null ? "n/a" : connected ? t("Yes") : t("No")}</span>
+                <span>${connected == null ? t("n/a") : connected ? t("Yes") : t("No")}</span>
               </div>
             </div>
           `
@@ -309,7 +309,7 @@ function renderGenericAccount(account: ChannelAccountSnapshot) {
         </div>
         <div>
           <span class="label">${t("Last inbound")}</span>
-          <span>${account.lastInboundAt ? formatAgo(account.lastInboundAt) : "n/a"}</span>
+          <span>${account.lastInboundAt ? formatAgo(account.lastInboundAt) : t("n/a")}</span>
         </div>
         ${
           account.lastError

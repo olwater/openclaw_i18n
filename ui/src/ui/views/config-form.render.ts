@@ -428,7 +428,7 @@ export function renderConfigForm(props: ConfigFormProps) {
               const { sectionKey, subsectionKey, schema: node } = subsectionContext;
               const hint = hintForPath([sectionKey, subsectionKey], props.uiHints);
               const label = t(hint?.label ?? node.title ?? humanize(subsectionKey));
-              const description = hint?.help ?? node.description ?? "";
+              const description = hint?.help ?? t(node.description ?? "");
               const sectionValue = value[sectionKey];
               const scopedValue =
                 sectionValue && typeof sectionValue === "object"
@@ -466,7 +466,7 @@ export function renderConfigForm(props: ConfigFormProps) {
           : filteredEntries.map(([key, node]) => {
               const meta = SECTION_META[key] ?? {
                 label: t(key.charAt(0).toUpperCase() + key.slice(1)),
-                description: node.description ?? "",
+                description: t(node.description ?? ""),
               };
 
               return html`
