@@ -613,4 +613,6 @@ export default {
   Today: "今天",
   "7d": "7天",
   "30d": "30天",
+  "See where tokens go, when sessions spike, and what drives cost.":
+    "查看 tokens 去向，了解会话在何时激增，以及成本由何驱动。",
 } as Record<string, string>;
