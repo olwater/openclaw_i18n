@@ -24,6 +24,7 @@ export type AuthChoiceGroupId =
   | "synthetic"
   | "venice"
   | "qwen"
+  | "qianfan"
   | "xai";
 
 export type AuthChoiceGroup = {
@@ -39,12 +40,6 @@ const AUTH_CHOICE_GROUP_DEFS: {
   hint?: string;
   choices: AuthChoice[];
 }[] = [
-  {
-    value: "xai",
-    label: "xAI (Grok)",
-    hint: "API key",
-    choices: ["xai-api-key"],
-  },
   {
     value: "openai",
     label: t("OpenAI"),
@@ -76,6 +71,12 @@ const AUTH_CHOICE_GROUP_DEFS: {
     choices: ["gemini-api-key", "google-antigravity", "google-gemini-cli"],
   },
   {
+    value: "xai",
+    label: "xAI (Grok)",
+    hint: "API key",
+    choices: ["xai-api-key"],
+  },
+  {
     value: "openrouter",
     label: t("OpenRouter"),
     hint: t("API key"),
@@ -92,6 +93,12 @@ const AUTH_CHOICE_GROUP_DEFS: {
     label: t("Z.AI (GLM 4.7)"),
     hint: t("API key"),
     choices: ["zai-api-key"],
+  },
+  {
+    value: "qianfan",
+    label: "Qianfan",
+    hint: "API key",
+    choices: ["qianfan-api-key"],
   },
   {
     value: "copilot",
@@ -156,8 +163,12 @@ export function buildAuthChoiceOptions(params: {
   });
   options.push({ value: "chutes", label: "Chutes (OAuth)" });
   options.push({ value: "openai-api-key", label: "OpenAI API key" });
-  options.push({ value: "openrouter-api-key", label: "OpenRouter API key" });
   options.push({ value: "xai-api-key", label: "xAI (Grok) API key" });
+  options.push({
+    value: "qianfan-api-key",
+    label: "Qianfan API key",
+  });
+  options.push({ value: "openrouter-api-key", label: "OpenRouter API key" });
   options.push({
     value: "ai-gateway-api-key",
     label: t("Vercel AI Gateway API key"),
