@@ -2963,7 +2963,6 @@ const zh_CN: TranslationMap = {
   "tools collapsed": "工具已折叠",
   "tools expanded": "工具已展开",
   "trace started": "追踪已开始",
-  "twiddling thumbs": "摸鱼中",
   "unknown error": "未知错误",
   "unsigned bridge clients are not allowed": "不允许未签名的桥接客户端",
   "up to date": "已是最新",
