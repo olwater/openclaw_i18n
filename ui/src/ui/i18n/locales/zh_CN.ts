@@ -593,4 +593,24 @@ export default {
   Loading: "加载中",
   "Model Mix": "模型组合",
   "No context data": "无上下文数据",
+  "Filter (client-side)": "过滤 (客户端)",
+  "Select a date range and click Refresh to load usage.": "选择日期范围并点击刷新以加载用量。",
+  Pinned: "已固定",
+  Pin: "固定",
+
+  "Sessions CSV": "会话 CSV",
+  "Daily CSV": "每日 CSV",
+  Local: "本地",
+  UTC: "UTC",
+
+  "Filter sessions (e.g. key:agent:main:cron* model:gpt-4o has:errors minTokens:2000)":
+    "过滤会话 (例如 key:agent:main:cron* model:gpt-4o has:errors minTokens:2000)",
+  Clear: "清除",
+  of: "之",
+  "sessions match": "个会话匹配",
+  "sessions in range": "个会话在范围内",
+  "Tip: use filters or click bars to filter days.": "提示：使用过滤器或点击柱状图过滤日期。",
+  Today: "今天",
+  "7d": "7天",
+  "30d": "30天",
 } as Record<string, string>;
