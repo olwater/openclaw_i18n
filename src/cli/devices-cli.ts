@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { callGateway } from "../gateway/call.js";
 import { t } from "../i18n/index.js";
+import { formatTimeAgo } from "../infra/format-time/format-relative.ts";
 import { defaultRuntime } from "../runtime.js";
 import { renderTable } from "../terminal/table.js";
 import { theme } from "../terminal/theme.js";
@@ -49,23 +50,6 @@ type DevicePairingList = {
   pending?: PendingDevice[];
   paired?: PairedDevice[];
 };
-
-function formatAge(msAgo: number) {
-  const s = Math.max(0, Math.floor(msAgo / 1000));
-  if (s < 60) {
-    return `${s}s`;
-  }
-  const m = Math.floor(s / 60);
-  if (m < 60) {
-    return `${m}m`;
-  }
-  const h = Math.floor(m / 60);
-  if (h < 24) {
-    return `${h}h`;
-  }
-  const d = Math.floor(h / 24);
-  return `${d}d`;
-}
 
 const devicesCallOpts = (cmd: Command, defaults?: { timeoutMs?: number }) =>
   cmd
@@ -151,7 +135,7 @@ export function registerDevicesCli(program: Command) {
                 Device: req.displayName || req.deviceId,
                 Role: req.role ?? "",
                 IP: req.remoteIp ?? "",
-                Age: typeof req.ts === "number" ? `${formatAge(Date.now() - req.ts)} ago` : "",
+                Age: typeof req.ts === "number" ? formatTimeAgo(Date.now() - req.ts) : "",
                 Flags: req.isRepair ? "repair" : "",
               })),
             }).trimEnd(),

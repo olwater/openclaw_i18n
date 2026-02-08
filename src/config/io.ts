@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import type { OpenClawConfig, ConfigFileSnapshot, LegacyConfigIssue } from "./types.js";
 import { setLocale, t } from "../i18n/index.js";
+import { resolveRequiredHomeDir } from "../infra/home-dir.js";
 import {
   loadShellEnvFallback,
   resolveShellEnvFallbackTimeoutMs,
@@ -186,7 +187,8 @@ function normalizeDeps(overrides: ConfigIoDeps = {}): Required<ConfigIoDeps> {
     fs: overrides.fs ?? fs,
     json5: overrides.json5 ?? JSON5,
     env: overrides.env ?? process.env,
-    homedir: overrides.homedir ?? os.homedir,
+    homedir:
+      overrides.homedir ?? (() => resolveRequiredHomeDir(overrides.env ?? process.env, os.homedir)),
     configPath: overrides.configPath ?? "",
     logger: overrides.logger ?? console,
   };

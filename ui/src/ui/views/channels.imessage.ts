@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import type { IMessageStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 
@@ -29,11 +29,11 @@ export function renderIMessageCard(params: {
         </div>
         <div>
           <span class="label">${t("Last start")}</span>
-          <span>${imessage?.lastStartAt ? formatAgo(imessage.lastStartAt) : t("n/a")}</span>
+          <span>${imessage?.lastStartAt ? formatRelativeTimestamp(imessage.lastStartAt) : t("n/a")}</span>
         </div>
         <div>
           <span class="label">${t("Last probe")}</span>
-          <span>${imessage?.lastProbeAt ? formatAgo(imessage.lastProbeAt) : t("n/a")}</span>
+          <span>${imessage?.lastProbeAt ? formatRelativeTimestamp(imessage.lastProbeAt) : t("n/a")}</span>
         </div>
       </div>
 

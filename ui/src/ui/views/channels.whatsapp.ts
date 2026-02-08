@@ -1,10 +1,9 @@
 import { html, nothing } from "lit";
 import type { WhatsAppStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp, formatDurationHuman } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
-import { formatDuration } from "./channels.shared.ts";
 
 export function renderWhatsAppCard(params: {
   props: ChannelsProps;
@@ -39,19 +38,19 @@ export function renderWhatsAppCard(params: {
         <div>
           <span class="label">${t("Last connect")}</span>
           <span>
-            ${whatsapp?.lastConnectedAt ? formatAgo(whatsapp.lastConnectedAt) : t("n/a")}
+            ${whatsapp?.lastConnectedAt ? formatRelativeTimestamp(whatsapp.lastConnectedAt) : t("n/a")}
           </span>
         </div>
         <div>
           <span class="label">${t("Last message")}</span>
           <span>
-            ${whatsapp?.lastMessageAt ? formatAgo(whatsapp.lastMessageAt) : t("n/a")}
+            ${whatsapp?.lastMessageAt ? formatRelativeTimestamp(whatsapp.lastMessageAt) : t("n/a")}
           </span>
         </div>
         <div>
           <span class="label">${t("Auth age")}</span>
           <span>
-            ${whatsapp?.authAgeMs != null ? formatDuration(whatsapp.authAgeMs) : t("n/a")}
+            ${whatsapp?.authAgeMs != null ? formatDurationHuman(whatsapp.authAgeMs) : t("n/a")}
           </span>
         </div>
       </div>

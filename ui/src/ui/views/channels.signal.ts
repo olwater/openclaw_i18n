@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import type { SignalStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 
@@ -33,11 +33,11 @@ export function renderSignalCard(params: {
         </div>
         <div>
           <span class="label">${t("Last start")}</span>
-          <span>${signal?.lastStartAt ? formatAgo(signal.lastStartAt) : t("n/a")}</span>
+          <span>${signal?.lastStartAt ? formatRelativeTimestamp(signal.lastStartAt) : t("n/a")}</span>
         </div>
         <div>
           <span class="label">${t("Last probe")}</span>
-          <span>${signal?.lastProbeAt ? formatAgo(signal.lastProbeAt) : t("n/a")}</span>
+          <span>${signal?.lastProbeAt ? formatRelativeTimestamp(signal.lastProbeAt) : t("n/a")}</span>
         </div>
       </div>
 

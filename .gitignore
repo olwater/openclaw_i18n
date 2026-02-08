@@ -72,8 +72,9 @@ USER.md
 .serena/
 
 # Agent credentials and memory (NEVER COMMIT)
-memory/
+/memory/
 .agent/
 .trae/
 !.agent/workflows/
 !.agent/skills/
+local/

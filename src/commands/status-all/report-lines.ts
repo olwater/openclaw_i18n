@@ -3,7 +3,7 @@ import { t } from "../../i18n/index.js";
 import { renderTable } from "../../terminal/table.js";
 import { isRich, theme } from "../../terminal/theme.js";
 import { appendStatusAllDiagnosis } from "./diagnosis.js";
-import { formatAge } from "./format.js";
+import { formatTimeAgo } from "./format.js";
 
 type OverviewRow = { Item: string; Value: string };
 
@@ -129,7 +129,7 @@ export async function buildStatusAllReportLines(params: {
           ? ok("OK")
           : "unknown",
     Sessions: String(a.sessionsCount),
-    Active: a.lastActiveAgeMs != null ? formatAge(a.lastActiveAgeMs) : "unknown",
+    Active: a.lastActiveAgeMs != null ? formatTimeAgo(a.lastActiveAgeMs) : "unknown",
     Store: a.sessionsPath,
   }));
 

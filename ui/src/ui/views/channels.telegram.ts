@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import type { ChannelAccountSnapshot, TelegramStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 
@@ -37,7 +37,7 @@ export function renderTelegramCard(params: {
           </div>
           <div>
             <span class="label">${t("Last inbound")}</span>
-            <span>${account.lastInboundAt ? formatAgo(account.lastInboundAt) : "n/a"}</span>
+            <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : t("n/a")}</span>
           </div>
           ${
             account.lastError
@@ -82,11 +82,11 @@ export function renderTelegramCard(params: {
               </div>
               <div>
                 <span class="label">${t("Last start")}</span>
-                <span>${telegram?.lastStartAt ? formatAgo(telegram.lastStartAt) : "n/a"}</span>
+                <span>${telegram?.lastStartAt ? formatRelativeTimestamp(telegram.lastStartAt) : t("n/a")}</span>
               </div>
               <div>
                 <span class="label">${t("Last probe")}</span>
-                <span>${telegram?.lastProbeAt ? formatAgo(telegram.lastProbeAt) : "n/a"}</span>
+                <span>${telegram?.lastProbeAt ? formatRelativeTimestamp(telegram.lastProbeAt) : t("n/a")}</span>
               </div>
             </div>
           `

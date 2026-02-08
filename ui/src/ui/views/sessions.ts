@@ -1,6 +1,6 @@
 import { html, nothing } from "lit";
 import type { GatewaySessionRow, SessionsListResult } from "../types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { pathForTab } from "../navigation.ts";
 import { formatSessionTokens } from "../presenter.ts";
@@ -222,7 +222,7 @@ function renderRow(
   onDelete: SessionsProps["onDelete"],
   disabled: boolean,
 ) {
-  const updated = row.updatedAt ? formatAgo(row.updatedAt) : t("n/a");
+  const updated = row.updatedAt ? formatRelativeTimestamp(row.updatedAt) : t("n/a");
   const rawThinking = row.thinkingLevel ?? "";
   const isBinaryThinking = isBinaryThinkingProvider(row.modelProvider);
   const thinking = resolveThinkLevelDisplay(rawThinking, isBinaryThinking);

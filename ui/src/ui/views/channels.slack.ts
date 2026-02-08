@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import type { SlackStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 
@@ -29,11 +29,11 @@ export function renderSlackCard(params: {
         </div>
         <div>
           <span class="label">${t("Last start")}</span>
-          <span>${slack?.lastStartAt ? formatAgo(slack.lastStartAt) : t("n/a")}</span>
+          <span>${slack?.lastStartAt ? formatRelativeTimestamp(slack.lastStartAt) : t("n/a")}</span>
         </div>
         <div>
           <span class="label">${t("Last probe")}</span>
-          <span>${slack?.lastProbeAt ? formatAgo(slack.lastProbeAt) : t("n/a")}</span>
+          <span>${slack?.lastProbeAt ? formatRelativeTimestamp(slack.lastProbeAt) : t("n/a")}</span>
         </div>
       </div>
 

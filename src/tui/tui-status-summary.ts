@@ -1,6 +1,6 @@
 import type { GatewayStatusSummary } from "./tui-types.js";
 import { t } from "../i18n/index.js";
-import { formatAge } from "../infra/channel-summary.js";
+import { formatTimeAgo } from "../infra/format-time/format-relative.ts";
 import { formatTokenCount } from "../utils/usage-format.js";
 import { formatContextUsageLine } from "./tui-formatters.js";
 
@@ -15,7 +15,7 @@ export function formatStatusSummary(summary: GatewayStatusSummary) {
     const linked = summary.linkChannel.linked === true;
     const authAge =
       linked && typeof summary.linkChannel.authAgeMs === "number"
-        ? ` (last refreshed ${formatAge(summary.linkChannel.authAgeMs)})`
+        ? ` (last refreshed ${formatTimeAgo(summary.linkChannel.authAgeMs)})`
         : "";
     lines.push(`${linkLabel}: ${linked ? "linked" : t("not linked")}${authAge}`);
   }
@@ -64,7 +64,7 @@ export function formatStatusSummary(summary: GatewayStatusSummary) {
   if (recent.length > 0) {
     lines.push(t("Recent sessions:"));
     for (const entry of recent) {
-      const ageLabel = typeof entry.age === "number" ? formatAge(entry.age) : t("no activity");
+      const ageLabel = typeof entry.age === "number" ? formatTimeAgo(entry.age) : t("no activity");
       const model = entry.model ?? "unknown";
       const usage = formatContextUsageLine({
         total: entry.totalTokens ?? null,

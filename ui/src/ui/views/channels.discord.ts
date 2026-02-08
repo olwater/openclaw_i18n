@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import type { DiscordStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 
@@ -29,11 +29,11 @@ export function renderDiscordCard(params: {
         </div>
         <div>
           <span class="label">${t("Last start")}</span>
-          <span>${discord?.lastStartAt ? formatAgo(discord.lastStartAt) : t("n/a")}</span>
+          <span>${discord?.lastStartAt ? formatRelativeTimestamp(discord.lastStartAt) : t("n/a")}</span>
         </div>
         <div>
           <span class="label">${t("Last probe")}</span>
-          <span>${discord?.lastProbeAt ? formatAgo(discord.lastProbeAt) : t("n/a")}</span>
+          <span>${discord?.lastProbeAt ? formatRelativeTimestamp(discord.lastProbeAt) : t("n/a")}</span>
         </div>
       </div>
 

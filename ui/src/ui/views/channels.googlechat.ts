@@ -1,7 +1,7 @@
 import { html, nothing } from "lit";
 import type { GoogleChatStatus } from "../types.ts";
 import type { ChannelsProps } from "./channels.types.ts";
-import { formatAgo } from "../format.ts";
+import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 
@@ -43,11 +43,11 @@ export function renderGoogleChatCard(params: {
         </div>
         <div>
           <span class="label">${t("Last start")}</span>
-          <span>${googleChat?.lastStartAt ? formatAgo(googleChat.lastStartAt) : t("n/a")}</span>
+          <span>${googleChat?.lastStartAt ? formatRelativeTimestamp(googleChat.lastStartAt) : t("n/a")}</span>
         </div>
         <div>
           <span class="label">${t("Last probe")}</span>
-          <span>${googleChat?.lastProbeAt ? formatAgo(googleChat.lastProbeAt) : t("n/a")}</span>
+          <span>${googleChat?.lastProbeAt ? formatRelativeTimestamp(googleChat.lastProbeAt) : t("n/a")}</span>
         </div>
       </div>
 
