@@ -109,7 +109,6 @@ export function renderApp(state: AppViewState) {
   const assistantAvatarUrl = resolveAssistantAvatarUrl(state);
   const chatAvatarUrl = state.chatAvatarUrl ?? assistantAvatarUrl ?? null;
   const logoBase = normalizeBasePath(state.basePath);
-  const logoHref = logoBase ? `${logoBase}/favicon.svg` : "/favicon.svg";
   const configValue =
     state.configForm ?? (state.configSnapshot?.config as Record<string, unknown> | null);
   const basePath = normalizeBasePath(state.basePath ?? "");
