@@ -1,12 +1,11 @@
-```javascript
 import {
   resolveGatewayLaunchAgentLabel,
   resolveGatewaySystemdServiceName,
   resolveGatewayWindowsTaskName,
 } from "../../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
-import { t } from "../../i18n/index.js";
 import { pickPrimaryLanIPv4 } from "../../gateway/net.js";
+import { t } from "../../i18n/index.js";
 import { getResolvedLoggerSettings } from "../../logging.js";
 import { formatCliCommand } from "../command-format.js";
 

@@ -11,6 +11,14 @@ import {
 } from "./internal-hooks.js";
 import { loadInternalHooks } from "./loader.js";
 
+vi.mock("../utils.js", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../utils.js")>();
+  return {
+    ...actual,
+    CONFIG_DIR: "/nonexistent/config/dir",
+  };
+});
+
 describe("loader", () => {
   let tmpDir: string;
   let originalBundledDir: string | undefined;
