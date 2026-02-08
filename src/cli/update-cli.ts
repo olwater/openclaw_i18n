@@ -15,11 +15,8 @@ import {
   resolveUpdateAvailability,
 } from "../commands/status.update.js";
 import { readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
-<<<<<<< HEAD
-import { t } from "../i18n/index.js";
-=======
 import { resolveStateDir } from "../config/paths.js";
->>>>>>> origin/main
+import { t } from "../i18n/index.js";
 import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
 import { trimLogTail } from "../infra/restart-sentinel.js";
 import { parseSemver } from "../infra/runtime-guard.js";

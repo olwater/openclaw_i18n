@@ -14,14 +14,9 @@ export function registerMessageThreadCommands(message: Command, helpers: Message
           .requiredOption("--thread-name <name>", t("Thread name")),
       ),
     )
-<<<<<<< HEAD
     .option("--message-id <id>", t("Message id (optional)"))
+    .option("-m, --message <text>", t("Initial thread message text"))
     .option("--auto-archive-min <n>", t("Thread auto-archive minutes"))
-=======
-    .option("--message-id <id>", "Message id (optional)")
-    .option("-m, --message <text>", "Initial thread message text")
-    .option("--auto-archive-min <n>", "Thread auto-archive minutes")
->>>>>>> origin/main
     .action(async (opts) => {
       await helpers.runMessageAction("thread-create", opts);
     });
