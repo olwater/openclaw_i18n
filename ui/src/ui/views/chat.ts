@@ -88,7 +88,7 @@ function renderCompactionIndicator(status: CompactionIndicatorStatus | null | un
     return html`
       <div class="callout info compaction-indicator compaction-indicator--active" role="status" aria-live="polite">
         ${icons.loader} ${t("Compacting context...")}
-      </div>
+
       </div>
     `;
   }
@@ -100,7 +100,7 @@ function renderCompactionIndicator(status: CompactionIndicatorStatus | null | un
       return html`
         <div class="callout success compaction-indicator compaction-indicator--complete" role="status" aria-live="polite">
           ${icons.check} ${t("Context compacted")}
-        </div>
+
         </div>
       `;
     }

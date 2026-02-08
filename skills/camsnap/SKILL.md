@@ -1,6 +1,6 @@
 ---
 name: camsnap
-description: Capture frames or clips from RTSP/ONVIF cameras.
+description: 从 RTSP/ONVIF 摄像头捕捉帧或剪辑。
 homepage: https://camsnap.ai
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "brew",
               "formula": "steipete/tap/camsnap",
               "bins": ["camsnap"],
-              "label": "Install camsnap (brew)",
+              "label": "安装 camsnap (brew)",
             },
           ],
       },
@@ -24,22 +24,22 @@ metadata:
 
 # camsnap
 
-Use `camsnap` to grab snapshots, clips, or motion events from configured cameras.
+使用 `camsnap` 从配置的摄像头中获取快照、剪辑或移动事件。
 
-Setup
+## 设置
 
-- Config file: `~/.config/camsnap/config.yaml`
-- Add camera: `camsnap add --name kitchen --host 192.168.0.10 --user user --pass pass`
+- 配置文件：`~/.config/camsnap/config.yaml`
+- 添加摄像头：`camsnap add --name kitchen --host 192.168.0.10 --user user --pass pass`
 
-Common commands
+## 常用命令
 
-- Discover: `camsnap discover --info`
-- Snapshot: `camsnap snap kitchen --out shot.jpg`
-- Clip: `camsnap clip kitchen --dur 5s --out clip.mp4`
-- Motion watch: `camsnap watch kitchen --threshold 0.2 --action '...'`
-- Doctor: `camsnap doctor --probe`
+- 发现设备：`camsnap discover --info`
+- 快照：`camsnap snap kitchen --out shot.jpg`
+- 剪辑：`camsnap clip kitchen --dur 5s --out clip.mp4`
+- 移动侦测：`camsnap watch kitchen --threshold 0.2 --action '...'`
+- 诊断：`camsnap doctor --probe`
 
-Notes
+## 注意事项
 
-- Requires `ffmpeg` on PATH.
-- Prefer a short test capture before longer clips.
+- 需要 PATH 中包含 `ffmpeg`。
+- 在进行较长剪辑之前，建议先进行简短的测试捕捉。

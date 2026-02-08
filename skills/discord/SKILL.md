@@ -1,33 +1,33 @@
 ---
 name: discord
-description: Use when you need to control Discord from OpenClaw via the discord tool: send messages, react, post or upload stickers, upload emojis, run polls, manage threads/pins/search, create/edit/delete channels and categories, fetch permissions or member/role/channel info, set bot presence/activity, or handle moderation actions in Discord DMs or channels.
-metadata: {"openclaw":{"emoji":"🎮","requires":{"config":["channels.discord"]}}}
+description: 通过 discord 工具控制 Discord：发送消息、添加反应、管理贴纸/表情、发起投票、管理线程/置顶/搜索、管理频道/类别、获取成员/角色/频道信息、设置机器人状态或执行管理操作。
+metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.discord"] } } }
 ---
 
-# Discord Actions
+# Discord 操作
 
-## Overview
+## 概览
 
-Use `discord` to manage messages, reactions, threads, polls, and moderation. You can disable groups via `discord.actions.*` (defaults to enabled, except roles/moderation). The tool uses the bot token configured for OpenClaw.
+使用 `discord` 来管理消息、反应、线程、投票和管理操作。你可以通过 `discord.actions.*` 禁用某些操作组（除了角色/管理操作外，默认均为启用状态）。该工具使用为 OpenClaw 配置的机器人令牌（bot token）。
 
-## Inputs to collect
+## 需要收集的输入
 
-- For reactions: `channelId`, `messageId`, and an `emoji`.
-- For fetchMessage: `guildId`, `channelId`, `messageId`, or a `messageLink` like `https://discord.com/channels/<guildId>/<channelId>/<messageId>`.
-- For stickers/polls/sendMessage: a `to` target (`channel:<id>` or `user:<id>`). Optional `content` text.
-- Polls also need a `question` plus 2–10 `answers`.
-- For media: `mediaUrl` with `file:///path` for local files or `https://...` for remote.
-- For emoji uploads: `guildId`, `name`, `mediaUrl`, optional `roleIds` (limit 256KB, PNG/JPG/GIF).
-- For sticker uploads: `guildId`, `name`, `description`, `tags`, `mediaUrl` (limit 512KB, PNG/APNG/Lottie JSON).
+- **反应（Reaction）**：需要 `channelId`、`messageId` 和一个 `emoji`。
+- **获取消息（fetchMessage）**：需要 `guildId`、`channelId`、`messageId`，或者类似 `https://discord.com/channels/<guildId>/<channelId>/<messageId>` 的 `messageLink`。
+- **贴纸/投票/发送消息**：需要一个 `to` 目标（`channel:<id>` 或 `user:<id>`）。可选 `content` 文本。
+- **投票（Poll）**：还需要一个 `question`（问题）以及 2-10 个 `answers`（选项）。
+- **媒体文件**：`mediaUrl` 支持本地文件的 `file:///path` 或远程文件的 `https://...`。
+- **上传表情符号**：需要 `guildId`、`name`、`mediaUrl`，可选 `roleIds`（限制 256KB，PNG/JPG/GIF）。
+- **上传贴纸**：需要 `guildId`、`name`、`description`、`tags`、`mediaUrl`（限制 512KB，PNG/APNG/Lottie JSON）。
 
-Message context lines include `discord message id` and `channel` fields you can reuse directly.
+消息上下文行包含你可以直接复用的 `discord message id` 和 `channel` 字段。
 
-**Note:** `sendMessage` uses `to: "channel:<id>"` format, not `channelId`. Other actions like `react`, `readMessages`, `editMessage` use `channelId` directly.
-**Note:** `fetchMessage` accepts message IDs or full links like `https://discord.com/channels/<guildId>/<channelId>/<messageId>`.
+**注意：** `sendMessage` 使用 `to: "channel:<id>"` 格式，而不是 `channelId`。其他操作如 `react`、`readMessages`、`editMessage` 则直接使用 `channelId`。
+**注意：** `fetchMessage` 接受消息 ID 或完整链接，如 `https://discord.com/channels/<guildId>/<channelId>/<messageId>`。
 
-## Actions
+## 操作
 
-### React to a message
+### 对消息添加反应
 
 ```json
 {
@@ -38,7 +38,7 @@ Message context lines include `discord message id` and `channel` fields you can 
 }
 ```
 
-### List reactions + users
+### 列出反应和用户
 
 ```json
 {
@@ -49,21 +49,21 @@ Message context lines include `discord message id` and `channel` fields you can 
 }
 ```
 
-### Send a sticker
+### 发送贴纸
 
 ```json
 {
   "action": "sticker",
   "to": "channel:123",
   "stickerIds": ["9876543210"],
-  "content": "Nice work!"
+  "content": "做的不错！"
 }
 ```
 
-- Up to 3 sticker IDs per message.
-- `to` can be `user:<id>` for DMs.
+- 每条消息最多支持 3 个贴纸 ID。
+- `to` 可以是 `user:<id>` 以发送私信。
 
-### Upload a custom emoji
+### 上传自定义表情符号
 
 ```json
 {
@@ -75,42 +75,42 @@ Message context lines include `discord message id` and `channel` fields you can 
 }
 ```
 
-- Emoji images must be PNG/JPG/GIF and <= 256KB.
-- `roleIds` is optional; omit to make the emoji available to everyone.
+- 表情符号图像必须为 PNG/JPG/GIF 且 <= 256KB。
+- `roleIds` 是可选的；省略则使该表情符号对所有人可用。
 
-### Upload a sticker
+### 上传贴纸
 
 ```json
 {
   "action": "stickerUpload",
   "guildId": "999",
   "name": "openclaw_wave",
-  "description": "OpenClaw waving hello",
+  "description": "OpenClaw 挥手问好",
   "tags": "👋",
   "mediaUrl": "file:///tmp/wave.png"
 }
 ```
 
-- Stickers require `name`, `description`, and `tags`.
-- Uploads must be PNG/APNG/Lottie JSON and <= 512KB.
+- 贴纸需要 `name`、`description` 和 `tags`。
+- 上传的文件必须为 PNG/APNG/Lottie JSON 且 <= 512KB。
 
-### Create a poll
+### 创建投票
 
 ```json
 {
   "action": "poll",
   "to": "channel:123",
-  "question": "Lunch?",
-  "answers": ["Pizza", "Sushi", "Salad"],
+  "question": "午饭吃什么？",
+  "answers": ["披萨", "寿司", "沙拉"],
   "allowMultiselect": false,
   "durationHours": 24,
-  "content": "Vote now"
+  "content": "快来投票"
 }
 ```
 
-- `durationHours` defaults to 24; max 32 days (768 hours).
+- `durationHours` 默认为 24；最大 32 天（768 小时）。
 
-### Check bot permissions for a channel
+### 检查机器人在频道中的权限
 
 ```json
 {
@@ -119,29 +119,29 @@ Message context lines include `discord message id` and `channel` fields you can 
 }
 ```
 
-## Ideas to try
+## 尝试这些点子
 
-- React with ✅/⚠️ to mark status updates.
-- Post a quick poll for release decisions or meeting times.
-- Send celebratory stickers after successful deploys.
-- Upload new emojis/stickers for release moments.
-- Run weekly “priority check” polls in team channels.
-- DM stickers as acknowledgements when a user’s request is completed.
+- 使用 ✅/⚠️ 来标记状态更新。
+- 针对发布决策或会议时间发起快速投票。
+- 在成功部署后发送庆祝贴纸。
+- 在发布时刻上传新的表情符号/贴纸。
+- 在团队频道中运行每周“优先级检查”投票。
+- 在用户请求完成后，通过私信发送贴纸以示确认。
 
-## Action gating
+## 操作门控
 
-Use `discord.actions.*` to disable action groups:
+使用 `discord.actions.*` 禁用操作组：
 
-- `reactions` (react + reactions list + emojiList)
-- `stickers`, `polls`, `permissions`, `messages`, `threads`, `pins`, `search`
-- `emojiUploads`, `stickerUploads`
-- `memberInfo`, `roleInfo`, `channelInfo`, `voiceStatus`, `events`
-- `roles` (role add/remove, default `false`)
-- `channels` (channel/category create/edit/delete/move, default `false`)
-- `moderation` (timeout/kick/ban, default `false`)
-- `presence` (bot status/activity, default `false`)
+- `reactions`（添加反应 + 反应列表 + 表情符号列表）
+- `stickers`、`polls`、`permissions`、`messages`、`threads`、`pins`、`search`
+- `emojiUploads`、`stickerUploads`
+- `memberInfo`、`roleInfo`、`channelInfo`、`voiceStatus`、`events`
+- `roles`（角色添加/移除，默认 `false`）
+- `channels`（频道/类别创建/编辑/删除/移动，默认 `false`）
+- `moderation`（禁言/踢出/封禁，默认 `false`）
+- `presence`（机器人状态/活动，默认 `false`）
 
-### Read recent messages
+### 读取最近消息
 
 ```json
 {
@@ -151,7 +151,7 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Fetch a single message
+### 获取单条消息
 
 ```json
 {
@@ -169,37 +169,37 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Send/edit/delete a message
+### 发送/编辑/删除消息
 
 ```json
 {
   "action": "sendMessage",
   "to": "channel:123",
-  "content": "Hello from OpenClaw"
+  "content": "来自 OpenClaw 的问候"
 }
 ```
 
-**With media attachment:**
+**带有媒体附件：**
 
 ```json
 {
   "action": "sendMessage",
   "to": "channel:123",
-  "content": "Check out this audio!",
+  "content": "听听这段音频！",
   "mediaUrl": "file:///tmp/audio.mp3"
 }
 ```
 
-- `to` uses format `channel:<id>` or `user:<id>` for DMs (not `channelId`!)
-- `mediaUrl` supports local files (`file:///path/to/file`) and remote URLs (`https://...`)
-- Optional `replyTo` with a message ID to reply to a specific message
+- `to` 使用格式 `channel:<id>` 或 `user:<id>` 发送私信（**不是** `channelId`！）。
+- `mediaUrl` 支持本地文件（`file:///path/to/file`）和远程 URL（`https://...`）。
+- 可选 `replyTo` 配合消息 ID 来回复特定消息。
 
 ```json
 {
   "action": "editMessage",
   "channelId": "123",
   "messageId": "456",
-  "content": "Fixed typo"
+  "content": "修正了错别字"
 }
 ```
 
@@ -211,13 +211,13 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Threads
+### 线程（Thread）
 
 ```json
 {
   "action": "threadCreate",
   "channelId": "123",
-  "name": "Bug triage",
+  "name": "Bug 分选",
   "messageId": "456"
 }
 ```
@@ -233,11 +233,11 @@ Use `discord.actions.*` to disable action groups:
 {
   "action": "threadReply",
   "channelId": "777",
-  "content": "Replying in thread"
+  "content": "在线程中回复"
 }
 ```
 
-### Pins
+### 置顶（Pin）
 
 ```json
 {
@@ -254,19 +254,19 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Search messages
+### 搜索消息
 
 ```json
 {
   "action": "searchMessages",
   "guildId": "999",
-  "content": "release notes",
+  "content": "发布说明",
   "channelIds": ["123", "456"],
   "limit": 10
 }
 ```
 
-### Member + role info
+### 成员和角色信息
 
 ```json
 {
@@ -283,7 +283,7 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### List available custom emojis
+### 列出可用的自定义表情符号
 
 ```json
 {
@@ -292,7 +292,7 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Role changes (disabled by default)
+### 角色变更（默认禁用）
 
 ```json
 {
@@ -303,7 +303,7 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Channel info
+### 频道信息
 
 ```json
 {
@@ -319,51 +319,51 @@ Use `discord.actions.*` to disable action groups:
 }
 ```
 
-### Channel management (disabled by default)
+### 频道管理（默认禁用）
 
-Create, edit, delete, and move channels and categories. Enable via `discord.actions.channels: true`.
+创建、编辑、删除和移动频道与类别。通过 `discord.actions.channels: true` 启用。
 
-**Create a text channel:**
+**创建文本频道：**
 
 ```json
 {
   "action": "channelCreate",
   "guildId": "999",
-  "name": "general-chat",
+  "name": "综合聊天",
   "type": 0,
   "parentId": "888",
-  "topic": "General discussion"
+  "topic": "综合讨论"
 }
 ```
 
-- `type`: Discord channel type integer (0 = text, 2 = voice, 4 = category; other values supported)
-- `parentId`: category ID to nest under (optional)
-- `topic`, `position`, `nsfw`: optional
+- `type`: Discord 频道类型整数（0 = 文本, 2 = 语音, 4 = 类别；支持其他值）。
+- `parentId`: 所属类别的 ID（可选）。
+- `topic`、`position`、`nsfw`: 可选。
 
-**Create a category:**
+**创建类别：**
 
 ```json
 {
   "action": "categoryCreate",
   "guildId": "999",
-  "name": "Projects"
+  "name": "项目"
 }
 ```
 
-**Edit a channel:**
+**编辑频道：**
 
 ```json
 {
   "action": "channelEdit",
   "channelId": "123",
-  "name": "new-name",
-  "topic": "Updated topic"
+  "name": "新名称",
+  "topic": "更新后的主题"
 }
 ```
 
-- Supports `name`, `topic`, `position`, `parentId` (null to remove from category), `nsfw`, `rateLimitPerUser`
+- 支持 `name`、`topic`、`position`、`parentId`（设为 null 则移出类别）、`nsfw`、`rateLimitPerUser`。
 
-**Move a channel:**
+**移动频道：**
 
 ```json
 {
@@ -375,9 +375,9 @@ Create, edit, delete, and move channels and categories. Enable via `discord.acti
 }
 ```
 
-- `parentId`: target category (null to move to top level)
+- `parentId`: 目标类别（设为 null 则移动到顶层）。
 
-**Delete a channel:**
+**删除频道：**
 
 ```json
 {
@@ -386,13 +386,13 @@ Create, edit, delete, and move channels and categories. Enable via `discord.acti
 }
 ```
 
-**Edit/delete a category:**
+**编辑/删除类别：**
 
 ```json
 {
   "action": "categoryEdit",
   "categoryId": "888",
-  "name": "Renamed Category"
+  "name": "重命名后的类别"
 }
 ```
 
@@ -403,7 +403,7 @@ Create, edit, delete, and move channels and categories. Enable via `discord.acti
 }
 ```
 
-### Voice status
+### 语音状态
 
 ```json
 {
@@ -413,7 +413,7 @@ Create, edit, delete, and move channels and categories. Enable via `discord.acti
 }
 ```
 
-### Scheduled events
+### 计划活动
 
 ```json
 {
@@ -422,7 +422,7 @@ Create, edit, delete, and move channels and categories. Enable via `discord.acti
 }
 ```
 
-### Moderation (disabled by default)
+### 管理操作（默认禁用）
 
 ```json
 {
@@ -433,19 +433,19 @@ Create, edit, delete, and move channels and categories. Enable via `discord.acti
 }
 ```
 
-### Bot presence/activity (disabled by default)
+### 机器人状态/活动（默认禁用）
 
-Set the bot's online status and activity. Enable via `discord.actions.presence: true`.
+设置机器人的在线状态和活动。通过 `discord.actions.presence: true` 启用。
 
-Discord bots can only set `name`, `state`, `type`, and `url` on an activity. Other Activity fields (details, emoji, assets) are accepted by the gateway but silently ignored by Discord for bots.
+Discord 机器人只能设置活动的 `name`、`state`、`type` 和 `url`。其他活动字段（details、emoji、assets）虽然会被网关接受，但会被 Discord 忽略。
 
-**How fields render by activity type:**
+**各活动类型的渲染方式：**
 
-- **playing, streaming, listening, watching, competing**: `activityName` is shown in the sidebar under the bot's name (e.g. "**with fire**" for type "playing" and name "with fire"). `activityState` is shown in the profile flyout.
-- **custom**: `activityName` is ignored. Only `activityState` is displayed as the status text in the sidebar.
-- **streaming**: `activityUrl` may be displayed or embedded by the client.
+- **playing, streaming, listening, watching, competing**: `activityName` 显示在侧边栏机器人名称下方（例如：类型为 "playing"、名称为 "with fire" 时，显示为 "**with fire**"）。`activityState` 显示在个人资料弹出层中。
+- **custom**: `activityName` 被忽略。只有 `activityState` 会作为侧边栏的状态文本显示。
+- **streaming**: `activityUrl` 可能会被客户端显示或嵌入。
 
-**Set playing status:**
+**设置“正在玩”状态：**
 
 ```json
 {
@@ -455,33 +455,33 @@ Discord bots can only set `name`, `state`, `type`, and `url` on an activity. Oth
 }
 ```
 
-Result in sidebar: "**with fire**". Flyout shows: "Playing: with fire"
+侧边栏结果："**with fire**"。弹出层显示："Playing: with fire"。
 
-**With state (shown in flyout):**
+**带有状态（显示在弹出层）：**
 
 ```json
 {
   "action": "setPresence",
   "activityType": "playing",
   "activityName": "My Game",
-  "activityState": "In the lobby"
+  "activityState": "在大厅中"
 }
 ```
 
-Result in sidebar: "**My Game**". Flyout shows: "Playing: My Game (newline) In the lobby".
+侧边栏结果："**My Game**"。弹出层显示："Playing: My Game (换行) 在大厅中"。
 
-**Set streaming (optional URL, may not render for bots):**
+**设置“正在直播”（可选 URL，机器人可能不渲染）：**
 
 ```json
 {
   "action": "setPresence",
   "activityType": "streaming",
-  "activityName": "Live coding",
+  "activityName": "现场编程",
   "activityUrl": "https://twitch.tv/example"
 }
 ```
 
-**Set listening/watching:**
+**设置“正在听/看”：**
 
 ```json
 {
@@ -495,23 +495,23 @@ Result in sidebar: "**My Game**". Flyout shows: "Playing: My Game (newline) In t
 {
   "action": "setPresence",
   "activityType": "watching",
-  "activityName": "the logs"
+  "activityName": "日志"
 }
 ```
 
-**Set a custom status (text in sidebar):**
+**设置自定义状态（侧边栏文本）：**
 
 ```json
 {
   "action": "setPresence",
   "activityType": "custom",
-  "activityState": "Vibing"
+  "activityState": "放空中"
 }
 ```
 
-Result in sidebar: "Vibing". Note: `activityName` is ignored for custom type.
+侧边栏结果："放空中"。注意：对于 `custom` 类型，`activityName` 会被忽略。
 
-**Set bot status only (no activity/clear status):**
+**仅设置机器人状态（无活动/清除状态）：**
 
 ```json
 {
@@ -520,59 +520,59 @@ Result in sidebar: "Vibing". Note: `activityName` is ignored for custom type.
 }
 ```
 
-**Parameters:**
+**参数：**
 
 - `activityType`: `playing`, `streaming`, `listening`, `watching`, `competing`, `custom`
-- `activityName`: text shown in the sidebar for non-custom types (ignored for `custom`)
-- `activityUrl`: Twitch or YouTube URL for streaming type (optional; may not render for bots)
-- `activityState`: for `custom` this is the status text; for other types it shows in the profile flyout
-- `status`: `online` (default), `dnd`, `idle`, `invisible`
+- `activityName`: 非 custom 类型在侧边栏显示的文本（对于 `custom` 则忽略）
+- `activityUrl`: 直播类型的 Twitch 或 YouTube URL（可选；机器人可能不渲染）
+- `activityState`: 对于 `custom` 是状态文本；对于其他类型则显示在个人资料弹出层中
+- `status`: `online` (默认), `dnd`, `idle`, `invisible`
 
-## Discord Writing Style Guide
+## Discord 编写风格指南
 
-**Keep it conversational!** Discord is a chat platform, not documentation.
+**保持对话感！** Discord 是一个聊天平台，不是文档。
 
-### Do
+### 建议
 
-- Short, punchy messages (1-3 sentences ideal)
-- Multiple quick replies > one wall of text
-- Use emoji for tone/emphasis 🦞
-- Lowercase casual style is fine
-- Break up info into digestible chunks
-- Match the energy of the conversation
+- 消息短小精悍（理想情况下 1-3 句）。
+- 多次快速回复 > 一大堆长篇大论。
+- 使用表情符号来表达语气/重点 🦞。
+- 全小写的随意风格也没问题。
+- 将信息拆分为易于消化的片段。
+- 匹配对话的氛围。
 
-### Don't
+### 不建议
 
-- No markdown tables (Discord renders them as ugly raw `| text |`)
-- No `## Headers` for casual chat (use **bold** or CAPS for emphasis)
-- Avoid multi-paragraph essays
-- Don't over-explain simple things
-- Skip the "I'd be happy to help!" fluff
+- **不要使用 Markdown 表格**（Discord 会将其渲染为丑陋的原始 `| text |`）。
+- **不要在随意聊天中使用 `## 标题`**（使用 **加粗** 或大写来表示强调）。
+- 避免写好几段的长文。
+- 不要过度解释简单的事情。
+- 省掉“我很乐意为您提供帮助！”之类的废话。
 
-### Formatting that works
+### 行之有效的格式
 
-- **bold** for emphasis
-- `code` for technical terms
-- Lists for multiple items
-- > quotes for referencing
-- Wrap multiple links in `<>` to suppress embeds
+- **加粗** 表示强调。
+- `代码块` 表示技术术语。
+- 列表 表示多个项目。
+- `> 引用` 表示参考。
+- 将多个链接包裹在 `<>` 中以抑制预览图。
 
-### Example transformations
+### 示例转换
 
-❌ Bad:
-
-```
-I'd be happy to help with that! Here's a comprehensive overview of the versioning strategies available:
-
-## Semantic Versioning
-Semver uses MAJOR.MINOR.PATCH format where...
-
-## Calendar Versioning
-CalVer uses date-based versions like...
-```
-
-✅ Good:
+❌ 差：
 
 ```
-versioning options: semver (1.2.3), calver (2026.01.04), or yolo (`latest` forever). what fits your release cadence?
+我很乐意为您提供帮助！这里是可用版本策略的全面概览：
+
+## 语义化版本 (Semantic Versioning)
+Semver 使用主版本号.次版本号.修订号格式，其中...
+
+## 日历化版本 (Calendar Versioning)
+CalVer 使用基于日期的版本，如...
+```
+
+✅ 好：
+
+```
+版本选项：semver (1.2.3)、calver (2026.01.04) 或者干脆 yolo (永远 `latest`)。哪种适合你的发布节奏？
 ```

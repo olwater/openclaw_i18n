@@ -1,6 +1,6 @@
 ---
 name: eightctl
-description: Control Eight Sleep pods (status, temperature, alarms, schedules).
+description: 控制 Eight Sleep 床垫（状态、温度、闹钟、日程）。
 homepage: https://eightctl.sh
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "go",
               "module": "github.com/steipete/eightctl/cmd/eightctl@latest",
               "bins": ["eightctl"],
-              "label": "Install eightctl (go)",
+              "label": "安装 eightctl (go)",
             },
           ],
       },
@@ -24,27 +24,27 @@ metadata:
 
 # eightctl
 
-Use `eightctl` for Eight Sleep pod control. Requires auth.
+使用 `eightctl` 控制 Eight Sleep 床垫。需要身份验证。
 
-Auth
+## 认证
 
-- Config: `~/.config/eightctl/config.yaml`
-- Env: `EIGHTCTL_EMAIL`, `EIGHTCTL_PASSWORD`
+- 配置文件：`~/.config/eightctl/config.yaml`
+- 环境变量：`EIGHTCTL_EMAIL`、`EIGHTCTL_PASSWORD`
 
-Quick start
+## 快速开始
 
 - `eightctl status`
 - `eightctl on|off`
 - `eightctl temp 20`
 
-Common tasks
+## 常用任务
 
-- Alarms: `eightctl alarm list|create|dismiss`
-- Schedules: `eightctl schedule list|create|update`
-- Audio: `eightctl audio state|play|pause`
-- Base: `eightctl base info|angle`
+- 闹钟：`eightctl alarm list|create|dismiss`
+- 日程：`eightctl schedule list|create|update`
+- 音频：`eightctl audio state|play|pause`
+- 床基座：`eightctl base info|angle`
 
-Notes
+## 注意事项
 
-- API is unofficial and rate-limited; avoid repeated logins.
-- Confirm before changing temperature or alarms.
+- API 是非官方的且有速率限制；避免重复登录。
+- 在更改温度或闹钟之前请先确认。

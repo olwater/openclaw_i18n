@@ -1,6 +1,6 @@
 ---
 name: songsee
-description: Generate spectrograms and feature-panel visualizations from audio with the songsee CLI.
+description: 使用 songsee CLI 从音频生成语谱图和特征面板可视化。
 homepage: https://github.com/steipete/songsee
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "brew",
               "formula": "steipete/tap/songsee",
               "bins": ["songsee"],
-              "label": "Install songsee (brew)",
+              "label": "安装 songsee (brew)",
             },
           ],
       },
@@ -24,26 +24,26 @@ metadata:
 
 # songsee
 
-Generate spectrograms + feature panels from audio.
+从音频生成语谱图（Spectrogram）和特征面板。
 
-Quick start
+## 快速开始
 
-- Spectrogram: `songsee track.mp3`
-- Multi-panel: `songsee track.mp3 --viz spectrogram,mel,chroma,hpss,selfsim,loudness,tempogram,mfcc,flux`
-- Time slice: `songsee track.mp3 --start 12.5 --duration 8 -o slice.jpg`
-- Stdin: `cat track.mp3 | songsee - --format png -o out.png`
+- 语谱图：`songsee track.mp3`
+- 多面板：`songsee track.mp3 --viz spectrogram,mel,chroma,hpss,selfsim,loudness,tempogram,mfcc,flux`
+- 时间切片：`songsee track.mp3 --start 12.5 --duration 8 -o slice.jpg`
+- 标准输入：`cat track.mp3 | songsee - --format png -o out.png`
 
-Common flags
+## 常用标志
 
-- `--viz` list (repeatable or comma-separated)
-- `--style` palette (classic, magma, inferno, viridis, gray)
-- `--width` / `--height` output size
-- `--window` / `--hop` FFT settings
-- `--min-freq` / `--max-freq` frequency range
-- `--start` / `--duration` time slice
+- `--viz` 列表（可重复或用逗号分隔）
+- `--style` 调色板（classic, magma, inferno, viridis, gray）
+- `--width` / `--height` 输出尺寸
+- `--window` / `--hop` FFT 设置
+- `--min-freq` / `--max-freq` 频率范围
+- `--start` / `--duration` 时间切片
 - `--format` jpg|png
 
-Notes
+## 注意事项
 
-- WAV/MP3 decode native; other formats use ffmpeg if available.
-- Multiple `--viz` renders a grid.
+- 原生支持 WAV/MP3 解码；其他格式如果可用则使用 ffmpeg。
+- 多个 `--viz` 会渲染出一个网格。

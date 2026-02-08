@@ -1,156 +1,156 @@
 ---
 name: coding-agent
-description: Run Codex CLI, Claude Code, OpenCode, or Pi Coding Agent via background process for programmatic control.
+description: 通过后台进程运行 Codex CLI、Claude Code、OpenCode 或 Pi Coding Agent 以进行程序化控制。
 metadata:
   {
     "openclaw": { "emoji": "🧩", "requires": { "anyBins": ["claude", "codex", "opencode", "pi"] } },
   }
 ---
 
-# Coding Agent (bash-first)
+# 编程代理（Bash 优先）
 
-Use **bash** (with optional background mode) for all coding agent work. Simple and effective.
+使用 **bash**（可选后台模式）进行所有编程代理工作。简单且高效。
 
-## ⚠️ PTY Mode Required!
+## ⚠️ 必须使用 PTY 模式！
 
-Coding agents (Codex, Claude Code, Pi) are **interactive terminal applications** that need a pseudo-terminal (PTY) to work correctly. Without PTY, you'll get broken output, missing colors, or the agent may hang.
+编程代理（Codex、Claude Code、Pi）是**交互式终端应用程序**，需要伪终端（PTY）才能正常工作。如果没有 PTY，你会得到损坏的输出、丢失颜色，或者代理可能会挂起。
 
-**Always use `pty:true`** when running coding agents:
+运行编程代理时**务必使用 `pty:true`**：
 
 ```bash
-# ✅ Correct - with PTY
+# ✅ 正确 - 带有 PTY
 bash pty:true command:"codex exec 'Your prompt'"
 
-# ❌ Wrong - no PTY, agent may break
+# ❌ 错误 - 没有 PTY，代理可能会崩溃
 bash command:"codex exec 'Your prompt'"
 ```
 
-### Bash Tool Parameters
+### Bash 工具参数
 
-| Parameter    | Type    | Description                                                                 |
-| ------------ | ------- | --------------------------------------------------------------------------- |
-| `command`    | string  | The shell command to run                                                    |
-| `pty`        | boolean | **Use for coding agents!** Allocates a pseudo-terminal for interactive CLIs |
-| `workdir`    | string  | Working directory (agent sees only this folder's context)                   |
-| `background` | boolean | Run in background, returns sessionId for monitoring                         |
-| `timeout`    | number  | Timeout in seconds (kills process on expiry)                                |
-| `elevated`   | boolean | Run on host instead of sandbox (if allowed)                                 |
+| 参数         | 类型    | 描述                                       |
+| ------------ | ------- | ------------------------------------------ |
+| `command`    | string  | 要运行的 shell 命令                        |
+| `pty`        | boolean | **编程代理必用！** 为交互式 CLI 分配伪终端 |
+| `workdir`    | string  | 工作目录（代理仅能看到此文件夹的上下文）   |
+| `background` | boolean | 在后台运行，返回 sessionId 以供监控        |
+| `timeout`    | number  | 超时时间（秒），到期后将杀死进程           |
+| `elevated`   | boolean | 在宿主机而非沙盒上运行（如果允许）         |
 
-### Process Tool Actions (for background sessions)
+### 进程工具操作（用于后台会话）
 
-| Action      | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| `list`      | List all running/recent sessions                     |
-| `poll`      | Check if session is still running                    |
-| `log`       | Get session output (with optional offset/limit)      |
-| `write`     | Send raw data to stdin                               |
-| `submit`    | Send data + newline (like typing and pressing Enter) |
-| `send-keys` | Send key tokens or hex bytes                         |
-| `paste`     | Paste text (with optional bracketed mode)            |
-| `kill`      | Terminate the session                                |
+| 操作        | 描述                                  |
+| ----------- | ------------------------------------- |
+| `list`      | 列出所有正在运行或最近的会话          |
+| `poll`      | 检查会话是否仍在运行                  |
+| `log`       | 获取会话输出（可选偏移量/限制）       |
+| `write`     | 向 stdin 发送原始数据                 |
+| `submit`    | 发送数据 + 换行符（模拟输入并按回车） |
+| `send-keys` | 发送按键令牌或十六进制字节            |
+| `paste`     | 粘贴文本（可选括号模式）              |
+| `kill`      | 终止会话                              |
 
 ---
 
-## Quick Start: One-Shot Tasks
+## 快速开始：一次性任务
 
-For quick prompts/chats, create a temp git repo and run:
+对于快速提示/聊天，创建一个临时 git 仓库并运行：
 
 ```bash
-# Quick chat (Codex needs a git repo!)
-SCRATCH=$(mktemp -d) && cd $SCRATCH && git init && codex exec "Your prompt here"
+# 快速聊天（Codex 需要 git 仓库！）
+SCRATCH=$(mktemp -d) && cd $SCRATCH && git init && codex exec "你的提示词"
 
-# Or in a real project - with PTY!
-bash pty:true workdir:~/Projects/myproject command:"codex exec 'Add error handling to the API calls'"
+# 或者在真实项目中 - 带有 PTY！
+bash pty:true workdir:~/Projects/myproject command:"codex exec '为 API 调用添加错误处理'"
 ```
 
-**Why git init?** Codex refuses to run outside a trusted git directory. Creating a temp repo solves this for scratch work.
+**为什么要 git init？** Codex 拒绝在受信任的 git 目录之外运行。为草稿工作创建一个临时仓库可以解决这个问题。
 
 ---
 
-## The Pattern: workdir + background + pty
+## 模式：workdir + background + pty
 
-For longer tasks, use background mode with PTY:
+对于较长时间的任务，请使用带有 PTY 的后台模式：
 
 ```bash
-# Start agent in target directory (with PTY!)
-bash pty:true workdir:~/project background:true command:"codex exec --full-auto 'Build a snake game'"
-# Returns sessionId for tracking
+# 在目标目录启动代理（带有 PTY！）
+bash pty:true workdir:~/project background:true command:"codex exec --full-auto '构建一个贪吃蛇游戏'"
+# 返回用于跟踪的 sessionId
 
-# Monitor progress
+# 监控进度
 process action:log sessionId:XXX
 
-# Check if done
+# 检查是否完成
 process action:poll sessionId:XXX
 
-# Send input (if agent asks a question)
+# 发送输入（如果代理提出问题）
 process action:write sessionId:XXX data:"y"
 
-# Submit with Enter (like typing "yes" and pressing Enter)
+# 使用 Enter 提交（模拟输入 "yes" 并按回车）
 process action:submit sessionId:XXX data:"yes"
 
-# Kill if needed
+# 如果需要，杀死进程
 process action:kill sessionId:XXX
 ```
 
-**Why workdir matters:** Agent wakes up in a focused directory, doesn't wander off reading unrelated files (like your soul.md 😅).
+**为什么 workdir 很重要：** 代理会在一个专注的目录中醒来，不会到处乱逛去读不相关的文件（比如你的 soul.md 😅）。
 
 ---
 
 ## Codex CLI
 
-**Model:** `gpt-5.2-codex` is the default (set in ~/.codex/config.toml)
+**模型：** 默认为 `gpt-5.2-codex`（在 ~/.codex/config.toml 中设置）
 
-### Flags
+### 标志
 
-| Flag            | Effect                                             |
-| --------------- | -------------------------------------------------- |
-| `exec "prompt"` | One-shot execution, exits when done                |
-| `--full-auto`   | Sandboxed but auto-approves in workspace           |
-| `--yolo`        | NO sandbox, NO approvals (fastest, most dangerous) |
+| 标志            | 作用                               |
+| --------------- | ---------------------------------- |
+| `exec "prompt"` | 一次性执行，完成后退出             |
+| `--full-auto`   | 在沙盒中运行，但在工作区内自动批准 |
+| `--yolo`        | 无沙盒，无批准（最快，也最危险）   |
 
-### Building/Creating
+### 构建/创建
 
 ```bash
-# Quick one-shot (auto-approves) - remember PTY!
-bash pty:true workdir:~/project command:"codex exec --full-auto 'Build a dark mode toggle'"
+# 快速一次性任务（自动批准）- 记得带 PTY！
+bash pty:true workdir:~/project command:"codex exec --full-auto '构建一个深色模式切换开关'"
 
-# Background for longer work
-bash pty:true workdir:~/project background:true command:"codex --yolo 'Refactor the auth module'"
+# 后台运行较长时间的工作
+bash pty:true workdir:~/project background:true command:"codex --yolo '重构身份验证模块'"
 ```
 
-### Reviewing PRs
+### 审查 PR
 
-**⚠️ CRITICAL: Never review PRs in OpenClaw's own project folder!**
-Clone to temp folder or use git worktree.
+**⚠️ 警告：切勿在 OpenClaw 自身的项目文件夹中审查 PR！**
+请克隆到临时文件夹或使用 git worktree。
 
 ```bash
-# Clone to temp for safe review
+# 克隆到临时文件夹以进行安全审查
 REVIEW_DIR=$(mktemp -d)
 git clone https://github.com/user/repo.git $REVIEW_DIR
 cd $REVIEW_DIR && gh pr checkout 130
 bash pty:true workdir:$REVIEW_DIR command:"codex review --base origin/main"
-# Clean up after: trash $REVIEW_DIR
+# 完成后清理：trash $REVIEW_DIR
 
-# Or use git worktree (keeps main intact)
+# 或者使用 git worktree（保持主分支完整）
 git worktree add /tmp/pr-130-review pr-130-branch
 bash pty:true workdir:/tmp/pr-130-review command:"codex review --base main"
 ```
 
-### Batch PR Reviews (parallel army!)
+### 批量 PR 审查（并行大军！）
 
 ```bash
-# Fetch all PR refs first
+# 先获取所有 PR 引用
 git fetch origin '+refs/pull/*/head:refs/remotes/origin/pr/*'
 
-# Deploy the army - one Codex per PR (all with PTY!)
+# 部署大军 - 每个 PR 一个 Codex（全部带 PTY！）
 bash pty:true workdir:~/project background:true command:"codex exec 'Review PR #86. git diff origin/main...origin/pr/86'"
 bash pty:true workdir:~/project background:true command:"codex exec 'Review PR #87. git diff origin/main...origin/pr/87'"
 
-# Monitor all
+# 监控所有进程
 process action:list
 
-# Post results to GitHub
-gh pr comment <PR#> --body "<review content>"
+# 将结果发布到 GitHub
+gh pr comment <PR#> --body "<审查内容>"
 ```
 
 ---
@@ -158,11 +158,11 @@ gh pr comment <PR#> --body "<review content>"
 ## Claude Code
 
 ```bash
-# With PTY for proper terminal output
-bash pty:true workdir:~/project command:"claude 'Your task'"
+# 带有 PTY 以获得正确的终端输出
+bash pty:true workdir:~/project command:"claude '你的任务'"
 
-# Background
-bash pty:true workdir:~/project background:true command:"claude 'Your task'"
+# 后台运行
+bash pty:true workdir:~/project background:true command:"claude '你的任务'"
 ```
 
 ---
@@ -170,115 +170,115 @@ bash pty:true workdir:~/project background:true command:"claude 'Your task'"
 ## OpenCode
 
 ```bash
-bash pty:true workdir:~/project command:"opencode run 'Your task'"
+bash pty:true workdir:~/project command:"opencode run '你的任务'"
 ```
 
 ---
 
-## Pi Coding Agent
+## Pi 编程代理
 
 ```bash
-# Install: npm install -g @mariozechner/pi-coding-agent
-bash pty:true workdir:~/project command:"pi 'Your task'"
+# 安装：npm install -g @mariozechner/pi-coding-agent
+bash pty:true workdir:~/project command:"pi '你的任务'"
 
-# Non-interactive mode (PTY still recommended)
-bash pty:true command:"pi -p 'Summarize src/'"
+# 非交互模式（仍建议使用 PTY）
+bash pty:true command:"pi -p '总结 src/'"
 
-# Different provider/model
-bash pty:true command:"pi --provider openai --model gpt-4o-mini -p 'Your task'"
+# 使用不同的提供商/模型
+bash pty:true command:"pi --provider openai --model gpt-4o-mini -p '你的任务'"
 ```
 
-**Note:** Pi now has Anthropic prompt caching enabled (PR #584, merged Jan 2026)!
+**注意：** Pi 现在已启用 Anthropic 提示词缓存（PR #584，2026 年 1 月合并）！
 
 ---
 
-## Parallel Issue Fixing with git worktrees
+## 使用 git worktree 并行修复 Issue
 
-For fixing multiple issues in parallel, use git worktrees:
+为了并行修复多个 Issue，请使用 git worktree：
 
 ```bash
-# 1. Create worktrees for each issue
+# 1. 为每个 Issue 创建 worktree
 git worktree add -b fix/issue-78 /tmp/issue-78 main
 git worktree add -b fix/issue-99 /tmp/issue-99 main
 
-# 2. Launch Codex in each (background + PTY!)
-bash pty:true workdir:/tmp/issue-78 background:true command:"pnpm install && codex --yolo 'Fix issue #78: <description>. Commit and push.'"
-bash pty:true workdir:/tmp/issue-99 background:true command:"pnpm install && codex --yolo 'Fix issue #99: <description>. Commit and push.'"
+# 2. 在每个目录中启动 Codex（后台 + PTY！）
+bash pty:true workdir:/tmp/issue-78 background:true command:"pnpm install && codex --yolo '修复 issue #78：<描述>。提交并推送。'"
+bash pty:true workdir:/tmp/issue-99 background:true command:"pnpm install && codex --yolo '修复 issue #99：<描述>。提交并推送。'"
 
-# 3. Monitor progress
+# 3. 监控进度
 process action:list
 process action:log sessionId:XXX
 
-# 4. Create PRs after fixes
+# 4. 修复后创建 PR
 cd /tmp/issue-78 && git push -u origin fix/issue-78
 gh pr create --repo user/repo --head fix/issue-78 --title "fix: ..." --body "..."
 
-# 5. Cleanup
+# 5. 清理
 git worktree remove /tmp/issue-78
 git worktree remove /tmp/issue-99
 ```
 
 ---
 
-## ⚠️ Rules
+## ⚠️ 规则
 
-1. **Always use pty:true** - coding agents need a terminal!
-2. **Respect tool choice** - if user asks for Codex, use Codex.
-   - Orchestrator mode: do NOT hand-code patches yourself.
-   - If an agent fails/hangs, respawn it or ask the user for direction, but don't silently take over.
-3. **Be patient** - don't kill sessions because they're "slow"
-4. **Monitor with process:log** - check progress without interfering
-5. **--full-auto for building** - auto-approves changes
-6. **vanilla for reviewing** - no special flags needed
-7. **Parallel is OK** - run many Codex processes at once for batch work
-8. **NEVER start Codex in ~/clawd/** - it'll read your soul docs and get weird ideas about the org chart!
-9. **NEVER checkout branches in ~/Projects/openclaw/** - that's the LIVE OpenClaw instance!
-
----
-
-## Progress Updates (Critical)
-
-When you spawn coding agents in the background, keep the user in the loop.
-
-- Send 1 short message when you start (what's running + where).
-- Then only update again when something changes:
-  - a milestone completes (build finished, tests passed)
-  - the agent asks a question / needs input
-  - you hit an error or need user action
-  - the agent finishes (include what changed + where)
-- If you kill a session, immediately say you killed it and why.
-
-This prevents the user from seeing only "Agent failed before reply" and having no idea what happened.
+1. **务必使用 pty:true** - 编程代理需要终端！
+2. **尊重工具选择** - 如果用户要求使用 Codex，就用 Codex。
+   - 编排模式：不要自己亲手编写补丁。
+   - 如果代理失败/挂起，重启它或询问用户建议，不要默默接管。
+3. **保持耐心** - 不要因为会话“慢”就杀死它们。
+4. **使用 process:log 进行监控** - 在不干扰的情况下检查进度。
+5. **--full-auto 用于构建** - 自动批准更改。
+6. **普通模式用于审查** - 不需要特殊标志。
+7. **可以并行运行** - 对于批量工作，可以同时运行多个 Codex 进程。
+8. **严禁在 ~/clawd/ 启动 Codex** - 它会读取你的灵魂文档，并对组织架构产生奇怪的想法！
+9. **严禁在 ~/Projects/openclaw/ 切换分支** - 那是正在运行的 OpenClaw 实例！
 
 ---
 
-## Auto-Notify on Completion
+## 进度更新（至关重要）
 
-For long-running background tasks, append a wake trigger to your prompt so OpenClaw gets notified immediately when the agent finishes (instead of waiting for the next heartbeat):
+当你在后台启动编程代理时，请保持用户知情。
+
+- 启动时发送 1 条简短消息（运行什么 + 在哪里运行）。
+- 仅当发生变化时再次更新：
+  - 里程碑完成（构建结束、测试通过）
+  - 代理提出问题 / 需要输入
+  - 遇到错误或需要用户操作
+  - 代理完成工作（包含更改内容 + 位置）
+- 如果你杀死了会话，请立即说明原因。
+
+这可以防止用户只看到“代理在回复前失败”而不知道发生了什么。
+
+---
+
+## 完成后自动通知
+
+对于长时间运行的后台任务，在提示词末尾添加一个唤醒触发器，以便在代理完成时 OpenClaw 能立即收到通知（而不是等待下一次心跳）：
 
 ```
-... your task here.
+... 你的任务内容。
 
-When completely finished, run this command to notify me:
-openclaw gateway wake --text "Done: [brief summary of what was built]" --mode now
+全部完成后，运行此命令通知我：
+openclaw gateway wake --text "完成：[构建内容的简短总结]" --mode now
 ```
 
-**Example:**
+**示例：**
 
 ```bash
-bash pty:true workdir:~/project background:true command:"codex --yolo exec 'Build a REST API for todos.
+bash pty:true workdir:~/project background:true command:"codex --yolo exec '为 todos 构建一个 REST API。
 
-When completely finished, run: openclaw gateway wake --text \"Done: Built todos REST API with CRUD endpoints\" --mode now'"
+全部完成后，运行：openclaw gateway wake --text \"完成：已构建包含 CRUD 端点的 todos REST API\" --mode now'"
 ```
 
-This triggers an immediate wake event — Skippy gets pinged in seconds, not 10 minutes.
+这会触发一个即时唤醒事件——Skippy 会在几秒钟内收到提醒，而不是 10 分钟。
 
 ---
 
-## Learnings (Jan 2026)
+## 经验教训（2026 年 1 月）
 
-- **PTY is essential:** Coding agents are interactive terminal apps. Without `pty:true`, output breaks or agent hangs.
-- **Git repo required:** Codex won't run outside a git directory. Use `mktemp -d && git init` for scratch work.
-- **exec is your friend:** `codex exec "prompt"` runs and exits cleanly - perfect for one-shots.
-- **submit vs write:** Use `submit` to send input + Enter, `write` for raw data without newline.
-- **Sass works:** Codex responds well to playful prompts. Asked it to write a haiku about being second fiddle to a space lobster, got: _"Second chair, I code / Space lobster sets the tempo / Keys glow, I follow"_ 🦞
+- **PTY 至关重要：** 编程代理是交互式终端应用。如果没有 `pty:true`，输出会损坏或代理会挂起。
+- **需要 Git 仓库：** Codex 不会在 git 目录之外运行。对于临时工作，请使用 `mktemp -d && git init`。
+- **exec 是你的好帮手：** `codex exec "prompt"` 运行并干净地退出 - 非常适合一次性任务。
+- **submit vs write：** 使用 `submit` 发送输入 + 回车，`write` 用于不带换行符的原始数据。
+- **俏皮话有效：** Codex 对俏皮的提示词反应良好。让它写一首关于“在太空龙虾手下当二把手”的俳句，它写道：_“次席我编码 / 太空龙虾定节奏 / 键亮我跟随”_ 🦞

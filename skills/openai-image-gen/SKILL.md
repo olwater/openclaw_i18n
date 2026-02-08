@@ -1,6 +1,6 @@
 ---
 name: openai-image-gen
-description: Batch-generate images via OpenAI Images API. Random prompt sampler + `index.html` gallery.
+description: 通过 OpenAI Images API 批量生成图像。包含随机提示词采样器 + `index.html` 画廊。
 homepage: https://platform.openai.com/docs/api-reference/images
 metadata:
   {
@@ -16,7 +16,7 @@ metadata:
               "kind": "brew",
               "formula": "python",
               "bins": ["python3"],
-              "label": "Install Python (brew)",
+              "label": "安装 Python (brew)",
             },
           ],
       },
@@ -25,65 +25,65 @@ metadata:
 
 # OpenAI Image Gen
 
-Generate a handful of “random but structured” prompts and render them via the OpenAI Images API.
+生成一些“随机但结构化”的提示词，并通过 OpenAI Images API 进行渲染。
 
-## Run
+## 运行
 
 ```bash
 python3 {baseDir}/scripts/gen.py
-open ~/Projects/tmp/openai-image-gen-*/index.html  # if ~/Projects/tmp exists; else ./tmp/...
+open ~/Projects/tmp/openai-image-gen-*/index.html  # 如果 ~/Projects/tmp 存在；否则使用 ./tmp/...
 ```
 
-Useful flags:
+常用标志：
 
 ```bash
-# GPT image models with various options
+# GPT 图像模型（带有多种选项）
 python3 {baseDir}/scripts/gen.py --count 16 --model gpt-image-1
-python3 {baseDir}/scripts/gen.py --prompt "ultra-detailed studio photo of a lobster astronaut" --count 4
+python3 {baseDir}/scripts/gen.py --prompt "超细节的龙虾宇航员工作照" --count 4
 python3 {baseDir}/scripts/gen.py --size 1536x1024 --quality high --out-dir ./out/images
 python3 {baseDir}/scripts/gen.py --model gpt-image-1.5 --background transparent --output-format webp
 
-# DALL-E 3 (note: count is automatically limited to 1)
+# DALL-E 3（注意：生成数量自动限制为 1）
 python3 {baseDir}/scripts/gen.py --model dall-e-3 --quality hd --size 1792x1024 --style vivid
-python3 {baseDir}/scripts/gen.py --model dall-e-3 --style natural --prompt "serene mountain landscape"
+python3 {baseDir}/scripts/gen.py --model dall-e-3 --style natural --prompt "宁静的山间景色"
 
 # DALL-E 2
 python3 {baseDir}/scripts/gen.py --model dall-e-2 --size 512x512 --count 4
 ```
 
-## Model-Specific Parameters
+## 特定模型的参数
 
-Different models support different parameter values. The script automatically selects appropriate defaults based on the model.
+不同的模型支持不同的参数值。脚本会根据模型自动选择合适的默认值。
 
-### Size
+### 尺寸 (Size)
 
-- **GPT image models** (`gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`): `1024x1024`, `1536x1024` (landscape), `1024x1536` (portrait), or `auto`
-  - Default: `1024x1024`
-- **dall-e-3**: `1024x1024`, `1792x1024`, or `1024x1792`
-  - Default: `1024x1024`
-- **dall-e-2**: `256x256`, `512x512`, or `1024x1024`
-  - Default: `1024x1024`
+- **GPT 图像模型** (`gpt-image-1`, `gpt-image-1-mini`, `gpt-image-1.5`): `1024x1024`, `1536x1024` (横向), `1024x1536` (纵向), 或 `auto`
+  - 默认值: `1024x1024`
+- **dall-e-3**: `1024x1024`, `1792x1024`, 或 `1024x1792`
+  - 默认值: `1024x1024`
+- **dall-e-2**: `256x256`, `512x512`, 或 `1024x1024`
+  - 默认值: `1024x1024`
 
-### Quality
+### 质量 (Quality)
 
-- **GPT image models**: `auto`, `high`, `medium`, or `low`
-  - Default: `high`
-- **dall-e-3**: `hd` or `standard`
-  - Default: `standard`
-- **dall-e-2**: `standard` only
-  - Default: `standard`
+- **GPT 图像模型**: `auto`, `high`, `medium`, 或 `low`
+  - 默认值: `high`
+- **dall-e-3**: `hd` 或 `standard`
+  - 默认值: `standard`
+- **dall-e-2**: 仅支持 `standard`
+  - 默认值: `standard`
 
-### Other Notable Differences
+### 其他显著差异
 
-- **dall-e-3** only supports generating 1 image at a time (`n=1`). The script automatically limits count to 1 when using this model.
-- **GPT image models** support additional parameters:
-  - `--background`: `transparent`, `opaque`, or `auto` (default)
-  - `--output-format`: `png` (default), `jpeg`, or `webp`
-  - Note: `stream` and `moderation` are available via API but not yet implemented in this script
-- **dall-e-3** has a `--style` parameter: `vivid` (hyper-real, dramatic) or `natural` (more natural looking)
+- **dall-e-3** 每次仅支持生成 1 张图像 (`n=1`)。使用该模型时，脚本会自动将数量限制为 1。
+- **GPT 图像模型** 支持额外参数：
+  - `--background`: `transparent` (透明), `opaque` (不透明), 或 `auto` (默认)
+  - `--output-format`: `png` (默认), `jpeg`, 或 `webp`
+  - 注意：`stream` 和 `moderation` 功能虽可通过 API 使用，但尚未在此脚本中实现。
+- **dall-e-3** 拥有 `--style` 参数：`vivid` (超现实、戏剧性) 或 `natural` (更趋于自然)。
 
-## Output
+## 输出
 
-- `*.png`, `*.jpeg`, or `*.webp` images (output format depends on model + `--output-format`)
-- `prompts.json` (prompt → file mapping)
-- `index.html` (thumbnail gallery)
+- `*.png`, `*.jpeg`, 或 `*.webp` 图像（输出格式取决于模型 + `--output-format`）。
+- `prompts.json`（提示词 → 文件映射）。
+- `index.html`（缩略图画廊）。

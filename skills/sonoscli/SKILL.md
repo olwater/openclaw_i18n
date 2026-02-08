@@ -1,6 +1,6 @@
 ---
 name: sonoscli
-description: Control Sonos speakers (discover/status/play/volume/group).
+description: 控制 Sonos 扬声器（发现/状态/播放/音量/分组）。
 homepage: https://sonoscli.sh
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "go",
               "module": "github.com/steipete/sonoscli/cmd/sonos@latest",
               "bins": ["sonos"],
-              "label": "Install sonoscli (go)",
+              "label": "安装 sonoscli (go)",
             },
           ],
       },
@@ -24,23 +24,23 @@ metadata:
 
 # Sonos CLI
 
-Use `sonos` to control Sonos speakers on the local network.
+使用 `sonos` 控制本地网络中的 Sonos 扬声器。
 
-Quick start
+## 快速开始
 
 - `sonos discover`
-- `sonos status --name "Kitchen"`
-- `sonos play|pause|stop --name "Kitchen"`
-- `sonos volume set 15 --name "Kitchen"`
+- `sonos status --name "厨房"`
+- `sonos play|pause|stop --name "厨房"`
+- `sonos volume set 15 --name "厨房"`
 
-Common tasks
+## 常用任务
 
-- Grouping: `sonos group status|join|unjoin|party|solo`
-- Favorites: `sonos favorites list|open`
-- Queue: `sonos queue list|play|clear`
-- Spotify search (via SMAPI): `sonos smapi search --service "Spotify" --category tracks "query"`
+- 分组：`sonos group status|join|unjoin|party|solo`
+- 收藏夹：`sonos favorites list|open`
+- 队列：`sonos queue list|play|clear`
+- Spotify 搜索（通过 SMAPI）：`sonos smapi search --service "Spotify" --category tracks "查询内容"`
 
-Notes
+## 注意事项
 
-- If SSDP fails, specify `--ip <speaker-ip>`.
-- Spotify Web API search is optional and requires `SPOTIFY_CLIENT_ID/SECRET`.
+- 如果 SSDP 发现失败，请指定 `--ip <扬声器 IP>`。
+- Spotify Web API 搜索是可选的，需要设置 `SPOTIFY_CLIENT_ID/SECRET`。

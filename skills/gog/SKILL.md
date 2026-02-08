@@ -1,6 +1,6 @@
 ---
 name: gog
-description: Google Workspace CLI for Gmail, Calendar, Drive, Contacts, Sheets, and Docs.
+description: 适用于 Gmail、日历、云端硬盘、联系人、表格和文档的 Google Workspace CLI。
 homepage: https://gogcli.sh
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "brew",
               "formula": "steipete/tap/gogcli",
               "bins": ["gog"],
-              "label": "Install gog (brew)",
+              "label": "安装 gog (brew)",
             },
           ],
       },
@@ -24,45 +24,45 @@ metadata:
 
 # gog
 
-Use `gog` for Gmail/Calendar/Drive/Contacts/Sheets/Docs. Requires OAuth setup.
+使用 `gog` 操作 Gmail、日历、云端硬盘、联系人、表格和文档。需要进行 OAuth 设置。
 
-Setup (once)
+## 设置（仅需一次）
 
 - `gog auth credentials /path/to/client_secret.json`
 - `gog auth add you@gmail.com --services gmail,calendar,drive,contacts,docs,sheets`
 - `gog auth list`
 
-Common commands
+## 常用命令
 
-- Gmail search: `gog gmail search 'newer_than:7d' --max 10`
-- Gmail messages search (per email, ignores threading): `gog gmail messages search "in:inbox from:ryanair.com" --max 20 --account you@example.com`
-- Gmail send (plain): `gog gmail send --to a@b.com --subject "Hi" --body "Hello"`
-- Gmail send (multi-line): `gog gmail send --to a@b.com --subject "Hi" --body-file ./message.txt`
-- Gmail send (stdin): `gog gmail send --to a@b.com --subject "Hi" --body-file -`
-- Gmail send (HTML): `gog gmail send --to a@b.com --subject "Hi" --body-html "<p>Hello</p>"`
-- Gmail draft: `gog gmail drafts create --to a@b.com --subject "Hi" --body-file ./message.txt`
-- Gmail send draft: `gog gmail drafts send <draftId>`
-- Gmail reply: `gog gmail send --to a@b.com --subject "Re: Hi" --body "Reply" --reply-to-message-id <msgId>`
-- Calendar list events: `gog calendar events <calendarId> --from <iso> --to <iso>`
-- Calendar create event: `gog calendar create <calendarId> --summary "Title" --from <iso> --to <iso>`
-- Calendar create with color: `gog calendar create <calendarId> --summary "Title" --from <iso> --to <iso> --event-color 7`
-- Calendar update event: `gog calendar update <calendarId> <eventId> --summary "New Title" --event-color 4`
-- Calendar show colors: `gog calendar colors`
-- Drive search: `gog drive search "query" --max 10`
-- Contacts: `gog contacts list --max 20`
-- Sheets get: `gog sheets get <sheetId> "Tab!A1:D10" --json`
-- Sheets update: `gog sheets update <sheetId> "Tab!A1:B2" --values-json '[["A","B"],["1","2"]]' --input USER_ENTERED`
-- Sheets append: `gog sheets append <sheetId> "Tab!A:C" --values-json '[["x","y","z"]]' --insert INSERT_ROWS`
-- Sheets clear: `gog sheets clear <sheetId> "Tab!A2:Z"`
-- Sheets metadata: `gog sheets metadata <sheetId> --json`
-- Docs export: `gog docs export <docId> --format txt --out /tmp/doc.txt`
-- Docs cat: `gog docs cat <docId>`
+- Gmail 搜索：`gog gmail search 'newer_than:7d' --max 10`
+- Gmail 邮件搜索（按邮件，忽略线程）：`gog gmail messages search "in:inbox from:ryanair.com" --max 20 --account you@example.com`
+- Gmail 发送（纯文本）：`gog gmail send --to a@b.com --subject "Hi" --body "Hello"`
+- Gmail 发送（多行）：`gog gmail send --to a@b.com --subject "Hi" --body-file ./message.txt`
+- Gmail 发送（标准输入）：`gog gmail send --to a@b.com --subject "Hi" --body-file -`
+- Gmail 发送（HTML）：`gog gmail send --to a@b.com --subject "Hi" --body-html "<p>Hello</p>"`
+- Gmail 草稿：`gog gmail drafts create --to a@b.com --subject "Hi" --body-file ./message.txt`
+- Gmail 发送草稿：`gog gmail drafts send <draftId>`
+- Gmail 回复：`gog gmail send --to a@b.com --subject "Re: Hi" --body "Reply" --reply-to-message-id <msgId>`
+- 日历列出活动：`gog calendar events <calendarId> --from <iso> --to <iso>`
+- 日历创建活动：`gog calendar create <calendarId> --summary "Title" --from <iso> --to <iso>`
+- 日历创建（带颜色）：`gog calendar create <calendarId> --summary "Title" --from <iso> --to <iso> --event-color 7`
+- 日历更新活动：`gog calendar update <calendarId> <eventId> --summary "New Title" --event-color 4`
+- 日历显示颜色：`gog calendar colors`
+- 云端硬盘搜索：`gog drive search "query" --max 10`
+- 联系人：`gog contacts list --max 20`
+- 表格获取：`gog sheets get <sheetId> "Tab!A1:D10" --json`
+- 表格更新：`gog sheets update <sheetId> "Tab!A1:B2" --values-json '[["A","B"],["1","2"]]' --input USER_ENTERED`
+- 表格追加：`gog sheets append <sheetId> "Tab!A:C" --values-json '[["x","y","z"]]' --insert INSERT_ROWS`
+- 表格清空：`gog sheets clear <sheetId> "Tab!A2:Z"`
+- 表格元数据：`gog sheets metadata <sheetId> --json`
+- 文档导出：`gog docs export <docId> --format txt --out /tmp/doc.txt`
+- 文档 cat：`gog docs cat <docId>`
 
-Calendar Colors
+## 日历颜色
 
-- Use `gog calendar colors` to see all available event colors (IDs 1-11)
-- Add colors to events with `--event-color <id>` flag
-- Event color IDs (from `gog calendar colors` output):
+- 使用 `gog calendar colors` 查看所有可用的活动颜色（ID 1-11）。
+- 使用 `--event-color <id>` 标志为活动添加颜色。
+- 活动颜色 ID（来自 `gog calendar colors` 输出）：
   - 1: #a4bdfc
   - 2: #7ae7bf
   - 3: #dbadff
@@ -75,42 +75,42 @@ Calendar Colors
   - 10: #51b749
   - 11: #dc2127
 
-Email Formatting
+## 邮件格式
 
-- Prefer plain text. Use `--body-file` for multi-paragraph messages (or `--body-file -` for stdin).
-- Same `--body-file` pattern works for drafts and replies.
-- `--body` does not unescape `\n`. If you need inline newlines, use a heredoc or `$'Line 1\n\nLine 2'`.
-- Use `--body-html` only when you need rich formatting.
-- HTML tags: `<p>` for paragraphs, `<br>` for line breaks, `<strong>` for bold, `<em>` for italic, `<a href="url">` for links, `<ul>`/`<li>` for lists.
-- Example (plain text via stdin):
+- 优先使用纯文本。对于多段落消息使用 `--body-file`（或通过标准输入使用 `--body-file -`）。
+- 同样的 `--body-file` 模式也适用于草稿和回复。
+- `--body` 不会对 `\n` 进行转义。如果你需要内联换行符，请使用 heredoc 或 `$'Line 1\n\nLine 2'`。
+- 仅在你需要富文本格式时使用 `--body-html`。
+- HTML 标签：`<p>` 代表段落，`<br>` 代表换行，`<strong>` 代表加粗，`<em>` 代表斜体，`<a href="url">` 代表链接，`<ul>`/`<li>` 代表列表。
+- 示例（通过标准输入发送纯文本）：
 
   ```bash
   gog gmail send --to recipient@example.com \
-    --subject "Meeting Follow-up" \
+    --subject "会议跟进" \
     --body-file - <<'EOF'
-  Hi Name,
+  你好 [姓名],
 
-  Thanks for meeting today. Next steps:
-  - Item one
-  - Item two
+  感谢今天的会面。下一步计划：
+  - 第一项
+  - 第二项
 
-  Best regards,
-  Your Name
+  祝好，
+  [你的名字]
   EOF
   ```
 
-- Example (HTML list):
+- 示例（HTML 列表）：
   ```bash
   gog gmail send --to recipient@example.com \
-    --subject "Meeting Follow-up" \
-    --body-html "<p>Hi Name,</p><p>Thanks for meeting today. Here are the next steps:</p><ul><li>Item one</li><li>Item two</li></ul><p>Best regards,<br>Your Name</p>"
+    --subject "会议跟进" \
+    --body-html "<p>你好 [姓名],</p><p>感谢今天的会面。这是下一步计划：</p><ul><li>第一项</li><li>第二项</li></ul><p>祝好，<br>[你的名字]</p>"
   ```
 
-Notes
+## 注意事项
 
-- Set `GOG_ACCOUNT=you@gmail.com` to avoid repeating `--account`.
-- For scripting, prefer `--json` plus `--no-input`.
-- Sheets values can be passed via `--values-json` (recommended) or as inline rows.
-- Docs supports export/cat/copy. In-place edits require a Docs API client (not in gog).
-- Confirm before sending mail or creating events.
-- `gog gmail search` returns one row per thread; use `gog gmail messages search` when you need every individual email returned separately.
+- 设置 `GOG_ACCOUNT=you@gmail.com` 以避免重复输入 `--account`。
+- 对于脚本编写，优先使用 `--json` 加 `--no-input`。
+- 表格值可以通过 `--values-json` 传递（推荐）或作为内联行传递。
+- 文档支持导出/cat/复制。就地编辑需要使用 Docs API 客户端（gog 中不包含）。
+- 在发送邮件或创建活动前请先确认。
+- `gog gmail search` 每个线程返回一行；如果你需要分别返回每封具体的邮件，请使用 `gog gmail messages search`。

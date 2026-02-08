@@ -1,6 +1,6 @@
 ---
 name: blogwatcher
-description: Monitor blogs and RSS/Atom feeds for updates using the blogwatcher CLI.
+description: 使用 blogwatcher CLI 监控博客和 RSS/Atom 订阅源的更新。
 homepage: https://github.com/Hyaxia/blogwatcher
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "go",
               "module": "github.com/Hyaxia/blogwatcher/cmd/blogwatcher@latest",
               "bins": ["blogwatcher"],
-              "label": "Install blogwatcher (go)",
+              "label": "安装 blogwatcher (go)",
             },
           ],
       },
@@ -24,27 +24,27 @@ metadata:
 
 # blogwatcher
 
-Track blog and RSS/Atom feed updates with the `blogwatcher` CLI.
+使用 `blogwatcher` CLI 追踪博客和 RSS/Atom 订阅源的更新。
 
-Install
+## 安装
 
 - Go: `go install github.com/Hyaxia/blogwatcher/cmd/blogwatcher@latest`
 
-Quick start
+## 快速开始
 
 - `blogwatcher --help`
 
-Common commands
+## 常用命令
 
-- Add a blog: `blogwatcher add "My Blog" https://example.com`
-- List blogs: `blogwatcher blogs`
-- Scan for updates: `blogwatcher scan`
-- List articles: `blogwatcher articles`
-- Mark an article read: `blogwatcher read 1`
-- Mark all articles read: `blogwatcher read-all`
-- Remove a blog: `blogwatcher remove "My Blog"`
+- 添加博客：`blogwatcher add "My Blog" https://example.com`
+- 列出博客：`blogwatcher blogs`
+- 扫描更新：`blogwatcher scan`
+- 列出文章：`blogwatcher articles`
+- 标记文章为已读：`blogwatcher read 1`
+- 标记所有文章为已读：`blogwatcher read-all`
+- 移除博客：`blogwatcher remove "My Blog"`
 
-Example output
+## 输出示例
 
 ```
 $ blogwatcher blogs
@@ -64,6 +64,6 @@ Scanning 1 blog(s)...
 Found 4 new article(s) total!
 ```
 
-Notes
+## 注意事项
 
-- Use `blogwatcher <command> --help` to discover flags and options.
+- 使用 `blogwatcher <command> --help` 来查看标志和选项。

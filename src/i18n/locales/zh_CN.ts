@@ -51,8 +51,9 @@ const zh_CN: TranslationMap = {
   " [y/N] ": " [y/N] ",
   " \\\\n    ": " \\\\n    ",
   " expires unknown": "过期时间未知",
-  " fail": "失败",
-  " ok": "正常",
+  initial: "初始",
+  "Initial thread message text": "初始帖子消息文本",
+  "Initial thought...": "最初的想法……",
   " | ": " | ",
   " · ": " · ",
   '"gateway.remote.token" is for remote CLI calls; it does not enable local gateway auth.':

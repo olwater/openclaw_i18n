@@ -1,5 +1,7 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { WizardPrompter } from "../wizard/prompts.js";
+import { upsertAuthProfile } from "../agents/auth-profiles.js";
+import { t } from "../i18n/index.js";
 import { ensureModelAllowlistEntry } from "./model-allowlist.js";
 
 export async function applyDefaultModelChoice(params: {
