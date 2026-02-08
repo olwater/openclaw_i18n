@@ -186,9 +186,13 @@ export async function gatherDaemonStatus(
   const probeUrl = probeUrlOverride ?? `ws://${probeHost}:${daemonPort}`;
   const probeNote =
     !probeUrlOverride && bindMode === "lan"
+<<<<<<< HEAD
       ? t(
           "Local probe uses loopback (127.0.0.1). bind=lan listens on 0.0.0.0 (all interfaces); use a LAN IP for remote clients.",
         )
+=======
+      ? `bind=lan listens on 0.0.0.0 (all interfaces); probing via ${probeHost}.`
+>>>>>>> origin/main
       : !probeUrlOverride && bindMode === "loopback"
         ? t("Loopback-only gateway; only local clients can connect.")
         : undefined;

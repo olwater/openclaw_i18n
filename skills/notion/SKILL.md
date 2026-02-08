@@ -1,6 +1,6 @@
 ---
 name: notion
-description: Notion API for creating and managing pages, databases, and blocks.
+description: 用于创建和管理页面、数据库和块的 Notion API。
 homepage: https://developers.notion.com
 metadata:
   {
@@ -11,24 +11,24 @@ metadata:
 
 # notion
 
-Use the Notion API to create/read/update pages, data sources (databases), and blocks.
+使用 Notion API 创建、读取和更新页面、数据源（数据库）以及块（Block）。
 
-## Setup
+## 设置
 
-1. Create an integration at https://notion.so/my-integrations
-2. Copy the API key (starts with `ntn_` or `secret_`)
-3. Store it:
+1. 在 https://notion.so/my-integrations 创建一个集成（integration）。
+2. 复制 API 密钥（以 `ntn_` 或 `secret_` 开头）。
+3. 保存它：
 
 ```bash
 mkdir -p ~/.config/notion
 echo "ntn_your_key_here" > ~/.config/notion/api_key
 ```
 
-4. Share target pages/databases with your integration (click "..." → "Connect to" → your integration name)
+4. 将目标页面/数据库共享给你的集成（点击 "..." → "Connect to" → 你的集成名称）。
 
-## API Basics
+## API 基础
 
-All requests need:
+所有请求都需要：
 
 ```bash
 NOTION_KEY=$(cat ~/.config/notion/api_key)
@@ -38,21 +38,21 @@ curl -X GET "https://api.notion.com/v1/..." \
   -H "Content-Type: application/json"
 ```
 
-> **Note:** The `Notion-Version` header is required. This skill uses `2025-09-03` (latest). In this version, databases are called "data sources" in the API.
+> **注意：** `Notion-Version` 请求头是必填的。本技能使用 `2025-09-03`（最新版本）。在此版本中，API 将数据库称为“数据源（data sources）”。
 
-## Common Operations
+## 常用操作
 
-**Search for pages and data sources:**
+**搜索页面和数据源：**
 
 ```bash
 curl -X POST "https://api.notion.com/v1/search" \
   -H "Authorization: Bearer $NOTION_KEY" \
   -H "Notion-Version: 2025-09-03" \
   -H "Content-Type: application/json" \
-  -d '{"query": "page title"}'
+  -d '{"query": "页面标题"}'
 ```
 
-**Get page:**
+**获取页面：**
 
 ```bash
 curl "https://api.notion.com/v1/pages/{page_id}" \
@@ -60,7 +60,7 @@ curl "https://api.notion.com/v1/pages/{page_id}" \
   -H "Notion-Version: 2025-09-03"
 ```
 
-**Get page content (blocks):**
+**获取页面内容（块）：**
 
 ```bash
 curl "https://api.notion.com/v1/blocks/{page_id}/children" \
@@ -68,7 +68,7 @@ curl "https://api.notion.com/v1/blocks/{page_id}/children" \
   -H "Notion-Version: 2025-09-03"
 ```
 
-**Create page in a data source:**
+**在数据源中创建页面：**
 
 ```bash
 curl -X POST "https://api.notion.com/v1/pages" \
@@ -78,13 +78,13 @@ curl -X POST "https://api.notion.com/v1/pages" \
   -d '{
     "parent": {"database_id": "xxx"},
     "properties": {
-      "Name": {"title": [{"text": {"content": "New Item"}}]},
+      "Name": {"title": [{"text": {"content": "新项目"}}]},
       "Status": {"select": {"name": "Todo"}}
     }
   }'
 ```
 
-**Query a data source (database):**
+**查询数据源（数据库）：**
 
 ```bash
 curl -X POST "https://api.notion.com/v1/data_sources/{data_source_id}/query" \
@@ -97,7 +97,7 @@ curl -X POST "https://api.notion.com/v1/data_sources/{data_source_id}/query" \
   }'
 ```
 
-**Create a data source (database):**
+**创建数据源（数据库）：**
 
 ```bash
 curl -X POST "https://api.notion.com/v1/data_sources" \
@@ -106,7 +106,7 @@ curl -X POST "https://api.notion.com/v1/data_sources" \
   -H "Content-Type: application/json" \
   -d '{
     "parent": {"page_id": "xxx"},
-    "title": [{"text": {"content": "My Database"}}],
+    "title": [{"text": {"content": "我的数据库"}}],
     "properties": {
       "Name": {"title": {}},
       "Status": {"select": {"options": [{"name": "Todo"}, {"name": "Done"}]}},
@@ -115,7 +115,7 @@ curl -X POST "https://api.notion.com/v1/data_sources" \
   }'
 ```
 
-**Update page properties:**
+**更新页面属性：**
 
 ```bash
 curl -X PATCH "https://api.notion.com/v1/pages/{page_id}" \
@@ -125,7 +125,7 @@ curl -X PATCH "https://api.notion.com/v1/pages/{page_id}" \
   -d '{"properties": {"Status": {"select": {"name": "Done"}}}}'
 ```
 
-**Add blocks to page:**
+**向页面添加块：**
 
 ```bash
 curl -X PATCH "https://api.notion.com/v1/blocks/{page_id}/children" \
@@ -134,39 +134,39 @@ curl -X PATCH "https://api.notion.com/v1/blocks/{page_id}/children" \
   -H "Content-Type: application/json" \
   -d '{
     "children": [
-      {"object": "block", "type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Hello"}}]}}
+      {"object": "block", "type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "你好"}}]}}
     ]
   }'
 ```
 
-## Property Types
+## 属性类型
 
-Common property formats for database items:
+数据库项目的常用属性格式：
 
-- **Title:** `{"title": [{"text": {"content": "..."}}]}`
-- **Rich text:** `{"rich_text": [{"text": {"content": "..."}}]}`
-- **Select:** `{"select": {"name": "Option"}}`
-- **Multi-select:** `{"multi_select": [{"name": "A"}, {"name": "B"}]}`
-- **Date:** `{"date": {"start": "2024-01-15", "end": "2024-01-16"}}`
-- **Checkbox:** `{"checkbox": true}`
-- **Number:** `{"number": 42}`
+- **标题 (Title):** `{"title": [{"text": {"content": "..."}}]}`
+- **富文本 (Rich text):** `{"rich_text": [{"text": {"content": "..."}}]}`
+- **单选 (Select):** `{"select": {"name": "Option"}}`
+- **多选 (Multi-select):** `{"multi_select": [{"name": "A"}, {"name": "B"}]}`
+- **日期 (Date):** `{"date": {"start": "2024-01-15", "end": "2024-01-16"}}`
+- **复选框 (Checkbox):** `{"checkbox": true}`
+- **数字 (Number):** `{"number": 42}`
 - **URL:** `{"url": "https://..."}`
-- **Email:** `{"email": "a@b.com"}`
-- **Relation:** `{"relation": [{"id": "page_id"}]}`
+- **电子邮件 (Email):** `{"email": "a@b.com"}`
+- **关联 (Relation):** `{"relation": [{"id": "page_id"}]}`
 
-## Key Differences in 2025-09-03
+## 2025-09-03 版本的主要差异
 
-- **Databases → Data Sources:** Use `/data_sources/` endpoints for queries and retrieval
-- **Two IDs:** Each database now has both a `database_id` and a `data_source_id`
-  - Use `database_id` when creating pages (`parent: {"database_id": "..."}`)
-  - Use `data_source_id` when querying (`POST /v1/data_sources/{id}/query`)
-- **Search results:** Databases return as `"object": "data_source"` with their `data_source_id`
-- **Parent in responses:** Pages show `parent.data_source_id` alongside `parent.database_id`
-- **Finding the data_source_id:** Search for the database, or call `GET /v1/data_sources/{data_source_id}`
+- **数据库 → 数据源：** 使用 `/data_sources/` 端点进行查询和获取。
+- **两个 ID：** 现在每个数据库都同时拥有 `database_id` 和 `data_source_id`。
+  - 创建页面时使用 `database_id` (`parent: {"database_id": "..."}`)。
+  - 查询时使用 `data_source_id` (`POST /v1/data_sources/{id}/query`)。
+- **搜索结果：** 数据库作为 `"object": "data_source"` 返回，并带有其 `data_source_id`。
+- **响应中的父级：** 页面会同时显示 `parent.data_source_id` 和 `parent.database_id`。
+- **查找 data_source_id：** 搜索该数据库，或调用 `GET /v1/data_sources/{data_source_id}`。
 
-## Notes
+## 注意事项
 
-- Page/database IDs are UUIDs (with or without dashes)
-- The API cannot set database view filters — that's UI-only
-- Rate limit: ~3 requests/second average
-- Use `is_inline: true` when creating data sources to embed them in pages
+- 页面/数据库 ID 是 UUID（带或不带连字符均可）。
+- API 无法设置数据库视图过滤器——那是 UI 专属功能。
+- 速率限制：平均每秒约 3 个请求。
+- 创建数据源时使用 `is_inline: true` 可将其嵌入到页面中。

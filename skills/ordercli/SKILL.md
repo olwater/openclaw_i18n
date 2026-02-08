@@ -1,6 +1,6 @@
 ---
 name: ordercli
-description: Foodora-only CLI for checking past orders and active order status (Deliveroo WIP).
+description: 仅限 Foodora 的 CLI，用于检查过往订单和当前订单状态（Deliveroo 正在开发中）。
 homepage: https://ordercli.sh
 metadata:
   {
@@ -15,14 +15,14 @@ metadata:
               "kind": "brew",
               "formula": "steipete/tap/ordercli",
               "bins": ["ordercli"],
-              "label": "Install ordercli (brew)",
+              "label": "安装 ordercli (brew)",
             },
             {
               "id": "go",
               "kind": "go",
               "module": "github.com/steipete/ordercli/cmd/ordercli@latest",
               "bins": ["ordercli"],
-              "label": "Install ordercli (go)",
+              "label": "安装 ordercli (go)",
             },
           ],
       },
@@ -31,9 +31,9 @@ metadata:
 
 # ordercli
 
-Use `ordercli` to check past orders and track active order status (Foodora only right now).
+使用 `ordercli` 检查过往订单并追踪当前订单状态（目前仅支持 Foodora）。
 
-Quick start (Foodora)
+## 快速开始 (Foodora)
 
 - `ordercli foodora countries`
 - `ordercli foodora config set --country AT`
@@ -42,37 +42,37 @@ Quick start (Foodora)
 - `ordercli foodora history --limit 20`
 - `ordercli foodora history show <orderCode>`
 
-Orders
+## 订单
 
-- Active list (arrival/status): `ordercli foodora orders`
-- Watch: `ordercli foodora orders --watch`
-- Active order detail: `ordercli foodora order <orderCode>`
-- History detail JSON: `ordercli foodora history show <orderCode> --json`
+- 当前列表（送达时间/状态）：`ordercli foodora orders`
+- 监视：`ordercli foodora orders --watch`
+- 当前订单详情：`ordercli foodora order <orderCode>`
+- 历史详情 JSON：`ordercli foodora history show <orderCode> --json`
 
-Reorder (adds to cart)
+## 再次下单（添加到购物车）
 
-- Preview: `ordercli foodora reorder <orderCode>`
-- Confirm: `ordercli foodora reorder <orderCode> --confirm`
-- Address: `ordercli foodora reorder <orderCode> --confirm --address-id <id>`
+- 预览：`ordercli foodora reorder <orderCode>`
+- 确认：`ordercli foodora reorder <orderCode> --confirm`
+- 地址：`ordercli foodora reorder <orderCode> --confirm --address-id <id>`
 
-Cloudflare / bot protection
+## Cloudflare / 机器人防护
 
-- Browser login: `ordercli foodora login --email you@example.com --password-stdin --browser`
-- Reuse profile: `--browser-profile "$HOME/Library/Application Support/ordercli/browser-profile"`
-- Import Chrome cookies: `ordercli foodora cookies chrome --profile "Default"`
+- 浏览器登录：`ordercli foodora login --email you@example.com --password-stdin --browser`
+- 复用配置文件：`--browser-profile "$HOME/Library/Application Support/ordercli/browser-profile"`
+- 导入 Chrome Cookie：`ordercli foodora cookies chrome --profile "Default"`
 
-Session import (no password)
+## 会话导入（无需密码）
 
 - `ordercli foodora session chrome --url https://www.foodora.at/ --profile "Default"`
 - `ordercli foodora session refresh --client-id android`
 
-Deliveroo (WIP, not working yet)
+## Deliveroo（开发中，尚不可用）
 
-- Requires `DELIVEROO_BEARER_TOKEN` (optional `DELIVEROO_COOKIE`).
+- 需要 `DELIVEROO_BEARER_TOKEN`（可选 `DELIVEROO_COOKIE`）。
 - `ordercli deliveroo config set --market uk`
 - `ordercli deliveroo history`
 
-Notes
+## 注意事项
 
-- Use `--config /tmp/ordercli.json` for testing.
-- Confirm before any reorder or cart-changing action.
+- 使用 `--config /tmp/ordercli.json` 进行测试。
+- 在进行任何再次下单或更改购物车的操作之前，请务必确认。

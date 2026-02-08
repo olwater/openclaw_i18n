@@ -1,6 +1,6 @@
 ---
 name: spotify-player
-description: Terminal Spotify playback/search via spogo (preferred) or spotify_player.
+description: 通过 spogo（首选）或 spotify_player 进行终端 Spotify 播放/搜索。
 homepage: https://www.spotify.com
 metadata:
   {
@@ -16,14 +16,14 @@ metadata:
               "formula": "spogo",
               "tap": "steipete/tap",
               "bins": ["spogo"],
-              "label": "Install spogo (brew)",
+              "label": "安装 spogo (brew)",
             },
             {
               "id": "brew",
               "kind": "brew",
               "formula": "spotify_player",
               "bins": ["spotify_player"],
-              "label": "Install spotify_player (brew)",
+              "label": "安装 spotify_player (brew)",
             },
           ],
       },
@@ -32,33 +32,33 @@ metadata:
 
 # spogo / spotify_player
 
-Use `spogo` **(preferred)** for Spotify playback/search. Fall back to `spotify_player` if needed.
+使用 `spogo` **（首选）** 进行 Spotify 播放/搜索。如果需要，可回退到 `spotify_player`。
 
-Requirements
+## 要求
 
-- Spotify Premium account.
-- Either `spogo` or `spotify_player` installed.
+- Spotify Premium 帐户。
+- 已安装 `spogo` 或 `spotify_player`。
 
-spogo setup
+## spogo 设置
 
-- Import cookies: `spogo auth import --browser chrome`
+- 导入 Cookie：`spogo auth import --browser chrome`
 
-Common CLI commands
+## 常用 CLI 命令
 
-- Search: `spogo search track "query"`
-- Playback: `spogo play|pause|next|prev`
-- Devices: `spogo device list`, `spogo device set "<name|id>"`
-- Status: `spogo status`
+- 搜索：`spogo search track "查询内容"`
+- 播放控制：`spogo play|pause|next|prev`
+- 设备：`spogo device list`，`spogo device set "<名称|ID>"`
+- 状态：`spogo status`
 
-spotify_player commands (fallback)
+## spotify_player 命令（回退）
 
-- Search: `spotify_player search "query"`
-- Playback: `spotify_player playback play|pause|next|previous`
-- Connect device: `spotify_player connect`
-- Like track: `spotify_player like`
+- 搜索：`spotify_player search "查询内容"`
+- 播放控制：`spotify_player playback play|pause|next|previous`
+- 连接设备：`spotify_player connect`
+- 收藏歌曲：`spotify_player like`
 
-Notes
+## 注意事项
 
-- Config folder: `~/.config/spotify-player` (e.g., `app.toml`).
-- For Spotify Connect integration, set a user `client_id` in config.
-- TUI shortcuts are available via `?` in the app.
+- 配置文件夹：`~/.config/spotify-player`（例如 `app.toml`）。
+- 要集成 Spotify Connect，请在配置中设置用户 `client_id`。
+- 在应用中按 `?` 可查看 TUI 快捷键。

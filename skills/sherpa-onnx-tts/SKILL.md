@@ -1,6 +1,6 @@
 ---
 name: sherpa-onnx-tts
-description: Local text-to-speech via sherpa-onnx (offline, no cloud)
+description: 通过 sherpa-onnx 实现的本地文本转语音（离线，无云端）。
 metadata:
   {
     "openclaw":
@@ -19,7 +19,7 @@ metadata:
               "extract": true,
               "stripComponents": 1,
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/runtime",
-              "label": "Download sherpa-onnx runtime (macOS)",
+              "label": "下载 sherpa-onnx 运行时 (macOS)",
             },
             {
               "id": "download-runtime-linux-x64",
@@ -30,7 +30,7 @@ metadata:
               "extract": true,
               "stripComponents": 1,
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/runtime",
-              "label": "Download sherpa-onnx runtime (Linux x64)",
+              "label": "下载 sherpa-onnx 运行时 (Linux x64)",
             },
             {
               "id": "download-runtime-win-x64",
@@ -41,7 +41,7 @@ metadata:
               "extract": true,
               "stripComponents": 1,
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/runtime",
-              "label": "Download sherpa-onnx runtime (Windows x64)",
+              "label": "下载 sherpa-onnx 运行时 (Windows x64)",
             },
             {
               "id": "download-model-lessac",
@@ -50,7 +50,7 @@ metadata:
               "archive": "tar.bz2",
               "extract": true,
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/models",
-              "label": "Download Piper en_US lessac (high)",
+              "label": "下载 Piper en_US lessac (high)",
             },
           ],
       },
@@ -59,14 +59,14 @@ metadata:
 
 # sherpa-onnx-tts
 
-Local TTS using the sherpa-onnx offline CLI.
+使用 sherpa-onnx 离线 CLI 实现的本地文本转语音（TTS）。
 
-## Install
+## 安装
 
-1. Download the runtime for your OS (extracts into `~/.openclaw/tools/sherpa-onnx-tts/runtime`)
-2. Download a voice model (extracts into `~/.openclaw/tools/sherpa-onnx-tts/models`)
+1. 下载适用于你操作系统的运行时（解压到 `~/.openclaw/tools/sherpa-onnx-tts/runtime`）
+2. 下载语音模型（解压到 `~/.openclaw/tools/sherpa-onnx-tts/models`）
 
-Update `~/.openclaw/openclaw.json`:
+更新 `~/.openclaw/openclaw.json`：
 
 ```json5
 {
@@ -83,21 +83,21 @@ Update `~/.openclaw/openclaw.json`:
 }
 ```
 
-The wrapper lives in this skill folder. Run it directly, or add the wrapper to PATH:
+封装程序位于此技能文件夹中。可以直接运行它，或者将封装程序添加到 PATH：
 
 ```bash
 export PATH="{baseDir}/bin:$PATH"
 ```
 
-## Usage
+## 用法
 
 ```bash
-{baseDir}/bin/sherpa-onnx-tts -o ./tts.wav "Hello from local TTS."
+{baseDir}/bin/sherpa-onnx-tts -o ./tts.wav "这是一条来自本地 TTS 的消息。"
 ```
 
-Notes:
+注意事项：
 
-- Pick a different model from the sherpa-onnx `tts-models` release if you want another voice.
-- If the model dir has multiple `.onnx` files, set `SHERPA_ONNX_MODEL_FILE` or pass `--model-file`.
-- You can also pass `--tokens-file` or `--data-dir` to override the defaults.
-- Windows: run `node {baseDir}\\bin\\sherpa-onnx-tts -o tts.wav "Hello from local TTS."`
+- 如果你想要另一种声音，请从 sherpa-onnx 的 `tts-models` 发布页面选择不同的模型。
+- 如果模型目录中有多个 `.onnx` 文件，请设置 `SHERPA_ONNX_MODEL_FILE` 或传递 `--model-file`。
+- 你也可以传递 `--tokens-file` 或 `--data-dir` 来覆盖默认值。
+- Windows 用户：请运行 `node {baseDir}\\bin\\sherpa-onnx-tts -o tts.wav "这是一条来自本地 TTS 的消息。"`

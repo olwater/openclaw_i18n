@@ -77,3 +77,4 @@ memory/
 .trae/
 !.agent/workflows/
 !.agent/skills/
+local/

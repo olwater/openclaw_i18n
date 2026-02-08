@@ -1,6 +1,6 @@
 ---
 name: model-usage
-description: Use CodexBar CLI local cost usage to summarize per-model usage for Codex or Claude, including the current (most recent) model or a full model breakdown. Trigger when asked for model-level usage/cost data from codexbar, or when you need a scriptable per-model summary from codexbar cost JSON.
+description: 使用 CodexBar CLI 本地费用日志按模型汇总 Codex 或 Claude 的使用情况，包含当前（最近）模型或完整的模型明细。当需要 CodexBar 的模型级费用数据或脚本化汇总时使用。
 metadata:
   {
     "openclaw":
@@ -15,25 +15,25 @@ metadata:
               "kind": "brew",
               "cask": "steipete/tap/codexbar",
               "bins": ["codexbar"],
-              "label": "Install CodexBar (brew cask)",
+              "label": "安装 CodexBar (brew cask)",
             },
           ],
       },
   }
 ---
 
-# Model usage
+# 模型使用情况
 
-## Overview
+## 概览
 
-Get per-model usage cost from CodexBar's local cost logs. Supports "current model" (most recent daily entry) or "all models" summaries for Codex or Claude.
+从 CodexBar 的本地费用日志中获取按模型计费的使用成本。支持 Codex 或 Claude 的“当前模型”（最近的每日条目）或“所有模型”汇总。
 
-TODO: add Linux CLI support guidance once CodexBar CLI install path is documented for Linux.
+待办：一旦 CodexBar CLI 的 Linux 安装路径有文档说明，添加 Linux CLI 支持指南。
 
-## Quick start
+## 快速开始
 
-1. Fetch cost JSON via CodexBar CLI or pass a JSON file.
-2. Use the bundled script to summarize by model.
+1. 通过 CodexBar CLI 获取费用 JSON 或传递一个 JSON 文件。
+2. 使用捆绑的脚本按模型进行汇总。
 
 ```bash
 python {baseDir}/scripts/model_usage.py --provider codex --mode current
@@ -41,17 +41,17 @@ python {baseDir}/scripts/model_usage.py --provider codex --mode all
 python {baseDir}/scripts/model_usage.py --provider claude --mode all --format json --pretty
 ```
 
-## Current model logic
+## 当前模型逻辑
 
-- Uses the most recent daily row with `modelBreakdowns`.
-- Picks the model with the highest cost in that row.
-- Falls back to the last entry in `modelsUsed` when breakdowns are missing.
-- Override with `--model <name>` when you need a specific model.
+- 使用包含 `modelBreakdowns` 的最新每日记录。
+- 选择该记录中费用最高的模型。
+- 当缺少明细时，回退到 `modelsUsed` 中的最后一个条目。
+- 当需要特定模型时，使用 `--model <name>` 进行覆盖。
 
-## Inputs
+## 输入
 
-- Default: runs `codexbar cost --format json --provider <codex|claude>`.
-- File or stdin:
+- 默认：运行 `codexbar cost --format json --provider <codex|claude>`。
+- 文件或标准输入：
 
 ```bash
 codexbar cost --provider codex --format json > /tmp/cost.json
@@ -59,11 +59,11 @@ python {baseDir}/scripts/model_usage.py --input /tmp/cost.json --mode all
 cat /tmp/cost.json | python {baseDir}/scripts/model_usage.py --input - --mode current
 ```
 
-## Output
+## 输出
 
-- Text (default) or JSON (`--format json --pretty`).
-- Values are cost-only per model; tokens are not split by model in CodexBar output.
+- 文本（默认）或 JSON (`--format json --pretty`)。
+- 数值仅为各模型的费用；在 CodexBar 的输出中，Token 数不按模型拆分。
 
-## References
+## 参考
 
-- Read `references/codexbar-cli.md` for CLI flags and cost JSON fields.
+- 阅读 `references/codexbar-cli.md` 以了解 CLI 标志和费用 JSON 字段。

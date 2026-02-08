@@ -15,7 +15,11 @@ import {
   resolveUpdateAvailability,
 } from "../commands/status.update.js";
 import { readConfigFileSnapshot, writeConfigFile } from "../config/config.js";
+<<<<<<< HEAD
 import { t } from "../i18n/index.js";
+=======
+import { resolveStateDir } from "../config/paths.js";
+>>>>>>> origin/main
 import { resolveOpenClawPackageRoot } from "../infra/openclaw-root.js";
 import { trimLogTail } from "../infra/restart-sentinel.js";
 import { parseSemver } from "../infra/runtime-guard.js";
@@ -127,7 +131,6 @@ const DEFAULT_PACKAGE_NAME = "openclaw";
 const CORE_PACKAGE_NAMES = new Set([DEFAULT_PACKAGE_NAME]);
 const CLI_NAME = resolveCliName();
 const OPENCLAW_REPO_URL = "https://github.com/openclaw/openclaw.git";
-const DEFAULT_GIT_DIR = path.join(os.homedir(), ".openclaw");
 
 function normalizeTag(value?: string | null): string | null {
   if (!value) {
@@ -314,7 +317,7 @@ function resolveGitInstallDir(): string {
 }
 
 function resolveDefaultGitDir(): string {
-  return DEFAULT_GIT_DIR;
+  return resolveStateDir(process.env, os.homedir);
 }
 
 function resolveNodeRunner(): string {

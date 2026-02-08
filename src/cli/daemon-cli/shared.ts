@@ -1,3 +1,4 @@
+```javascript
 import {
   resolveGatewayLaunchAgentLabel,
   resolveGatewaySystemdServiceName,
@@ -5,6 +6,7 @@ import {
 } from "../../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
 import { t } from "../../i18n/index.js";
+import { pickPrimaryLanIPv4 } from "../../gateway/net.js";
 import { getResolvedLoggerSettings } from "../../logging.js";
 import { formatCliCommand } from "../command-format.js";
 
@@ -61,6 +63,9 @@ export function pickProbeHostForBind(
   }
   if (bindMode === "tailnet") {
     return tailnetIPv4 ?? "127.0.0.1";
+  }
+  if (bindMode === "lan") {
+    return pickPrimaryLanIPv4() ?? "127.0.0.1";
   }
   return "127.0.0.1";
 }

@@ -1,38 +1,38 @@
 ---
 name: bluebubbles
-description: Use when you need to send or manage iMessages via BlueBubbles (recommended iMessage integration). Calls go through the generic message tool with channel="bluebubbles".
+description: 当需要通过 BlueBubbles（推荐的 iMessage 集成方案）发送或管理 iMessage 时使用。调用通过带有 channel="bluebubbles" 的通用 message 工具进行。
 metadata: { "openclaw": { "emoji": "🫧", "requires": { "config": ["channels.bluebubbles"] } } }
 ---
 
-# BlueBubbles Actions
+# BlueBubbles 操作
 
-## Overview
+## 概览
 
-BlueBubbles is OpenClaw’s recommended iMessage integration. Use the `message` tool with `channel: "bluebubbles"` to send messages and manage iMessage conversations: send texts and attachments, react (tapbacks), edit/unsend, reply in threads, and manage group participants/names/icons.
+BlueBubbles 是 OpenClaw 推荐的 iMessage 集成方案。使用 `message` 工具配合 `channel: "bluebubbles"` 来发送消息和管理 iMessage 对话：发送文本和附件、添加反应 (tapbacks)、编辑/撤回、在线程中回复，以及管理群组参与者/名称/图标。
 
-## Inputs to collect
+## 需要收集的输入
 
-- `target` (prefer `chat_guid:...`; also `+15551234567` in E.164 or `user@example.com`)
-- `message` text for send/edit/reply
-- `messageId` for react/edit/unsend/reply
-- Attachment `path` for local files, or `buffer` + `filename` for base64
+- `target`（首选 `chat_guid:...`；也支持 E.164 格式的 `+15551234567` 或 `user@example.com`）
+- 用于发送/编辑/回复的 `message` 文本
+- 用于反应/编辑/撤回/回复的 `messageId`
+- 本地文件的附件 `path`，或 base64 格式的 `buffer` + `filename`
 
-If the user is vague ("text my mom"), ask for the recipient handle or chat guid and the exact message content.
+如果用户描述模糊（如“给妈妈发条短信”），请询问收件人账号或聊天 GUID 以及确切的消息内容。
 
-## Actions
+## 操作
 
-### Send a message
+### 发送消息
 
 ```json
 {
   "action": "send",
   "channel": "bluebubbles",
   "target": "+15551234567",
-  "message": "hello from OpenClaw"
+  "message": "来自 OpenClaw 的问候"
 }
 ```
 
-### React (tapback)
+### 添加反应 (tapback)
 
 ```json
 {
@@ -44,7 +44,7 @@ If the user is vague ("text my mom"), ask for the recipient handle or chat guid 
 }
 ```
 
-### Remove a reaction
+### 移除反应
 
 ```json
 {
@@ -57,7 +57,7 @@ If the user is vague ("text my mom"), ask for the recipient handle or chat guid 
 }
 ```
 
-### Edit a previously sent message
+### 编辑已发送的消息
 
 ```json
 {
@@ -65,11 +65,11 @@ If the user is vague ("text my mom"), ask for the recipient handle or chat guid 
   "channel": "bluebubbles",
   "target": "+15551234567",
   "messageId": "<message-guid>",
-  "message": "updated text"
+  "message": "更新后的文本"
 }
 ```
 
-### Unsend a message
+### 撤回消息
 
 ```json
 {
@@ -80,7 +80,7 @@ If the user is vague ("text my mom"), ask for the recipient handle or chat guid 
 }
 ```
 
-### Reply to a specific message
+### 回复特定消息
 
 ```json
 {
@@ -88,11 +88,11 @@ If the user is vague ("text my mom"), ask for the recipient handle or chat guid 
   "channel": "bluebubbles",
   "target": "+15551234567",
   "replyTo": "<message-guid>",
-  "message": "replying to that"
+  "message": "回复该消息"
 }
 ```
 
-### Send an attachment
+### 发送附件
 
 ```json
 {
@@ -100,32 +100,32 @@ If the user is vague ("text my mom"), ask for the recipient handle or chat guid 
   "channel": "bluebubbles",
   "target": "+15551234567",
   "path": "/tmp/photo.jpg",
-  "caption": "here you go"
+  "caption": "给你这个"
 }
 ```
 
-### Send with an iMessage effect
+### 发送带有 iMessage 特效的消息
 
 ```json
 {
   "action": "sendWithEffect",
   "channel": "bluebubbles",
   "target": "+15551234567",
-  "message": "big news",
+  "message": "大新闻",
   "effect": "balloons"
 }
 ```
 
-## Notes
+## 注意事项
 
-- Requires gateway config `channels.bluebubbles` (serverUrl/password/webhookPath).
-- Prefer `chat_guid` targets when you have them (especially for group chats).
-- BlueBubbles supports rich actions, but some are macOS-version dependent (for example, edit may be broken on macOS 26 Tahoe).
-- The gateway may expose both short and full message ids; full ids are more durable across restarts.
-- Developer reference for the underlying plugin lives in `extensions/bluebubbles/README.md`.
+- 需要网关配置 `channels.bluebubbles`（serverUrl/password/webhookPath）。
+- 如果已知 `chat_guid` 目标，请优先使用（特别是对于群聊）。
+- BlueBubbles 支持丰富的操作，但某些操作取决于 macOS 版本（例如，编辑功能在 macOS 26 Tahoe 上可能无法正常工作）。
+- 网关可能会公开短消息 ID 和完整消息 ID；完整 ID 在重启后更持久。
+- 底层插件的开发人员参考文档位于 `extensions/bluebubbles/README.md`。
 
-## Ideas to try
+## 尝试这些点子
 
-- React with a tapback to acknowledge a request.
-- Reply in-thread when a user references a specific message.
-- Send a file attachment with a short caption.
+- 使用 tapback 反应来确认收到请求。
+- 当用户引用特定消息时，在线程中回复。
+- 发送一个带有简短说明的文件附件。
