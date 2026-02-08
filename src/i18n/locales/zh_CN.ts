@@ -3047,6 +3047,25 @@ const zh_CN: TranslationMap = {
   hobnobbing: "攀谈",
   pondering: "沉思",
   conjuring: "变戏法",
+  "Gateway target": "Gateway 目标",
+  "Have you run `claude setup-token` and copied the token?":
+    "您是否运行了 `claude setup-token` 并复制了 Token？",
+  "Hooks tooling": "Hooks 工具",
+  "Leave blank to keep current": "留空以保持当前值",
+  "OpenClaw hook token": "OpenClaw Hook Token",
+  "Output JSON (alias for `models status --json`)": "输出 JSON (即 `models status --json`)",
+  "Paste a setup-token from `claude setup-token`": "粘贴来自 `claude setup-token` 的 setup-token",
+  "Plain output (alias for `models status --plain`)": "纯文本输出 (即 `models status --plain`)",
+  "Recipient number in E.164 used to derive the session key":
+    "用于生成会话密钥的 E.164 格式接收者号码",
+  "Run `claude setup-token` in your terminal.": "在终端中运行 `claude setup-token`。",
+  "Systemd user services are unavailable; skipping service install. Use your container supervisor or `docker compose up -d`.":
+    "Systemd 用户服务不可用；跳过服务安装。请使用您的容器管理器或 `docker compose up -d`。",
+  "Update wizard requires a TTY. Use `openclaw update --channel <stable|beta|dev>` instead.":
+    "更新向导需要 TTY。请改用 `openclaw update --channel <stable|beta|dev>`。",
+  "Value (JSON5 or raw string)": "值 (JSON5 或原始字符串)",
+  "run `claude setup-token` elsewhere, then paste the token here":
+    "在其他地方运行 `claude setup-token`，然后将 Token 粘贴到此处",
 };
 
 export default zh_CN;

@@ -50,4 +50,4 @@ OpenClaw 可以在你已经使用的任何聊天应用上与你交流。每个�
 - 为安全起见，私信配对和允许列表会被强制执行；参见[安全](/gateway/security)。
 - Telegram 内部机制：[grammY 说明](/channels/grammy)。
 - 故障排除：[渠道故障排除](/channels/troubleshooting)。
-- 模型提供商单独记录；参见[模型提供商](/providers/models)。
+- 模型提供商单独记录；参见 [模型提供商](/providers/models)。
