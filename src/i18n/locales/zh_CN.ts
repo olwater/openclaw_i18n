@@ -3067,6 +3067,77 @@ const zh_CN: TranslationMap = {
   "Value (JSON5 or raw string)": "值 (JSON5 或原始字符串)",
   "run `claude setup-token` elsewhere, then paste the token here":
     "在其他地方运行 `claude setup-token`，然后将 Token 粘贴到此处",
+  "Requesting device code from GitHub...": "正在向 GitHub 请求设备代码...",
+  "Waiting for GitHub authorization...": "正在等待 GitHub 授权...",
+  "Attack surface summary": "攻击面摘要",
+  "State/config path looks like a synced folder": "State/config 路径看起来像是一个同步文件夹",
+  "Gateway password is stored in config": "Gateway 密码存储在配置中",
+  "Hooks token is stored in config": "Hooks Token 存储在配置中",
+  "Hooks token looks short": "Hooks Token 看起来太短",
+  "Hooks token reuses the Gateway token": "Hooks Token 重用了 Gateway Token",
+  "Use a separate hooks.token dedicated to hook ingress.":
+    "请使用单独的 hooks.token 专门用于 Hook 入口。",
+  "Hooks base path is '/'": "Hooks 基础路径为 '/'",
+  "hooks.path='/' would shadow other HTTP endpoints and is unsafe.":
+    "hooks.path='/' 会遮蔽其他 HTTP 端点，这是不安全的。",
+  "Use a dedicated path like '/hooks'.": "请使用像 '/hooks' 这样的专用路径。",
+  "Some configured models look legacy": "一些已配置的模型看起来已过时",
+  "Older/legacy models can be less robust against prompt injection and tool misuse.\\n":
+    "旧/过时模型在抵御提示词注入和工具滥用方面可能不够健壮。\\n",
+  "Prefer modern, instruction-hardened models for any bot that can run tools.":
+    "对于任何可以运行工具的机器人，建议使用现代的、指令强化的模型。",
+  "Some configured models are below recommended tiers": "一些已配置的模型低于推荐层级",
+  "Small models require sandboxing and web tools disabled": "小模型需要沙箱并将 Web 工具禁用",
+  "Small models are not recommended for untrusted inputs.": "不推荐将小模型用于不可信输入。",
+  "Extensions exist but plugins.allow is not set": "存在扩展但未设置 plugins.allow",
+  "Set plugins.allow to an explicit list of plugin ids you trust.":
+    "将 plugins.allow 设置为您信任的插件 ID 的明确列表。",
+  "Config include file is writable by others": "配置包含文件可被他人写入",
+  "Config include file is world-readable": "配置包含文件全员可读",
+  "Config include file is group-readable": "配置包含文件组可读",
+  "Credentials dir is writable by others": "凭据目录可被他人写入",
+  "Credentials dir is readable by others": "凭据目录可被他人读取",
+  "auth-profiles.json is writable by others": "auth-profiles.json 可被他人写入",
+  "auth-profiles.json is readable by others": "auth-profiles.json 可被他人读取",
+  "sessions.json is readable by others": "sessions.json 可被他人读取",
+  "Log file is readable by others": "日志文件可被他人读取",
+  "Open groupPolicy with elevated tools enabled": "启用了提升权限工具的 Open groupPolicy",
+  'Found groupPolicy="open" at:\\n': '在以下位置发现 groupPolicy="open":\\n',
+  'Set groupPolicy="allowlist" and keep elevated allowlists extremely tight.':
+    '设置 groupPolicy="allowlist" 并保持提升权限的白名单极其严格。',
+  "State dir is a symlink": "State 目录是一个符号链接",
+  "State dir is world-writable": "State 目录全员可写",
+  "State dir is group-writable": "State 目录组可写",
+  "State dir is readable by others": "State 目录可被他人读取",
+  "Config file is a symlink": "配置文件是一个符号链接",
+  "Config file is writable by others": "配置文件可被他人写入",
+  "Config file is world-readable": "配置文件全员可读",
+  "Config file is group-readable": "配置文件组可读",
+  "Gateway binds beyond loopback without auth": "Gateway 在没有认证的情况下绑定到非环回接口",
+  "Set gateway.auth (token recommended) or bind to loopback.":
+    "设置 gateway.auth (推荐使用 Token) 或绑定到环回接口。",
+  "Reverse proxy headers are not trusted": "反向代理头不被信任",
+  "Gateway auth missing on loopback": "环回接口缺少 Gateway 认证",
+  "Set gateway.auth (token recommended) or keep the Control UI local-only.":
+    "设置 gateway.auth (推荐使用 Token) 或保持控制 UI 仅限本地。",
+  "Tailscale Funnel exposure enabled": "启用了 Tailscale Funnel 暴露",
+  'Prefer tailscale.mode="serve" (tailnet-only) or set tailscale.mode="off".':
+    '首选 tailscale.mode="serve" (仅 Tailnet) 或设置 tailscale.mode="off"。',
+  "Tailscale Serve exposure enabled": "启用了 Tailscale Serve 暴露",
+  "Control UI allows insecure HTTP auth": "控制 UI 允许不安全的 HTTP 认证",
+  "Disable it or switch to HTTPS (Tailscale Serve) or localhost.":
+    "禁用它或切换到 HTTPS (Tailscale Serve) 或 Localhost。",
+  "DANGEROUS: Control UI device auth disabled": "危险：控制 UI 设备认证已禁用",
+  "Disable it unless you are in a short-lived break-glass scenario.":
+    "除非您处于短暂的紧急情况，否则请禁用它。",
+  "Gateway token looks short": "Gateway Token 看起来太短",
+  "Gateway service install failed: {error}": "Gateway 服务安装失败: {error}",
+  "Gateway: not detected{detail}": "Gateway: 未检测到{detail}",
+  "When you're ready: {command}": "准备好后: {command}",
+  "Gateway custom IP": "Gateway 自定义 IP",
+  "Gateway reachable ({url})": "Gateway 可达 ({url})",
+  "No gateway detected ({url})": "未检测到 Gateway ({url})",
+  "Configured but unreachable ({url})": "已配置但不可达 ({url})",
 };
 
 export default zh_CN;
