@@ -1,4 +1,4 @@
-import zh_CN from "./locales/zh_CN";
+import zh_CN from "./locales/zh_CN.js";
 
 export type TranslationMap = Record<string, string>;
 

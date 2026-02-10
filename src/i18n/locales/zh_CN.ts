@@ -660,7 +660,7 @@ const zh_CN: TranslationMap = {
   "Docs: https://docs.openclaw.ai/gateway/discovery":
     "文档：https://docs.openclaw.ai/gateway/discovery",
   "Docs: https://docs.openclaw.ai/gateway/remote": "Docs: https://docs.openclaw.ai/gateway/remote",
-  "Docs: https://docs.openclaw.ai/skills": "Docs: https://docs.openclaw.ai/skills",
+  //"Docs: https://docs.openclaw.ai/skills": "Docs: https://docs.openclaw.ai/skills", // Duplicate
   "Docs: https://docs.openclaw.ai/tools/web": "文档：https://docs.openclaw.ai/tools/web",
   "Docs: https://docs.openclaw.ai/web/control-ui": "文档：https://docs.openclaw.ai/web/control-ui",
   "Doctor changes": "Doctor 更改",
@@ -3185,6 +3185,63 @@ const zh_CN: TranslationMap = {
     "跳过: 此 OpenClaw 安装不是 Git 签出，且无法检测到包管理器。请通过您的包管理器进行更新，然后运行 `{{doctor}}` 和 `{{restart}}`。",
   "Examples: `{{npm_example}}` or `{{pnpm_example}}`":
     "示例: `{{npm_example}}` 或 `{{pnpm_example}}`",
+  Eligible: "符合条件",
+  "Missing requirements": "缺少要求",
+  "Unsupported on this OS": "此操作系统不支持",
+  "Blocked by allowlist": "被白名单拦截",
+  "Installed {{name}} (with warnings)": "已安装 {{name}} (带警告)",
+  "Installed {{name}}": "已安装 {{name}}",
+  "Install failed: {{name}}{{code}}{{detail}}": "安装失败: {{name}}{{code}}{{detail}}",
+  "Tip: run `{{command}}` to review skills + requirements.":
+    "提示：运行 `{{command}}` 以查看技能和要求。",
+  "Docs: https://docs.openclaw.ai/skills": "文档: https://docs.openclaw.ai/skills",
+  'Plugin "{{name}}" entry path is hidden or node_modules':
+    '插件 "{{name}}" 的入口路径是隐藏的或位于 node_modules 下',
+  'Plugin "{{name}}" has extension entry path traversal': '插件 "{{name}}" 的扩展入口包含路径穿越',
+  'Plugin "{{name}}" code scan failed': '插件 "{{name}}" 代码扫描失败',
+  'Plugin "{{name}}" contains dangerous code patterns': '插件 "{{name}}" 包含危险代码模式',
+  'Plugin "{{name}}" contains suspicious code patterns': '插件 "{{name}}" 包含可疑代码模式',
+  'Skill "{{name}}" code scan failed': '技能 "{{name}}" 代码扫描失败',
+  'Skill "{{name}}" contains dangerous code patterns': '技能 "{{name}}" 包含危险代码模式',
+  'Skill "{{name}}" contains suspicious code patterns': '技能 "{{name}}" 包含可疑代码模式',
+  "Found {{count}} extension(s) under {{dir}}. Without plugins.allow, any discovered plugin id may load (depending on config and plugin behavior).":
+    "在 {{dir}} 下发现 {{count}} 个扩展。如果没有 plugins.allow，任何发现的插件 ID 都可能被加载 (取决于配置和插件行为)。",
+  "Native skill commands are enabled on at least one configured chat surface; treat unpinned/unallowlisted extensions as high risk.":
+    "至少在一个配置的聊天平面上启用了原生技能命令；请将未固定/未白名单化的扩展视为高风险。",
+  "{{detail}}; another user could influence your effective config.":
+    "{{detail}}；另一个用户可能会影响您的生效配置。",
+  "{{detail}}; include files can contain tokens and private settings.":
+    "{{detail}}；包含文件可能包含 Token 和私密设置。",
+  "{{detail}}; another user could drop/modify credential files.":
+    "{{detail}}；另一个用户可能会丢弃/修改凭据文件。",
+  "{{detail}}; credentials and allowlists can be sensitive.":
+    "{{detail}}；凭据和白名单可能是敏感的。",
+  "{{detail}}; another user could inject credentials.": "{{detail}}；另一个用户可能会注入凭据。",
+  "{{detail}}; auth-profiles.json contains API keys and OAuth tokens.":
+    "{{detail}}；auth-profiles.json 包含 API 密钥和 OAuth Token。",
+  "{{detail}}; routing and transcript metadata can be sensitive.":
+    "{{detail}}；路由和对话记录元数据可能是敏感的。",
+  "{{detail}}; logs can contain private messages and tool output.":
+    "{{detail}}；日志可能包含私密消息和工具输出。",
+  "Static code scan could not list extensions directory: {{error}}":
+    "静态代码扫描无法列出扩展目录: {{error}}",
+  'Extension entry "{{entry}}" points to a hidden or node_modules path. Deep code scan will cover this entry explicitly, but review this path choice carefully.':
+    '扩展入口 "{{entry}}" 指向隐藏或 node_modules 路径。深度代码扫描将明确覆盖此入口，但请仔细检查此路径选择。',
+  "Found extension entries that escape the plugin directory:\n{{entries}}":
+    "发现超出插件目录的扩展入口:\n{{entries}}",
+  "Static code scan could not complete: {{error}}": "静态代码扫描无法完成: {{error}}",
+  "Found {{count}} critical issue(s) in {{scanned}} scanned file(s):\n{{details}}":
+    "在 {{scanned}} 个扫描的文件中发现 {{count}} 个严重问题:\n{{details}}",
+  "Found {{count}} warning(s) in {{scanned}} scanned file(s):\n{{details}}":
+    "在 {{scanned}} 个扫描的文件中发现 {{count}} 个警告:\n{{details}}",
+  "Static code scan could not complete for {{dir}}: {{error}}":
+    "无法完成对 {{dir}} 的静态代码扫描: {{error}}",
+  "Found {{count}} critical issue(s) in {{scanned}} scanned file(s) under {{dir}}:\n{{details}}":
+    "在 {{dir}} 下的 {{scanned}} 个扫描的文件中发现 {{count}} 个严重问题:\n{{details}}",
+  "Found {{count}} warning(s) in {{scanned}} scanned file(s) under {{dir}}:\n{{details}}":
+    "在 {{dir}} 下的 {{scanned}} 个扫描的文件中发现 {{count}} 个警告:\n{{details}}",
+  "Small models (<={{size}}B params) detected:\n": "检测到小模型 (<={{size}}B 参数):\n",
+  'Found groupPolicy="open" at:\n{{groups}}\n': '在以下位置发现 groupPolicy="open":\n{{groups}}\n',
 };
 
 export default zh_CN;
