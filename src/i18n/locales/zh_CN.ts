@@ -91,7 +91,42 @@ const zh_CN: TranslationMap = {
   "--max-candidates must be > 0": "--max-candidates 必须 > 0",
   "--min-params must be >= 0": "--min-params 必须 >= 0",
   "--mode must be now or next-heartbeat": "--mode 必须是 now 或 next-heartbeat",
-  "--name is required": "--name 是必须的",
+  "--name is required": "必须提供 --name",
+  "Update a source checkout (git)": "更新源码签出 (Git)",
+  "Switch to beta channel (git + npm)": "切换到 Beta 渠道 (Git + npm)",
+  "Switch to dev channel (git + npm)": "切换到 Dev 渠道 (Git + npm)",
+  "One-off update to a dist-tag or version": "一次性更新到特定的标签或版本",
+  "Update without restarting the service": "更新但不重启服务",
+  "Non-interactive (accept downgrade prompts)": "非交互模式 (自动接受降级提示)",
+  "Shorthand for openclaw update": "openclaw update 的简写",
+  "Git checkouts: fetches, rebases, installs deps, builds, and runs doctor":
+    "Git 签出: 获取、变基、安装依赖、构建并运行 Doctor 检查",
+  "npm installs: updates via detected package manager": "npm 安装: 通过检测到的包管理器进行更新",
+  "Switch channels:": "切换渠道:",
+  "Use --channel stable|beta|dev to persist the update channel in config":
+    "使用 --channel stable|beta|dev 将更新渠道持久化到配置中",
+  "Run openclaw update status to see the active channel and source":
+    "运行 openclaw update status 以查看当前活跃的渠道和源码详情",
+  "Use --tag <dist-tag|version> for a one-off npm update without persisting":
+    "使用 --tag <dist-tag|version> 进行一次性 npm 更新而不持久化",
+  "Non-interactive:": "非交互模式:",
+  "Use --yes to accept downgrade prompts": "使用 --yes 确认降级提示",
+  "Combine with --channel/--tag/--restart/--json/--timeout as needed":
+    "根据需要结合 --channel/--tag/--restart/--json/--timeout 操作",
+  "Notes:": "备注:",
+  "Switch channels with --channel stable|beta|dev": "使用 --channel stable|beta|dev 切换渠道",
+  "For global installs: auto-updates via detected package manager when possible (see docs/install/updating.md)":
+    "对于全局安装: 尽可能通过检测到的包管理器自动更新 (参见 docs/install/updating.md)",
+  "Downgrades require confirmation (can break configuration)": "降级需要确认 (可能会破坏现有配置)",
+  "Skips update if the working directory has uncommitted changes":
+    "如果工作目录中有未提交的更改，则跳过更新",
+  "Show channel + version status.": "显示渠道 + 版本状态。",
+  "JSON output.": "JSON 输出。",
+  "Custom timeout.": "自定义超时时间。",
+  "- Shows current update channel (stable/beta/dev) and source":
+    "- 显示当前的更新渠道 (Stable/Beta/Dev) 和源码来源",
+  "- Includes git tag/branch/SHA for source checkouts":
+    "- 对于 Git 源码签出，包含标签/分支/SHA 详情",
   "--node and --name required": "需要 --node 和 --name",
   "--post-prefix only applies to isolated jobs.": "--post-prefix 仅适用于 isolated 任务。",
   "--probe cannot be used with --plain output.": "--probe 不能与 --plain 输出同时使用。",
@@ -522,7 +557,6 @@ const zh_CN: TranslationMap = {
   "Custom IP address": "自定义 IP 地址",
   "Custom or unexpected service edits detected. Rerun with --force to overwrite.":
     "Custom or unexpected service edits detected. Rerun with --force to overwrite.",
-  "Custom timeout.": "自定义超时时间。",
   "DM security: default is pairing; unknown DMs get a pairing code.":
     "私聊安全：默认为配对；未知的私聊将获得配对码。",
   "DNS helpers": "DNS 助手",
@@ -556,7 +590,7 @@ const zh_CN: TranslationMap = {
   "Delivery account id override": "投递账户 ID 覆盖",
   "Delivery channel override (separate from routing)": "投递频道覆盖 (独立于路由绑定)",
   "Delivery destination (E.164, Telegram chatId, or Discord channel/user)":
-    "Delivery destination (E.164, Telegram chatId, or Discord channel/user)",
+    "交货目的地（E.164、Telegram chatId 或 Discord 频道/用户）",
   "Delivery mode": "递送模式",
   "Delivery target override (separate from session routing)": "投递目标覆盖 (独立于会话路由)",
   "Deprecated external CLI auth profiles detected (no longer supported):":
@@ -1113,6 +1147,9 @@ const zh_CN: TranslationMap = {
   "Isolated jobs cannot use --system-event; use --message or --session main.":
     "隔离任务不能使用 --system-event；请使用 --message 或 --session main。",
   "Isolated jobs require --message (agentTurn).": "隔离任务需要 --message (agentTurn)。",
+  cron: "定时任务",
+  onboard: "引导",
+  "onboard help": "引导帮助",
   "It requires a Brave Search API key (you can store it in the config or set BRAVE_API_KEY in the Gateway environment).":
     "这需要 Brave Search API 密钥 (您可以将其存储在配置中或在 Gateway 环境中设置 BRAVE_API_KEY)。",
   'It\'s not "failing," it\'s "discovering new ways to configure the same thing wrong."':
@@ -1122,7 +1159,6 @@ const zh_CN: TranslationMap = {
   "JSON array of field objects": "字段对象的 JSON 数组",
   "JSON object of headers": "Header 的 JSON 对象",
   "JSON object string for params": "参数的 JSON 对象字符串",
-  "JSON output.": "JSON 输出。",
   "JavaScript to evaluate": "要执行的 JavaScript",
   "Job id": "任务 ID",
   "Job name": "任务名称",
@@ -1437,7 +1473,6 @@ const zh_CN: TranslationMap = {
   "Node invoke timeout in ms (default 90000)": "节点调用超时（毫秒，默认 90000）",
   "Node manager for skills: npm|pnpm|bun": "Skills Node 管理器: npm|pnpm|bun",
   "Node service": "Node 服务",
-  "Non-interactive (accept downgrade prompts)": "非交互模式（自动接受降级提示）",
   "Non-interactive mode requires --scope.": "非交互式模式需要 --scope。",
   "Non-interactive mode requires --workspace. Re-run without flags to use the wizard.":
     "非交互模式需要 --workspace。不带参数重新运行以使用向导。",
@@ -1492,7 +1527,6 @@ const zh_CN: TranslationMap = {
   "One CLI to rule them all, and one more restart because you changed the port.":
     "一“令”统御众端，再加一次重启——因为你又改了端口。",
   "One gateway supports multiple agents.": "一个 Gateway 支持多个 Agent。",
-  "One-off update to a dist-tag or version": "一次性更新到特定的 dist-tag 或版本",
   "Only --provider anthropic is supported for setup-token.":
     "只有 --provider anthropic 支持 setup-token。",
   "Only --token-provider anthropic is supported for --auth-choice token.":
@@ -2062,10 +2096,8 @@ const zh_CN: TranslationMap = {
   "Shell yeah—I'm here to pinch the toil and leave you the glory.":
     "Shell yeah——我来帮你解决苦差事，把荣耀留给你。",
   "Ship fast, log faster.": "发布快，日志更快。",
-  "Shorthand for openclaw update": "openclaw update 的简写",
   "Show Homebrew install command?": "显示 Homebrew 安装命令？",
   "Show browser status": "显示浏览器状态",
-  "Show channel + version status.": "显示通道和版本状态。",
   "Show channel health + session summary.": "显示频道健康状况 + 会话摘要。",
   "Show channel health and recent session recipients": "显示频道健康状况和最近的会话接收者",
   "Show configured model state": "显示已配置的模型状态",
@@ -2194,10 +2226,7 @@ const zh_CN: TranslationMap = {
   "Supports 'private' (fully private) and 'anonymized' (proxy) modes.":
     "Supports 'private' (fully private) and 'anonymized' (proxy) modes.",
   "Switch agent (or open picker)": "切换 Agent（或打开选择器）",
-  "Switch channels:": "切换通道:",
   "Switch session (or open picker)": "切换会话（或打开选择器）",
-  "Switch to beta channel (git + npm)": "切换到 Beta 通道 (git + npm)",
-  "Switch to dev channel (git + npm)": "切换到开发通道 (git + npm)",
   Synthetic: "Synthetic",
   "Synthetic API key": "Synthetic API 密钥",
   "System Node 22+ not found. Install via Homebrew/apt/choco and rerun doctor to migrate off Bun/version managers.":
@@ -2380,7 +2409,6 @@ const zh_CN: TranslationMap = {
   "Update OpenClaw from git before running doctor?": "运行 Doctor 前是否从 Git 更新 OpenClaw?",
   "Update OpenClaw to the latest version": "将 OpenClaw 更新到最新版本",
   "Update Result:": "更新结果:",
-  "Update a source checkout (git)": "更新源码检出 (Git)",
   "Update all tracked hooks": "更新所有已追踪的 Hooks",
   "Update all tracked plugins": "更新所有跟踪的插件",
   "Update an agent identity (name/theme/emoji/avatar)": "更新 Agent 身份信息 (名称/主题/表情/头像)",
@@ -2400,7 +2428,6 @@ const zh_CN: TranslationMap = {
   "Update installed plugins (npm installs only)": "更新已安装的插件 (仅限 npm 安装)",
   "Update result": "更新结果",
   "Update values": "修改配置项",
-  "Update without restarting the service": "不重启服务进行更新",
   "Update wizard requires a TTY. Use `openclaw update--channel <stable | beta | dev>` instead.":
     "更新向导需要 TTY。请改用 `openclaw update--channel <stable | beta | dev>`。",
   "Updating OpenClaw...": "正在更新 OpenClaw...",
@@ -3138,6 +3165,26 @@ const zh_CN: TranslationMap = {
   "Gateway reachable ({url})": "Gateway 可达 ({url})",
   "No gateway detected ({url})": "未检测到 Gateway ({url})",
   "Configured but unreachable ({url})": "已配置但不可达 ({url})",
+
+  "npm plugins: {{summary}}.": "npm 插件: {{summary}}。",
+  "Doctor failed: {{error}}": "Doctor 检查失败: {{error}}",
+  "Daemon restart failed: {{error}}": "守护进程重启失败: {{error}}",
+  "You may need to restart the service manually: {{command}}":
+    "您可能需要手动重启服务: {{command}}",
+  "Keep current ({{channel}})": "保持当前 ({{channel}})",
+  "Switched to bundled plugins: {{list}}.": "已切换到捆绑插件: {{list}}。",
+  "Restored npm plugins: {{list}}.": "已恢复 npm 插件: {{list}}。",
+  "Create a git checkout at {{dir}}? (override via OPENCLAW_GIT_DIR)":
+    "在 {{dir}} 创建 Git 签出？(通过 OPENCLAW_GIT_DIR 覆盖)",
+  "Delivery channel ({{options}})": "递送渠道 ({{options}})",
+  "Choose at most one of --announce or --no-deliver": "最多选择 --announce 或 --no-deliver 之一",
+  "Deprecated (use --announce). Announces a summary to a chat.":
+    "不推荐使用 (请改用 --announce)。向聊天发送摘要说明。",
+  "Announce summary to a chat (subagent-style)": "向聊天发送摘要说明 (子 Agent 风格)",
+  "Skipped: this OpenClaw install isn't a git checkout, and the package manager couldn't be detected. Update via your package manager, then run `{{doctor}}` and `{{restart}}`.":
+    "跳过: 此 OpenClaw 安装不是 Git 签出，且无法检测到包管理器。请通过您的包管理器进行更新，然后运行 `{{doctor}}` 和 `{{restart}}`。",
+  "Examples: `{{npm_example}}` or `{{pnpm_example}}`":
+    "示例: `{{npm_example}}` 或 `{{pnpm_example}}`",
 };
 
 export default zh_CN;
