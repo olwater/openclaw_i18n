@@ -43,6 +43,10 @@ export async function promptAuthChoiceGrouped(params: {
       continue;
     }
 
+    if (group.options.length === 1) {
+      return group.options[0].value;
+    }
+
     const methodSelection = await params.prompter.select({
       message: t("{provider} auth method").replace("{provider}", group.label),
       options: [...group.options, { value: BACK_VALUE, label: t("Back") }],

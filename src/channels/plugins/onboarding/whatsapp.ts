@@ -1,4 +1,3 @@
-import fs from "node:fs/promises";
 import path from "node:path";
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { DmPolicy } from "../../../config/types.js";
@@ -11,7 +10,7 @@ import { mergeWhatsAppConfig } from "../../../config/merge-config.js";
 import { t } from "../../../i18n/index.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import { formatDocsLink } from "../../../terminal/links.js";
-import { normalizeE164 } from "../../../utils.js";
+import { normalizeE164, pathExists } from "../../../utils.js";
 import {
   listWhatsAppAccountIds,
   resolveDefaultWhatsAppAccountId,
@@ -31,15 +30,6 @@ function setWhatsAppAllowFrom(cfg: OpenClawConfig, allowFrom?: string[]): OpenCl
 
 function setWhatsAppSelfChatMode(cfg: OpenClawConfig, selfChatMode: boolean): OpenClawConfig {
   return mergeWhatsAppConfig(cfg, { selfChatMode });
-}
-
-async function pathExists(filePath: string): Promise<boolean> {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 async function detectWhatsAppLinked(cfg: OpenClawConfig, accountId: string): Promise<boolean> {

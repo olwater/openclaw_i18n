@@ -260,7 +260,7 @@ git worktree remove /tmp/issue-99
 ... 你的任务内容。
 
 全部完成后，运行此命令通知我：
-openclaw gateway wake --text "完成：[构建内容的简短总结]" --mode now
+openclaw system event --text "完成：[构建内容的简短总结]" --mode now
 ```
 
 **示例：**
@@ -268,7 +268,7 @@ openclaw gateway wake --text "完成：[构建内容的简短总结]" --mode now
 ```bash
 bash pty:true workdir:~/project background:true command:"codex --yolo exec '为 todos 构建一个 REST API。
 
-全部完成后，运行：openclaw gateway wake --text \"完成：已构建包含 CRUD 端点的 todos REST API\" --mode now'"
+全部完成后，运行：openclaw system event --text \"完成：已构建包含 CRUD 端点的 todos REST API\" --mode now'"
 ```
 
 这会触发一个即时唤醒事件——Skippy 会在几秒钟内收到提醒，而不是 10 分钟。

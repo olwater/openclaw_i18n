@@ -62,7 +62,7 @@ export function registerOnboardCommand(program: Command) {
     .option(
       "--auth-choice <choice>",
       t(
-        "Auth: setup-token|token|chutes|openai-codex|openai-api-key|xai-api-key|qianfan-api-key|openrouter-api-key|ai-gateway-api-key|cloudflare-ai-gateway-api-key|moonshot-api-key|moonshot-api-key-cn|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip",
+        "Auth: setup-token|token|chutes|openai-codex|openai-api-key|xai-api-key|qianfan-api-key|openrouter-api-key|ai-gateway-api-key|cloudflare-ai-gateway-api-key|moonshot-api-key|moonshot-api-key-cn|kimi-code-api-key|synthetic-api-key|venice-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|apiKey|minimax-api|minimax-api-lightning|opencode-zen|skip|together-api-key",
       ),
     )
     .option(
@@ -90,6 +90,7 @@ export function registerOnboardCommand(program: Command) {
     .option("--minimax-api-key <key>", t("MiniMax API key"))
     .option("--synthetic-api-key <key>", t("Synthetic API key"))
     .option("--venice-api-key <key>", t("Venice API key"))
+    .option("--together-api-key <key>", t("Together AI API key"))
     .option("--opencode-zen-api-key <key>", t("OpenCode Zen API key"))
     .option("--xai-api-key <key>", t("xAI API key"))
     .option("--qianfan-api-key <key>", t("QIANFAN API key"))
@@ -147,6 +148,7 @@ export function registerOnboardCommand(program: Command) {
             minimaxApiKey: opts.minimaxApiKey as string | undefined,
             syntheticApiKey: opts.syntheticApiKey as string | undefined,
             veniceApiKey: opts.veniceApiKey as string | undefined,
+            togetherApiKey: opts.togetherApiKey as string | undefined,
             opencodeZenApiKey: opts.opencodeZenApiKey as string | undefined,
             xaiApiKey: opts.xaiApiKey as string | undefined,
             gatewayPort:
