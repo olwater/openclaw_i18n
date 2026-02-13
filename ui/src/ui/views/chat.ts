@@ -12,6 +12,7 @@ import {
 import { normalizeMessage, normalizeRoleForGrouping } from "../chat/message-normalizer.ts";
 import { t } from "../i18n/index.ts";
 import { icons } from "../icons.ts";
+import { detectTextDirection } from "../text-direction.ts";
 import "../components/resizable-divider.ts";
 import { renderMarkdownSidebar } from "./markdown-sidebar.ts";
 
@@ -380,6 +381,7 @@ export function renderChat(props: ChatProps) {
             <textarea
               ${ref((el) => el && adjustTextareaHeight(el as HTMLTextAreaElement))}
               .value=${props.draft}
+              dir=${detectTextDirection(props.draft)}
               ?disabled=${!props.connected}
               @keydown=${(e: KeyboardEvent) => {
                 if (e.key !== "Enter") {

@@ -1,34 +1,14 @@
 import type { AuthProfileStore } from "../agents/auth-profiles.js";
-import type { AuthChoice } from "./onboard-types.js";
+import type { AuthChoice, AuthChoiceGroupId } from "./onboard-types.js";
 import { t } from "../i18n/index.js";
+
+export type { AuthChoiceGroupId };
 
 export type AuthChoiceOption = {
   value: AuthChoice;
   label: string;
   hint?: string;
 };
-
-export type AuthChoiceGroupId =
-  | "openai"
-  | "anthropic"
-  | "google"
-  | "copilot"
-  | "openrouter"
-  | "ai-gateway"
-  | "cloudflare-ai-gateway"
-  | "moonshot"
-  | "zai"
-  | "xiaomi"
-  | "opencode-zen"
-  | "minimax"
-  | "synthetic"
-  | "venice"
-  | "qwen"
-  | "together"
-  | "qianfan"
-  | "xai"
-  | "custom";
-
 export type AuthChoiceGroup = {
   value: AuthChoiceGroupId;
   label: string;
@@ -55,9 +35,15 @@ const AUTH_CHOICE_GROUP_DEFS: {
     choices: ["token", "apiKey"],
   },
   {
+    value: "vllm",
+    label: "vLLM",
+    hint: "Local/self-hosted OpenAI-compatible",
+    choices: ["vllm"],
+  },
+  {
     value: "minimax",
     label: t("MiniMax"),
-    hint: t("M2.1 (recommended)"),
+    hint: t("M2.5 (recommended)"),
     choices: ["minimax-portal", "minimax-api", "minimax-api-lightning"],
   },
   {
@@ -92,9 +78,9 @@ const AUTH_CHOICE_GROUP_DEFS: {
   },
   {
     value: "zai",
-    label: t("Z.AI (GLM 4.7)"),
-    hint: t("API key"),
-    choices: ["zai-api-key"],
+    label: t("Z.AI"),
+    hint: t("GLM Coding Plan / Global / CN"),
+    choices: ["zai-coding-global", "zai-coding-cn", "zai-global", "zai-cn"],
   },
   {
     value: "qianfan",
@@ -139,10 +125,22 @@ const AUTH_CHOICE_GROUP_DEFS: {
     choices: ["together-api-key"],
   },
   {
+    value: "huggingface",
+    label: "Hugging Face",
+    hint: "Inference API (HF token)",
+    choices: ["huggingface-api-key"],
+  },
+  {
     value: "venice",
     label: t("Venice AI"),
     hint: t("Privacy-focused (uncensored models)"),
     choices: ["venice-api-key"],
+  },
+  {
+    value: "litellm",
+    label: "LiteLLM",
+    hint: "Unified LLM gateway (100+ providers)",
+    choices: ["litellm-api-key"],
   },
   {
     value: "cloudflare-ai-gateway",
@@ -176,6 +174,11 @@ export function buildAuthChoiceOptions(params: {
     label: t("OpenAI Codex (ChatGPT OAuth)"),
   });
   options.push({ value: "chutes", label: "Chutes (OAuth)" });
+  options.push({
+    value: "vllm",
+    label: "vLLM (custom URL + model)",
+    hint: "Local/self-hosted OpenAI-compatible server",
+  });
   options.push({ value: "openai-api-key", label: "OpenAI API key" });
   options.push({ value: "xai-api-key", label: "xAI (Grok) API key" });
   options.push({
@@ -183,6 +186,11 @@ export function buildAuthChoiceOptions(params: {
     label: "Qianfan API key",
   });
   options.push({ value: "openrouter-api-key", label: "OpenRouter API key" });
+  options.push({
+    value: "litellm-api-key",
+    label: "LiteLLM API key",
+    hint: "Unified gateway for 100+ LLM providers",
+  });
   options.push({
     value: "ai-gateway-api-key",
     label: t("Vercel AI Gateway API key"),
@@ -216,6 +224,11 @@ export function buildAuthChoiceOptions(params: {
     hint: "Access to Llama, DeepSeek, Qwen, and more open models",
   });
   options.push({
+    value: "huggingface-api-key",
+    label: "Hugging Face API key (HF token)",
+    hint: "Inference Providers — OpenAI-compatible chat",
+  });
+  options.push({
     value: "github-copilot",
     label: t("GitHub Copilot (GitHub device login)"),
     hint: t("Uses GitHub device flow"),
@@ -231,7 +244,27 @@ export function buildAuthChoiceOptions(params: {
     label: t("Google Gemini CLI OAuth"),
     hint: t("Uses the bundled Gemini CLI auth plugin"),
   });
-  options.push({ value: "zai-api-key", label: t("Z.AI (GLM 4.7) API key") });
+  options.push({ value: "zai-api-key", label: t("Z.AI API key") });
+  options.push({
+    value: "zai-coding-global",
+    label: "Coding-Plan-Global",
+    hint: t("GLM Coding Plan Global (api.z.ai)"),
+  });
+  options.push({
+    value: "zai-coding-cn",
+    label: "Coding-Plan-CN",
+    hint: t("GLM Coding Plan CN (open.bigmodel.cn)"),
+  });
+  options.push({
+    value: "zai-global",
+    label: "Global",
+    hint: t("Z.AI Global (api.z.ai)"),
+  });
+  options.push({
+    value: "zai-cn",
+    label: "CN",
+    hint: t("Z.AI CN (open.bigmodel.cn)"),
+  });
   options.push({
     value: "xiaomi-api-key",
     label: t("Xiaomi API key"),
@@ -254,10 +287,10 @@ export function buildAuthChoiceOptions(params: {
     label: t("OpenCode Zen (multi-model proxy)"),
     hint: t("Claude, GPT, Gemini via opencode.ai/zen"),
   });
-  options.push({ value: "minimax-api", label: t("MiniMax M2.1") });
+  options.push({ value: "minimax-api", label: t("MiniMax M2.5") });
   options.push({
     value: "minimax-api-lightning",
-    label: t("MiniMax M2.1 Lightning"),
+    label: t("MiniMax M2.5 Lightning"),
     hint: t("Faster, higher output cost"),
   });
   options.push({ value: "custom-api-key", label: "Custom Provider" });

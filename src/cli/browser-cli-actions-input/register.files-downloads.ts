@@ -58,7 +58,12 @@ export function registerBrowserFilesAndDownloadsCommands(
   browser
     .command("waitfordownload")
     .description(t("Wait for the next download (and save it)"))
-    .argument("[path]", t("Save path (default: /tmp/openclaw/downloads/...)"))
+    .argument(
+      "[path]",
+      t(
+        "Save path (default: /tmp/openclaw/downloads/...; fallback: os.tmpdir()/openclaw/downloads/...)",
+      ),
+    )
     .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .option(
       "--timeout-ms <ms>",

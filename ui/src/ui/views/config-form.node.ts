@@ -5,7 +5,6 @@ import {
   defaultValue,
   hintForPath,
   humanize,
-  isSensitivePath,
   pathKey,
   schemaType,
   type JsonSchema,
@@ -308,7 +307,8 @@ function renderTextInput(params: {
   const hint = hintForPath(path, hints);
   const label = t(hint?.label ?? schema.title ?? humanize(String(path.at(-1))));
   const help = hint?.help ?? schema.description;
-  const isSensitive = hint?.sensitive ?? isSensitivePath(path);
+  const isSensitive =
+    (hint?.sensitive ?? false) && !/^\$\{[^}]*\}$/.test(String(value ?? "").trim());
   const placeholder =
     hint?.placeholder ??
     // oxlint-disable typescript/no-base-to-string

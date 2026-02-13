@@ -27,6 +27,7 @@ type LogsCliOptions = {
   json?: boolean;
   plain?: boolean;
   color?: boolean;
+  localTime?: boolean;
   url?: string;
   token?: string;
   timeout?: string;
@@ -60,7 +61,11 @@ async function fetchLogs(
   return payload as LogsTailPayload;
 }
 
-function formatLogTimestamp(value?: string, mode: "pretty" | "plain" = "plain") {
+export function formatLogTimestamp(
+  value?: string,
+  mode: "pretty" | "plain" = "plain",
+  localTime = false,
+) {
   if (!value) {
     return "";
   }
@@ -68,10 +73,32 @@ function formatLogTimestamp(value?: string, mode: "pretty" | "plain" = "plain") 
   if (Number.isNaN(parsed.getTime())) {
     return value;
   }
-  if (mode === "pretty") {
-    return parsed.toISOString().slice(11, 19);
+
+  const formatLocalIsoWithOffset = (now: Date) => {
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const h = String(now.getHours()).padStart(2, "0");
+    const m = String(now.getMinutes()).padStart(2, "0");
+    const s = String(now.getSeconds()).padStart(2, "0");
+    const ms = String(now.getMilliseconds()).padStart(3, "0");
+    const tzOffset = now.getTimezoneOffset();
+    const tzSign = tzOffset <= 0 ? "+" : "-";
+    const tzHours = String(Math.floor(Math.abs(tzOffset) / 60)).padStart(2, "0");
+    const tzMinutes = String(Math.abs(tzOffset) % 60).padStart(2, "0");
+    return `${year}-${month}-${day}T${h}:${m}:${s}.${ms}${tzSign}${tzHours}:${tzMinutes}`;
+  };
+
+  let timeString: string;
+  if (localTime) {
+    timeString = formatLocalIsoWithOffset(parsed);
+  } else {
+    timeString = parsed.toISOString();
   }
-  return parsed.toISOString();
+  if (mode === "pretty") {
+    return timeString.slice(11, 19);
+  }
+  return timeString;
 }
 
 function formatLogLine(
@@ -79,6 +106,7 @@ function formatLogLine(
   opts: {
     pretty: boolean;
     rich: boolean;
+    localTime: boolean;
   },
 ): string {
   const parsed = parseLogLine(raw);
@@ -86,7 +114,7 @@ function formatLogLine(
     return raw;
   }
   const label = parsed.subsystem ?? parsed.module ?? "";
-  const time = formatLogTimestamp(parsed.time, opts.pretty ? "pretty" : "plain");
+  const time = formatLogTimestamp(parsed.time, opts.pretty ? "pretty" : "plain", opts.localTime);
   const level = parsed.level ?? "";
   const levelLabel = level.padEnd(5).trim();
   const message = parsed.message || parsed.raw;
@@ -193,6 +221,7 @@ export function registerLogsCli(program: Command) {
     .option("--json", t("Emit JSON log lines"), false)
     .option("--plain", t("Plain text output (no ANSI styling)"), false)
     .option("--no-color", t("Disable ANSI colors"))
+    .option("--local-time", t("Display timestamps in local timezone"), false)
     .addHelpText(
       "after",
       () =>
@@ -209,6 +238,7 @@ export function registerLogsCli(program: Command) {
     const jsonMode = Boolean(opts.json);
     const pretty = !jsonMode && Boolean(process.stdout.isTTY) && !opts.plain;
     const rich = isRich() && opts.color !== false;
+    const localTime = Boolean(opts.localTime);
 
     while (true) {
       let payload: LogsTailPayload;
@@ -280,6 +310,7 @@ export function registerLogsCli(program: Command) {
               formatLogLine(line, {
                 pretty,
                 rich,
+                localTime,
               }),
             )
           ) {

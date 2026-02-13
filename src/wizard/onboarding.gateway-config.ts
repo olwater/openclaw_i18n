@@ -7,7 +7,11 @@ import type {
   WizardFlow,
 } from "./onboarding.types.js";
 import type { WizardPrompter } from "./prompts.js";
-import { normalizeGatewayTokenInput, randomToken } from "../commands/onboard-helpers.js";
+import {
+  normalizeGatewayTokenInput,
+  randomToken,
+  validateGatewayPasswordInput,
+} from "../commands/onboard-helpers.js";
 import { t } from "../i18n/index.js";
 import { findTailscaleBinary } from "../infra/tailscale.js";
 
@@ -214,7 +218,7 @@ export async function configureGatewayForOnboarding(
         ? quickstartGateway.password
         : await prompter.text({
             message: t("Gateway password"),
-            validate: (value) => (value?.trim() ? undefined : t("Required")),
+            validate: validateGatewayPasswordInput,
           });
     nextConfig = {
       ...nextConfig,
@@ -223,7 +227,7 @@ export async function configureGatewayForOnboarding(
         auth: {
           ...nextConfig.gateway?.auth,
           mode: "password",
-          password: String(password).trim(),
+          password: String(password ?? "").trim(),
         },
       },
     };

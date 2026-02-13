@@ -204,9 +204,12 @@ async function noteChannelPrimer(
         formatCliCommand(t("openclaw pairing approve <channel> <code>")),
       ),
       t('Public DMs require dmPolicy="open" + allowFrom=["*"].'),
-      t(
-        'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
-      ),
+      t("Multi-user DMs: run: {command} (or {alt} for multi-account channels) to isolate sessions.")
+        .replace(
+          "{command}",
+          formatCliCommand('openclaw config set session.dmScope "per-channel-peer"'),
+        )
+        .replace("{alt}", '"per-account-channel-peer"'),
       t("Docs: {link}").replace("{link}", formatDocsLink("/start/pairing", "start/pairing")),
       "",
       ...channelLines,
@@ -268,8 +271,13 @@ async function maybeConfigureDmPolicies(params: {
           .replace("{policyKey}", policy.policyKey)
           .replace("{allowFromKey}", policy.allowFromKey),
         t(
-          'Multi-user DMs: set session.dmScope="per-channel-peer" (or "per-account-channel-peer" for multi-account channels) to isolate sessions.',
-        ),
+          "Multi-user DMs: run: {command} (or {alt} for multi-account channels) to isolate sessions.",
+        )
+          .replace(
+            "{command}",
+            formatCliCommand('openclaw config set session.dmScope "per-channel-peer"'),
+          )
+          .replace("{alt}", '"per-account-channel-peer"'),
         t("Docs: {link}").replace("{link}", formatDocsLink("/start/pairing", "start/pairing")),
       ].join("\n"),
       t("{label} DM access").replace("{label}", policy.label),

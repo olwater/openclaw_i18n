@@ -30,7 +30,7 @@ export async function applyAuthChoiceAnthropic(
       message: t("Paste Anthropic setup-token"),
       validate: (value) => validateAnthropicSetupToken(String(value ?? "")),
     });
-    const token = String(tokenRaw).trim();
+    const token = String(tokenRaw ?? "").trim();
 
     const profileNameRaw = await params.prompter.text({
       message: t("Token name (blank = default)"),
@@ -89,7 +89,7 @@ export async function applyAuthChoiceAnthropic(
         message: t("Enter Anthropic API key"),
         validate: validateApiKeyInput,
       });
-      await setAnthropicApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
+      await setAnthropicApiKey(normalizeApiKeyInput(String(key ?? "")), params.agentDir);
     }
     nextConfig = applyAuthProfileConfig(nextConfig, {
       profileId: "anthropic:default",
