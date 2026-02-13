@@ -21,6 +21,7 @@ export function getLocale(): Locale {
     return currentLocale;
   }
   const envLocale = (
+    process.env.OPENCLAW_LANG ||
     process.env.LANG ||
     process.env.LC_ALL ||
     process.env.LC_MESSAGES ||
