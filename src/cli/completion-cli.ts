@@ -3,11 +3,8 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { resolveStateDir } from "../config/paths.js";
-<<<<<<< HEAD
 import { t } from "../i18n/index.js";
-=======
 import { routeLogsToStderr } from "../logging/console.js";
->>>>>>> origin/main
 import { pathExists } from "../utils.js";
 import { getCoreCliCommandNames, registerCoreCliByName } from "./program/command-registry.js";
 import { getProgramContext } from "./program/program-context.js";

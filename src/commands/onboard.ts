@@ -18,31 +18,21 @@ export async function onboardCommand(opts: OnboardOptions, runtime: RuntimeEnv =
   if (opts.nonInteractive && isDeprecatedAuthChoice(originalAuthChoice)) {
     runtime.error(
       [
-<<<<<<< HEAD
-        t('Auth choice "{authChoice}" is deprecated.').replace("{authChoice}", authChoice),
+        t('Auth choice "{authChoice}" is deprecated.').replace(
+          "{authChoice}",
+          String(originalAuthChoice),
+        ),
         t('Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".'),
-=======
-        `Auth choice "${String(originalAuthChoice)}" is deprecated.`,
-        'Use "--auth-choice token" (Anthropic setup-token) or "--auth-choice openai-codex".',
->>>>>>> origin/main
       ].join("\n"),
     );
     runtime.exit(1);
     return;
   }
-<<<<<<< HEAD
-  if (authChoice === "claude-cli") {
+  if (originalAuthChoice === "claude-cli") {
     runtime.log(t('Auth choice "claude-cli" is deprecated; using setup-token flow instead.'));
   }
-  if (authChoice === "codex-cli") {
-    runtime.log(t('Auth choice "codex-cli" is deprecated; using OpenAI Codex OAuth instead.'));
-=======
-  if (originalAuthChoice === "claude-cli") {
-    runtime.log('Auth choice "claude-cli" is deprecated; using setup-token flow instead.');
-  }
   if (originalAuthChoice === "codex-cli") {
-    runtime.log('Auth choice "codex-cli" is deprecated; using OpenAI Codex OAuth instead.');
->>>>>>> origin/main
+    runtime.log(t('Auth choice "codex-cli" is deprecated; using OpenAI Codex OAuth instead.'));
   }
   const flow = opts.flow === "manual" ? ("advanced" as const) : opts.flow;
   const normalizedOpts =

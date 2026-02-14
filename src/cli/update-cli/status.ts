@@ -4,6 +4,7 @@ import {
   resolveUpdateAvailability,
 } from "../../commands/status.update.js";
 import { readConfigFileSnapshot } from "../../config/config.js";
+import { t } from "../../i18n/index.js";
 import {
   formatUpdateChannelLabel,
   normalizeUpdateChannel,
@@ -34,7 +35,7 @@ function formatGitStatusLine(params: {
 export async function updateStatusCommand(opts: UpdateStatusOptions): Promise<void> {
   const timeoutMs = opts.timeout ? Number.parseInt(opts.timeout, 10) * 1000 : undefined;
   if (timeoutMs !== undefined && (Number.isNaN(timeoutMs) || timeoutMs <= 0)) {
-    defaultRuntime.error("--timeout must be a positive integer (seconds)");
+    defaultRuntime.error(t("--timeout must be a positive integer (seconds)"));
     defaultRuntime.exit(1);
     return;
   }
@@ -105,23 +106,25 @@ export async function updateStatusCommand(opts: UpdateStatusOptions): Promise<vo
         : "unknown";
 
   const rows = [
-    { Item: "Install", Value: installLabel },
-    { Item: "Channel", Value: channelLabel },
-    ...(gitLabel ? [{ Item: "Git", Value: gitLabel }] : []),
+    { Item: t("Install"), Value: installLabel },
+    { Item: t("Channel"), Value: channelLabel },
+    ...(gitLabel ? [{ Item: t("Git"), Value: gitLabel }] : []),
     {
-      Item: "Update",
-      Value: updateAvailability.available ? theme.warn(`available · ${updateLine}`) : updateLine,
+      Item: t("Update"),
+      Value: updateAvailability.available
+        ? theme.warn(`${t("available")} · ${updateLine}`)
+        : updateLine,
     },
   ];
 
-  defaultRuntime.log(theme.heading("OpenClaw update status"));
+  defaultRuntime.log(theme.heading(t("OpenClaw update status")));
   defaultRuntime.log("");
   defaultRuntime.log(
     renderTable({
       width: tableWidth,
       columns: [
-        { key: "Item", header: "Item", minWidth: 10 },
-        { key: "Value", header: "Value", flex: true, minWidth: 24 },
+        { key: "Item", header: t("Item"), minWidth: 10 },
+        { key: "Value", header: t("Value"), flex: true, minWidth: 24 },
       ],
       rows,
     }).trimEnd(),
