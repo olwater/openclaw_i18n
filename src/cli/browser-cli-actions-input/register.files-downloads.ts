@@ -60,13 +60,9 @@ export function registerBrowserFilesAndDownloadsCommands(
     .description(t("Wait for the next download (and save it)"))
     .argument(
       "[path]",
-<<<<<<< HEAD
       t(
-        "Save path (default: /tmp/openclaw/downloads/...; fallback: os.tmpdir()/openclaw/downloads/...)",
+        "Save path within openclaw temp downloads dir (default: /tmp/openclaw/downloads/...; fallback: os.tmpdir()/openclaw/downloads/...)",
       ),
-=======
-      "Save path within openclaw temp downloads dir (default: /tmp/openclaw/downloads/...; fallback: os.tmpdir()/openclaw/downloads/...)",
->>>>>>> origin/main
     )
     .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .option(
@@ -107,16 +103,11 @@ export function registerBrowserFilesAndDownloadsCommands(
     .command("download")
     .description(t("Click a ref and save the resulting download"))
     .argument("<ref>", "Ref id from snapshot to click")
-<<<<<<< HEAD
-    .argument("<path>", t("Save path"))
-    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
-=======
     .argument(
       "<path>",
-      "Save path within openclaw temp downloads dir (e.g. report.pdf or /tmp/openclaw/downloads/report.pdf)",
+      t("Save path within openclaw temp downloads dir (e.g. report.pdf or /tmp/openclaw/downloads/report.pdf)"),
     )
-    .option("--target-id <id>", "CDP target id (or unique prefix)")
->>>>>>> origin/main
+    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
     .option(
       "--timeout-ms <ms>",
       t("How long to wait for the download to start (default: 120000)"),

@@ -8,11 +8,8 @@ import {
   generateChutesPkce,
   parseOAuthCallbackInput,
 } from "../agents/chutes-oauth.js";
-<<<<<<< HEAD
 import { t } from "../i18n/index.js";
-=======
 import { isLoopbackHost } from "../gateway/net.js";
->>>>>>> origin/main
 
 type OAuthPrompt = {
   message: string;

@@ -1,9 +1,6 @@
 import type { OpenClawConfig } from "../config/config.js";
-<<<<<<< HEAD
 import { t } from "../i18n/index.js";
-=======
 import type { ModelProviderConfig } from "../config/types.models.js";
->>>>>>> origin/main
 import {
   buildMinimaxApiModelDefinition,
   buildMinimaxModelDefinition,
@@ -228,16 +225,10 @@ function applyMinimaxApiProviderConfigWithBaseUrl(
   };
 
   const models = { ...cfg.agents?.defaults?.models };
-<<<<<<< HEAD
-  models[`minimax/${modelId}`] = {
-    ...models[`minimax/${modelId}`],
-    alias: t("Minimax"),
-=======
   const modelRef = `${params.providerId}/${params.modelId}`;
   models[modelRef] = {
     ...models[modelRef],
-    alias: "Minimax",
->>>>>>> origin/main
+    alias: t("Minimax"),
   };
 
   return {

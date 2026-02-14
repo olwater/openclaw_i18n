@@ -1,10 +1,7 @@
 import type { AuthProfileStore } from "../agents/auth-profiles.js";
 import type { AuthChoice, AuthChoiceGroupId } from "./onboard-types.js";
-<<<<<<< HEAD
-import { t } from "../i18n/index.js";
-=======
 import { AUTH_CHOICE_LEGACY_ALIASES_FOR_CLI } from "./auth-choice-legacy.js";
->>>>>>> origin/main
+import { t } from "../i18n/index.js";
 
 export type { AuthChoiceGroupId };
 
@@ -52,15 +49,9 @@ const AUTH_CHOICE_GROUP_DEFS: {
   },
   {
     value: "minimax",
-<<<<<<< HEAD
     label: t("MiniMax"),
     hint: t("M2.5 (recommended)"),
-    choices: ["minimax-portal", "minimax-api", "minimax-api-lightning"],
-=======
-    label: "MiniMax",
-    hint: "M2.5 (recommended)",
     choices: ["minimax-portal", "minimax-api", "minimax-api-key-cn", "minimax-api-lightning"],
->>>>>>> origin/main
   },
   {
     value: "moonshot",
@@ -332,7 +323,7 @@ export function buildAuthChoiceOptions(params: {
   includeSkip: boolean;
 }): AuthChoiceOption[] {
   void params.store;
-<<<<<<< HEAD
+
   const options: AuthChoiceOption[] = [];
 
   options.push({
@@ -461,14 +452,16 @@ export function buildAuthChoiceOptions(params: {
   });
   options.push({ value: "minimax-api", label: t("MiniMax M2.5") });
   options.push({
+    value: "minimax-api-key-cn",
+    label: t("MiniMax M2.5 (CN)"),
+    hint: t("China endpoint (api.minimaxi.com)"),
+  });
+  options.push({
     value: "minimax-api-lightning",
     label: t("MiniMax M2.5 Lightning"),
     hint: t("Faster, higher output cost"),
   });
-  options.push({ value: "custom-api-key", label: "Custom Provider" });
-=======
-  const options: AuthChoiceOption[] = [...BASE_AUTH_CHOICE_OPTIONS];
->>>>>>> origin/main
+  options.push({ value: "custom-api-key", label: t("Custom Provider") });
 
   if (params.includeSkip) {
     options.push({ value: "skip", label: t("Skip for now") });

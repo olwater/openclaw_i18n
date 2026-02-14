@@ -83,32 +83,10 @@ export async function applyAuthChoiceMiniMax(
   ) {
     const modelId =
       params.authChoice === "minimax-api-lightning" ? "MiniMax-M2.5-Lightning" : "MiniMax-M2.5";
-<<<<<<< HEAD
-    let hasCredential = false;
-    const envKey = resolveEnvApiKey("minimax");
-    if (envKey) {
-      const useExisting = await params.prompter.confirm({
-        message: `Use existing MINIMAX_API_KEY (${envKey.source}, ${formatApiKeyPreview(envKey.apiKey)})?`,
-        initialValue: true,
-      });
-      if (useExisting) {
-        await setMinimaxApiKey(envKey.apiKey, params.agentDir);
-        hasCredential = true;
-      }
-    }
-    if (!hasCredential) {
-      const key = await params.prompter.text({
-        message: t("Enter MiniMax API key"),
-        validate: validateApiKeyInput,
-      });
-      await setMinimaxApiKey(normalizeApiKeyInput(String(key)), params.agentDir);
-    }
-=======
     await ensureMinimaxApiKey({
       profileId: "minimax:default",
-      promptMessage: "Enter MiniMax API key",
+      promptMessage: t("Enter MiniMax API key"),
     });
->>>>>>> origin/main
     nextConfig = applyAuthProfileConfig(nextConfig, {
       profileId: "minimax:default",
       provider: "minimax",

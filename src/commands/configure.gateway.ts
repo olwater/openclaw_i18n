@@ -102,18 +102,13 @@ export async function promptGatewayConfig(
     await select({
       message: t("Gateway auth"),
       options: [
-<<<<<<< HEAD
         { value: "token", label: t("Token"), hint: t("Recommended default") },
         { value: "password", label: t("Password") },
-=======
-        { value: "token", label: "Token", hint: "Recommended default" },
-        { value: "password", label: "Password" },
         {
           value: "trusted-proxy",
-          label: "Trusted Proxy",
-          hint: "Behind reverse proxy (Pomerium, Caddy, Traefik, etc.)",
+          label: t("Trusted Proxy"),
+          hint: t("Behind reverse proxy (Pomerium, Caddy, Traefik, etc.)"),
         },
->>>>>>> origin/main
       ],
       initialValue: t("token"),
     }),
