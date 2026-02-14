@@ -270,8 +270,11 @@ export function registerNodesInvokeCommands(nodes: Command) {
           }
 
           const requiresAsk = hostAsk === "always" || hostAsk === "on-miss";
+          let approvalId: string | null = null;
           if (requiresAsk) {
+            approvalId = crypto.randomUUID();
             const decisionResult = (await callGatewayCli("exec.approval.request", opts, {
+              id: approvalId,
               command: rawCommand ?? argv.join(" "),
               cwd: opts.cwd,
               host: "node",
@@ -330,6 +333,9 @@ export function registerNodesInvokeCommands(nodes: Command) {
           (invokeParams.params as Record<string, unknown>).approved = approvedByAsk;
           if (approvalDecision) {
             (invokeParams.params as Record<string, unknown>).approvalDecision = approvalDecision;
+          }
+          if (approvedByAsk && approvalId) {
+            (invokeParams.params as Record<string, unknown>).runId = approvalId;
           }
           if (invokeTimeout !== undefined) {
             invokeParams.timeoutMs = invokeTimeout;

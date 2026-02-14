@@ -83,5 +83,10 @@ USER.md
 .agent/
 .trae/
 !.agent/workflows/
+<<<<<<< HEAD
 !.agent/skills/
 local/
+=======
+/local/
+package-lock.json
+>>>>>>> origin/main

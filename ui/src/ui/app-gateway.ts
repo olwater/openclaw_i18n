@@ -123,14 +123,17 @@ export function connectGateway(host: GatewayHost) {
   host.execApprovalQueue = [];
   host.execApprovalError = null;
 
-  host.client?.stop();
-  host.client = new GatewayBrowserClient({
+  const previousClient = host.client;
+  const client = new GatewayBrowserClient({
     url: host.settings.gatewayUrl,
     token: host.settings.token.trim() ? host.settings.token : undefined,
     password: host.password.trim() ? host.password : undefined,
     clientName: "openclaw-control-ui",
     mode: "webchat",
     onHello: (hello) => {
+      if (host.client !== client) {
+        return;
+      }
       host.connected = true;
       host.lastError = null;
       host.hello = hello;
@@ -148,6 +151,9 @@ export function connectGateway(host: GatewayHost) {
       void refreshActiveTab(host as unknown as Parameters<typeof refreshActiveTab>[0]);
     },
     onClose: ({ code, reason }) => {
+      if (host.client !== client) {
+        return;
+      }
       host.connected = false;
       // Code 1012 = Service Restart (expected during config saves, don't show as error)
 
@@ -155,12 +161,22 @@ export function connectGateway(host: GatewayHost) {
         host.lastError = `${t("disconnected")} (${code}): ${reason || t("no reason")}`;
       }
     },
-    onEvent: (evt) => handleGatewayEvent(host, evt),
+    onEvent: (evt) => {
+      if (host.client !== client) {
+        return;
+      }
+      handleGatewayEvent(host, evt);
+    },
     onGap: ({ expected, received }) => {
+      if (host.client !== client) {
+        return;
+      }
       host.lastError = `${t("event gap detected")} (${t("expected")} ${expected}, ${t("received")} ${received}); ${t("refresh recommended")}`;
     },
   });
-  host.client.start();
+  host.client = client;
+  previousClient?.stop();
+  client.start();
 }
 
 export function handleGatewayEvent(host: GatewayHost, evt: GatewayEventFrame) {

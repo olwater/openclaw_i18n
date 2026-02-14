@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+<<<<<<< HEAD
 import { confirm, isCancel, select, spinner } from "@clack/prompts";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs/promises";
@@ -52,17 +53,13 @@ import {
 } from "../infra/update-runner.js";
 import { syncPluginsForUpdateChannel, updateNpmInstalledPlugins } from "../plugins/update.js";
 import { runCommandWithTimeout } from "../process/exec.js";
+=======
+>>>>>>> origin/main
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
-import { stylePromptHint, stylePromptMessage } from "../terminal/prompt-style.js";
-import { renderTable } from "../terminal/table.js";
 import { theme } from "../terminal/theme.js";
-import { pathExists } from "../utils.js";
-import { replaceCliName, resolveCliName } from "./cli-name.js";
-import { formatCliCommand } from "./command-format.js";
-import { installCompletion } from "./completion-cli.js";
-import { runDaemonRestart } from "./daemon-cli.js";
 import { formatHelpExamples } from "./help-format.js";
+<<<<<<< HEAD
 import { suppressDeprecations } from "./update-cli/suppress-deprecations.js";
 
 export type UpdateCommandOptions = {
@@ -1259,6 +1256,19 @@ export async function updateWizardCommand(opts: UpdateWizardOptions = {}): Promi
     defaultRuntime.exit(1);
   }
 }
+=======
+import {
+  type UpdateCommandOptions,
+  type UpdateStatusOptions,
+  type UpdateWizardOptions,
+} from "./update-cli/shared.js";
+import { updateStatusCommand } from "./update-cli/status.js";
+import { updateCommand } from "./update-cli/update-command.js";
+import { updateWizardCommand } from "./update-cli/wizard.js";
+
+export { updateCommand, updateStatusCommand, updateWizardCommand };
+export type { UpdateCommandOptions, UpdateStatusOptions, UpdateWizardOptions };
+>>>>>>> origin/main
 
 export function registerUpdateCli(program: Command) {
   const update = program

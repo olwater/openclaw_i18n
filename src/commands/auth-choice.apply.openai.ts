@@ -1,4 +1,3 @@
-import { loginOpenAICodex } from "@mariozechner/pi-ai";
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { resolveEnvApiKey } from "../agents/model-auth.js";
 import { t } from "../i18n/index.js";
@@ -10,13 +9,13 @@ import {
 } from "./auth-choice.api-key.js";
 import { applyDefaultModelChoice } from "./auth-choice.default-model.js";
 import { isRemoteEnvironment } from "./oauth-env.js";
-import { createVpsAwareOAuthHandlers } from "./oauth-flow.js";
 import { applyAuthProfileConfig, writeOAuthCredentials } from "./onboard-auth.js";
 import { openUrl } from "./onboard-helpers.js";
 import {
   applyOpenAICodexModelDefault,
   OPENAI_CODEX_DEFAULT_MODEL,
 } from "./openai-codex-model-default.js";
+import { loginOpenAICodexOAuth } from "./openai-codex-oauth.js";
 import {
   applyOpenAIConfig,
   applyOpenAIProviderConfig,
@@ -126,6 +125,7 @@ export async function applyAuthChoiceOpenAI(
       );
     };
 
+<<<<<<< HEAD
     const isRemote = isRemoteEnvironment();
     await params.prompter.note(
       isRemote
@@ -142,21 +142,38 @@ export async function applyAuthChoiceOpenAI(
       t("OpenAI Codex OAuth"),
     );
     const spin = params.prompter.progress(t("Starting OAuth flow…"));
+=======
+    let creds;
+>>>>>>> origin/main
     try {
-      const { onAuth, onPrompt } = createVpsAwareOAuthHandlers({
-        isRemote,
+      creds = await loginOpenAICodexOAuth({
         prompter: params.prompter,
         runtime: params.runtime,
+<<<<<<< HEAD
         spin,
         openUrl,
         localBrowserMessage: t("Complete sign-in in browser…"),
+=======
+        isRemote: isRemoteEnvironment(),
+        openUrl: async (url) => {
+          await openUrl(url);
+        },
+        localBrowserMessage: "Complete sign-in in browser…",
+>>>>>>> origin/main
       });
-
-      const creds = await loginOpenAICodex({
-        onAuth,
-        onPrompt,
-        onProgress: (msg) => spin.update(msg),
+    } catch {
+      // The helper already surfaces the error to the user.
+      // Keep onboarding flow alive and return unchanged config.
+      return { config: nextConfig, agentModelOverride };
+    }
+    if (creds) {
+      await writeOAuthCredentials("openai-codex", creds, params.agentDir);
+      nextConfig = applyAuthProfileConfig(nextConfig, {
+        profileId: "openai-codex:default",
+        provider: "openai-codex",
+        mode: "oauth",
       });
+<<<<<<< HEAD
       spin.stop(t("OpenAI OAuth complete"));
       if (creds) {
         await writeOAuthCredentials("openai-codex", creds, params.agentDir);
@@ -177,8 +194,22 @@ export async function applyAuthChoiceOpenAI(
         } else {
           agentModelOverride = OPENAI_CODEX_DEFAULT_MODEL;
           await noteAgentModel(OPENAI_CODEX_DEFAULT_MODEL);
+=======
+      if (params.setDefaultModel) {
+        const applied = applyOpenAICodexModelDefault(nextConfig);
+        nextConfig = applied.next;
+        if (applied.changed) {
+          await params.prompter.note(
+            `Default model set to ${OPENAI_CODEX_DEFAULT_MODEL}`,
+            "Model configured",
+          );
+>>>>>>> origin/main
         }
+      } else {
+        agentModelOverride = OPENAI_CODEX_DEFAULT_MODEL;
+        await noteAgentModel(OPENAI_CODEX_DEFAULT_MODEL);
       }
+<<<<<<< HEAD
     } catch (err) {
       spin.stop(t("OpenAI OAuth failed"));
       params.runtime.error(String(err));
@@ -186,6 +217,8 @@ export async function applyAuthChoiceOpenAI(
         t("Trouble with OAuth? See https://docs.openclaw.ai/start/faq"),
         t("OAuth help"),
       );
+=======
+>>>>>>> origin/main
     }
     return { config: nextConfig, agentModelOverride };
   }
