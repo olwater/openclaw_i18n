@@ -6,6 +6,7 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../daemon/launchd.js";
+import { formatRuntimeStatus } from "../daemon/runtime-format.js";
 import {
   isSystemdUnavailableDetail,
   renderSystemdUnavailableHints,
@@ -22,6 +23,7 @@ type RuntimeHintOptions = {
 export function formatGatewayRuntimeSummary(
   runtime: GatewayServiceRuntime | undefined,
 ): string | null {
+<<<<<<< HEAD
   if (!runtime) {
     return null;
   }
@@ -52,6 +54,9 @@ export function formatGatewayRuntimeSummary(
     details.push(runtime.detail);
   }
   return details.length > 0 ? `${status} (${details.join(t(", "))})` : status;
+=======
+  return formatRuntimeStatus(runtime);
+>>>>>>> origin/main
 }
 
 export function buildGatewayRuntimeHints(

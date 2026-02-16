@@ -1,7 +1,12 @@
 import type { Command } from "commander";
 import type { NodeListNode, NodesRpcOpts } from "./types.js";
+<<<<<<< HEAD
 import { callGateway } from "../../gateway/call.js";
 import { t } from "../../i18n/index.js";
+=======
+import { callGateway, randomIdempotencyKey } from "../../gateway/call.js";
+import { resolveNodeIdFromCandidates } from "../../shared/node-match.js";
+>>>>>>> origin/main
 import { GATEWAY_CLIENT_MODES, GATEWAY_CLIENT_NAMES } from "../../utils/message-channel.js";
 import { withProgress } from "../progress.js";
 import { parseNodeList, parsePairingList } from "./format.js";
@@ -16,7 +21,12 @@ export const nodesCallOpts = (cmd: Command, defaults?: { timeoutMs?: number }) =
     .option("--timeout <ms>", t("Timeout in ms"), String(defaults?.timeoutMs ?? 10_000))
     .option("--json", t("Output JSON"), false);
 
-export const callGatewayCli = async (method: string, opts: NodesRpcOpts, params?: unknown) =>
+export const callGatewayCli = async (
+  method: string,
+  opts: NodesRpcOpts,
+  params?: unknown,
+  callOpts?: { transportTimeoutMs?: number },
+) =>
   withProgress(
     {
       label: `Nodes ${method}`,
@@ -29,11 +39,30 @@ export const callGatewayCli = async (method: string, opts: NodesRpcOpts, params?
         token: opts.token,
         method,
         params,
-        timeoutMs: Number(opts.timeout ?? 10_000),
+        timeoutMs: callOpts?.transportTimeoutMs ?? Number(opts.timeout ?? 10_000),
         clientName: GATEWAY_CLIENT_NAMES.CLI,
         mode: GATEWAY_CLIENT_MODES.CLI,
       }),
   );
+
+export function buildNodeInvokeParams(params: {
+  nodeId: string;
+  command: string;
+  params?: Record<string, unknown>;
+  timeoutMs?: number;
+  idempotencyKey?: string;
+}): Record<string, unknown> {
+  const invokeParams: Record<string, unknown> = {
+    nodeId: params.nodeId,
+    command: params.command,
+    params: params.params,
+    idempotencyKey: params.idempotencyKey ?? randomIdempotencyKey(),
+  };
+  if (typeof params.timeoutMs === "number" && Number.isFinite(params.timeoutMs)) {
+    invokeParams.timeoutMs = params.timeoutMs;
+  }
+  return invokeParams;
+}
 
 export function unauthorizedHintForMessage(message: string): string | null {
   const haystack = message.toLowerCase();
@@ -49,14 +78,6 @@ export function unauthorizedHintForMessage(message: string): string | null {
     ].join(" ");
   }
   return null;
-}
-
-function normalizeNodeKey(value: string) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+/, "")
-    .replace(/-+$/, "");
 }
 
 export async function resolveNodeId(opts: NodesRpcOpts, query: string) {
@@ -80,6 +101,7 @@ export async function resolveNodeId(opts: NodesRpcOpts, query: string) {
       remoteIp: n.remoteIp,
     }));
   }
+<<<<<<< HEAD
 
   const qNorm = normalizeNodeKey(q);
   const matches = nodes.filter((n) => {
@@ -114,4 +136,7 @@ export async function resolveNodeId(opts: NodesRpcOpts, query: string) {
       .map((n) => n.displayName || n.remoteIp || n.nodeId)
       .join(t(", "))})`,
   );
+=======
+  return resolveNodeIdFromCandidates(nodes, q);
+>>>>>>> origin/main
 }

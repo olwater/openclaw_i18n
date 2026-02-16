@@ -294,6 +294,7 @@ export function registerConfigCli(program: Command) {
       [] as string[],
     )
     .action(async (opts) => {
+<<<<<<< HEAD
       const { CONFIGURE_WIZARD_SECTIONS, configureCommand, configureCommandWithSections } =
         await import("../commands/configure.js");
       const sections: string[] = Array.isArray(opts.section)
@@ -316,6 +317,10 @@ export function registerConfigCli(program: Command) {
       }
 
       await configureCommandWithSections(sections as never, defaultRuntime);
+=======
+      const { configureCommandFromSectionsArg } = await import("../commands/configure.js");
+      await configureCommandFromSectionsArg(opts.section, defaultRuntime);
+>>>>>>> origin/main
     });
 
   cmd

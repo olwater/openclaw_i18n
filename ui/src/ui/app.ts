@@ -76,7 +76,7 @@ import {
   type ToolStreamEntry,
   type CompactionStatus,
 } from "./app-tool-stream.ts";
-import { resolveInjectedAssistantIdentity } from "./assistant-identity.ts";
+import { normalizeAssistantIdentity } from "./assistant-identity.ts";
 import { loadAssistantIdentity as loadAssistantIdentityInternal } from "./controllers/assistant-identity.ts";
 import { setLocale, t } from "./i18n/index.ts";
 import { loadSettings, type UiSettings } from "./storage.ts";
@@ -88,7 +88,7 @@ declare global {
   }
 }
 
-const injectedAssistantIdentity = resolveInjectedAssistantIdentity();
+const bootAssistantIdentity = normalizeAssistantIdentity({});
 
 function resolveOnboardingMode(): boolean {
   if (!window.location.search) {
@@ -119,9 +119,9 @@ export class OpenClawApp extends LitElement {
   private toolStreamSyncTimer: number | null = null;
   private sidebarCloseTimer: number | null = null;
 
-  @state() assistantName = injectedAssistantIdentity.name;
-  @state() assistantAvatar = injectedAssistantIdentity.avatar;
-  @state() assistantAgentId = injectedAssistantIdentity.agentId ?? null;
+  @state() assistantName = bootAssistantIdentity.name;
+  @state() assistantAvatar = bootAssistantIdentity.avatar;
+  @state() assistantAgentId = bootAssistantIdentity.agentId ?? null;
 
   @state() sessionKey = this.settings.sessionKey;
   @state() chatLoading = false;

@@ -1,46 +1,27 @@
 import type { RuntimeEnv } from "../../runtime.js";
+<<<<<<< HEAD
 import { buildModelAliasIndex, resolveModelRefFromString } from "../../agents/model-selection.js";
 import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
 import { t } from "../../i18n/index.js";
+=======
+>>>>>>> origin/main
 import {
-  DEFAULT_PROVIDER,
-  ensureFlagCompatibility,
-  modelKey,
-  resolveModelTarget,
-  updateConfig,
-} from "./shared.js";
+  addFallbackCommand,
+  clearFallbacksCommand,
+  listFallbacksCommand,
+  removeFallbackCommand,
+} from "./fallbacks-shared.js";
 
 export async function modelsImageFallbacksListCommand(
   opts: { json?: boolean; plain?: boolean },
   runtime: RuntimeEnv,
 ) {
-  ensureFlagCompatibility(opts);
-  const cfg = loadConfig();
-  const fallbacks = cfg.agents?.defaults?.imageModel?.fallbacks ?? [];
-
-  if (opts.json) {
-    runtime.log(JSON.stringify({ fallbacks }, null, 2));
-    return;
-  }
-  if (opts.plain) {
-    for (const entry of fallbacks) {
-      runtime.log(entry);
-    }
-    return;
-  }
-
-  runtime.log(`Image fallbacks (${fallbacks.length}):`);
-  if (fallbacks.length === 0) {
-    runtime.log("- none");
-    return;
-  }
-  for (const entry of fallbacks) {
-    runtime.log(`- ${entry}`);
-  }
+  return await listFallbacksCommand({ label: "Image fallbacks", key: "imageModel" }, opts, runtime);
 }
 
 export async function modelsImageFallbacksAddCommand(modelRaw: string, runtime: RuntimeEnv) {
+<<<<<<< HEAD
   const updated = await updateConfig((cfg) => {
     const resolved = resolveModelTarget({ raw: modelRaw, cfg });
     const targetKey = modelKey(resolved.provider, resolved.model);
@@ -91,10 +72,17 @@ export async function modelsImageFallbacksAddCommand(modelRaw: string, runtime: 
   logConfigUpdated(runtime);
   runtime.log(
     `Image fallbacks: ${(updated.agents?.defaults?.imageModel?.fallbacks ?? []).join(t(", "))}`,
+=======
+  return await addFallbackCommand(
+    { label: "Image fallbacks", key: "imageModel", logPrefix: "Image fallbacks" },
+    modelRaw,
+    runtime,
+>>>>>>> origin/main
   );
 }
 
 export async function modelsImageFallbacksRemoveCommand(modelRaw: string, runtime: RuntimeEnv) {
+<<<<<<< HEAD
   const updated = await updateConfig((cfg) => {
     const resolved = resolveModelTarget({ raw: modelRaw, cfg });
     const targetKey = modelKey(resolved.provider, resolved.model);
@@ -141,10 +129,22 @@ export async function modelsImageFallbacksRemoveCommand(modelRaw: string, runtim
   logConfigUpdated(runtime);
   runtime.log(
     `Image fallbacks: ${(updated.agents?.defaults?.imageModel?.fallbacks ?? []).join(t(", "))}`,
+=======
+  return await removeFallbackCommand(
+    {
+      label: "Image fallbacks",
+      key: "imageModel",
+      notFoundLabel: "Image fallback",
+      logPrefix: "Image fallbacks",
+    },
+    modelRaw,
+    runtime,
+>>>>>>> origin/main
   );
 }
 
 export async function modelsImageFallbacksClearCommand(runtime: RuntimeEnv) {
+<<<<<<< HEAD
   await updateConfig((cfg) => {
     const existingModel = cfg.agents?.defaults?.imageModel as
       | { primary?: string; fallbacks?: string[] }
@@ -166,4 +166,10 @@ export async function modelsImageFallbacksClearCommand(runtime: RuntimeEnv) {
 
   logConfigUpdated(runtime);
   runtime.log(t("Image fallback list cleared."));
+=======
+  return await clearFallbacksCommand(
+    { key: "imageModel", clearedMessage: "Image fallback list cleared." },
+    runtime,
+  );
+>>>>>>> origin/main
 }

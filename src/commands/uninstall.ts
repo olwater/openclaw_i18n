@@ -1,18 +1,13 @@
 import { cancel, confirm, isCancel, multiselect } from "@clack/prompts";
 import path from "node:path";
 import type { RuntimeEnv } from "../runtime.js";
-import {
-  isNixMode,
-  loadConfig,
-  resolveConfigPath,
-  resolveOAuthDir,
-  resolveStateDir,
-} from "../config/config.js";
+import { isNixMode } from "../config/config.js";
 import { resolveGatewayService } from "../daemon/service.js";
 import { t } from "../i18n/index.js";
 import { stylePromptHint, stylePromptMessage, stylePromptTitle } from "../terminal/prompt-style.js";
 import { resolveHomeDir } from "../utils.js";
-import { collectWorkspaceDirs, isPathWithin, removePath } from "./cleanup-utils.js";
+import { resolveCleanupPlanFromDisk } from "./cleanup-plan.js";
+import { removePath } from "./cleanup-utils.js";
 
 type UninstallScope = "service" | "state" | "workspace" | "app";
 
@@ -158,13 +153,8 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
   }
 
   const dryRun = Boolean(opts.dryRun);
-  const cfg = loadConfig();
-  const stateDir = resolveStateDir();
-  const configPath = resolveConfigPath();
-  const oauthDir = resolveOAuthDir();
-  const configInsideState = isPathWithin(configPath, stateDir);
-  const oauthInsideState = isPathWithin(oauthDir, stateDir);
-  const workspaceDirs = collectWorkspaceDirs(cfg);
+  const { stateDir, configPath, oauthDir, configInsideState, oauthInsideState, workspaceDirs } =
+    resolveCleanupPlanFromDisk();
 
   if (scopes.has("service")) {
     if (dryRun) {

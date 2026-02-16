@@ -1,8 +1,17 @@
 import type { OpenClawConfig } from "../config/config.js";
 import type { RuntimeEnv } from "../runtime.js";
 import { resolveGatewayPort } from "../config/config.js";
+<<<<<<< HEAD
 import { t } from "../i18n/index.js";
+=======
+import {
+  TAILSCALE_DOCS_LINES,
+  TAILSCALE_EXPOSURE_OPTIONS,
+  TAILSCALE_MISSING_BIN_NOTE_LINES,
+} from "../gateway/gateway-config-prompts.shared.js";
+>>>>>>> origin/main
 import { findTailscaleBinary } from "../infra/tailscale.js";
+import { validateIPv4AddressInput } from "../shared/net/ipv4.js";
 import { note } from "../terminal/note.js";
 import { buildGatewayAuthConfig } from "./configure.gateway-auth.js";
 import { confirm, select, text } from "./configure.shared.js";
@@ -71,6 +80,7 @@ export async function promptGatewayConfig(
   if (bind === "custom") {
     const input = guardCancel(
       await text({
+<<<<<<< HEAD
         message: t("Custom IP address"),
         placeholder: t("192.168.1.100"),
         validate: (value) => {
@@ -92,6 +102,11 @@ export async function promptGatewayConfig(
           }
           return t("Invalid IPv4 address (each octet must be 0-255)");
         },
+=======
+        message: "Custom IP address",
+        placeholder: "192.168.1.100",
+        validate: validateIPv4AddressInput,
+>>>>>>> origin/main
       }),
       runtime,
     );
@@ -117,6 +132,7 @@ export async function promptGatewayConfig(
 
   let tailscaleMode = guardCancel(
     await select({
+<<<<<<< HEAD
       message: t("Tailscale exposure"),
       options: [
         { value: "off", label: t("Off"), hint: t("No Tailscale exposure") },
@@ -131,6 +147,10 @@ export async function promptGatewayConfig(
           hint: t("Public HTTPS via Tailscale Funnel (internet)"),
         },
       ],
+=======
+      message: "Tailscale exposure",
+      options: [...TAILSCALE_EXPOSURE_OPTIONS],
+>>>>>>> origin/main
     }),
     runtime,
   );
@@ -139,6 +159,7 @@ export async function promptGatewayConfig(
   if (tailscaleMode !== "off") {
     const tailscaleBin = await findTailscaleBinary();
     if (!tailscaleBin) {
+<<<<<<< HEAD
       note(
         [
           t("Tailscale binary not found in PATH or /Applications."),
@@ -149,17 +170,15 @@ export async function promptGatewayConfig(
         ].join("\n"),
         t("Tailscale Warning"),
       );
+=======
+      note(TAILSCALE_MISSING_BIN_NOTE_LINES.join("\n"), "Tailscale Warning");
+>>>>>>> origin/main
     }
   }
 
   let tailscaleResetOnExit = false;
   if (tailscaleMode !== "off") {
-    note(
-      ["Docs:", "https://docs.openclaw.ai/gateway/tailscale", "https://docs.openclaw.ai/web"].join(
-        "\n",
-      ),
-      "Tailscale",
-    );
+    note(TAILSCALE_DOCS_LINES.join("\n"), "Tailscale");
     tailscaleResetOnExit = Boolean(
       guardCancel(
         await confirm({

@@ -128,6 +128,15 @@ export function renderCron(props: CronProps) {
                 props.onFormChange({ enabled: (e.target as HTMLInputElement).checked })}
             />
           </label>
+          <label class="field checkbox">
+            <span>Notify webhook</span>
+            <input
+              type="checkbox"
+              .checked=${props.form.notify}
+              @change=${(e: Event) =>
+                props.onFormChange({ notify: (e.target as HTMLInputElement).checked })}
+            />
+          </label>
           <label class="field">
             <span>${t("Schedule")}</span>
             <select
@@ -399,6 +408,13 @@ function renderJob(job: CronJob, props: CronProps) {
           <span class=${`chip ${job.enabled ? "chip-ok" : "chip-danger"}`}>
             ${job.enabled ? t("enabled") : t("disabled")}
           </span>
+          ${
+            job.notify
+              ? html`
+                  <span class="chip">notify</span>
+                `
+              : nothing
+          }
           <span class="chip">${job.sessionTarget}</span>
           <span class="chip">${job.wakeMode}</span>
         </div>

@@ -9,6 +9,7 @@ import { resolveNodeService } from "../daemon/node-service.js";
 import { resolveGatewayService } from "../daemon/service.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { normalizeControlUiBasePath } from "../gateway/control-ui-shared.js";
+import { resolveGatewayProbeAuth } from "../gateway/probe-auth.js";
 import { probeGateway } from "../gateway/probe.js";
 import { t } from "../i18n/index.js";
 import { collectChannelStatusIssues } from "../infra/channels-status-issues.js";
@@ -23,7 +24,11 @@ import {
   normalizeUpdateChannel,
   resolveEffectiveUpdateChannel,
 } from "../infra/update-channels.js";
-import { checkUpdateStatus, compareSemverStrings } from "../infra/update-check.js";
+import {
+  checkUpdateStatus,
+  compareSemverStrings,
+  formatGitInstallLabel,
+} from "../infra/update-check.js";
 import { runExec } from "../process/exec.js";
 import { VERSION } from "../version.js";
 import { resolveControlUiLinks } from "./onboard-helpers.js";
@@ -105,6 +110,7 @@ export async function statusAllCommand(
       gitTag: update.git?.tag ?? null,
       gitBranch: update.git?.branch ?? null,
     });
+<<<<<<< HEAD
     const gitLabel =
       update.installKind === "git"
         ? (() => {
@@ -120,6 +126,9 @@ export async function statusAllCommand(
             return parts.join(t(" · "));
           })()
         : null;
+=======
+    const gitLabel = formatGitInstallLabel(update);
+>>>>>>> origin/main
     progress.tick();
 
     progress.setLabel(t("Probing gateway…"));
@@ -130,31 +139,8 @@ export async function statusAllCommand(
     const remoteUrlMissing = isRemoteMode && !remoteUrlRaw;
     const gatewayMode = isRemoteMode ? "remote" : "local";
 
-    const resolveProbeAuth = (mode: "local" | "remote") => {
-      const authToken = cfg.gateway?.auth?.token;
-      const authPassword = cfg.gateway?.auth?.password;
-      const remote = cfg.gateway?.remote;
-      const token =
-        mode === "remote"
-          ? typeof remote?.token === "string" && remote.token.trim()
-            ? remote.token.trim()
-            : undefined
-          : process.env.OPENCLAW_GATEWAY_TOKEN?.trim() ||
-            (typeof authToken === "string" && authToken.trim() ? authToken.trim() : undefined);
-      const password =
-        process.env.OPENCLAW_GATEWAY_PASSWORD?.trim() ||
-        (mode === "remote"
-          ? typeof remote?.password === "string" && remote.password.trim()
-            ? remote.password.trim()
-            : undefined
-          : typeof authPassword === "string" && authPassword.trim()
-            ? authPassword.trim()
-            : undefined);
-      return { token, password };
-    };
-
-    const localFallbackAuth = resolveProbeAuth("local");
-    const remoteAuth = resolveProbeAuth("remote");
+    const localFallbackAuth = resolveGatewayProbeAuth({ cfg, mode: "local" });
+    const remoteAuth = resolveGatewayProbeAuth({ cfg, mode: "remote" });
     const probeAuth = isRemoteMode && !remoteUrlMissing ? remoteAuth : localFallbackAuth;
 
     const gatewayProbe = await probeGateway({
@@ -277,6 +263,32 @@ export async function statusAllCommand(
       : null;
 
     const updateLine = (() => {
+      const appendRegistryAndDepsStatus = (parts: string[]) => {
+        const latest = update.registry?.latestVersion;
+        if (latest) {
+          const cmp = compareSemverStrings(VERSION, latest);
+          if (cmp === 0) {
+            parts.push(`npm latest ${latest}`);
+          } else if (cmp != null && cmp < 0) {
+            parts.push(`npm update ${latest}`);
+          } else {
+            parts.push(`npm latest ${latest} (local newer)`);
+          }
+        } else if (update.registry?.error) {
+          parts.push("npm latest unknown");
+        }
+
+        if (update.deps?.status === "ok") {
+          parts.push("deps ok");
+        }
+        if (update.deps?.status === "stale") {
+          parts.push("deps stale");
+        }
+        if (update.deps?.status === "missing") {
+          parts.push("deps missing");
+        }
+      };
+
       if (update.installKind === "git" && update.git) {
         const parts: string[] = [];
         parts.push(update.git.branch ? `git ${update.git.branch}` : "git");
@@ -301,6 +313,7 @@ export async function statusAllCommand(
           parts.push(t("fetch failed"));
         }
 
+<<<<<<< HEAD
         const latest = update.registry?.latestVersion;
         if (latest) {
           const cmp = compareSemverStrings(VERSION, latest);
@@ -351,6 +364,15 @@ export async function statusAllCommand(
         parts.push(t("deps missing"));
       }
       return parts.join(t(" · "));
+=======
+        appendRegistryAndDepsStatus(parts);
+        return parts.join(" · ");
+      }
+      const parts: string[] = [];
+      parts.push(update.packageManager !== "unknown" ? update.packageManager : "pkg");
+      appendRegistryAndDepsStatus(parts);
+      return parts.join(" · ");
+>>>>>>> origin/main
     })();
 
     const gatewayTarget = remoteUrlMissing ? `fallback ${connection.url}` : connection.url;

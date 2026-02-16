@@ -3,6 +3,7 @@ import { setTimeout as delay } from "node:timers/promises";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
 import { t } from "../i18n/index.js";
 import { parseLogLine } from "../logging/parse-log-line.js";
+import { formatLocalIsoWithOffset } from "../logging/timestamps.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { clearActiveProgressLine } from "../terminal/progress-line.js";
 import { createSafeStreamWriter } from "../terminal/stream-writer.js";
@@ -73,21 +74,6 @@ export function formatLogTimestamp(
   if (Number.isNaN(parsed.getTime())) {
     return value;
   }
-
-  const formatLocalIsoWithOffset = (now: Date) => {
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const h = String(now.getHours()).padStart(2, "0");
-    const m = String(now.getMinutes()).padStart(2, "0");
-    const s = String(now.getSeconds()).padStart(2, "0");
-    const ms = String(now.getMilliseconds()).padStart(3, "0");
-    const tzOffset = now.getTimezoneOffset();
-    const tzSign = tzOffset <= 0 ? "+" : "-";
-    const tzHours = String(Math.floor(Math.abs(tzOffset) / 60)).padStart(2, "0");
-    const tzMinutes = String(Math.abs(tzOffset) % 60).padStart(2, "0");
-    return `${year}-${month}-${day}T${h}:${m}:${s}.${ms}${tzSign}${tzHours}:${tzMinutes}`;
-  };
 
   let timeString: string;
   if (localTime) {

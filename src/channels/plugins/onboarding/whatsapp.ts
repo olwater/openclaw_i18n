@@ -38,6 +38,69 @@ async function detectWhatsAppLinked(cfg: OpenClawConfig, accountId: string): Pro
   return await pathExists(credsPath);
 }
 
+async function promptWhatsAppOwnerAllowFrom(params: {
+  prompter: WizardPrompter;
+  existingAllowFrom: string[];
+}): Promise<{ normalized: string; allowFrom: string[] }> {
+  const { prompter, existingAllowFrom } = params;
+
+  await prompter.note(
+    "We need the sender/owner number so OpenClaw can allowlist you.",
+    "WhatsApp number",
+  );
+  const entry = await prompter.text({
+    message: "Your personal WhatsApp number (the phone you will message from)",
+    placeholder: "+15555550123",
+    initialValue: existingAllowFrom[0],
+    validate: (value) => {
+      const raw = String(value ?? "").trim();
+      if (!raw) {
+        return "Required";
+      }
+      const normalized = normalizeE164(raw);
+      if (!normalized) {
+        return `Invalid number: ${raw}`;
+      }
+      return undefined;
+    },
+  });
+
+  const normalized = normalizeE164(String(entry).trim());
+  if (!normalized) {
+    throw new Error("Invalid WhatsApp owner number (expected E.164 after validation).");
+  }
+  const merged = [
+    ...existingAllowFrom
+      .filter((item) => item !== "*")
+      .map((item) => normalizeE164(item))
+      .filter(Boolean),
+    normalized,
+  ];
+  const allowFrom = [...new Set(merged.filter(Boolean))];
+  return { normalized, allowFrom };
+}
+
+async function applyWhatsAppOwnerAllowlist(params: {
+  cfg: OpenClawConfig;
+  prompter: WizardPrompter;
+  existingAllowFrom: string[];
+  title: string;
+  messageLines: string[];
+}): Promise<OpenClawConfig> {
+  const { normalized, allowFrom } = await promptWhatsAppOwnerAllowFrom({
+    prompter: params.prompter,
+    existingAllowFrom: params.existingAllowFrom,
+  });
+  let next = setWhatsAppSelfChatMode(params.cfg, true);
+  next = setWhatsAppDmPolicy(next, "allowlist");
+  next = setWhatsAppAllowFrom(next, allowFrom);
+  await params.prompter.note(
+    [...params.messageLines, `- allowFrom includes ${normalized}`].join("\n"),
+    params.title,
+  );
+  return next;
+}
+
 async function promptWhatsAppAllowFrom(
   cfg: OpenClawConfig,
   _runtime: RuntimeEnv,
@@ -49,6 +112,7 @@ async function promptWhatsAppAllowFrom(
   const existingLabel = existingAllowFrom.length > 0 ? existingAllowFrom.join(", ") : "unset";
 
   if (options?.forceAllowlist) {
+<<<<<<< HEAD
     await prompter.note(
       t("We need the sender/owner number so OpenClaw can allowlist you."),
       t("WhatsApp number"),
@@ -89,10 +153,20 @@ async function promptWhatsAppAllowFrom(
       t("WhatsApp allowlist"),
     );
     return next;
+=======
+    return await applyWhatsAppOwnerAllowlist({
+      cfg,
+      prompter,
+      existingAllowFrom,
+      title: "WhatsApp allowlist",
+      messageLines: ["Allowlist mode enabled."],
+    });
+>>>>>>> origin/main
   }
 
   await prompter.note(
     [
+<<<<<<< HEAD
       t(
         "WhatsApp direct chats are gated by `channels.whatsapp.dmPolicy` + `channels.whatsapp.allowFrom`.",
       ),
@@ -114,10 +188,30 @@ async function promptWhatsAppAllowFrom(
     options: [
       { value: "personal", label: t("This is my personal phone number") },
       { value: "separate", label: t("Separate phone just for OpenClaw") },
+=======
+      "WhatsApp direct chats are gated by `channels.whatsapp.dmPolicy` + `channels.whatsapp.allowFrom`.",
+      "- pairing (default): unknown senders get a pairing code; owner approves",
+      "- allowlist: unknown senders are blocked",
+      '- open: public inbound DMs (requires allowFrom to include "*")',
+      "- disabled: ignore WhatsApp DMs",
+      "",
+      `Current: dmPolicy=${existingPolicy}, allowFrom=${existingLabel}`,
+      `Docs: ${formatDocsLink("/whatsapp", "whatsapp")}`,
+    ].join("\n"),
+    "WhatsApp DM access",
+  );
+
+  const phoneMode = await prompter.select({
+    message: "WhatsApp phone setup",
+    options: [
+      { value: "personal", label: "This is my personal phone number" },
+      { value: "separate", label: "Separate phone just for OpenClaw" },
+>>>>>>> origin/main
     ],
   });
 
   if (phoneMode === "personal") {
+<<<<<<< HEAD
     await prompter.note(
       t("We need the sender/owner number so OpenClaw can allowlist you."),
       t("WhatsApp number"),
@@ -159,6 +253,18 @@ async function promptWhatsAppAllowFrom(
       t("WhatsApp personal phone"),
     );
     return next;
+=======
+    return await applyWhatsAppOwnerAllowlist({
+      cfg,
+      prompter,
+      existingAllowFrom,
+      title: "WhatsApp personal phone",
+      messageLines: [
+        "Personal phone mode enabled.",
+        "- dmPolicy set to allowlist (pairing skipped)",
+      ],
+    });
+>>>>>>> origin/main
   }
 
   const policy = (await prompter.select({

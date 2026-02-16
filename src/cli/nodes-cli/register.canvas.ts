@@ -1,8 +1,11 @@
 import type { Command } from "commander";
 import fs from "node:fs/promises";
 import type { NodesRpcOpts } from "./types.js";
+<<<<<<< HEAD
 import { randomIdempotencyKey } from "../../gateway/call.js";
 import { t } from "../../i18n/index.js";
+=======
+>>>>>>> origin/main
 import { defaultRuntime } from "../../runtime.js";
 import { shortenHomePath } from "../../utils.js";
 import { writeBase64ToFile } from "../nodes-camera.js";
@@ -10,21 +13,21 @@ import { canvasSnapshotTempPath, parseCanvasSnapshotPayload } from "../nodes-can
 import { parseTimeoutMs } from "../nodes-run.js";
 import { buildA2UITextJsonl, validateA2UIJsonl } from "./a2ui-jsonl.js";
 import { getNodesTheme, runNodesCommand } from "./cli-utils.js";
-import { callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
+import { buildNodeInvokeParams, callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
 
 async function invokeCanvas(opts: NodesRpcOpts, command: string, params?: Record<string, unknown>) {
   const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
-  const invokeParams: Record<string, unknown> = {
-    nodeId,
-    command,
-    params,
-    idempotencyKey: randomIdempotencyKey(),
-  };
   const timeoutMs = parseTimeoutMs(opts.invokeTimeout);
-  if (typeof timeoutMs === "number") {
-    invokeParams.timeoutMs = timeoutMs;
-  }
-  return await callGatewayCli("node.invoke", opts, invokeParams);
+  return await callGatewayCli(
+    "node.invoke",
+    opts,
+    buildNodeInvokeParams({
+      nodeId,
+      command,
+      params,
+      timeoutMs: typeof timeoutMs === "number" ? timeoutMs : undefined,
+    }),
+  );
 }
 
 export function registerNodesCanvasCommands(nodes: Command) {
@@ -42,8 +45,12 @@ export function registerNodesCanvasCommands(nodes: Command) {
       .option("--quality <0-1>", t("JPEG quality (optional)"))
       .option("--invoke-timeout <ms>", t("Node invoke timeout in ms (default 20000)"), "20000")
       .action(async (opts: NodesRpcOpts) => {
+<<<<<<< HEAD
         await runNodesCommand(t("canvas snapshot"), async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
+=======
+        await runNodesCommand("canvas snapshot", async () => {
+>>>>>>> origin/main
           const formatOpt = String(opts.format ?? "jpg")
             .trim()
             .toLowerCase();
@@ -55,25 +62,11 @@ export function registerNodesCanvasCommands(nodes: Command) {
 
           const maxWidth = opts.maxWidth ? Number.parseInt(String(opts.maxWidth), 10) : undefined;
           const quality = opts.quality ? Number.parseFloat(String(opts.quality)) : undefined;
-          const timeoutMs = opts.invokeTimeout
-            ? Number.parseInt(String(opts.invokeTimeout), 10)
-            : undefined;
-
-          const invokeParams: Record<string, unknown> = {
-            nodeId,
-            command: "canvas.snapshot",
-            params: {
-              format: formatForParams,
-              maxWidth: Number.isFinite(maxWidth) ? maxWidth : undefined,
-              quality: Number.isFinite(quality) ? quality : undefined,
-            },
-            idempotencyKey: randomIdempotencyKey(),
-          };
-          if (typeof timeoutMs === "number" && Number.isFinite(timeoutMs)) {
-            invokeParams.timeoutMs = timeoutMs;
-          }
-
-          const raw = await callGatewayCli("node.invoke", opts, invokeParams);
+          const raw = await invokeCanvas(opts, "canvas.snapshot", {
+            format: formatForParams,
+            maxWidth: Number.isFinite(maxWidth) ? maxWidth : undefined,
+            quality: Number.isFinite(quality) ? quality : undefined,
+          });
           const res = typeof raw === "object" && raw !== null ? (raw as { payload?: unknown }) : {};
           const payload = parseCanvasSnapshotPayload(res.payload);
           const filePath = canvasSnapshotTempPath({

@@ -122,7 +122,11 @@ async function promptTelegramAllowFrom(params: {
   let resolvedIds: string[] = [];
   while (resolvedIds.length === 0) {
     const entry = await prompter.text({
+<<<<<<< HEAD
       message: t("Telegram allowFrom (username or user id)"),
+=======
+      message: "Telegram allowFrom (numeric sender id; @username resolves to id)",
+>>>>>>> origin/main
       placeholder: "@username",
       initialValue: existingAllowFrom[0] ? String(existingAllowFrom[0]) : undefined,
       validate: (value) => (String(value ?? "").trim() ? undefined : t("Required")),

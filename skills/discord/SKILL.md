@@ -1,5 +1,6 @@
 ---
 name: discord
+<<<<<<< HEAD
 description: 通过 discord 工具控制 Discord：发送消息、添加反应、管理贴纸/表情、发起投票、管理线程/置顶/搜索、管理频道/类别、获取成员/角色/频道信息、设置机器人状态或执行管理操作。
 metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.discord"] } } }
 ---
@@ -28,16 +29,105 @@ metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.di
 ## 操作
 
 ### 对消息添加反应
+=======
+description: "Discord ops via the message tool (channel=discord)."
+metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.discord.token"] } } }
+allowed-tools: ["message"]
+---
+
+# Discord (Via `message`)
+
+Use the `message` tool. No provider-specific `discord` tool exposed to the agent.
+
+## Musts
+
+- Always: `channel: "discord"`.
+- Respect gating: `channels.discord.actions.*` (some default off: `roles`, `moderation`, `presence`, `channels`).
+- Prefer explicit ids: `guildId`, `channelId`, `messageId`, `userId`.
+- Multi-account: optional `accountId`.
+
+## Guidelines
+
+- Avoid Markdown tables in outbound Discord messages.
+- Mention users as `<@USER_ID>`.
+- Prefer Discord components v2 (`components`) for rich UI; use legacy `embeds` only when you must.
+
+## Targets
+
+- Send-like actions: `to: "channel:<id>"` or `to: "user:<id>"`.
+- Message-specific actions: `channelId: "<id>"` (or `to`) + `messageId: "<id>"`.
+
+## Common Actions (Examples)
+
+Send message:
+
+```json
+{
+  "action": "send",
+  "channel": "discord",
+  "to": "channel:123",
+  "message": "hello",
+  "silent": true
+}
+```
+
+Send with media:
+
+```json
+{
+  "action": "send",
+  "channel": "discord",
+  "to": "channel:123",
+  "message": "see attachment",
+  "media": "file:///tmp/example.png"
+}
+```
+
+- Optional `silent: true` to suppress Discord notifications.
+
+Send with components v2 (recommended for rich UI):
+
+```json
+{
+  "action": "send",
+  "channel": "discord",
+  "to": "channel:123",
+  "message": "Status update",
+  "components": "[Carbon v2 components]"
+}
+```
+
+- `components` expects Carbon component instances (Container, TextDisplay, etc.) from JS/TS integrations.
+- Do not combine `components` with `embeds` (Discord rejects v2 + embeds).
+
+Legacy embeds (not recommended):
+
+```json
+{
+  "action": "send",
+  "channel": "discord",
+  "to": "channel:123",
+  "message": "Status update",
+  "embeds": [{ "title": "Legacy", "description": "Embeds are legacy." }]
+}
+```
+
+- `embeds` are ignored when components v2 are present.
+
+React:
+>>>>>>> origin/main
 
 ```json
 {
   "action": "react",
+  "channel": "discord",
   "channelId": "123",
   "messageId": "456",
   "emoji": "✅"
 }
 ```
 
+<<<<<<< HEAD
 ### 列出反应和用户
 
 ```json
@@ -147,10 +237,20 @@ metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.di
 {
   "action": "readMessages",
   "channelId": "123",
+=======
+Read:
+
+```json
+{
+  "action": "read",
+  "channel": "discord",
+  "to": "channel:123",
+>>>>>>> origin/main
   "limit": 20
 }
 ```
 
+<<<<<<< HEAD
 ### 获取单条消息
 
 ```json
@@ -200,17 +300,30 @@ metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.di
   "channelId": "123",
   "messageId": "456",
   "content": "修正了错别字"
+=======
+Edit / delete:
+
+```json
+{
+  "action": "edit",
+  "channel": "discord",
+  "channelId": "123",
+  "messageId": "456",
+  "message": "fixed typo"
+>>>>>>> origin/main
 }
 ```
 
 ```json
 {
-  "action": "deleteMessage",
+  "action": "delete",
+  "channel": "discord",
   "channelId": "123",
   "messageId": "456"
 }
 ```
 
+<<<<<<< HEAD
 ### 线程（Thread）
 
 ```json
@@ -219,18 +332,27 @@ metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.di
   "channelId": "123",
   "name": "Bug 分选",
   "messageId": "456"
-}
-```
+=======
+Poll:
 
 ```json
 {
-  "action": "threadList",
-  "guildId": "999"
+  "action": "poll",
+  "channel": "discord",
+  "to": "channel:123",
+  "pollQuestion": "Lunch?",
+  "pollOption": ["Pizza", "Sushi", "Salad"],
+  "pollMulti": false,
+  "pollDurationHours": 24
+>>>>>>> origin/main
 }
 ```
 
+Pins:
+
 ```json
 {
+<<<<<<< HEAD
   "action": "threadReply",
   "channelId": "777",
   "content": "在线程中回复"
@@ -242,30 +364,49 @@ metadata: { "openclaw": { "emoji": "🎮", "requires": { "config": ["channels.di
 ```json
 {
   "action": "pinMessage",
+=======
+  "action": "pin",
+  "channel": "discord",
+>>>>>>> origin/main
   "channelId": "123",
   "messageId": "456"
 }
 ```
 
+Threads:
+
 ```json
 {
-  "action": "listPins",
-  "channelId": "123"
+  "action": "thread-create",
+  "channel": "discord",
+  "channelId": "123",
+  "messageId": "456",
+  "threadName": "bug triage"
 }
 ```
 
+<<<<<<< HEAD
 ### 搜索消息
+=======
+Search:
+>>>>>>> origin/main
 
 ```json
 {
-  "action": "searchMessages",
+  "action": "search",
+  "channel": "discord",
   "guildId": "999",
+<<<<<<< HEAD
   "content": "发布说明",
+=======
+  "query": "release notes",
+>>>>>>> origin/main
   "channelIds": ["123", "456"],
   "limit": 10
 }
 ```
 
+<<<<<<< HEAD
 ### 成员和角色信息
 
 ```json
@@ -450,11 +591,21 @@ Discord 机器人只能设置活动的 `name`、`state`、`type` 和 `url`。其
 ```json
 {
   "action": "setPresence",
+=======
+Presence (often gated):
+
+```json
+{
+  "action": "set-presence",
+  "channel": "discord",
+>>>>>>> origin/main
   "activityType": "playing",
-  "activityName": "with fire"
+  "activityName": "with fire",
+  "status": "online"
 }
 ```
 
+<<<<<<< HEAD
 侧边栏结果："**with fire**"。弹出层显示："Playing: with fire"。
 
 **带有状态（显示在弹出层）：**
@@ -576,3 +727,10 @@ CalVer 使用基于日期的版本，如...
 ```
 版本选项：semver (1.2.3)、calver (2026.01.04) 或者干脆 yolo (永远 `latest`)。哪种适合你的发布节奏？
 ```
+=======
+## Writing Style (Discord)
+
+- Short, conversational, low ceremony.
+- No markdown tables.
+- Mention users as `<@USER_ID>`.
+>>>>>>> origin/main

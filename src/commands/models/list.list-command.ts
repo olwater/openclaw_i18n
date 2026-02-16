@@ -2,12 +2,14 @@ import type { Api, Model } from "@mariozechner/pi-ai";
 import type { ModelRegistry } from "../../agents/pi-model-discovery.js";
 import type { RuntimeEnv } from "../../runtime.js";
 import type { ModelRow } from "./list.types.js";
-import { ensureAuthProfileStore } from "../../agents/auth-profiles.js";
 import { resolveForwardCompatModel } from "../../agents/model-forward-compat.js";
 import { parseModelRef } from "../../agents/model-selection.js";
+<<<<<<< HEAD
 import { resolveModel } from "../../agents/pi-embedded-runner/model.js";
 import { loadConfig } from "../../config/config.js";
 import { t } from "../../i18n/index.js";
+=======
+>>>>>>> origin/main
 import { resolveConfiguredEntries } from "./list.configured.js";
 import { formatErrorWithStack } from "./list.errors.js";
 import { loadModelRegistry, toModelRow } from "./list.registry.js";
@@ -25,6 +27,8 @@ export async function modelsListCommand(
   runtime: RuntimeEnv,
 ) {
   ensureFlagCompatibility(opts);
+  const { loadConfig } = await import("../../config/config.js");
+  const { ensureAuthProfileStore } = await import("../../agents/auth-profiles.js");
   const cfg = loadConfig();
   const authStore = ensureAuthProfileStore();
   const providerFilter = (() => {
@@ -112,6 +116,7 @@ export async function modelsListCommand(
         }
       }
       if (!model) {
+        const { resolveModel } = await import("../../agents/pi-embedded-runner/model.js");
         model = resolveModel(entry.ref.provider, entry.ref.model, undefined, cfg).model;
       }
       if (opts.local && model && !isLocalBaseUrl(model.baseUrl)) {

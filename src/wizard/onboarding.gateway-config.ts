@@ -14,6 +14,7 @@ import {
 } from "../commands/onboard-helpers.js";
 import { t } from "../i18n/index.js";
 import { findTailscaleBinary } from "../infra/tailscale.js";
+import { validateIPv4AddressInput } from "../shared/net/ipv4.js";
 
 // These commands are "high risk" (privacy writes/recording) and should be
 // explicitly armed by the user when they want to use them.

@@ -1,19 +1,13 @@
 import type { Command } from "commander";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
-import {
-  buildWorkspaceSkillStatus,
-  type SkillStatusEntry,
-  type SkillStatusReport,
-} from "../agents/skills-status.js";
 import { loadConfig } from "../config/config.js";
 import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
-import { renderTable } from "../terminal/table.js";
 import { theme } from "../terminal/theme.js";
-import { shortenHomePath } from "../utils.js";
-import { formatCliCommand } from "./command-format.js";
+import { formatSkillInfo, formatSkillsCheck, formatSkillsList } from "./skills-cli.format.js";
 
+<<<<<<< HEAD
 export type SkillsListOptions = {
   json?: boolean;
   eligible?: boolean;
@@ -338,6 +332,14 @@ export function formatSkillsCheck(report: SkillStatusReport, opts: SkillsCheckOp
 
   return appendClawHubHint(lines.join("\n"), opts.json);
 }
+=======
+export type {
+  SkillInfoOptions,
+  SkillsCheckOptions,
+  SkillsListOptions,
+} from "./skills-cli.format.js";
+export { formatSkillInfo, formatSkillsCheck, formatSkillsList } from "./skills-cli.format.js";
+>>>>>>> origin/main
 
 /**
  * Register the skills CLI commands
@@ -362,6 +364,7 @@ export function registerSkillsCli(program: Command) {
       try {
         const config = loadConfig();
         const workspaceDir = resolveAgentWorkspaceDir(config, resolveDefaultAgentId(config));
+        const { buildWorkspaceSkillStatus } = await import("../agents/skills-status.js");
         const report = buildWorkspaceSkillStatus(workspaceDir, { config });
         defaultRuntime.log(formatSkillsList(report, opts));
       } catch (err) {
@@ -379,6 +382,7 @@ export function registerSkillsCli(program: Command) {
       try {
         const config = loadConfig();
         const workspaceDir = resolveAgentWorkspaceDir(config, resolveDefaultAgentId(config));
+        const { buildWorkspaceSkillStatus } = await import("../agents/skills-status.js");
         const report = buildWorkspaceSkillStatus(workspaceDir, { config });
         defaultRuntime.log(formatSkillInfo(report, name, opts));
       } catch (err) {
@@ -395,6 +399,7 @@ export function registerSkillsCli(program: Command) {
       try {
         const config = loadConfig();
         const workspaceDir = resolveAgentWorkspaceDir(config, resolveDefaultAgentId(config));
+        const { buildWorkspaceSkillStatus } = await import("../agents/skills-status.js");
         const report = buildWorkspaceSkillStatus(workspaceDir, { config });
         defaultRuntime.log(formatSkillsCheck(report, opts));
       } catch (err) {
@@ -408,6 +413,7 @@ export function registerSkillsCli(program: Command) {
     try {
       const config = loadConfig();
       const workspaceDir = resolveAgentWorkspaceDir(config, resolveDefaultAgentId(config));
+      const { buildWorkspaceSkillStatus } = await import("../agents/skills-status.js");
       const report = buildWorkspaceSkillStatus(workspaceDir, { config });
       defaultRuntime.log(formatSkillsList(report, {}));
     } catch (err) {

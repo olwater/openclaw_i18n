@@ -2,14 +2,7 @@ import type { Command } from "commander";
 import { t } from "../../i18n/index.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
-import {
-  runDaemonInstall,
-  runDaemonRestart,
-  runDaemonStart,
-  runDaemonStatus,
-  runDaemonStop,
-  runDaemonUninstall,
-} from "./runners.js";
+import { addGatewayServiceCommands } from "./register-service-commands.js";
 
 export function registerDaemonCli(program: Command) {
   const daemon = program
@@ -21,6 +14,7 @@ export function registerDaemonCli(program: Command) {
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/gateway", "docs.openclaw.ai/cli/gateway")}\n`,
     );
 
+<<<<<<< HEAD
   daemon
     .command("status")
     .description(t("Show service install status + probe the Gateway"))
@@ -83,4 +77,9 @@ export function registerDaemonCli(program: Command) {
     .action(async (opts) => {
       await runDaemonRestart(opts);
     });
+=======
+  addGatewayServiceCommands(daemon, {
+    statusDescription: "Show service install status + probe the Gateway",
+  });
+>>>>>>> origin/main
 }

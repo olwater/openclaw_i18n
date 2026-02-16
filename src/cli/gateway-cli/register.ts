@@ -8,18 +8,12 @@ import { t } from "../../i18n/index.js";
 import { discoverGatewayBeacons } from "../../infra/bonjour-discovery.js";
 import { resolveWideAreaDiscoveryDomain } from "../../infra/widearea-dns.js";
 import { defaultRuntime } from "../../runtime.js";
+import { styleHealthChannelLine } from "../../terminal/health-style.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { colorize, isRich, theme } from "../../terminal/theme.js";
 import { formatTokenCount, formatUsd } from "../../utils/usage-format.js";
 import { runCommandWithRuntime } from "../cli-utils.js";
-import {
-  runDaemonInstall,
-  runDaemonRestart,
-  runDaemonStart,
-  runDaemonStatus,
-  runDaemonStop,
-  runDaemonUninstall,
-} from "../daemon-cli.js";
+import { addGatewayServiceCommands } from "../daemon-cli.js";
 import { withProgress } from "../progress.js";
 import { callGatewayCli, gatewayCallOpts } from "./call.js";
 import {
@@ -31,6 +25,7 @@ import {
 } from "./discover.js";
 import { addGatewayRunCommand } from "./run.js";
 
+<<<<<<< HEAD
 function styleHealthChannelLine(line: string, rich: boolean): string {
   if (!rich) {
     return line;
@@ -72,6 +67,8 @@ function styleHealthChannelLine(line: string, rich: boolean): string {
   return line;
 }
 
+=======
+>>>>>>> origin/main
 function runGatewayCommand(action: () => Promise<void>, label?: string) {
   return runCommandWithRuntime(defaultRuntime, action, (err) => {
     const message = String(err);
@@ -135,6 +132,7 @@ export function registerGatewayCli(program: Command) {
     gateway.command("run").description(t("Run the WebSocket Gateway (foreground)")),
   );
 
+<<<<<<< HEAD
   gateway
     .command("status")
     .description(t("Show gateway service status + probe the Gateway"))
@@ -197,6 +195,11 @@ export function registerGatewayCli(program: Command) {
     .action(async (opts) => {
       await runDaemonRestart(opts);
     });
+=======
+  addGatewayServiceCommands(gateway, {
+    statusDescription: "Show gateway service status + probe the Gateway",
+  });
+>>>>>>> origin/main
 
   gatewayCallOpts(
     gateway

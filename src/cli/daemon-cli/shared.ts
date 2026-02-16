@@ -4,29 +4,28 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
+import { formatRuntimeStatus } from "../../daemon/runtime-format.js";
 import { pickPrimaryLanIPv4 } from "../../gateway/net.js";
 import { t } from "../../i18n/index.js";
 import { getResolvedLoggerSettings } from "../../logging.js";
+import { colorize, isRich, theme } from "../../terminal/theme.js";
 import { formatCliCommand } from "../command-format.js";
+import { parsePort } from "../shared/parse-port.js";
 
-export function parsePort(raw: unknown): number | null {
-  if (raw === undefined || raw === null) {
-    return null;
-  }
-  const value =
-    typeof raw === "string"
-      ? raw
-      : typeof raw === "number" || typeof raw === "bigint"
-        ? raw.toString()
-        : null;
-  if (value === null) {
-    return null;
-  }
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
-    return null;
-  }
-  return parsed;
+export { formatRuntimeStatus };
+export { parsePort };
+
+export function createCliStatusTextStyles() {
+  const rich = isRich();
+  return {
+    rich,
+    label: (value: string) => colorize(rich, theme.muted, value),
+    accent: (value: string) => colorize(rich, theme.accent, value),
+    infoText: (value: string) => colorize(rich, theme.info, value),
+    okText: (value: string) => colorize(rich, theme.success, value),
+    warnText: (value: string) => colorize(rich, theme.warn, value),
+    errorText: (value: string) => colorize(rich, theme.error, value),
+  };
 }
 
 export function parsePortFromArgs(programArguments: string[] | undefined): number | null {
@@ -107,6 +106,7 @@ export function normalizeListenerAddress(raw: string): string {
   return value.trim();
 }
 
+<<<<<<< HEAD
 export function formatRuntimeStatus(
   runtime:
     | {
@@ -154,6 +154,8 @@ export function formatRuntimeStatus(
   return details.length > 0 ? `${status} (${details.join(t(", "))})` : status;
 }
 
+=======
+>>>>>>> origin/main
 export function renderRuntimeHints(
   runtime: { missingUnit?: boolean; status?: string } | undefined,
   env: NodeJS.ProcessEnv = process.env,

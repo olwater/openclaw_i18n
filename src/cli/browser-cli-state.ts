@@ -3,6 +3,7 @@ import { danger } from "../globals.js";
 import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { parseBooleanValue } from "../utils/boolean.js";
+import { runBrowserResizeWithOutput } from "./browser-cli-resize.js";
 import { callBrowserRequest, type BrowserParentOpts } from "./browser-cli-shared.js";
 import { registerBrowserCookiesAndStorageCommands } from "./browser-cli-state.cookies-storage.js";
 import { runCommandWithRuntime } from "./cli-utils.js";
@@ -36,32 +37,24 @@ export function registerBrowserStateCommands(
     .action(async (width: number, height: number, opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
+<<<<<<< HEAD
       if (!Number.isFinite(width) || !Number.isFinite(height)) {
         defaultRuntime.error(danger(t("width and height must be numbers")));
         defaultRuntime.exit(1);
         return;
       }
+=======
+>>>>>>> origin/main
       await runBrowserCommand(async () => {
-        const result = await callBrowserRequest(
+        await runBrowserResizeWithOutput({
           parent,
-          {
-            method: "POST",
-            path: "/act",
-            query: profile ? { profile } : undefined,
-            body: {
-              kind: "resize",
-              width,
-              height,
-              targetId: opts.targetId?.trim() || undefined,
-            },
-          },
-          { timeoutMs: 20000 },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        defaultRuntime.log(`viewport set: ${width}x${height}`);
+          profile,
+          width,
+          height,
+          targetId: opts.targetId,
+          timeoutMs: 20000,
+          successMessage: `viewport set: ${width}x${height}`,
+        });
       });
     });
 

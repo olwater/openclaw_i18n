@@ -18,8 +18,13 @@ metadata:
               "archive": "tar.bz2",
               "extract": true,
               "stripComponents": 1,
+<<<<<<< HEAD
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/runtime",
               "label": "下载 sherpa-onnx 运行时 (macOS)",
+=======
+              "targetDir": "runtime",
+              "label": "Download sherpa-onnx runtime (macOS)",
+>>>>>>> origin/main
             },
             {
               "id": "download-runtime-linux-x64",
@@ -29,8 +34,13 @@ metadata:
               "archive": "tar.bz2",
               "extract": true,
               "stripComponents": 1,
+<<<<<<< HEAD
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/runtime",
               "label": "下载 sherpa-onnx 运行时 (Linux x64)",
+=======
+              "targetDir": "runtime",
+              "label": "Download sherpa-onnx runtime (Linux x64)",
+>>>>>>> origin/main
             },
             {
               "id": "download-runtime-win-x64",
@@ -40,8 +50,13 @@ metadata:
               "archive": "tar.bz2",
               "extract": true,
               "stripComponents": 1,
+<<<<<<< HEAD
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/runtime",
               "label": "下载 sherpa-onnx 运行时 (Windows x64)",
+=======
+              "targetDir": "runtime",
+              "label": "Download sherpa-onnx runtime (Windows x64)",
+>>>>>>> origin/main
             },
             {
               "id": "download-model-lessac",
@@ -49,8 +64,13 @@ metadata:
               "url": "https://github.com/k2-fsa/sherpa-onnx/releases/download/tts-models/vits-piper-en_US-lessac-high.tar.bz2",
               "archive": "tar.bz2",
               "extract": true,
+<<<<<<< HEAD
               "targetDir": "~/.openclaw/tools/sherpa-onnx-tts/models",
               "label": "下载 Piper en_US lessac (high)",
+=======
+              "targetDir": "models",
+              "label": "Download Piper en_US lessac (high)",
+>>>>>>> origin/main
             },
           ],
       },
