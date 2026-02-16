@@ -13,7 +13,6 @@ import {
   normalizeUpdateChannel,
   resolveEffectiveUpdateChannel,
 } from "../infra/update-channels.js";
-import { formatGitInstallLabel } from "../infra/update-check.js";
 import {
   resolveMemoryCacheSummary,
   resolveMemoryFtsState,
@@ -359,7 +358,6 @@ export async function statusCommand(
     gitTag: update.git?.tag ?? null,
     gitBranch: update.git?.branch ?? null,
   });
-<<<<<<< HEAD
   const gitLabel =
     update.installKind === "git"
       ? (() => {
@@ -375,9 +373,6 @@ export async function statusCommand(
           return parts.join(t(" · "));
         })()
       : null;
-=======
-  const gitLabel = formatGitInstallLabel(update);
->>>>>>> origin/main
 
   const overviewRows = [
     { Item: "Dashboard", Value: dashboard },

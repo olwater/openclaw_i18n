@@ -1,7 +1,8 @@
 import type { Command } from "commander";
 import {
   CONFIGURE_WIZARD_SECTIONS,
-  configureCommandFromSectionsArg,
+  configureCommand,
+  configureCommandWithSections,
 } from "../../commands/configure.js";
 import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
@@ -26,7 +27,6 @@ export function registerConfigureCommand(program: Command) {
     )
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
-<<<<<<< HEAD
         const sections: string[] = Array.isArray(opts.section)
           ? opts.section
               .map((value: unknown) => (typeof value === "string" ? value.trim() : ""))
@@ -47,9 +47,6 @@ export function registerConfigureCommand(program: Command) {
         }
 
         await configureCommandWithSections(sections as never, defaultRuntime);
-=======
-        await configureCommandFromSectionsArg(opts.section, defaultRuntime);
->>>>>>> origin/main
       });
     });
 }

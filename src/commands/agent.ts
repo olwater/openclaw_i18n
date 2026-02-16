@@ -256,11 +256,7 @@ export async function agentCommand(
     timeoutSecondsRaw !== undefined &&
     (Number.isNaN(timeoutSecondsRaw) || timeoutSecondsRaw < 0)
   ) {
-<<<<<<< HEAD
-    throw new Error(t("--timeout must be a positive integer (seconds)"));
-=======
-    throw new Error("--timeout must be a non-negative integer (seconds; 0 means no timeout)");
->>>>>>> origin/main
+    throw new Error(t("--timeout must be a non-negative integer (seconds; 0 means no timeout)"));
   }
   const timeoutMs = resolveAgentTimeoutMs({
     cfg,

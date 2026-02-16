@@ -4,7 +4,7 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../../daemon/launchd.js";
-import { formatRuntimeStatus } from "../../daemon/runtime-format.js";
+
 import { pickPrimaryLanIPv4 } from "../../gateway/net.js";
 import { t } from "../../i18n/index.js";
 import { getResolvedLoggerSettings } from "../../logging.js";
@@ -12,7 +12,6 @@ import { colorize, isRich, theme } from "../../terminal/theme.js";
 import { formatCliCommand } from "../command-format.js";
 import { parsePort } from "../shared/parse-port.js";
 
-export { formatRuntimeStatus };
 export { parsePort };
 
 export function createCliStatusTextStyles() {
@@ -106,7 +105,6 @@ export function normalizeListenerAddress(raw: string): string {
   return value.trim();
 }
 
-<<<<<<< HEAD
 export function formatRuntimeStatus(
   runtime:
     | {
@@ -153,9 +151,6 @@ export function formatRuntimeStatus(
   }
   return details.length > 0 ? `${status} (${details.join(t(", "))})` : status;
 }
-
-=======
->>>>>>> origin/main
 export function renderRuntimeHints(
   runtime: { missingUnit?: boolean; status?: string } | undefined,
   env: NodeJS.ProcessEnv = process.env,

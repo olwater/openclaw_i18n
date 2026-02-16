@@ -18,7 +18,6 @@ export const browserCoreExamples = [
 ];
 
 export const browserActionExamples = [
-<<<<<<< HEAD
   t("openclaw browser navigate https://example.com"),
   t("openclaw browser resize 1280 720"),
   t("openclaw browser click 12 --double"),
@@ -34,21 +33,4 @@ export const browserActionExamples = [
   t("openclaw browser evaluate --fn '(el) => el.textContent' --ref 7"),
   t("openclaw browser console --level error"),
   t("openclaw browser pdf"),
-=======
-  "openclaw browser navigate https://example.com",
-  "openclaw browser resize 1280 720",
-  "openclaw browser click 12 --double",
-  'openclaw browser type 23 "hello" --submit',
-  "openclaw browser press Enter",
-  "openclaw browser hover 44",
-  "openclaw browser drag 10 11",
-  "openclaw browser select 9 OptionA OptionB",
-  "openclaw browser upload /tmp/openclaw/uploads/file.pdf",
-  'openclaw browser fill --fields \'[{"ref":"1","value":"Ada"}]\'',
-  "openclaw browser dialog --accept",
-  'openclaw browser wait --text "Done"',
-  "openclaw browser evaluate --fn '(el) => el.textContent' --ref 7",
-  "openclaw browser console --level error",
-  "openclaw browser pdf",
->>>>>>> origin/main
 ];

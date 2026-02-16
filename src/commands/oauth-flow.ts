@@ -18,12 +18,8 @@ export function createVpsAwareOAuthHandlers(params: {
   onAuth: (event: { url: string }) => Promise<void>;
   onPrompt: (prompt: OAuthPrompt) => Promise<string>;
 } {
-<<<<<<< HEAD
   const manualPromptMessage =
     params.manualPromptMessage ?? t("Paste the redirect URL (or authorization code)");
-=======
-  const manualPromptMessage = params.manualPromptMessage ?? "Paste the redirect URL";
->>>>>>> origin/main
   let manualCodePromise: Promise<string> | undefined;
 
   return {

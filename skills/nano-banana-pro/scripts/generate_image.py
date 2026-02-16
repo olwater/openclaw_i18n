@@ -60,8 +60,16 @@ def main():
         "--api-key", "-k",
         help="Gemini API key (overrides GEMINI_API_KEY env var)"
     )
+    parser.add_argument(
+        "--base-url",
+        help="Gemini API base URL (overrides default/env)"
+    )
 
     args = parser.parse_args()
+
+    # Set base URL
+    if args.base_url:
+        os.environ["GEMINI_BASE_URL"] = args.base_url
 
     # Get API key
     api_key = get_api_key(args.api_key)
@@ -78,7 +86,14 @@ def main():
     from PIL import Image as PILImage
 
     # Initialise client
-    client = genai.Client(api_key=api_key)
+    # Use GEMINI_BASE_URL if set, otherwise default to localhost:8045/v1
+    base_url = os.environ.get("GEMINI_BASE_URL", "http://127.0.0.1:8045/v1")
+    client = genai.Client(
+        api_key=api_key,
+        http_options=types.HttpOptions(
+            base_url=base_url
+        )
+    )
 
     # Set up output path
     output_path = Path(args.filename)
@@ -127,7 +142,7 @@ def main():
 
     try:
         response = client.models.generate_content(
-            model="gemini-3-pro-image-preview",
+            model="gemini-3-pro-image",
             contents=contents,
             config=types.GenerateContentConfig(
                 response_modalities=["TEXT", "IMAGE"],

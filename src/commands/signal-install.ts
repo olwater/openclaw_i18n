@@ -5,11 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
 import type { RuntimeEnv } from "../runtime.js";
-<<<<<<< HEAD
 import { t } from "../i18n/index.js";
-=======
-import { extractArchive } from "../infra/archive.js";
->>>>>>> origin/main
 import { resolveBrewExecutable } from "../infra/brew.js";
 import { runCommandWithTimeout } from "../process/exec.js";
 import { CONFIG_DIR } from "../utils.js";
@@ -35,15 +31,6 @@ export type SignalInstallResult = {
   version?: string;
   error?: string;
 };
-
-/** @internal Exported for testing. */
-export async function extractSignalCliArchive(
-  archivePath: string,
-  installRoot: string,
-  timeoutMs: number,
-): Promise<void> {
-  await extractArchive({ archivePath, destDir: installRoot, timeoutMs });
-}
 
 /** @internal Exported for testing. */
 export function looksLikeArchive(name: string): boolean {
@@ -255,17 +242,16 @@ async function installSignalCliFromRelease(runtime: RuntimeEnv): Promise<SignalI
   const installRoot = path.join(CONFIG_DIR, "tools", "signal-cli", version);
   await fs.mkdir(installRoot, { recursive: true });
 
-  if (!looksLikeArchive(asset.name.toLowerCase())) {
+  if (asset.name.endsWith(".zip")) {
+    await runCommandWithTimeout(["unzip", "-q", archivePath, "-d", installRoot], {
+      timeoutMs: 60_000,
+    });
+  } else if (asset.name.endsWith(".tar.gz") || asset.name.endsWith(".tgz")) {
+    await runCommandWithTimeout(["tar", "-xzf", archivePath, "-C", installRoot], {
+      timeoutMs: 60_000,
+    });
+  } else {
     return { ok: false, error: `Unsupported archive type: ${asset.name}` };
-  }
-  try {
-    await extractSignalCliArchive(archivePath, installRoot, 60_000);
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      ok: false,
-      error: `Failed to extract ${asset.name}: ${message}`,
-    };
   }
 
   const cliPath = await findSignalCliBinary(installRoot);

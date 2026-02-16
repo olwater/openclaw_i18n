@@ -1,5 +1,4 @@
 import type { PromptAccountId, PromptAccountIdParams } from "../onboarding-types.js";
-<<<<<<< HEAD
 import { t } from "../../../i18n/translations.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 
@@ -34,12 +33,6 @@ export const promptAccountId: PromptAccountId = async (params: PromptAccountIdPa
     );
   }
   return normalized;
-=======
-import { promptAccountId as promptAccountIdSdk } from "../../../plugin-sdk/onboarding.js";
-
-export const promptAccountId: PromptAccountId = async (params: PromptAccountIdParams) => {
-  return await promptAccountIdSdk(params);
->>>>>>> origin/main
 };
 
 export function addWildcardAllowFrom(
