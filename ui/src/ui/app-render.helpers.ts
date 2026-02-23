@@ -1,16 +1,17 @@
 import { html } from "lit";
 import { repeat } from "lit/directives/repeat.js";
+
+import { refreshChat } from "./app-chat.ts";
+import { syncUrlWithSessionKey } from "./app-settings.ts";
 import type { AppViewState } from "./app-view-state.ts";
+import { OpenClawApp } from "./app.ts";
+import { ChatState, loadChatHistory } from "./controllers/chat.ts";
+import { t } from "../i18n/index.ts";
+import { icons } from "./icons.ts";
+import { iconForTab, pathForTab, titleForTab, type Tab } from "./navigation.ts";
 import type { ThemeTransitionContext } from "./theme-transition.ts";
 import type { ThemeMode } from "./theme.ts";
 import type { SessionsListResult } from "./types.ts";
-import { refreshChat } from "./app-chat.ts";
-import { syncUrlWithSessionKey } from "./app-settings.ts";
-import { OpenClawApp } from "./app.ts";
-import { ChatState, loadChatHistory } from "./controllers/chat.ts";
-import { t } from "./i18n/index.ts";
-import { icons } from "./icons.ts";
-import { iconForTab, pathForTab, titleForTab, type Tab } from "./navigation.ts";
 
 type SessionDefaultsSnapshot = {
   mainSessionKey?: string;
@@ -187,7 +188,7 @@ export function renderChatControls(state: AppViewState) {
             });
           }
         }}
-        title="${t("Refresh chat data")}"
+        title=${t("chat.refreshTitle")}
       >
         ${refreshIcon}
       </button>
@@ -205,11 +206,7 @@ export function renderChatControls(state: AppViewState) {
           });
         }}
         aria-pressed=${showThinking}
-        title=${
-          disableThinkingToggle
-            ? t("Disabled during onboarding")
-            : t("Toggle assistant thinking/working output")
-        }
+        title=${disableThinkingToggle ? t("chat.onboardingDisabled") : t("chat.thinkingToggle")}
       >
         ${icons.brain}
       </button>
@@ -226,11 +223,7 @@ export function renderChatControls(state: AppViewState) {
           });
         }}
         aria-pressed=${focusActive}
-        title=${
-          disableFocusToggle
-            ? t("Disabled during onboarding")
-            : t("Toggle focus mode (hide sidebar + page header)")
-        }
+        title=${disableFocusToggle ? t("chat.onboardingDisabled") : t("chat.focusToggle")}
       >
         ${focusIcon}
       </button>
@@ -340,11 +333,19 @@ export function resolveSessionDisplayName(
   const displayName = row?.displayName?.trim() || "";
   const { prefix, fallbackName } = parseSessionKey(key);
 
+  const applyTypedPrefix = (name: string): string => {
+    if (!prefix) {
+      return name;
+    }
+    const prefixPattern = new RegExp(`^${prefix.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\\s*`, "i");
+    return prefixPattern.test(name) ? name : `${prefix} ${name}`;
+  };
+
   if (label && label !== key) {
-    return prefix ? `${prefix} ${label}` : label;
+    return applyTypedPrefix(label);
   }
   if (displayName && displayName !== key) {
-    return prefix ? `${prefix} ${displayName}` : displayName;
+    return applyTypedPrefix(displayName);
   }
   return fallbackName;
 }

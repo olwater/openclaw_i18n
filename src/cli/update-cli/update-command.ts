@@ -1,5 +1,5 @@
-import { confirm, isCancel } from "@clack/prompts";
 import path from "node:path";
+import { confirm, isCancel } from "@clack/prompts";
 import {
   checkShellCompletionStatus,
   ensureCompletionCacheExists,
@@ -7,6 +7,7 @@ import {
 import { doctorCommand } from "../../commands/doctor.js";
 import { readConfigFileSnapshot, writeConfigFile } from "../../config/config.js";
 import { t } from "../../i18n/index.js";
+import { resolveGatewayService } from "../../daemon/service.js";
 import {
   channelToNpmTag,
   DEFAULT_GIT_CHANNEL,
@@ -35,10 +36,12 @@ import { formatCliCommand } from "../command-format.js";
 import { installCompletion } from "../completion-cli.js";
 import { runDaemonRestart } from "../daemon-cli.js";
 import { createUpdateProgress, printResult } from "./progress.js";
+import { prepareRestartScript, runRestartScript } from "./restart-helper.js";
 import {
   DEFAULT_PACKAGE_NAME,
   ensureGitCheckout,
   normalizeTag,
+  parseTimeoutMsOrExit,
   readPackageName,
   readPackageVersion,
   resolveGitInstallDir,
@@ -405,6 +408,7 @@ async function maybeRestartService(params: {
   shouldRestart: boolean;
   result: UpdateRunResult;
   opts: UpdateCommandOptions;
+  restartScriptPath?: string | null;
 }): Promise<void> {
   if (params.shouldRestart) {
     if (!params.opts.json) {
@@ -413,7 +417,15 @@ async function maybeRestartService(params: {
     }
 
     try {
-      const restarted = await runDaemonRestart();
+      let restarted = false;
+      let restartInitiated = false;
+      if (params.restartScriptPath) {
+        await runRestartScript(params.restartScriptPath);
+        restartInitiated = true;
+      } else {
+        restarted = await runDaemonRestart();
+      }
+
       if (!params.opts.json && restarted) {
         defaultRuntime.log(theme.success(t("Daemon restarted successfully.")));
         defaultRuntime.log("");
@@ -429,6 +441,16 @@ async function maybeRestartService(params: {
         } finally {
           delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
         }
+      }
+
+      if (!params.opts.json && restartInitiated) {
+        defaultRuntime.log(theme.success("Daemon restart initiated."));
+        defaultRuntime.log(
+          theme.muted(
+            `Verify with \`${replaceCliName(formatCliCommand("openclaw gateway status"), CLI_NAME)}\` once the gateway is back.`,
+          ),
+        );
+        defaultRuntime.log("");
       }
     } catch (err) {
       if (!params.opts.json) {
@@ -471,7 +493,7 @@ async function maybeRestartService(params: {
 export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
   suppressDeprecations();
 
-  const timeoutMs = opts.timeout ? Number.parseInt(opts.timeout, 10) * 1000 : undefined;
+  const timeoutMs = parseTimeoutMsOrExit(opts.timeout);
   const shouldRestart = opts.restart !== false;
 
   if (timeoutMs !== undefined && (Number.isNaN(timeoutMs) || timeoutMs <= 0)) {
@@ -479,6 +501,9 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
     defaultRuntime.exit(1);
     return;
   }
+  // The instruction had an extra `return;` here, which was syntactically incorrect.
+  // Assuming the intent was to ensure the function returns after an error.
+  // The `parseTimeoutMsOrExit` function likely handles exiting, but this explicit check is also present.
 
   const root = await resolveUpdateRoot();
   const updateStatus = await checkUpdateStatus({
@@ -601,6 +626,18 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
   const { progress, stop } = createUpdateProgress(showProgress);
   const startedAt = Date.now();
 
+  let restartScriptPath: string | null = null;
+  if (shouldRestart) {
+    try {
+      const loaded = await resolveGatewayService().isLoaded({ env: process.env });
+      if (loaded) {
+        restartScriptPath = await prepareRestartScript(process.env);
+      }
+    } catch {
+      // Ignore errors during pre-check; fallback to standard restart
+    }
+  }
+
   const result = switchToPackage
     ? await runPackageInstallUpdate({
         root,
@@ -681,6 +718,7 @@ export async function updateCommand(opts: UpdateCommandOptions): Promise<void> {
     shouldRestart,
     result,
     opts,
+    restartScriptPath,
   });
 
   if (!opts.json) {

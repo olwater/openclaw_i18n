@@ -5,6 +5,7 @@ import { t } from "../i18n/index.js";
 import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { theme } from "../terminal/theme.js";
+import { inheritOptionFromParent } from "./command-options.js";
 
 export function registerAcpCli(program: Command) {
   const acp = program.command("acp").description(t("Run an ACP bridge backed by the Gateway"));
@@ -53,14 +54,15 @@ export function registerAcpCli(program: Command) {
     .option("--server-args <args...>", t("Extra arguments for the ACP server"))
     .option("--server-verbose", t("Enable verbose logging on the ACP server"), false)
     .option("--verbose, -v", t("Verbose client logging"), false)
-    .action(async (opts) => {
+    .action(async (opts, command) => {
+      const inheritedVerbose = inheritOptionFromParent<boolean>(command, "verbose");
       try {
         await runAcpClientInteractive({
           cwd: opts.cwd as string | undefined,
           serverCommand: opts.server as string | undefined,
           serverArgs: opts.serverArgs as string[] | undefined,
           serverVerbose: Boolean(opts.serverVerbose),
-          verbose: Boolean(opts.verbose),
+          verbose: Boolean(opts.verbose || inheritedVerbose),
         });
       } catch (err) {
         defaultRuntime.error(String(err));

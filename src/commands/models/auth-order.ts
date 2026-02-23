@@ -1,4 +1,3 @@
-import type { RuntimeEnv } from "../../runtime.js";
 import { resolveAgentDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import {
   type AuthProfileStore,
@@ -8,6 +7,7 @@ import {
 import { normalizeProviderId } from "../../agents/model-selection.js";
 import { loadConfig } from "../../config/config.js";
 import { t } from "../../i18n/index.js";
+import type { RuntimeEnv } from "../../runtime.js";
 import { shortenHomePath } from "../../utils.js";
 import { resolveKnownAgentId } from "./shared.js";
 

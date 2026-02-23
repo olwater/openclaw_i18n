@@ -1,10 +1,10 @@
 import type { Command } from "commander";
 import type { CronJob } from "../../cron/types.js";
-import type { GatewayRpcOpts } from "../gateway-rpc.js";
 import { danger } from "../../globals.js";
 import { t } from "../../i18n/index.js";
 import { sanitizeAgentId } from "../../routing/session-key.js";
 import { defaultRuntime } from "../../runtime.js";
+import type { GatewayRpcOpts } from "../gateway-rpc.js";
 import { addGatewayClientOptions, callGatewayFromCli } from "../gateway-rpc.js";
 import { parsePositiveIntOrUndefined } from "../program/helpers.js";
 import {
@@ -76,8 +76,10 @@ export function registerCronAddCommand(cron: Command) {
       .option("--at <when>", t("Run once at time (ISO) or +duration (e.g. 20m)"))
       .option("--every <duration>", t("Run every duration (e.g. 10m, 1h)"))
       .option("--expect-final", t("Wait for final response (agent)"), false)
-      .option("--cron <expr>", t("Cron expression (5-field)"))
+      .option("--cron <expr>", t("Cron expression (5-field or 6-field with seconds)"))
       .option("--tz <iana>", t("Timezone for cron expressions (IANA)"), "")
+      .option("--stagger <duration>", t("Cron stagger window (e.g. 30s, 5m)"))
+      .option("--exact", t("Disable cron staggering (set stagger to 0)"), false)
       .option("--system-event <text>", t("System event payload (main session)"))
       .option("--message <text>", t("Agent message payload"))
       .option(
@@ -103,6 +105,12 @@ export function registerCronAddCommand(cron: Command) {
       .option("--json", t("Output JSON"), false)
       .action(async (opts: GatewayRpcOpts & Record<string, unknown>, cmd?: Command) => {
         try {
+          const staggerRaw = typeof opts.stagger === "string" ? opts.stagger.trim() : "";
+          const useExact = Boolean(opts.exact);
+          if (staggerRaw && useExact) {
+            throw new Error("Choose either --stagger or --exact, not both");
+          }
+
           const schedule = (() => {
             const at = typeof opts.at === "string" ? opts.at : "";
             const every = typeof opts.every === "string" ? opts.every : "";
@@ -110,6 +118,9 @@ export function registerCronAddCommand(cron: Command) {
             const chosen = [Boolean(at), Boolean(every), Boolean(cronExpr)].filter(Boolean).length;
             if (chosen !== 1) {
               throw new Error(t("Choose exactly one schedule: --at, --every, or --cron"));
+            }
+            if ((useExact || staggerRaw) && !cronExpr) {
+              throw new Error("--stagger/--exact are only valid with --cron");
             }
             if (at) {
               const atIso = parseAt(at);
@@ -125,10 +136,24 @@ export function registerCronAddCommand(cron: Command) {
               }
               return { kind: "every" as const, everyMs };
             }
+            const staggerMs = (() => {
+              if (useExact) {
+                return 0;
+              }
+              if (!staggerRaw) {
+                return undefined;
+              }
+              const parsed = parseDurationMs(staggerRaw);
+              if (!parsed) {
+                throw new Error("Invalid --stagger; use e.g. 30s, 1m, 5m");
+              }
+              return parsed;
+            })();
             return {
               kind: "cron" as const,
               expr: cronExpr,
               tz: typeof opts.tz === "string" && opts.tz.trim() ? opts.tz.trim() : undefined,
+              staggerMs,
             };
           })();
 

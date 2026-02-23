@@ -1,8 +1,8 @@
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { DmPolicy } from "../../../config/types.js";
+import { t } from "../../../i18n/index.js";
 import type { WizardPrompter } from "../../../wizard/prompts.js";
 import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onboarding-types.js";
-import { t } from "../../../i18n/translations.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import {
   listSlackAccountIds,
@@ -12,8 +12,9 @@ import {
 import { resolveSlackChannelAllowlist } from "../../../slack/resolve-channels.js";
 import { resolveSlackUserAllowlist } from "../../../slack/resolve-users.js";
 import { formatDocsLink } from "../../../terminal/links.js";
+
 import { promptChannelAccessConfig } from "./channel-access.js";
-import { addWildcardAllowFrom, promptAccountId } from "./helpers.js";
+import { addWildcardAllowFrom, promptAccountId, promptResolvedAllowFrom } from "./helpers.js";
 
 const channel = "slack" as const;
 
@@ -266,55 +267,23 @@ async function promptSlackAllowFrom(params: {
     return null;
   };
 
-  while (true) {
-    const entry = await params.prompter.text({
-      message: t("Slack allowFrom (usernames or ids)"),
-      placeholder: "@alice, U12345678",
-      initialValue: existing[0] ? String(existing[0]) : undefined,
-      validate: (value) => (String(value ?? "").trim() ? undefined : t("Required")),
-    });
-    const parts = parseInputs(String(entry));
-    if (!token) {
-      const ids = parts.map(parseId).filter(Boolean) as string[];
-      if (ids.length !== parts.length) {
-        await params.prompter.note(
-          t("Slack token missing; use user ids (or mention form) only."),
-          t("Slack allowlist"),
-        );
-        continue;
-      }
-      const unique = [...new Set([...existing.map((v) => String(v).trim()), ...ids])].filter(
-        Boolean,
-      );
-      return setSlackAllowFrom(params.cfg, unique);
-    }
-
-    const results = await resolveSlackUserAllowlist({
-      token,
-      entries: parts,
-    }).catch(() => null);
-    if (!results) {
-      await params.prompter.note(
-        t("Failed to resolve usernames. Try again."),
-        t("Slack allowlist"),
-      );
-      continue;
-    }
-    const unresolved = results.filter((res) => !res.resolved || !res.id);
-    if (unresolved.length > 0) {
-      await params.prompter.note(
-        t("Could not resolve: {users}").replace(
-          "{users}",
-          unresolved.map((res) => res.input).join(", "),
-        ),
-        t("Slack allowlist"),
-      );
-      continue;
-    }
-    const ids = results.map((res) => res.id as string);
-    const unique = [...new Set([...existing.map((v) => String(v).trim()).filter(Boolean), ...ids])];
-    return setSlackAllowFrom(params.cfg, unique);
-  }
+  const unique = await promptResolvedAllowFrom({
+    prompter: params.prompter,
+    existing,
+    token,
+    message: t("Slack allowFrom (usernames or ids)"),
+    placeholder: "@alice, U12345678",
+    label: t("Slack allowlist"),
+    parseInputs,
+    parseId,
+    invalidWithoutTokenNote: t("Slack token missing; use user ids (or mention form) only."),
+    resolveEntries: ({ token, entries }) =>
+      resolveSlackUserAllowlist({
+        token,
+        entries,
+      }),
+  });
+  return setSlackAllowFrom(params.cfg, unique);
 }
 
 const dmPolicy: ChannelOnboardingDmPolicy = {

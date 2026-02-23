@@ -3,6 +3,7 @@ import type { RuntimeEnv } from "../runtime.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { readConfigFileSnapshot } from "../config/config.js";
 import { t } from "../i18n/index.js";
+import { requireValidConfigSnapshot } from "./config-validation.js";
 
 export function createQuietRuntime(runtime: RuntimeEnv): RuntimeEnv {
   return { ...runtime, log: () => {} };

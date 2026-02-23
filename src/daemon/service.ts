@@ -1,4 +1,3 @@
-import type { GatewayServiceRuntime } from "./service-runtime.js";
 import { t } from "../i18n/index.js";
 import {
   installLaunchAgent,
@@ -18,6 +17,7 @@ import {
   stopScheduledTask,
   uninstallScheduledTask,
 } from "./schtasks.js";
+import type { GatewayServiceRuntime } from "./service-runtime.js";
 import {
   installSystemdService,
   isSystemdServiceEnabled,

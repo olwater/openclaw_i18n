@@ -1,5 +1,3 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { WizardPrompter, WizardSelectOption } from "../wizard/prompts.js";
 import {
   ensureAuthProfileStore,
   listProfilesForProvider,
@@ -16,6 +14,8 @@ import {
   resolveConfiguredModelRef,
 } from "../agents/model-selection.js";
 import { t } from "../i18n/index.js";
+import type { OpenClawConfig } from "../config/config.js";
+import type { WizardPrompter, WizardSelectOption } from "../wizard/prompts.js";
 import { formatTokenK } from "./models/shared.js";
 import { OPENAI_CODEX_DEFAULT_MODEL } from "./openai-codex-model-default.js";
 
@@ -97,6 +97,60 @@ function normalizeModelKeys(values: string[]): string[] {
     next.push(value);
   }
   return next;
+}
+
+function addModelSelectOption(params: {
+  entry: {
+    provider: string;
+    id: string;
+    name?: string;
+    contextWindow?: number;
+    reasoning?: boolean;
+  };
+  options: WizardSelectOption[];
+  seen: Set<string>;
+  aliasIndex: ReturnType<typeof buildModelAliasIndex>;
+  hasAuth: (provider: string) => boolean;
+}) {
+  const key = modelKey(params.entry.provider, params.entry.id);
+  if (params.seen.has(key)) {
+    return;
+  }
+  // Skip internal router models that can't be directly called via API.
+  if (HIDDEN_ROUTER_MODELS.has(key)) {
+    return;
+  }
+  const hints: string[] = [];
+  if (params.entry.name && params.entry.name !== params.entry.id) {
+    hints.push(params.entry.name);
+  }
+  if (params.entry.contextWindow) {
+    hints.push(`ctx ${formatTokenK(params.entry.contextWindow)}`);
+  }
+  if (params.entry.reasoning) {
+    hints.push("reasoning");
+  }
+  const aliases = params.aliasIndex.byKey.get(key);
+  if (aliases?.length) {
+    hints.push(`alias: ${aliases.join(", ")}`);
+  }
+  if (!params.hasAuth(params.entry.provider)) {
+    hints.push("auth missing");
+  }
+  params.options.push({
+    value: key,
+    label: key,
+    hint: hints.length > 0 ? hints.join(" · ") : undefined,
+  });
+  params.seen.add(key);
+}
+
+function isAnthropicLegacyModel(entry: { provider: string; id: string }): boolean {
+  return (
+    entry.provider === "anthropic" &&
+    typeof entry.id === "string" &&
+    entry.id.toLowerCase().startsWith("claude-3")
+  );
 }
 
 async function promptManualModel(params: {
@@ -200,6 +254,9 @@ export async function promptDefaultModel(
 
   if (hasPreferredProvider && preferredProvider) {
     models = models.filter((entry) => entry.provider === preferredProvider);
+    if (preferredProvider === "anthropic") {
+      models = models.filter((entry) => !isAnthropicLegacyModel(entry));
+    }
   }
 
   const agentDir = params.agentDir;
@@ -530,6 +587,7 @@ export async function promptModelAllowlist(params: {
     message: params.message ?? t("Models in /model picker (multi-select)"),
     options,
     initialValues: initialKeys.length > 0 ? initialKeys : undefined,
+    searchable: true,
   });
   const selected = normalizeModelKeys(selection.map((value) => String(value)));
   if (selected.length > 0) {

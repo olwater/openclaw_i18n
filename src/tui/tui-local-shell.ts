@@ -1,6 +1,6 @@
-import type { Component, SelectItem } from "@mariozechner/pi-tui";
 import { spawn } from "node:child_process";
 import { t } from "../i18n/index.js";
+import type { Component, SelectItem } from "@mariozechner/pi-tui";
 import { createSearchableSelectList } from "./components/selectors.js";
 
 type LocalShellDeps = {

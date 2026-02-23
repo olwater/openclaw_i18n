@@ -1,11 +1,10 @@
 import type { Command } from "commander";
-import type { CostUsageSummary } from "../../infra/session-cost-usage.js";
-import type { GatewayDiscoverOpts } from "./discover.js";
 import { gatewayStatusCommand } from "../../commands/gateway-status.js";
 import { formatHealthChannelLines, type HealthSummary } from "../../commands/health.js";
 import { loadConfig } from "../../config/config.js";
 import { t } from "../../i18n/index.js";
 import { discoverGatewayBeacons } from "../../infra/bonjour-discovery.js";
+import type { CostUsageSummary } from "../../infra/session-cost-usage.js";
 import { resolveWideAreaDiscoveryDomain } from "../../infra/widearea-dns.js";
 import { defaultRuntime } from "../../runtime.js";
 import { formatDocsLink } from "../../terminal/links.js";
@@ -20,8 +19,12 @@ import {
   runDaemonStop,
   runDaemonUninstall,
 } from "../daemon-cli.js";
+import { inheritOptionFromParent } from "../command-options.js";
+import { addGatewayServiceCommands } from "../daemon-cli.js";
+import { formatHelpExamples } from "../help-format.js";
 import { withProgress } from "../progress.js";
 import { callGatewayCli, gatewayCallOpts } from "./call.js";
+import type { GatewayDiscoverOpts } from "./discover.js";
 import {
   dedupeBeacons,
   parseDiscoverTimeoutMs,
@@ -93,6 +96,19 @@ function parseDaysOption(raw: unknown, fallback = 30): number {
   return fallback;
 }
 
+function resolveGatewayRpcOptions<T extends { token?: string; password?: string }>(
+  opts: T,
+  command?: Command,
+): T {
+  const parentToken = inheritOptionFromParent<string>(command, "token");
+  const parentPassword = inheritOptionFromParent<string>(command, "password");
+  return {
+    ...opts,
+    token: opts.token ?? parentToken,
+    password: opts.password ?? parentPassword,
+  };
+}
+
 function renderCostUsageSummary(summary: CostUsageSummary, days: number, rich: boolean): string[] {
   const totalCost = formatUsd(summary.totals.totalCost) ?? "$0.00";
   const totalTokens = formatTokenCount(summary.totals.totalTokens) ?? "0";
@@ -123,11 +139,16 @@ export function registerGatewayCli(program: Command) {
   const gateway = addGatewayRunCommand(
     program
       .command("gateway")
-      .description(t("Run the WebSocket Gateway"))
+      .description(t("Run, inspect, and query the WebSocket Gateway"))
       .addHelpText(
         "after",
         () =>
-          `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/gateway", "docs.openclaw.ai/cli/gateway")}\n`,
+          `\n${theme.heading("Examples:")}\n${formatHelpExamples([
+            ["openclaw gateway run", "Run the gateway in the foreground."],
+            ["openclaw gateway status", "Show service status and probe reachability."],
+            ["openclaw gateway discover", "Find local and wide-area gateway beacons."],
+            ["openclaw gateway call health", "Call a gateway RPC method directly."],
+          ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/gateway", "docs.openclaw.ai/cli/gateway")}\n`,
       ),
   );
 
@@ -204,11 +225,12 @@ export function registerGatewayCli(program: Command) {
       .description(t("Call a Gateway method"))
       .argument("<method>", t("Method name (health/status/system-presence/cron.*)"))
       .option("--params <json>", t("JSON object string for params"), "{}")
-      .action(async (method, opts) => {
+      .action(async (method, opts, command) => {
         await runGatewayCommand(async () => {
+          const rpcOpts = resolveGatewayRpcOptions(opts, command);
           const params = JSON.parse(String(opts.params ?? "{}"));
-          const result = await callGatewayCli(method, opts, params);
-          if (opts.json) {
+          const result = await callGatewayCli(method, rpcOpts, params);
+          if (rpcOpts.json) {
             defaultRuntime.log(JSON.stringify(result, null, 2));
             return;
           }
@@ -226,11 +248,12 @@ export function registerGatewayCli(program: Command) {
       .command("usage-cost")
       .description(t("Fetch usage cost summary from session logs"))
       .option("--days <days>", t("Number of days to include"), "30")
-      .action(async (opts) => {
+      .action(async (opts, command) => {
         await runGatewayCommand(async () => {
+          const rpcOpts = resolveGatewayRpcOptions(opts, command);
           const days = parseDaysOption(opts.days);
-          const result = await callGatewayCli("usage.cost", opts, { days });
-          if (opts.json) {
+          const result = await callGatewayCli("usage.cost", rpcOpts, { days });
+          if (rpcOpts.json) {
             defaultRuntime.log(JSON.stringify(result, null, 2));
             return;
           }
@@ -247,10 +270,11 @@ export function registerGatewayCli(program: Command) {
     gateway
       .command("health")
       .description(t("Fetch Gateway health"))
-      .action(async (opts) => {
+      .action(async (opts, command) => {
         await runGatewayCommand(async () => {
-          const result = await callGatewayCli("health", opts);
-          if (opts.json) {
+          const rpcOpts = resolveGatewayRpcOptions(opts, command);
+          const result = await callGatewayCli("health", rpcOpts);
+          if (rpcOpts.json) {
             defaultRuntime.log(JSON.stringify(result, null, 2));
             return;
           }
@@ -272,23 +296,19 @@ export function registerGatewayCli(program: Command) {
 
   gateway
     .command("probe")
-    .description(
-      t("Show gateway reachability + discovery + health + status summary (local + remote)"),
-    )
+    .description(t("Show gateway reachability + discovery + health + status summary (local + remote)"))
     .option("--url <url>", t("Explicit Gateway WebSocket URL (still probes localhost)"))
-    .option(
-      "--ssh <target>",
-      t("SSH target for remote gateway tunnel (user@host or user@host:port)"),
-    )
+    .option("--ssh <target>", t("SSH target for remote gateway tunnel (user@host or user@host:port)"))
     .option("--ssh-identity <path>", t("SSH identity file path"))
     .option("--ssh-auto", t("Try to derive an SSH target from Bonjour discovery"), false)
     .option("--token <token>", t("Gateway token (applies to all probes)"))
     .option("--password <password>", t("Gateway password (applies to all probes)"))
     .option("--timeout <ms>", t("Overall probe budget in ms"), "3000")
     .option("--json", t("Output JSON"), false)
-    .action(async (opts) => {
+    .action(async (opts, command) => {
       await runGatewayCommand(async () => {
-        await gatewayStatusCommand(opts, defaultRuntime);
+        const rpcOpts = resolveGatewayRpcOptions(opts, command);
+        await gatewayStatusCommand(rpcOpts, defaultRuntime);
       });
     });
 

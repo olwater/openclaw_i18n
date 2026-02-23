@@ -1,11 +1,10 @@
-import type { GatewayService } from "../daemon/service.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { buildWorkspaceSkillStatus } from "../agents/skills-status.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { withProgress } from "../cli/progress.js";
 import { loadConfig, readConfigFileSnapshot, resolveGatewayPort } from "../config/config.js";
 import { readLastGatewayErrorLine } from "../daemon/diagnostics.js";
 import { resolveNodeService } from "../daemon/node-service.js";
+import type { GatewayService } from "../daemon/service.js";
 import { resolveGatewayService } from "../daemon/service.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { normalizeControlUiBasePath } from "../gateway/control-ui-shared.js";
@@ -22,9 +21,11 @@ import {
   formatUpdateChannelLabel,
   normalizeUpdateChannel,
   resolveEffectiveUpdateChannel,
+  resolveUpdateChannelDisplay,
 } from "../infra/update-channels.js";
-import { checkUpdateStatus, compareSemverStrings } from "../infra/update-check.js";
+import { checkUpdateStatus, compareSemverStrings, formatGitInstallLabel } from "../infra/update-check.js";
 import { runExec } from "../process/exec.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { VERSION } from "../version.js";
 import { resolveControlUiLinks } from "./onboard-helpers.js";
 import { getAgentLocalStatuses } from "./status-all/agents.js";
@@ -32,6 +33,7 @@ import { buildChannelsTable } from "./status-all/channels.js";
 import { formatDurationPrecise, formatGatewayAuthUsed } from "./status-all/format.js";
 import { pickGatewaySelfPresence } from "./status-all/gateway.js";
 import { buildStatusAllReportLines } from "./status-all/report-lines.js";
+import { formatUpdateOneLiner } from "./status.update.js";
 
 export async function statusAllCommand(
   runtime: RuntimeEnv,
@@ -94,14 +96,9 @@ export async function statusAllCommand(
       includeRegistry: true,
     });
     const configChannel = normalizeUpdateChannel(cfg.update?.channel);
-    const channelInfo = resolveEffectiveUpdateChannel({
+    const channelInfo = resolveUpdateChannelDisplay({
       configChannel,
       installKind: update.installKind,
-      git: update.git ? { tag: update.git.tag, branch: update.git.branch } : undefined,
-    });
-    const channelLabel = formatUpdateChannelLabel({
-      channel: channelInfo.channel,
-      source: channelInfo.source,
       gitTag: update.git?.tag ?? null,
       gitBranch: update.git?.branch ?? null,
     });
@@ -120,6 +117,7 @@ export async function statusAllCommand(
             return parts.join(t(" · "));
           })()
         : null;
+    const channelLabel = channelInfo.label;
     progress.tick();
 
     progress.setLabel(t("Probing gateway…"));

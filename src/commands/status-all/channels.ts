@@ -1,10 +1,4 @@
 import fs from "node:fs";
-import type {
-  ChannelAccountSnapshot,
-  ChannelId,
-  ChannelPlugin,
-} from "../../channels/plugins/types.js";
-import type { OpenClawConfig } from "../../config/config.js";
 import {
   buildChannelAccountSnapshot,
   formatChannelAllowFrom,
@@ -12,6 +6,12 @@ import {
 import { resolveChannelDefaultAccountId } from "../../channels/plugins/helpers.js";
 import { listChannelPlugins } from "../../channels/plugins/index.js";
 import { t } from "../../i18n/index.js";
+import type {
+  ChannelAccountSnapshot,
+  ChannelId,
+  ChannelPlugin,
+} from "../../channels/plugins/types.js";
+import type { OpenClawConfig } from "../../config/config.js";
 import { sha256HexPrefix } from "../../logging/redact-identifier.js";
 import { formatTimeAgo } from "./format.js";
 
@@ -212,14 +212,15 @@ function summarizeTokenConfig(params: {
   }
 
   const accountRecs = enabled.map((a) => asRecord(a.account));
-  const hasBotOrAppTokenFields = accountRecs.some((r) => "botToken" in r || "appToken" in r);
+  const hasBotTokenField = accountRecs.some((r) => "botToken" in r);
+  const hasAppTokenField = accountRecs.some((r) => "appToken" in r);
   const hasTokenField = accountRecs.some((r) => "token" in r);
 
-  if (!hasBotOrAppTokenFields && !hasTokenField) {
+  if (!hasBotTokenField && !hasAppTokenField && !hasTokenField) {
     return { state: null, detail: null };
   }
 
-  if (hasBotOrAppTokenFields) {
+  if (hasBotTokenField && hasAppTokenField) {
     const ready = enabled.filter((a) => {
       const rec = asRecord(a.account);
       const bot = typeof rec.botToken === "string" ? rec.botToken.trim() : "";
@@ -263,6 +264,30 @@ function summarizeTokenConfig(params: {
     return {
       state: "ok",
       detail: `tokens ok (bot ${botSources.label}, app ${appSources.label})${hint} · accounts ${ready.length}/${enabled.length || 1}`,
+    };
+  }
+
+  if (hasBotTokenField) {
+    const ready = enabled.filter((a) => {
+      const rec = asRecord(a.account);
+      const bot = typeof rec.botToken === "string" ? rec.botToken.trim() : "";
+      return Boolean(bot);
+    });
+
+    if (ready.length === 0) {
+      return { state: "setup", detail: "no bot token" };
+    }
+
+    const sample = ready[0]?.account ? asRecord(ready[0].account) : {};
+    const botToken = typeof sample.botToken === "string" ? sample.botToken : "";
+    const botHint = botToken.trim()
+      ? formatTokenHint(botToken, { showSecrets: params.showSecrets })
+      : "";
+    const hint = botHint ? ` (${botHint})` : "";
+
+    return {
+      state: "ok",
+      detail: `bot token config${hint} · accounts ${ready.length}/${enabled.length || 1}`,
     };
   }
 

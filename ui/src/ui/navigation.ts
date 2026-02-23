@@ -1,14 +1,15 @@
+import { t } from "../i18n/index.ts";
 import type { IconName } from "./icons.js";
-import { t } from "./i18n/index.js";
+
 
 export const TAB_GROUPS = [
-  { label: "Chat", tabs: ["chat"] },
+  { label: "chat", tabs: ["chat"] },
   {
-    label: "Control",
+    label: "control",
     tabs: ["overview", "channels", "instances", "sessions", "usage", "cron"],
   },
-  { label: "Agent", tabs: ["agents", "skills", "nodes"] },
-  { label: "Settings", tabs: ["config", "debug", "logs"] },
+  { label: "agent", tabs: ["agents", "skills", "nodes"] },
+  { label: "settings", tabs: ["config", "debug", "logs"] },
 ] as const;
 
 export type Tab =
@@ -157,67 +158,9 @@ export function iconForTab(tab: Tab): IconName {
 }
 
 export function titleForTab(tab: Tab) {
-  switch (tab) {
-    case "agents":
-      return t("Agents");
-    case "overview":
-      return t("Overview");
-    case "channels":
-      return t("Channels");
-    case "instances":
-      return t("Instances");
-    case "sessions":
-      return t("Sessions");
-    case "usage":
-      return t("Usage");
-    case "cron":
-      return t("Cron Jobs");
-    case "skills":
-      return t("Skills");
-    case "nodes":
-      return t("Nodes");
-    case "chat":
-      return t("Assistant");
-    case "config":
-      return t("Config");
-    case "debug":
-      return t("Debug");
-    case "logs":
-      return t("Logs");
-    default:
-      return t("Control");
-  }
+  return t(`tabs.${tab}`);
 }
 
 export function subtitleForTab(tab: Tab) {
-  switch (tab) {
-    case "agents":
-      return t("Manage agent workspaces, tools, and identities.");
-    case "overview":
-      return t("Gateway status, entry points, and a fast health read.");
-    case "channels":
-      return t("Manage channels and settings.");
-    case "instances":
-      return t("Presence beacons from connected clients and nodes.");
-    case "sessions":
-      return t("Inspect active sessions and adjust per-session defaults.");
-    case "usage":
-      return "";
-    case "cron":
-      return t("Schedule wakeups and recurring agent runs.");
-    case "skills":
-      return t("Manage skill availability and API key injection.");
-    case "nodes":
-      return t("Paired devices, capabilities, and command exposure.");
-    case "chat":
-      return t("Direct gateway chat session for quick interventions.");
-    case "config":
-      return t("Edit ~/.openclaw/openclaw.json safely.");
-    case "debug":
-      return t("Gateway snapshots, events, and manual RPC calls.");
-    case "logs":
-      return t("Live tail of the gateway file logs.");
-    default:
-      return "";
-  }
+  return t(`subtitles.${tab}`);
 }

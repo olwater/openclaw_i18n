@@ -1,9 +1,9 @@
 import { html, nothing } from "lit";
-import type { GoogleChatStatus } from "../types.ts";
-import type { ChannelsProps } from "./channels.types.ts";
 import { formatRelativeTimestamp } from "../format.ts";
 import { t } from "../i18n/index.ts";
+import type { GoogleChatStatus } from "../types.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
+import type { ChannelsProps } from "./channels.types.ts";
 
 export function renderGoogleChatCard(params: {
   props: ChannelsProps;

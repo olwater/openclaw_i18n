@@ -1,7 +1,10 @@
 import type { OpenClawConfig } from "../config/config.js";
 import { t } from "../i18n/index.js";
 import type { ModelProviderConfig } from "../config/types.models.js";
-import { applyOnboardAuthAgentModelsAndProviders } from "./onboard-auth.config-shared.js";
+import {
+  applyAgentDefaultModelPrimary,
+  applyOnboardAuthAgentModelsAndProviders,
+} from "./onboard-auth.config-shared.js";
 import {
   buildMinimaxApiModelDefinition,
   buildMinimaxModelDefinition,
@@ -83,24 +86,7 @@ export function applyMinimaxHostedProviderConfig(
 
 export function applyMinimaxConfig(cfg: OpenClawConfig): OpenClawConfig {
   const next = applyMinimaxProviderConfig(cfg);
-  return {
-    ...next,
-    agents: {
-      ...next.agents,
-      defaults: {
-        ...next.agents?.defaults,
-        model: {
-          ...(next.agents?.defaults?.model &&
-          "fallbacks" in (next.agents.defaults.model as Record<string, unknown>)
-            ? {
-                fallbacks: (next.agents.defaults.model as { fallbacks?: string[] }).fallbacks,
-              }
-            : undefined),
-          primary: "lmstudio/minimax-m2.1-gs32",
-        },
-      },
-    },
-  };
+  return applyAgentDefaultModelPrimary(next, "lmstudio/minimax-m2.1-gs32");
 }
 
 export function applyMinimaxHostedConfig(
@@ -224,22 +210,5 @@ function applyMinimaxApiConfigWithBaseUrl(
   params: MinimaxApiProviderConfigParams,
 ): OpenClawConfig {
   const next = applyMinimaxApiProviderConfigWithBaseUrl(cfg, params);
-  return {
-    ...next,
-    agents: {
-      ...next.agents,
-      defaults: {
-        ...next.agents?.defaults,
-        model: {
-          ...(next.agents?.defaults?.model &&
-          "fallbacks" in (next.agents.defaults.model as Record<string, unknown>)
-            ? {
-                fallbacks: (next.agents.defaults.model as { fallbacks?: string[] }).fallbacks,
-              }
-            : undefined),
-          primary: `${params.providerId}/${params.modelId}`,
-        },
-      },
-    },
-  };
+  return applyAgentDefaultModelPrimary(next, `${params.providerId}/${params.modelId}`);
 }

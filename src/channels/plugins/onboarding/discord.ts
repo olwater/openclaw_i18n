@@ -1,8 +1,6 @@
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { DiscordGuildEntry } from "../../../config/types.discord.js";
 import type { DmPolicy } from "../../../config/types.js";
-import type { WizardPrompter } from "../../../wizard/prompts.js";
-import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onboarding-types.js";
 import {
   listDiscordAccountIds,
   resolveDefaultDiscordAccountId,
@@ -17,8 +15,10 @@ import { resolveDiscordUserAllowlist } from "../../../discord/resolve-users.js";
 import { t } from "../../../i18n/translations.js";
 import { DEFAULT_ACCOUNT_ID, normalizeAccountId } from "../../../routing/session-key.js";
 import { formatDocsLink } from "../../../terminal/links.js";
+import type { WizardPrompter } from "../../../wizard/prompts.js";
+import type { ChannelOnboardingAdapter, ChannelOnboardingDmPolicy } from "../onboarding-types.js";
 import { promptChannelAccessConfig } from "./channel-access.js";
-import { addWildcardAllowFrom, promptAccountId } from "./helpers.js";
+import { addWildcardAllowFrom, promptAccountId, promptResolvedAllowFrom } from "./helpers.js";
 
 const channel = "discord" as const;
 
@@ -198,55 +198,23 @@ async function promptDiscordAllowFrom(params: {
     return null;
   };
 
-  while (true) {
-    const entry = await params.prompter.text({
-      message: t("Discord allowFrom (usernames or ids)"),
-      placeholder: "@alice, 123456789012345678",
-      initialValue: existing[0] ? String(existing[0]) : undefined,
-      validate: (value) => (String(value ?? "").trim() ? undefined : t("Required")),
-    });
-    const parts = parseInputs(String(entry));
-    if (!token) {
-      const ids = parts.map(parseId).filter(Boolean) as string[];
-      if (ids.length !== parts.length) {
-        await params.prompter.note(
-          t("Bot token missing; use numeric user ids (or mention form) only."),
-          t("Discord allowlist"),
-        );
-        continue;
-      }
-      const unique = [...new Set([...existing.map((v) => String(v).trim()), ...ids])].filter(
-        Boolean,
-      );
-      return setDiscordAllowFrom(params.cfg, unique);
-    }
-
-    const results = await resolveDiscordUserAllowlist({
-      token,
-      entries: parts,
-    }).catch(() => null);
-    if (!results) {
-      await params.prompter.note(
-        t("Failed to resolve usernames. Try again."),
-        t("Discord allowlist"),
-      );
-      continue;
-    }
-    const unresolved = results.filter((res) => !res.resolved || !res.id);
-    if (unresolved.length > 0) {
-      await params.prompter.note(
-        t("Could not resolve: {inputs}").replace(
-          "{inputs}",
-          unresolved.map((res) => res.input).join(", "),
-        ),
-        t("Discord allowlist"),
-      );
-      continue;
-    }
-    const ids = results.map((res) => res.id as string);
-    const unique = [...new Set([...existing.map((v) => String(v).trim()).filter(Boolean), ...ids])];
-    return setDiscordAllowFrom(params.cfg, unique);
-  }
+  const unique = await promptResolvedAllowFrom({
+    prompter: params.prompter,
+    existing,
+    token,
+    message: t("Discord allowFrom (usernames or ids)"),
+    placeholder: "@alice, 123456789012345678",
+    label: t("Discord allowlist"),
+    parseInputs,
+    parseId,
+    invalidWithoutTokenNote: t("Bot token missing; use numeric user ids (or mention form) only."),
+    resolveEntries: ({ token, entries }) =>
+      resolveDiscordUserAllowlist({
+        token,
+        entries,
+      }),
+  });
+  return setDiscordAllowFrom(params.cfg, unique);
 }
 
 const dmPolicy: ChannelOnboardingDmPolicy = {

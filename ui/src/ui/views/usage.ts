@@ -87,7 +87,7 @@ export function renderUsage(props: UsageProps) {
           <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
             <div style="display: flex; gap: 8px; align-items: center;">
               <input type="date" .value=${props.startDate} disabled style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px; opacity: 0.6;" />
-              <span style="color: var(--text-muted);">${t("to")}</span>
+              <span style="color: var(--muted);">${t("to")}</span>
               <input type="date" .value=${props.endDate} disabled style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--text); font-size: 13px; opacity: 0.6;" />
             </div>
           </div>
@@ -593,7 +593,7 @@ export function renderUsage(props: UsageProps) {
             title="Start Date"
             @change=${(e: Event) => props.onStartDateChange((e.target as HTMLInputElement).value)}
           />
-          <span style="color: var(--text-muted);">${t("to")}</span>
+          <span style="color: var(--muted);">${t("to")}</span>
           <input
             type="date"
             .value=${props.endDate}
@@ -812,6 +812,9 @@ export function renderUsage(props: UsageProps) {
             props.onTimeSeriesModeChange,
             props.timeSeriesBreakdownMode,
             props.onTimeSeriesBreakdownChange,
+            props.timeSeriesCursorStart,
+            props.timeSeriesCursorEnd,
+            props.onTimeSeriesCursorRangeChange,
             props.startDate,
             props.endDate,
             props.selectedDays,

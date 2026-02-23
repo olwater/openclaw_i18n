@@ -1,7 +1,7 @@
 import type { SessionStatus } from "./status.types.js";
 import { t } from "../i18n/index.js";
 import { formatDurationPrecise } from "../infra/format-time/format-duration.ts";
-
+import { formatRuntimeStatusWithDetails } from "../infra/runtime-status.ts";
 export const formatKTokens = (value: number) =>
   `${(value / 1000).toFixed(value >= 10_000 ? 0 : 1)}k`;
 
@@ -45,14 +45,7 @@ export const formatDaemonRuntimeShort = (runtime?: {
   if (!runtime) {
     return null;
   }
-  const status = runtime.status ?? "unknown";
   const details: string[] = [];
-  if (runtime.pid) {
-    details.push(`pid ${runtime.pid}`);
-  }
-  if (runtime.state && runtime.state.toLowerCase() !== status) {
-    details.push(`state ${runtime.state}`);
-  }
   const detail = runtime.detail?.replace(/\s+/g, " ").trim() || "";
   const noisyLaunchctlDetail =
     runtime.missingUnit === true && detail.toLowerCase().includes(t("could not find service"));

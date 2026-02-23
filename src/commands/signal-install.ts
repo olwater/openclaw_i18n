@@ -4,10 +4,11 @@ import { request } from "node:https";
 import os from "node:os";
 import path from "node:path";
 import { pipeline } from "node:stream/promises";
-import type { RuntimeEnv } from "../runtime.js";
-import { t } from "../i18n/index.js";
+import { extractArchive } from "../infra/archive.js";
 import { resolveBrewExecutable } from "../infra/brew.js";
 import { runCommandWithTimeout } from "../process/exec.js";
+import type { RuntimeEnv } from "../runtime.js";
+import { t } from "../i18n/index.js";
 import { CONFIG_DIR } from "../utils.js";
 
 export type ReleaseAsset = {

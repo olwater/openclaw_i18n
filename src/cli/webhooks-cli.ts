@@ -119,21 +119,7 @@ function parseGmailSetupOptions(raw: Record<string, unknown>): GmailSetupOptions
   return {
     account,
     project: stringOption(raw.project),
-    topic: common.topic,
-    subscription: common.subscription,
-    label: common.label,
-    hookUrl: common.hookUrl,
-    hookToken: common.hookToken,
-    pushToken: common.pushToken,
-    bind: common.bind,
-    port: common.port,
-    path: common.path,
-    includeBody: common.includeBody,
-    maxBytes: common.maxBytes,
-    renewEveryMinutes: common.renewEveryMinutes,
-    tailscale: common.tailscaleRaw as GmailSetupOptions["tailscale"],
-    tailscalePath: common.tailscalePath,
-    tailscaleTarget: common.tailscaleTarget,
+    ...gmailOptionsFromCommon(common),
     pushEndpoint: stringOption(raw.pushEndpoint),
     json: Boolean(raw.json),
   };
@@ -143,21 +129,7 @@ function parseGmailRunOptions(raw: Record<string, unknown>): GmailRunOptions {
   const common = parseGmailCommonOptions(raw);
   return {
     account: stringOption(raw.account),
-    topic: common.topic,
-    subscription: common.subscription,
-    label: common.label,
-    hookUrl: common.hookUrl,
-    hookToken: common.hookToken,
-    pushToken: common.pushToken,
-    bind: common.bind,
-    port: common.port,
-    path: common.path,
-    includeBody: common.includeBody,
-    maxBytes: common.maxBytes,
-    renewEveryMinutes: common.renewEveryMinutes,
-    tailscale: common.tailscaleRaw as GmailRunOptions["tailscale"],
-    tailscalePath: common.tailscalePath,
-    tailscaleTarget: common.tailscaleTarget,
+    ...gmailOptionsFromCommon(common),
   };
 }
 
@@ -178,6 +150,28 @@ function parseGmailCommonOptions(raw: Record<string, unknown>) {
     tailscaleRaw: stringOption(raw.tailscale),
     tailscalePath: stringOption(raw.tailscalePath),
     tailscaleTarget: stringOption(raw.tailscaleTarget),
+  };
+}
+
+function gmailOptionsFromCommon(
+  common: ReturnType<typeof parseGmailCommonOptions>,
+): Omit<GmailRunOptions, "account"> {
+  return {
+    topic: common.topic,
+    subscription: common.subscription,
+    label: common.label,
+    hookUrl: common.hookUrl,
+    hookToken: common.hookToken,
+    pushToken: common.pushToken,
+    bind: common.bind,
+    port: common.port,
+    path: common.path,
+    includeBody: common.includeBody,
+    maxBytes: common.maxBytes,
+    renewEveryMinutes: common.renewEveryMinutes,
+    tailscale: common.tailscaleRaw as GmailRunOptions["tailscale"],
+    tailscalePath: common.tailscalePath,
+    tailscaleTarget: common.tailscaleTarget,
   };
 }
 
