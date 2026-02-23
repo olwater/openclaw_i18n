@@ -56,100 +56,54 @@ pnpm ui:build && pnpm build
 
 我们为您准备了一个全中文的交互式向导，只需一条命令即可完成所有配置：
 
-<<<<<<< HEAD
 ```bash
 pnpm openclaw onboard
-=======
-OpenClaw connects to real messaging surfaces. Treat inbound DMs as **untrusted input**.
-
-Full security guide: [Security](https://docs.openclaw.ai/gateway/security)
-
-Default behavior on Telegram/WhatsApp/Signal/iMessage/Microsoft Teams/Discord/Google Chat/Slack:
-
-- **DM pairing** (`dmPolicy="pairing"` / `channels.discord.dmPolicy="pairing"` / `channels.slack.dmPolicy="pairing"`; legacy: `channels.discord.dm.policy`, `channels.slack.dm.policy`): unknown senders receive a short pairing code and the bot does not process their message.
-- Approve with: `openclaw pairing approve <channel> <code>` (then the sender is added to a local allowlist store).
-- Public inbound DMs require an explicit opt-in: set `dmPolicy="open"` and include `"*"` in the channel allowlist (`allowFrom` / `channels.discord.allowFrom` / `channels.slack.allowFrom`; legacy: `channels.discord.dm.allowFrom`, `channels.slack.dm.allowFrom`).
-
-Run `openclaw doctor` to surface risky/misconfigured DM policies.
-
-## Highlights
-
-- **[Local-first Gateway](https://docs.openclaw.ai/gateway)** — single control plane for sessions, channels, tools, and events.
-- **[Multi-channel inbox](https://docs.openclaw.ai/channels)** — WhatsApp, Telegram, Slack, Discord, Google Chat, Signal, BlueBubbles (iMessage), iMessage (legacy), Microsoft Teams, Matrix, Zalo, Zalo Personal, WebChat, macOS, iOS/Android.
-- **[Multi-agent routing](https://docs.openclaw.ai/gateway/configuration)** — route inbound channels/accounts/peers to isolated agents (workspaces + per-agent sessions).
-- **[Voice Wake](https://docs.openclaw.ai/nodes/voicewake) + [Talk Mode](https://docs.openclaw.ai/nodes/talk)** — always-on speech for macOS/iOS/Android with ElevenLabs.
-- **[Live Canvas](https://docs.openclaw.ai/platforms/mac/canvas)** — agent-driven visual workspace with [A2UI](https://docs.openclaw.ai/platforms/mac/canvas#canvas-a2ui).
-- **[First-class tools](https://docs.openclaw.ai/tools)** — browser, canvas, nodes, cron, sessions, and Discord/Slack actions.
-- **[Companion apps](https://docs.openclaw.ai/platforms/macos)** — macOS menu bar app + iOS/Android [nodes](https://docs.openclaw.ai/nodes).
-- **[Onboarding](https://docs.openclaw.ai/start/wizard) + [skills](https://docs.openclaw.ai/tools/skills)** — wizard-driven setup with bundled/managed/workspace skills.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=openclaw/openclaw&type=date&legend=top-left)](https://www.star-history.com/#openclaw/openclaw&type=date&legend=top-left)
-
-## Everything we built so far
-
-### Core platform
-
-- [Gateway WS control plane](https://docs.openclaw.ai/gateway) with sessions, presence, config, cron, webhooks, [Control UI](https://docs.openclaw.ai/web), and [Canvas host](https://docs.openclaw.ai/platforms/mac/canvas#canvas-a2ui).
-- [CLI surface](https://docs.openclaw.ai/tools/agent-send): gateway, agent, send, [wizard](https://docs.openclaw.ai/start/wizard), and [doctor](https://docs.openclaw.ai/gateway/doctor).
-- [Pi agent runtime](https://docs.openclaw.ai/concepts/agent) in RPC mode with tool streaming and block streaming.
-- [Session model](https://docs.openclaw.ai/concepts/session): `main` for direct chats, group isolation, activation modes, queue modes, reply-back. Group rules: [Groups](https://docs.openclaw.ai/concepts/groups).
-- [Media pipeline](https://docs.openclaw.ai/nodes/images): images/audio/video, transcription hooks, size caps, temp file lifecycle. Audio details: [Audio](https://docs.openclaw.ai/nodes/audio).
-
-### Channels
-
-- [Channels](https://docs.openclaw.ai/channels): [WhatsApp](https://docs.openclaw.ai/channels/whatsapp) (Baileys), [Telegram](https://docs.openclaw.ai/channels/telegram) (grammY), [Slack](https://docs.openclaw.ai/channels/slack) (Bolt), [Discord](https://docs.openclaw.ai/channels/discord) (discord.js), [Google Chat](https://docs.openclaw.ai/channels/googlechat) (Chat API), [Signal](https://docs.openclaw.ai/channels/signal) (signal-cli), [BlueBubbles](https://docs.openclaw.ai/channels/bluebubbles) (iMessage, recommended), [iMessage](https://docs.openclaw.ai/channels/imessage) (legacy imsg), [Microsoft Teams](https://docs.openclaw.ai/channels/msteams) (extension), [Matrix](https://docs.openclaw.ai/channels/matrix) (extension), [Zalo](https://docs.openclaw.ai/channels/zalo) (extension), [Zalo Personal](https://docs.openclaw.ai/channels/zalouser) (extension), [WebChat](https://docs.openclaw.ai/web/webchat).
-- [Group routing](https://docs.openclaw.ai/concepts/group-messages): mention gating, reply tags, per-channel chunking and routing. Channel rules: [Channels](https://docs.openclaw.ai/channels).
-
-### Apps + nodes
-
-- [macOS app](https://docs.openclaw.ai/platforms/macos): menu bar control plane, [Voice Wake](https://docs.openclaw.ai/nodes/voicewake)/PTT, [Talk Mode](https://docs.openclaw.ai/nodes/talk) overlay, [WebChat](https://docs.openclaw.ai/web/webchat), debug tools, [remote gateway](https://docs.openclaw.ai/gateway/remote) control.
-- [iOS node](https://docs.openclaw.ai/platforms/ios): [Canvas](https://docs.openclaw.ai/platforms/mac/canvas), [Voice Wake](https://docs.openclaw.ai/nodes/voicewake), [Talk Mode](https://docs.openclaw.ai/nodes/talk), camera, screen recording, Bonjour pairing.
-- [Android node](https://docs.openclaw.ai/platforms/android): [Canvas](https://docs.openclaw.ai/platforms/mac/canvas), [Talk Mode](https://docs.openclaw.ai/nodes/talk), camera, screen recording, optional SMS.
-- [macOS node mode](https://docs.openclaw.ai/nodes): system.run/notify + canvas/camera exposure.
-
-### Tools + automation
-
-- [Browser control](https://docs.openclaw.ai/tools/browser): dedicated openclaw Chrome/Chromium, snapshots, actions, uploads, profiles.
-- [Canvas](https://docs.openclaw.ai/platforms/mac/canvas): [A2UI](https://docs.openclaw.ai/platforms/mac/canvas#canvas-a2ui) push/reset, eval, snapshot.
-- [Nodes](https://docs.openclaw.ai/nodes): camera snap/clip, screen record, [location.get](https://docs.openclaw.ai/nodes/location-command), notifications.
-- [Cron + wakeups](https://docs.openclaw.ai/automation/cron-jobs); [webhooks](https://docs.openclaw.ai/automation/webhook); [Gmail Pub/Sub](https://docs.openclaw.ai/automation/gmail-pubsub).
-- [Skills platform](https://docs.openclaw.ai/tools/skills): bundled, managed, and workspace skills with install gating + UI.
-
-### Runtime + safety
-
-- [Channel routing](https://docs.openclaw.ai/concepts/channel-routing), [retry policy](https://docs.openclaw.ai/concepts/retry), and [streaming/chunking](https://docs.openclaw.ai/concepts/streaming).
-- [Presence](https://docs.openclaw.ai/concepts/presence), [typing indicators](https://docs.openclaw.ai/concepts/typing-indicators), and [usage tracking](https://docs.openclaw.ai/concepts/usage-tracking).
-- [Models](https://docs.openclaw.ai/concepts/models), [model failover](https://docs.openclaw.ai/concepts/model-failover), and [session pruning](https://docs.openclaw.ai/concepts/session-pruning).
-- [Security](https://docs.openclaw.ai/gateway/security) and [troubleshooting](https://docs.openclaw.ai/channels/troubleshooting).
-
-### Ops + packaging
-
-- [Control UI](https://docs.openclaw.ai/web) + [WebChat](https://docs.openclaw.ai/web/webchat) served directly from the Gateway.
-- [Tailscale Serve/Funnel](https://docs.openclaw.ai/gateway/tailscale) or [SSH tunnels](https://docs.openclaw.ai/gateway/remote) with token/password auth.
-- [Nix mode](https://docs.openclaw.ai/install/nix) for declarative config; [Docker](https://docs.openclaw.ai/install/docker)-based installs.
-- [Doctor](https://docs.openclaw.ai/gateway/doctor) migrations, [logging](https://docs.openclaw.ai/logging).
-
-## How it works (short)
-
 ```
-WhatsApp / Telegram / Slack / Discord / Google Chat / Signal / iMessage / BlueBubbles / Microsoft Teams / Matrix / Zalo / Zalo Personal / WebChat
+
+### 安全与私信策略
+
+OpenClaw 能够连接到真实的通讯平台。请将来自私信 (DM) 的输入视为**不可信输入**。
+
+完整的安全指南：[Security](https://docs.openclaw.ai/gateway/security)
+
+默认行为 (适用于 Telegram/WhatsApp/Signal/iMessage/Teams/Discord/Google Chat/Slack 等):
+
+- **私信配对 (DM pairing)**：未知发送者会收到一个简短的配对码，机器人此时不会处理他们的消息。
+- **批准配对**：在控制端使用命令 `openclaw pairing approve <频道> <配对码>` (随后发送者将被添加到本地白名单中)。
+- 若要公开接收所有人的私信，需明确开启：设置 `dmPolicy="open"` 并在频道的 `allowFrom` 列表中包含 `"*"`。
+- 您可以随时运行 `openclaw doctor` 来自动诊断存在安全风险的私信策略配置。
+
+## 🌟 核心亮点
+
+- **[本地优先的 网关 Gateway](https://docs.openclaw.ai/gateway)** — 用于统一管理会话、频道、工具和事件的控制端。
+- **[多渠道消息接入](https://docs.openclaw.ai/channels)** — 现已支持 WhatsApp, Telegram, Slack, Discord, Google Chat, Signal, BlueBubbles (iMessage), Microsoft Teams, Matrix, Zalo, WebChat 以及移动端。
+- **[多 Agent 路由](https://docs.openclaw.ai/gateway/configuration)** — 支持将不同的频道或账号入站请求隔离并路由给不同的 Agents。
+- **[语音唤醒](https://docs.openclaw.ai/nodes/voicewake) + [对讲模式](https://docs.openclaw.ai/nodes/talk)** — 借助 ElevenLabs 实现 macOS/iOS/Android 的全天候语音交互。
+- **[Live Canvas](https://docs.openclaw.ai/platforms/mac/canvas)** — 由 Agent 驱动的智能视觉工作区。
+- **[原生技能与工具](https://docs.openclaw.ai/tools)** — 内置浏览器控制、Canvas 控制、移动端节点控制、Cron 定时任务等强大功能。
+- **[多平台客户端支持](https://docs.openclaw.ai/platforms/macos)** — 提供 macOS 菜单栏应用及 iOS/Android 互联应用。
+- **[可视化向导](https://docs.openclaw.ai/start/wizard)** — 通过向导引导轻松完成环境配置和技能管理。
+
+## 架构概览
+
+```text
+WhatsApp / Telegram / Slack / Discord / WebChat / Signal / iMessage ...
                │
                ▼
 ┌───────────────────────────────┐
 │            Gateway            │
-│       (control plane)         │
+│       (控制平面 / 主节点)        │
 │     ws://127.0.0.1:18789      │
 └──────────────┬────────────────┘
                │
-               ├─ Pi agent (RPC)
-               ├─ CLI (openclaw …)
-               ├─ WebChat UI
-               ├─ macOS app
-               └─ iOS / Android nodes
->>>>>>> origin/main
+               ├─ Pi Agent (RPC 远程调用)
+               ├─ CLI (openclaw ...)
+               ├─ WebChat UI (本地安全网页端)
+               ├─ macOS 客户端应用
+               └─ iOS / Android 互联节点
 ```
+
+````
 
 向导会引导您：
 
@@ -165,7 +119,7 @@ WhatsApp / Telegram / Slack / Discord / Google Chat / Signal / iMessage / BlueBu
 
 ```bash
 pnpm openclaw gateway
-```
+````
 
 现在，打开浏览器访问控制台 (默认为 `http://localhost:3000`)，或者直接在终端开始与 AI 对话！
 
@@ -201,11 +155,11 @@ _(注意：建议挂载 `~/.openclaw` 目录以持久化保存您的配置和对
 本项目欢迎任何形式的贡献！无论是翻译修正、代码提交还是 Bug 反馈。
 
 <<<<<<< HEAD
+
 - **官方仓库**: [openclaw/openclaw](https://github.com/openclaw/openclaw)
-- **中文分支**: [olwater/openclaw_i18n](https://github.com/olwater/openclaw_i18n)
-=======
+- # **中文分支**: [olwater/openclaw_i18n](https://github.com/olwater/openclaw_i18n)
 - Set `DISCORD_BOT_TOKEN` or `channels.discord.token` (env wins).
 - Optional: set `commands.native`, `commands.text`, or `commands.useAccessGroups`, plus `channels.discord.allowFrom`, `channels.discord.guilds`, or `channels.discord.mediaMaxMb` as needed.
->>>>>>> origin/main
+  > > > > > > > origin/main
 
 如果您觉得好用，请给个 Star ⭐️ 支持一下！
