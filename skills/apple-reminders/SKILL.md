@@ -1,6 +1,6 @@
 ---
 name: apple-reminders
-description: 在 macOS 上通过 `remindctl` CLI 管理 Apple 提醒事项（列出、添加、编辑、完成、删除）。支持列表、日期过滤器以及 JSON/纯文本输出。
+description: Manage Apple Reminders via remindctl CLI (list, add, edit, complete, delete). Supports lists, date filters, and JSON/plain output.
 homepage: https://github.com/steipete/remindctl
 metadata:
   {
@@ -16,7 +16,7 @@ metadata:
               "kind": "brew",
               "formula": "steipete/tap/remindctl",
               "bins": ["remindctl"],
-              "label": "通过 Homebrew 安装 remindctl",
+              "label": "Install remindctl via Homebrew",
             },
           ],
       },
@@ -25,73 +25,94 @@ metadata:
 
 # Apple Reminders CLI (remindctl)
 
-使用 `remindctl` 直接从终端管理 Apple 提醒事项。支持列表过滤、基于日期的视图以及脚本输出。
+Use `remindctl` to manage Apple Reminders directly from the terminal.
 
-## 设置
+## When to Use
 
-- 安装 (Homebrew)：`brew install steipete/tap/remindctl`
-- 源码安装：`pnpm install && pnpm build`（二进制文件位于 `./bin/remindctl`）
-- 仅限 macOS；在提示时授予提醒事项访问权限。
+✅ **USE this skill when:**
 
-## 权限
+- User explicitly mentions "reminder" or "Reminders app"
+- Creating personal to-dos with due dates that sync to iOS
+- Managing Apple Reminders lists
+- User wants tasks to appear in their iPhone/iPad Reminders app
 
-- 检查状态：`remindctl status`
-- 请求访问权限：`remindctl authorize`
+## When NOT to Use
 
-## 查看提醒事项
+❌ **DON'T use this skill when:**
 
-- 默认（今天）：`remindctl`
-- 今天：`remindctl today`
-- 明天：`remindctl tomorrow`
-- 本周：`remindctl week`
-- 已过期：`remindctl overdue`
-- 即将到来：`remindctl upcoming`
-- 已完成：`remindctl completed`
-- 全部：`remindctl all`
-- 特定日期：`remindctl 2026-01-04`
+- Scheduling Clawdbot tasks or alerts → use `cron` tool with systemEvent instead
+- Calendar events or appointments → use Apple Calendar
+- Project/work task management → use Notion, GitHub Issues, or task queue
+- One-time notifications → use `cron` tool for timed alerts
+- User says "remind me" but means a Clawdbot alert → clarify first
 
-## 管理列表
+## Setup
 
-- 列出所有列表：`remindctl list`
-- 显示列表：`remindctl list Work`
-- 创建列表：`remindctl list Projects --create`
-- 重命名列表：`remindctl list Work --rename Office`
-- 删除列表：`remindctl list Work --delete`
+- Install: `brew install steipete/tap/remindctl`
+- macOS-only; grant Reminders permission when prompted
+- Check status: `remindctl status`
+- Request access: `remindctl authorize`
 
-## 创建提醒事项
+## Common Commands
 
-- 快速添加：`remindctl add "买牛奶"`
-- 指定列表 + 到期时间：`remindctl add --title "给妈妈打电话" --list Personal --due tomorrow`
+### View Reminders
 
-## 编辑提醒事项
+```bash
+remindctl                    # Today's reminders
+remindctl today              # Today
+remindctl tomorrow           # Tomorrow
+remindctl week               # This week
+remindctl overdue            # Past due
+remindctl all                # Everything
+remindctl 2026-01-04         # Specific date
+```
 
-- 编辑标题/到期时间：`remindctl edit 1 --title "新标题" --due 2026-01-04`
+### Manage Lists
 
-## 完成提醒事项
+```bash
+remindctl list               # List all lists
+remindctl list Work          # Show specific list
+remindctl list Projects --create    # Create list
+remindctl list Work --delete        # Delete list
+```
 
-- 按 ID 完成：`remindctl complete 1 2 3`
+### Create Reminders
 
-## 删除提醒事项
+```bash
+remindctl add "Buy milk"
+remindctl add --title "Call mom" --list Personal --due tomorrow
+remindctl add --title "Meeting prep" --due "2026-02-15 09:00"
+```
 
-- 按 ID 删除：`remindctl delete 4A83 --force`
+### Complete/Delete
 
-## 输出格式
+```bash
+remindctl complete 1 2 3     # Complete by ID
+remindctl delete 4A83 --force  # Delete by ID
+```
 
-- JSON（脚本使用）：`remindctl today --json`
-- 纯文本 TSV：`remindctl today --plain`
-- 仅计数：`remindctl today --quiet`
+### Output Formats
 
-## 日期格式
+```bash
+remindctl today --json       # JSON for scripting
+remindctl today --plain      # TSV format
+remindctl today --quiet      # Counts only
+```
 
-`--due` 和日期过滤器接受以下格式：
+## Date Formats
+
+Accepted by `--due` and date filters:
 
 - `today`, `tomorrow`, `yesterday`
 - `YYYY-MM-DD`
 - `YYYY-MM-DD HH:mm`
 - ISO 8601 (`2026-01-04T12:34:56Z`)
 
-## 注意事项
+## Example: Clarifying User Intent
 
-- 仅限 macOS。
-- 如果访问被拒绝，请在“系统设置”→“隐私与安全性”→“提醒事项”中启用“终端”或 `remindctl`。
-- 如果通过 SSH 运行，请在运行命令的 Mac 上授予访问权限。
+User: "Remind me to check on the deploy in 2 hours"
+
+**Ask:** "Do you want this in Apple Reminders (syncs to your phone) or as a Clawdbot alert (I'll message you here)?"
+
+- Apple Reminders → use this skill
+- Clawdbot alert → use `cron` tool with systemEvent

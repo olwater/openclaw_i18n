@@ -1,6 +1,6 @@
-import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
-import { t } from "../i18n/index.js";
+import { toAgentModelListLike } from "../config/model-input.js";
 import { githubCopilotLoginCommand } from "../providers/github-copilot-auth.js";
+import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { applyAuthProfileConfig } from "./onboard-auth.js";
 
 export async function applyAuthChoiceGitHubCopilot(
@@ -14,16 +14,16 @@ export async function applyAuthChoiceGitHubCopilot(
 
   await params.prompter.note(
     [
-      t("This will open a GitHub device login to authorize Copilot."),
-      t("Requires an active GitHub Copilot subscription."),
+      "This will open a GitHub device login to authorize Copilot.",
+      "Requires an active GitHub Copilot subscription.",
     ].join("\n"),
-    t("GitHub Copilot"),
+    "GitHub Copilot",
   );
 
   if (!process.stdin.isTTY) {
     await params.prompter.note(
-      t("GitHub Copilot login requires an interactive TTY."),
-      t("GitHub Copilot"),
+      "GitHub Copilot login requires an interactive TTY.",
+      "GitHub Copilot",
     );
     return { config: nextConfig };
   }
@@ -31,7 +31,7 @@ export async function applyAuthChoiceGitHubCopilot(
   try {
     await githubCopilotLoginCommand({ yes: true }, params.runtime);
   } catch (err) {
-    await params.prompter.note(`GitHub Copilot login failed: ${String(err)}`, t("GitHub Copilot"));
+    await params.prompter.note(`GitHub Copilot login failed: ${String(err)}`, "GitHub Copilot");
     return { config: nextConfig };
   }
 
@@ -50,15 +50,13 @@ export async function applyAuthChoiceGitHubCopilot(
         defaults: {
           ...nextConfig.agents?.defaults,
           model: {
-            ...(typeof nextConfig.agents?.defaults?.model === "object"
-              ? nextConfig.agents.defaults.model
-              : undefined),
+            ...toAgentModelListLike(nextConfig.agents?.defaults?.model),
             primary: model,
           },
         },
       },
     };
-    await params.prompter.note(`Default model set to ${model}`, t("Model configured"));
+    await params.prompter.note(`Default model set to ${model}`, "Model configured");
   }
 
   return { config: nextConfig };

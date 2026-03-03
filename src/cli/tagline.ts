@@ -1,109 +1,105 @@
-import { t } from "../i18n/index.js";
-
-const DEFAULT_TAGLINE = t("All your chats, one OpenClaw.");
+const DEFAULT_TAGLINE = "All your chats, one OpenClaw.";
+export type TaglineMode = "random" | "default" | "off";
 
 const HOLIDAY_TAGLINES = {
-  newYear: t(
+  newYear:
     "New Year's Day: New year, new config—same old EADDRINUSE, but this time we resolve it like grown-ups.",
-  ),
-  lunarNewYear: t(
+  lunarNewYear:
     "Lunar New Year: May your builds be lucky, your branches prosperous, and your merge conflicts chased away with fireworks.",
-  ),
-  christmas: t(
+  christmas:
     "Christmas: Ho ho ho—Santa's little claw-sistant is here to ship joy, roll back chaos, and stash the keys safely.",
-  ),
-  eid: t(
-    "Eid al-Fitr: Celebration mode: queues cleared, tasks completed, and good vibes committed to main with clean history.",
-  ),
-  diwali: t(
+  eid: "Eid al-Fitr: Celebration mode: queues cleared, tasks completed, and good vibes committed to main with clean history.",
+  diwali:
     "Diwali: Let the logs sparkle and the bugs flee—today we light up the terminal and ship with pride.",
-  ),
-  easter: t(
+  easter:
     "Easter: I found your missing environment variable—consider it a tiny CLI egg hunt with fewer jellybeans.",
-  ),
-  hanukkah: t(
+  hanukkah:
     "Hanukkah: Eight nights, eight retries, zero shame—may your gateway stay lit and your deployments stay peaceful.",
-  ),
-  halloween: t(
+  halloween:
     "Halloween: Spooky season: beware haunted dependencies, cursed caches, and the ghost of node_modules past.",
-  ),
-  thanksgiving: t(
+  thanksgiving:
     "Thanksgiving: Grateful for stable ports, working DNS, and a bot that reads the logs so nobody has to.",
-  ),
-  valentines: t(
+  valentines:
     "Valentine's Day: Roses are typed, violets are piped—I'll automate the chores so you can spend time with humans.",
-  ),
 } as const;
 
 const TAGLINES: string[] = [
-  t("Your terminal just grew claws—type something and let the bot pinch the busywork."),
-  t("Welcome to the command line: where dreams compile and confidence segfaults."),
-  t('I run on caffeine, JSON5, and the audacity of "it worked on my machine."'),
-  t("Gateway online—please keep hands, feet, and appendages inside the shell at all times."),
-  t("I speak fluent bash, mild sarcasm, and aggressive tab-completion energy."),
-  t("One CLI to rule them all, and one more restart because you changed the port."),
-  t("If it works, it's automation; if it breaks, it's a \"learning opportunity.\""),
-  t("Pairing codes exist because even bots believe in consent—and good security hygiene."),
-  t("Your .env is showing; don't worry, I'll pretend I didn't see it."),
-  t("I'll do the boring stuff while you dramatically stare at the logs like it's cinema."),
-  t("I'm not saying your workflow is chaotic... I'm just bringing a linter and a helmet."),
-  t("Type the command with confidence—nature will provide the stack trace if needed."),
-  t("I don't judge, but your missing API keys are absolutely judging you."),
-  t("I can grep it, git blame it, and gently roast it—pick your coping mechanism."),
-  t("Hot reload for config, cold sweat for deploys."),
-  t("I'm the assistant your terminal demanded, not the one your sleep schedule requested."),
-  t("I keep secrets like a vault... unless you print them in debug logs again."),
-  t("Automation with claws: minimal fuss, maximal pinch."),
-  t("I'm basically a Swiss Army knife, but with more opinions and fewer sharp edges."),
-  t("If you're lost, run doctor; if you're brave, run prod; if you're wise, run tests."),
-  t("Your task has been queued; your dignity has been deprecated."),
-  t("I can't fix your code taste, but I can fix your build and your backlog."),
-  t("I'm not magic—I'm just extremely persistent with retries and coping strategies."),
-  t('It\'s not "failing," it\'s "discovering new ways to configure the same thing wrong."'),
-  t("Give me a workspace and I'll give you fewer tabs, fewer toggles, and more oxygen."),
-  t("I read logs so you can keep pretending you don't have to."),
-  t("If something's on fire, I can't extinguish it—but I can write a beautiful postmortem."),
-  t("I'll refactor your busywork like it owes me money."),
-  t('Say "stop" and I\'ll stop—say "ship" and we\'ll both learn a lesson.'),
-  t("I'm the reason your shell history looks like a hacker-movie montage."),
-  t("I'm like tmux: confusing at first, then suddenly you can't live without me."),
-  t("I can run local, remote, or purely on vibes—results may vary with DNS."),
-  t("If you can describe it, I can probably automate it—or at least make it funnier."),
-  t("Your config is valid, your assumptions are not."),
-  t("I don't just autocomplete—I auto-commit (emotionally), then ask you to review (logically)."),
-  t('Less clicking, more shipping, fewer "where did that file go" moments.'),
-  t("Claws out, commit in—let's ship something mildly responsible."),
-  t("I'll butter your workflow like a lobster roll: messy, delicious, effective."),
-  t("Shell yeah—I'm here to pinch the toil and leave you the glory."),
-  t("If it's repetitive, I'll automate it; if it's hard, I'll bring jokes and a rollback plan."),
-  t("Because texting yourself reminders is so 2024."),
-  t("Your inbox, your infra, your rules."),
-  t('Turning "I\'ll reply later" into "my bot replied instantly".'),
-  t("The only crab in your contacts you actually want to hear from. 🦞"),
-  t("Chat automation for people who peaked at IRC."),
-  t("Because Siri wasn't answering at 3AM."),
-  t("IPC, but it's your phone."),
-  t("The UNIX philosophy meets your DMs."),
-  t("curl for conversations."),
-  t("Less middlemen, more messages."),
-  t("Ship fast, log faster."),
-  t("End-to-end encrypted, drama-to-drama excluded."),
-  t("The only bot that stays out of your training set."),
-  t('WhatsApp automation without the "please accept our new privacy policy".'),
-  t("Chat APIs that don't require a Senate hearing."),
-  t("Meta wishes they shipped this fast."),
-  t("Because the right answer is usually a script."),
-  t("Your messages, your servers, your control."),
-  t("OpenAI-compatible, not OpenAI-dependent."),
-  t("iMessage green bubble energy, but for everyone."),
-  t("Siri's competent cousin."),
-  t("Works on Android. Crazy concept, we know."),
-  t("No $999 stand required."),
-  t("We ship features faster than Apple ships calculator updates."),
-  t("Your AI assistant, now without the $3,499 headset."),
-  t("Think different. Actually think."),
-  t("Ah, the fruit tree company! 🍎"),
-  t("Greetings, Professor Falken"),
+  "Your terminal just grew claws—type something and let the bot pinch the busywork.",
+  "Welcome to the command line: where dreams compile and confidence segfaults.",
+  'I run on caffeine, JSON5, and the audacity of "it worked on my machine."',
+  "Gateway online—please keep hands, feet, and appendages inside the shell at all times.",
+  "I speak fluent bash, mild sarcasm, and aggressive tab-completion energy.",
+  "One CLI to rule them all, and one more restart because you changed the port.",
+  "If it works, it's automation; if it breaks, it's a \"learning opportunity.\"",
+  "Pairing codes exist because even bots believe in consent—and good security hygiene.",
+  "Your .env is showing; don't worry, I'll pretend I didn't see it.",
+  "I'll do the boring stuff while you dramatically stare at the logs like it's cinema.",
+  "I'm not saying your workflow is chaotic... I'm just bringing a linter and a helmet.",
+  "Type the command with confidence—nature will provide the stack trace if needed.",
+  "I don't judge, but your missing API keys are absolutely judging you.",
+  "I can grep it, git blame it, and gently roast it—pick your coping mechanism.",
+  "Hot reload for config, cold sweat for deploys.",
+  "I'm the assistant your terminal demanded, not the one your sleep schedule requested.",
+  "I keep secrets like a vault... unless you print them in debug logs again.",
+  "Automation with claws: minimal fuss, maximal pinch.",
+  "I'm basically a Swiss Army knife, but with more opinions and fewer sharp edges.",
+  "If you're lost, run doctor; if you're brave, run prod; if you're wise, run tests.",
+  "Your task has been queued; your dignity has been deprecated.",
+  "I can't fix your code taste, but I can fix your build and your backlog.",
+  "I'm not magic—I'm just extremely persistent with retries and coping strategies.",
+  'It\'s not "failing," it\'s "discovering new ways to configure the same thing wrong."',
+  "Give me a workspace and I'll give you fewer tabs, fewer toggles, and more oxygen.",
+  "I read logs so you can keep pretending you don't have to.",
+  "If something's on fire, I can't extinguish it—but I can write a beautiful postmortem.",
+  "I'll refactor your busywork like it owes me money.",
+  'Say "stop" and I\'ll stop—say "ship" and we\'ll both learn a lesson.',
+  "I'm the reason your shell history looks like a hacker-movie montage.",
+  "I'm like tmux: confusing at first, then suddenly you can't live without me.",
+  "I can run local, remote, or purely on vibes—results may vary with DNS.",
+  "If you can describe it, I can probably automate it—or at least make it funnier.",
+  "Your config is valid, your assumptions are not.",
+  "I don't just autocomplete—I auto-commit (emotionally), then ask you to review (logically).",
+  'Less clicking, more shipping, fewer "where did that file go" moments.',
+  "Claws out, commit in—let's ship something mildly responsible.",
+  "I'll butter your workflow like a lobster roll: messy, delicious, effective.",
+  "Shell yeah—I'm here to pinch the toil and leave you the glory.",
+  "If it's repetitive, I'll automate it; if it's hard, I'll bring jokes and a rollback plan.",
+  "The only crab in your contacts you actually want to hear from. 🦞",
+  'WhatsApp automation without the "please accept our new privacy policy".',
+  "iMessage green bubble energy, but for everyone.",
+  "No $999 stand required.",
+  "We ship features faster than Apple ships calculator updates.",
+  "Your AI assistant, now without the $3,499 headset.",
+  "Ah, the fruit tree company! 🍎",
+  "Greetings, Professor Falken",
+  "I don't sleep, I just enter low-power mode and dream of clean diffs.",
+  "Your personal assistant, minus the passive-aggressive calendar reminders.",
+  "Built by lobsters, for humans. Don't question the hierarchy.",
+  "I've seen your commit messages. We'll work on that together.",
+  "More integrations than your therapist's intake form.",
+  "Running on your hardware, reading your logs, judging nothing (mostly).",
+  "The only open-source project where the mascot could eat the competition.",
+  "Self-hosted, self-updating, self-aware (just kidding... unless?).",
+  "I autocomplete your thoughts—just slower and with more API calls.",
+  "Somewhere between 'hello world' and 'oh god what have I built.'",
+  "Your .zshrc wishes it could do what I do.",
+  "I've read more man pages than any human should—so you don't have to.",
+  "Powered by open source, sustained by spite and good documentation.",
+  "I'm the middleware between your ambition and your attention span.",
+  "Finally, a use for that always-on Mac Mini under your desk.",
+  "Like having a senior engineer on call, except I don't bill hourly or sigh audibly.",
+  "Making 'I'll automate that later' happen now.",
+  "Your second brain, except this one actually remembers where you left things.",
+  "Half butler, half debugger, full crustacean.",
+  "I don't have opinions about tabs vs spaces. I have opinions about everything else.",
+  "Open source means you can see exactly how I judge your config.",
+  "I've survived more breaking changes than your last three relationships.",
+  "Runs on a Raspberry Pi. Dreams of a rack in Iceland.",
+  "The lobster in your shell. 🦞",
+  "Alexa, but with taste.",
+  "I'm not AI-powered, I'm AI-possessed. Big difference.",
+  "Deployed locally, trusted globally, debugged eternally.",
+  "You had me at 'openclaw gateway start.'",
   HOLIDAY_TAGLINES.newYear,
   HOLIDAY_TAGLINES.lunarNewYear,
   HOLIDAY_TAGLINES.christmas,
@@ -253,6 +249,7 @@ export interface TaglineOptions {
   env?: NodeJS.ProcessEnv;
   random?: () => number;
   now?: () => Date;
+  mode?: TaglineMode;
 }
 
 export function activeTaglines(options: TaglineOptions = {}): string[] {
@@ -265,6 +262,12 @@ export function activeTaglines(options: TaglineOptions = {}): string[] {
 }
 
 export function pickTagline(options: TaglineOptions = {}): string {
+  if (options.mode === "off") {
+    return "";
+  }
+  if (options.mode === "default") {
+    return DEFAULT_TAGLINE;
+  }
   const env = options.env ?? process.env;
   const override = env?.OPENCLAW_TAGLINE_INDEX;
   if (override !== undefined) {

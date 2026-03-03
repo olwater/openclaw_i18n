@@ -1,5 +1,5 @@
-import * as Lark from "@larksuiteoapi/node-sdk";
 import fs from "node:fs";
+import * as Lark from "@larksuiteoapi/node-sdk";
 import { loadConfig } from "../config/config.js";
 import { getChildLogger } from "../logging.js";
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
@@ -44,7 +44,8 @@ export function getFeishuClient(accountIdOrAppId?: string, explicitAppSecret?: s
   if (!appSecret && feishuCfg?.accounts) {
     if (isAppId) {
       // When given an appId, find the account with matching appId
-      for (const [, acc] of Object.entries(feishuCfg.accounts)) {
+      for (const [accId, accRecord] of Object.entries(feishuCfg.accounts)) {
+        const acc = accRecord as any;
         if (acc.appId === accountIdOrAppId) {
           appId = acc.appId;
           appSecret = resolveAppSecret(acc);
@@ -57,14 +58,14 @@ export function getFeishuClient(accountIdOrAppId?: string, explicitAppSecret?: s
         appId = accountIdOrAppId;
         const firstKey = Object.keys(feishuCfg.accounts)[0];
         if (firstKey) {
-          const acc = feishuCfg.accounts[firstKey];
+          const acc = (feishuCfg.accounts as any)[firstKey];
           appSecret = resolveAppSecret(acc);
           domain = acc.domain ?? feishuCfg?.domain;
         }
       }
-    } else if (accountId && feishuCfg.accounts[accountId]) {
+    } else if (accountId && (feishuCfg.accounts as any)[accountId]) {
       // Try to get from accounts config by accountId
-      const acc = feishuCfg.accounts[accountId];
+      const acc = (feishuCfg.accounts as any)[accountId];
       appId = acc.appId;
       appSecret = resolveAppSecret(acc);
       domain = acc.domain ?? feishuCfg?.domain;
@@ -72,7 +73,7 @@ export function getFeishuClient(accountIdOrAppId?: string, explicitAppSecret?: s
       // Fallback to first account if accountId is not specified
       const firstKey = Object.keys(feishuCfg.accounts)[0];
       if (firstKey) {
-        const acc = feishuCfg.accounts[firstKey];
+        const acc = (feishuCfg.accounts as any)[firstKey];
         appId = acc.appId;
         appSecret = resolveAppSecret(acc);
         domain = acc.domain ?? feishuCfg?.domain;
@@ -112,19 +113,19 @@ export function getFeishuClient(accountIdOrAppId?: string, explicitAppSecret?: s
     appSecret,
     ...(resolvedDomain ? { domain: resolvedDomain } : {}),
     logger: {
-      debug: (msg) => {
+      debug: (msg: any) => {
         logger.debug(msg);
       },
-      info: (msg) => {
+      info: (msg: any) => {
         logger.info(msg);
       },
-      warn: (msg) => {
+      warn: (msg: any) => {
         logger.warn(msg);
       },
-      error: (msg) => {
+      error: (msg: any) => {
         logger.error(msg);
       },
-      trace: (msg) => {
+      trace: (msg: any) => {
         logger.silly(msg);
       },
     },

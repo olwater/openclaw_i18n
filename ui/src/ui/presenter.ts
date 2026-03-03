@@ -1,9 +1,8 @@
-import type { CronJob, GatewaySessionRow, PresenceEntry } from "./types.ts";
 import { formatRelativeTimestamp, formatDurationHuman, formatMs } from "./format.ts";
-import { t } from "./i18n/index.ts";
+import type { CronJob, GatewaySessionRow, PresenceEntry } from "./types.ts";
 
 export function formatPresenceSummary(entry: PresenceEntry): string {
-  const host = entry.host ?? t("unknown");
+  const host = entry.host ?? "unknown";
   const ip = entry.ip ? `(${entry.ip})` : "";
   const mode = entry.mode ?? "";
   const version = entry.version ?? "";
@@ -19,7 +18,8 @@ export function formatNextRun(ms?: number | null) {
   if (!ms) {
     return "n/a";
   }
-  return `${formatMs(ms)} (${formatRelativeTimestamp(ms)})`;
+  const weekday = new Date(ms).toLocaleDateString(undefined, { weekday: "short" });
+  return `${weekday}, ${formatMs(ms)} (${formatRelativeTimestamp(ms)})`;
 }
 
 export function formatSessionTokens(row: GatewaySessionRow) {
@@ -48,33 +48,37 @@ export function formatCronState(job: CronJob) {
   const next = state.nextRunAtMs ? formatMs(state.nextRunAtMs) : "n/a";
   const last = state.lastRunAtMs ? formatMs(state.lastRunAtMs) : "n/a";
   const status = state.lastStatus ?? "n/a";
-  return `${status} · ${t("next")} ${next} · ${t("last")} ${last}`;
+  return `${status} · next ${next} · last ${last}`;
 }
 
 export function formatCronSchedule(job: CronJob) {
   const s = job.schedule;
   if (s.kind === "at") {
     const atMs = Date.parse(s.at);
-    return Number.isFinite(atMs) ? `${t("At")} ${formatMs(atMs)}` : `${t("At")} ${s.at}`;
+    return Number.isFinite(atMs) ? `At ${formatMs(atMs)}` : `At ${s.at}`;
   }
   if (s.kind === "every") {
-    return `${t("Every")} ${formatDurationHuman(s.everyMs)}`;
+    return `Every ${formatDurationHuman(s.everyMs)}`;
   }
-  return `${t("Cron")} ${s.expr}${s.tz ? ` (${s.tz})` : ""}`;
+  return `Cron ${s.expr}${s.tz ? ` (${s.tz})` : ""}`;
 }
 
 export function formatCronPayload(job: CronJob) {
   const p = job.payload;
   if (p.kind === "systemEvent") {
-    return `${t("System")}: ${p.text}`;
+    return `System: ${p.text}`;
   }
-  const base = `${t("Agent")}: ${p.message}`;
+  const base = `Agent: ${p.message}`;
   const delivery = job.delivery;
   if (delivery && delivery.mode !== "none") {
     const target =
-      delivery.channel || delivery.to
-        ? ` (${delivery.channel ?? "last"}${delivery.to ? ` -> ${delivery.to}` : ""})`
-        : "";
+      delivery.mode === "webhook"
+        ? delivery.to
+          ? ` (${delivery.to})`
+          : ""
+        : delivery.channel || delivery.to
+          ? ` (${delivery.channel ?? "last"}${delivery.to ? ` -> ${delivery.to}` : ""})`
+          : "";
     return `${base} · ${delivery.mode}${target}`;
   }
   return base;

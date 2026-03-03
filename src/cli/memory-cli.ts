@@ -1,8 +1,8 @@
-import type { Command } from "commander";
 import fsSync from "node:fs";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import type { Command } from "commander";
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { loadConfig } from "../config/config.js";
 import { resolveStateDir } from "../config/paths.js";
@@ -16,6 +16,9 @@ import { formatDocsLink } from "../terminal/links.js";
 import { colorize, isRich, theme } from "../terminal/theme.js";
 import { shortenHomeInString, shortenHomePath } from "../utils.js";
 import { formatErrorMessage, withManager } from "./cli-utils.js";
+import { resolveCommandSecretRefsViaGateway } from "./command-secret-gateway.js";
+import { getMemoryCommandSecretTargetIds } from "./command-secret-targets.js";
+import { formatHelpExamples } from "./help-format.js";
 import { withProgress, withProgressTotals } from "./progress.js";
 
 type MemoryCommandOptions = {
@@ -28,6 +31,7 @@ type MemoryCommandOptions = {
 };
 
 type MemoryManager = NonNullable<MemorySearchManagerResult["manager"]>;
+type MemoryManagerPurpose = Parameters<typeof getMemorySearchManager>[0]["purpose"];
 
 type MemorySourceName = "memory" | "sessions";
 
@@ -42,6 +46,41 @@ type MemorySourceScan = {
   totalFiles: number | null;
   issues: string[];
 };
+
+type LoadedMemoryCommandConfig = {
+  config: ReturnType<typeof loadConfig>;
+  diagnostics: string[];
+};
+
+async function loadMemoryCommandConfig(commandName: string): Promise<LoadedMemoryCommandConfig> {
+  const { resolvedConfig, diagnostics } = await resolveCommandSecretRefsViaGateway({
+    config: loadConfig(),
+    commandName,
+    targetIds: getMemoryCommandSecretTargetIds(),
+  });
+  return {
+    config: resolvedConfig,
+    diagnostics,
+  };
+}
+
+function emitMemorySecretResolveDiagnostics(
+  diagnostics: string[],
+  params?: { json?: boolean },
+): void {
+  if (diagnostics.length === 0) {
+    return;
+  }
+  const toStderr = params?.json === true;
+  for (const entry of diagnostics) {
+    const message = theme.warn(`[secrets] ${entry}`);
+    if (toStderr) {
+      defaultRuntime.error(message);
+    } else {
+      defaultRuntime.log(message);
+    }
+  }
+}
 
 function formatSourceLabel(source: string, workspaceDir: string, agentId: string): string {
   if (source === "memory") {
@@ -80,6 +119,31 @@ function resolveAgentIds(cfg: ReturnType<typeof loadConfig>, agent?: string): st
 
 function formatExtraPaths(workspaceDir: string, extraPaths: string[]): string[] {
   return normalizeExtraMemoryPaths(workspaceDir, extraPaths).map((entry) => shortenHomePath(entry));
+}
+
+async function withMemoryManagerForAgent(params: {
+  cfg: ReturnType<typeof loadConfig>;
+  agentId: string;
+  purpose?: MemoryManagerPurpose;
+  run: (manager: MemoryManager) => Promise<void>;
+}): Promise<void> {
+  const managerParams: Parameters<typeof getMemorySearchManager>[0] = {
+    cfg: params.cfg,
+    agentId: params.agentId,
+  };
+  if (params.purpose) {
+    managerParams.purpose = params.purpose;
+  }
+  await withManager<MemoryManager>({
+    getManager: () => getMemorySearchManager(managerParams),
+    onMissing: (error) => defaultRuntime.log(error ?? "Memory search disabled."),
+    onCloseError: (err) =>
+      defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
+    close: async (manager) => {
+      await manager.close?.();
+    },
+    run: params.run,
+  });
 }
 
 async function checkReadableFile(pathname: string): Promise<{ exists: boolean; issue?: string }> {
@@ -216,6 +280,34 @@ async function scanMemoryFiles(
   return { source: "memory", totalFiles, issues };
 }
 
+async function summarizeQmdIndexArtifact(manager: MemoryManager): Promise<string | null> {
+  const status = manager.status?.();
+  if (!status || status.backend !== "qmd") {
+    return null;
+  }
+  const dbPath = status.dbPath?.trim();
+  if (!dbPath) {
+    return null;
+  }
+  let stat: fsSync.Stats;
+  try {
+    stat = await fs.stat(dbPath);
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") {
+      throw new Error(`QMD index file not found: ${shortenHomePath(dbPath)}`, { cause: err });
+    }
+    throw new Error(
+      `QMD index file check failed: ${shortenHomePath(dbPath)} (${code ?? "error"})`,
+      { cause: err },
+    );
+  }
+  if (!stat.isFile() || stat.size <= 0) {
+    throw new Error(`QMD index file is empty: ${shortenHomePath(dbPath)}`);
+  }
+  return `QMD index: ${shortenHomePath(dbPath)} (${stat.size} bytes)`;
+}
+
 async function scanMemorySources(params: {
   workspaceDir: string;
   agentId: string;
@@ -243,7 +335,8 @@ async function scanMemorySources(params: {
 
 export async function runMemoryStatus(opts: MemoryCommandOptions) {
   setVerbose(Boolean(opts.verbose));
-  const cfg = loadConfig();
+  const { config: cfg, diagnostics } = await loadMemoryCommandConfig("memory status");
+  emitMemorySecretResolveDiagnostics(diagnostics, { json: Boolean(opts.json) });
   const agentIds = resolveAgentIds(cfg, opts.agent);
   const allResults: Array<{
     agentId: string;
@@ -254,14 +347,11 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
   }> = [];
 
   for (const agentId of agentIds) {
-    await withManager<MemoryManager>({
-      getManager: () => getMemorySearchManager({ cfg, agentId }),
-      onMissing: (error) => defaultRuntime.log(error ?? t("Memory search disabled.")),
-      onCloseError: (err) =>
-        defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
-      close: async (manager) => {
-        await manager.close?.();
-      },
+    const managerPurpose = opts.index ? "default" : "status";
+    await withMemoryManagerForAgent({
+      cfg,
+      agentId,
+      purpose: managerPurpose,
       run: async (manager) => {
         const deep = Boolean(opts.deep || opts.index);
         let embeddingProbe:
@@ -270,18 +360,18 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         let indexError: string | undefined;
         const syncFn = manager.sync ? manager.sync.bind(manager) : undefined;
         if (deep) {
-          await withProgress({ label: t("Checking memory…"), total: 2 }, async (progress) => {
-            progress.setLabel(t("Probing vector…"));
+          await withProgress({ label: "Checking memory…", total: 2 }, async (progress) => {
+            progress.setLabel("Probing vector…");
             await manager.probeVectorAvailability();
             progress.tick();
-            progress.setLabel(t("Probing embeddings…"));
+            progress.setLabel("Probing embeddings…");
             embeddingProbe = await manager.probeEmbeddingAvailability();
             progress.tick();
           });
           if (opts.index && syncFn) {
             await withProgressTotals(
               {
-                label: t("Indexing memory…"),
+                label: "Indexing memory…",
                 total: 0,
                 fallback: opts.verbose ? "line" : undefined,
               },
@@ -356,7 +446,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         ? `${filesIndexed}/? files · ${chunksIndexed} chunks`
         : `${filesIndexed}/${totalFiles} files · ${chunksIndexed} chunks`;
     if (opts.index) {
-      const line = indexError ? `Memory index failed: ${indexError}` : t("Memory index complete.");
+      const line = indexError ? `Memory index failed: ${indexError}` : "Memory index complete.";
       defaultRuntime.log(line);
     }
     const requestedProvider = status.requestedProvider ?? status.provider;
@@ -368,11 +458,11 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
       ? formatExtraPaths(status.workspaceDir, status.extraPaths ?? [])
       : [];
     const lines = [
-      `${heading(t("Memory Search"))} ${muted(`(${agentId})`)}`,
+      `${heading("Memory Search")} ${muted(`(${agentId})`)}`,
       `${label("Provider")} ${info(status.provider)} ${muted(`(requested: ${requestedProvider})`)}`,
       `${label("Model")} ${info(modelLabel)}`,
       sourceList ? `${label("Sources")} ${info(sourceList)}` : null,
-      extraPaths.length ? `${label(t("Extra paths"))} ${info(extraPaths.join(t(", ")))}` : null,
+      extraPaths.length ? `${label("Extra paths")} ${info(extraPaths.join(", "))}` : null,
       `${label("Indexed")} ${success(indexedLabel)}`,
       `${label("Dirty")} ${status.dirty ? warn("yes") : muted("no")}`,
       `${label("Store")} ${info(storePath)}`,
@@ -383,11 +473,11 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
       const stateColor = embeddingProbe.ok ? theme.success : theme.warn;
       lines.push(`${label("Embeddings")} ${colorize(rich, stateColor, state)}`);
       if (embeddingProbe.error) {
-        lines.push(`${label(t("Embeddings error"))} ${warn(embeddingProbe.error)}`);
+        lines.push(`${label("Embeddings error")} ${warn(embeddingProbe.error)}`);
       }
     }
     if (status.sourceCounts?.length) {
-      lines.push(label(t("By source")));
+      lines.push(label("By source"));
       for (const entry of status.sourceCounts) {
         const total = scan?.sources?.find(
           (scanEntry) => scanEntry.source === entry.source,
@@ -418,15 +508,13 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
             : theme.muted;
       lines.push(`${label("Vector")} ${colorize(rich, vectorColor, vectorState)}`);
       if (status.vector.dims) {
-        lines.push(`${label(t("Vector dims"))} ${info(String(status.vector.dims))}`);
+        lines.push(`${label("Vector dims")} ${info(String(status.vector.dims))}`);
       }
       if (status.vector.extensionPath) {
-        lines.push(
-          `${label(t("Vector path"))} ${info(shortenHomePath(status.vector.extensionPath))}`,
-        );
+        lines.push(`${label("Vector path")} ${info(shortenHomePath(status.vector.extensionPath))}`);
       }
       if (status.vector.loadError) {
-        lines.push(`${label(t("Vector error"))} ${warn(status.vector.loadError)}`);
+        lines.push(`${label("Vector error")} ${warn(status.vector.loadError)}`);
       }
     }
     if (status.fts) {
@@ -443,7 +531,7 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
             : theme.muted;
       lines.push(`${label("FTS")} ${colorize(rich, ftsColor, ftsState)}`);
       if (status.fts.error) {
-        lines.push(`${label(t("FTS error"))} ${warn(status.fts.error)}`);
+        lines.push(`${label("FTS error")} ${warn(status.fts.error)}`);
       }
     }
     if (status.cache) {
@@ -453,11 +541,9 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         status.cache.enabled && typeof status.cache.entries === "number"
           ? ` (${status.cache.entries} entries)`
           : "";
-      lines.push(
-        `${label(t("Embedding cache"))} ${colorize(rich, cacheColor, cacheState)}${suffix}`,
-      );
+      lines.push(`${label("Embedding cache")} ${colorize(rich, cacheColor, cacheState)}${suffix}`);
       if (status.cache.enabled && typeof status.cache.maxEntries === "number") {
-        lines.push(`${label(t("Cache cap"))} ${info(String(status.cache.maxEntries))}`);
+        lines.push(`${label("Cache cap")} ${info(String(status.cache.maxEntries))}`);
       }
     }
     if (status.batch) {
@@ -468,14 +554,14 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
         `${label("Batch")} ${colorize(rich, batchColor, batchState)}${muted(batchSuffix)}`,
       );
       if (status.batch.lastError) {
-        lines.push(`${label(t("Batch error"))} ${warn(status.batch.lastError)}`);
+        lines.push(`${label("Batch error")} ${warn(status.batch.lastError)}`);
       }
     }
     if (status.fallback?.reason) {
       lines.push(muted(status.fallback.reason));
     }
     if (indexError) {
-      lines.push(`${label(t("Index error"))} ${warn(indexError)}`);
+      lines.push(`${label("Index error")} ${warn(indexError)}`);
     }
     if (scan?.issues.length) {
       lines.push(label("Issues"));
@@ -491,21 +577,26 @@ export async function runMemoryStatus(opts: MemoryCommandOptions) {
 export function registerMemoryCli(program: Command) {
   const memory = program
     .command("memory")
-    .description(t("Memory search tools"))
+    .description(t("Search, inspect, and reindex memory files"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/memory", "docs.openclaw.ai/cli/memory")}\n`,
+        `\n${theme.heading("Examples:")}\n${formatHelpExamples([
+          ["openclaw memory status", "Show index and provider status."],
+          ["openclaw memory index --force", "Force a full reindex."],
+          ['openclaw memory search --query "deployment notes"', "Search indexed memory entries."],
+          ["openclaw memory status --json", "Output machine-readable JSON."],
+        ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/memory", "docs.openclaw.ai/cli/memory")}\n`,
     );
 
   memory
     .command("status")
     .description(t("Show memory search index status"))
-    .option("--agent <id>", t("Agent id (default: default agent)"))
-    .option("--json", t("Print JSON"))
-    .option("--deep", t("Probe embedding provider availability"))
-    .option("--index", t("Reindex if dirty (implies --deep)"))
-    .option("--verbose", t("Verbose logging"), false)
+    .option("--agent <id>", "Agent id (default: default agent)")
+    .option("--json", "Print JSON")
+    .option("--deep", "Probe embedding provider availability")
+    .option("--index", "Reindex if dirty (implies --deep)")
+    .option("--verbose", "Verbose logging", false)
     .action(async (opts: MemoryCommandOptions & { force?: boolean }) => {
       await runMemoryStatus(opts);
     });
@@ -513,22 +604,18 @@ export function registerMemoryCli(program: Command) {
   memory
     .command("index")
     .description(t("Reindex memory files"))
-    .option("--agent <id>", t("Agent id (default: default agent)"))
-    .option("--force", t("Force full reindex"), false)
-    .option("--verbose", t("Verbose logging"), false)
+    .option("--agent <id>", "Agent id (default: default agent)")
+    .option("--force", "Force full reindex", false)
+    .option("--verbose", "Verbose logging", false)
     .action(async (opts: MemoryCommandOptions) => {
       setVerbose(Boolean(opts.verbose));
-      const cfg = loadConfig();
+      const { config: cfg, diagnostics } = await loadMemoryCommandConfig("memory index");
+      emitMemorySecretResolveDiagnostics(diagnostics);
       const agentIds = resolveAgentIds(cfg, opts.agent);
       for (const agentId of agentIds) {
-        await withManager<MemoryManager>({
-          getManager: () => getMemorySearchManager({ cfg, agentId }),
-          onMissing: (error) => defaultRuntime.log(error ?? t("Memory search disabled.")),
-          onCloseError: (err) =>
-            defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
-          close: async (manager) => {
-            await manager.close?.();
-          },
+        await withMemoryManagerForAgent({
+          cfg,
+          agentId,
           run: async (manager) => {
             try {
               const syncFn = manager.sync ? manager.sync.bind(manager) : undefined;
@@ -549,16 +636,16 @@ export function registerMemoryCli(program: Command) {
                 const requestedProvider = status.requestedProvider ?? status.provider;
                 const modelLabel = status.model ?? status.provider;
                 const lines = [
-                  `${heading(t("Memory Index"))} ${muted(`(${agentId})`)}`,
+                  `${heading("Memory Index")} ${muted(`(${agentId})`)}`,
                   `${label("Provider")} ${info(status.provider)} ${muted(
                     `(requested: ${requestedProvider})`,
                   )}`,
                   `${label("Model")} ${info(modelLabel)}`,
                   sourceLabels.length
-                    ? `${label("Sources")} ${info(sourceLabels.join(t(", ")))}`
+                    ? `${label("Sources")} ${info(sourceLabels.join(", "))}`
                     : null,
                   extraPaths.length
-                    ? `${label(t("Extra paths"))} ${info(extraPaths.join(t(", ")))}`
+                    ? `${label("Extra paths")} ${info(extraPaths.join(", "))}`
                     : null,
                 ].filter(Boolean) as string[];
                 if (status.fallback) {
@@ -568,7 +655,7 @@ export function registerMemoryCli(program: Command) {
                 defaultRuntime.log("");
               }
               const startedAt = Date.now();
-              let lastLabel = t("Indexing memory…");
+              let lastLabel = "Indexing memory…";
               let lastCompleted = 0;
               let lastTotal = 0;
               const formatElapsed = () => {
@@ -606,7 +693,7 @@ export function registerMemoryCli(program: Command) {
               }
               await withProgressTotals(
                 {
-                  label: t("Indexing memory…"),
+                  label: "Indexing memory…",
                   total: 0,
                   fallback: opts.verbose ? "line" : undefined,
                 },
@@ -637,6 +724,10 @@ export function registerMemoryCli(program: Command) {
                   }
                 },
               );
+              const qmdIndexSummary = await summarizeQmdIndexArtifact(manager);
+              if (qmdIndexSummary) {
+                defaultRuntime.log(qmdIndexSummary);
+              }
               defaultRuntime.log(`Memory index updated (${agentId}).`);
             } catch (err) {
               const message = formatErrorMessage(err);
@@ -651,29 +742,35 @@ export function registerMemoryCli(program: Command) {
   memory
     .command("search")
     .description(t("Search memory files"))
-    .argument("<query>", t("Search query"))
-    .option("--agent <id>", t("Agent id (default: default agent)"))
-    .option("--max-results <n>", t("Max results"), (value: string) => Number(value))
-    .option("--min-score <n>", t("Minimum score"), (value: string) => Number(value))
-    .option("--json", t("Print JSON"))
+    .argument("[query]", "Search query")
+    .option("--query <text>", "Search query (alternative to positional argument)")
+    .option("--agent <id>", "Agent id (default: default agent)")
+    .option("--max-results <n>", "Max results", (value: string) => Number(value))
+    .option("--min-score <n>", "Minimum score", (value: string) => Number(value))
+    .option("--json", "Print JSON")
     .action(
       async (
-        query: string,
+        queryArg: string | undefined,
         opts: MemoryCommandOptions & {
+          query?: string;
           maxResults?: number;
           minScore?: number;
         },
       ) => {
-        const cfg = loadConfig();
+        const query = opts.query ?? queryArg;
+        if (!query) {
+          defaultRuntime.error(
+            "Missing search query. Provide a positional query or use --query <text>.",
+          );
+          process.exitCode = 1;
+          return;
+        }
+        const { config: cfg, diagnostics } = await loadMemoryCommandConfig("memory search");
+        emitMemorySecretResolveDiagnostics(diagnostics, { json: Boolean(opts.json) });
         const agentId = resolveAgent(cfg, opts.agent);
-        await withManager<MemoryManager>({
-          getManager: () => getMemorySearchManager({ cfg, agentId }),
-          onMissing: (error) => defaultRuntime.log(error ?? t("Memory search disabled.")),
-          onCloseError: (err) =>
-            defaultRuntime.error(`Memory manager close failed: ${formatErrorMessage(err)}`),
-          close: async (manager) => {
-            await manager.close?.();
-          },
+        await withMemoryManagerForAgent({
+          cfg,
+          agentId,
           run: async (manager) => {
             let results: Awaited<ReturnType<typeof manager.search>>;
             try {
@@ -692,7 +789,7 @@ export function registerMemoryCli(program: Command) {
               return;
             }
             if (results.length === 0) {
-              defaultRuntime.log(t("No matches."));
+              defaultRuntime.log("No matches.");
               return;
             }
             const rich = isRich();

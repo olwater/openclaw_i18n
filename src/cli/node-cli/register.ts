@@ -5,6 +5,7 @@ import { runNodeHost } from "../../node-host/runner.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
 import { parsePort } from "../daemon-cli/shared.js";
+import { formatHelpExamples } from "../help-format.js";
 import {
   runNodeDaemonInstall,
   runNodeDaemonRestart,
@@ -21,22 +22,30 @@ function parsePortWithFallback(value: unknown, fallback: number): number {
 export function registerNodeCli(program: Command) {
   const node = program
     .command("node")
-    .description(t("Run a headless node host (system.run/system.which)"))
+    .description(t("Run and manage the headless node host service"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/node", "docs.openclaw.ai/cli/node")}\n`,
+        `\n${theme.heading("Examples:")}\n${formatHelpExamples([
+          [
+            "openclaw node run --host 127.0.0.1 --port 18789",
+            "Run the node host in the foreground.",
+          ],
+          ["openclaw node status", "Check node host service status."],
+          ["openclaw node install", "Install the node host service."],
+          ["openclaw node restart", "Restart the installed node host service."],
+        ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/node", "docs.openclaw.ai/cli/node")}\n`,
     );
 
   node
     .command("run")
     .description(t("Run the headless node host (foreground)"))
-    .option("--host <host>", t("Gateway host"))
-    .option("--port <port>", t("Gateway port"))
-    .option("--tls", t("Use TLS for the gateway connection"), false)
-    .option("--tls-fingerprint <sha256>", t("Expected TLS certificate fingerprint (sha256)"))
-    .option("--node-id <id>", t("Override node id (clears pairing token)"))
-    .option("--display-name <name>", t("Override node display name"))
+    .option("--host <host>", "Gateway host")
+    .option("--port <port>", "Gateway port")
+    .option("--tls", "Use TLS for the gateway connection", false)
+    .option("--tls-fingerprint <sha256>", "Expected TLS certificate fingerprint (sha256)")
+    .option("--node-id <id>", "Override node id (clears pairing token)")
+    .option("--display-name <name>", "Override node display name")
     .action(async (opts) => {
       const existing = await loadNodeHostConfig();
       const host =
@@ -55,7 +64,7 @@ export function registerNodeCli(program: Command) {
   node
     .command("status")
     .description(t("Show node host status"))
-    .option("--json", t("Output JSON"), false)
+    .option("--json", "Output JSON", false)
     .action(async (opts) => {
       await runNodeDaemonStatus(opts);
     });
@@ -63,15 +72,15 @@ export function registerNodeCli(program: Command) {
   node
     .command("install")
     .description(t("Install the node host service (launchd/systemd/schtasks)"))
-    .option("--host <host>", t("Gateway host"))
-    .option("--port <port>", t("Gateway port"))
-    .option("--tls", t("Use TLS for the gateway connection"), false)
-    .option("--tls-fingerprint <sha256>", t("Expected TLS certificate fingerprint (sha256)"))
-    .option("--node-id <id>", t("Override node id (clears pairing token)"))
-    .option("--display-name <name>", t("Override node display name"))
-    .option("--runtime <runtime>", t("Service runtime (node|bun). Default: node"))
-    .option("--force", t("Reinstall/overwrite if already installed"), false)
-    .option("--json", t("Output JSON"), false)
+    .option("--host <host>", "Gateway host")
+    .option("--port <port>", "Gateway port")
+    .option("--tls", "Use TLS for the gateway connection", false)
+    .option("--tls-fingerprint <sha256>", "Expected TLS certificate fingerprint (sha256)")
+    .option("--node-id <id>", "Override node id (clears pairing token)")
+    .option("--display-name <name>", "Override node display name")
+    .option("--runtime <runtime>", "Service runtime (node|bun). Default: node")
+    .option("--force", "Reinstall/overwrite if already installed", false)
+    .option("--json", "Output JSON", false)
     .action(async (opts) => {
       await runNodeDaemonInstall(opts);
     });
@@ -79,7 +88,7 @@ export function registerNodeCli(program: Command) {
   node
     .command("uninstall")
     .description(t("Uninstall the node host service (launchd/systemd/schtasks)"))
-    .option("--json", t("Output JSON"), false)
+    .option("--json", "Output JSON", false)
     .action(async (opts) => {
       await runNodeDaemonUninstall(opts);
     });
@@ -87,7 +96,7 @@ export function registerNodeCli(program: Command) {
   node
     .command("stop")
     .description(t("Stop the node host service (launchd/systemd/schtasks)"))
-    .option("--json", t("Output JSON"), false)
+    .option("--json", "Output JSON", false)
     .action(async (opts) => {
       await runNodeDaemonStop(opts);
     });
@@ -95,7 +104,7 @@ export function registerNodeCli(program: Command) {
   node
     .command("restart")
     .description(t("Restart the node host service (launchd/systemd/schtasks)"))
-    .option("--json", t("Output JSON"), false)
+    .option("--json", "Output JSON", false)
     .action(async (opts) => {
       await runNodeDaemonRestart(opts);
     });

@@ -1,0 +1,432 @@
+\n\n========== acp ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 少点鼠标，多发代码，少点“那文件去哪了”的懵圈时刻。
+   中文版由 @olwater 维护
+
+Usage: openclaw acp [options]
+
+Agent 控制协议工具
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== agent ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的联系人里唯一你想搭理的那只螃蟹。🦞
+   中文版由 @olwater 维护
+
+Usage: openclaw agent [options]
+
+通过 Gateway 运行一次 agent turn
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== agents ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我不仅自动补全代码，还自动投入感情——然后让你用理智去 Code Review。
+   中文版由 @olwater 维护
+
+Usage: openclaw agents [options]
+
+管理隔离的智能体 (工作区，认证，路由)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== approvals ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b)
+   中文版由 @olwater 维护
+   我可以 grep 它是谁写的，git blame 是谁提交的，然后温柔地吐槽它——选一个你喜欢的应对机制吧。
+
+Usage: openclaw approvals [options]
+
+管理执行批准 (Gateway 或 Node 主机)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== browser ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b)
+   中文版由 @olwater 维护
+   我可以 grep 它是谁写的，git blame 是谁提交的，然后温柔地吐槽它——选一个你喜欢的应对机制吧。
+
+Usage: openclaw browser [options]
+
+管理 OpenClaw 的专用浏览器 (Chrome/Chromium)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== channels ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我不挑地儿，本地能跑，远程能跑，全凭感觉也能跑——当然结果得看 DNS 给不给面子。
+   中文版由 @olwater 维护
+
+Usage: openclaw channels [options]
+
+管理连接的聊天渠道 (Telegram, Discord 等)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== clawbot ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我不会魔法——我只是在重试和容错策略上极其执着。
+   中文版由 @olwater 维护
+
+Usage: openclaw clawbot [options]
+
+Legacy clawbot command aliases
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== completion ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 如果这玩意儿着火了，我灭不了火——但我能写一份漂亮的故障复盘报告。
+   中文版由 @olwater 维护
+
+Usage: openclaw completion [options]
+
+生成 Shell 自动补全脚本
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== config ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的联系人里唯一你想搭理的那只螃蟹。🦞
+   中文版由 @olwater 维护
+
+Usage: openclaw config [options]
+
+非交互式配置助手 (get/set/unset)。默认：启动配置向导。
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== configure ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我不是说你的工作流很混乱……我只是顺手带了个 Linter 和一顶头盔。
+   中文版由 @olwater 维护
+
+Usage: openclaw configure [options]
+
+用于凭证、渠道、Gateway 及智能体默认设置的交互式配置向导
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== cron ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你说 'stop' 我就停——你说 'ship' 我们就一起买个教训。
+   中文版由 @olwater 维护
+
+Usage: openclaw cron [options]
+
+通过 Gateway 调度程序管理定时任务
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== daemon ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的联系人里唯一你想搭理的那只螃蟹。🦞
+   中文版由 @olwater 维护
+
+Usage: openclaw daemon [options]
+
+Gateway 服务 (旧别名)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== dashboard ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — Your AI assistant, now without the $3,499 headset.
+   中文版由 @olwater 维护
+
+Usage: openclaw dashboard [options]
+
+使用当前 Token 打开控制台 UI
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== devices ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 问候，Falken 教授
+   中文版由 @olwater 维护
+
+Usage: openclaw devices [options]
+
+设备配对 + Token 管理
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== directory ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 通过了 lint 不代表代码有品味，但我确实能搞定构建和积压的任务。
+   中文版由 @olwater 维护
+
+Usage: openclaw directory [options]
+
+查找支持聊天渠道的联系人和群组 ID (自己、对方、群组)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== dns ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我不挑地儿，本地能跑，远程能跑，全凭感觉也能跑——当然结果得看 DNS 给不给面子。
+   中文版由 @olwater 维护
+
+Usage: openclaw dns [options]
+
+DNS helpers for wide-area discovery (Tailscale + CoreDNS)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== docs ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的联系人里唯一你想搭理的那只螃蟹。🦞
+   中文版由 @olwater 维护
+
+Usage: openclaw docs [options]
+
+搜索 OpenClaw 在线文档
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== doctor ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — OpenAI 兼容，不依赖 OpenAI。
+   中文版由 @olwater 维护
+
+Usage: openclaw doctor [options]
+
+Gateway 和频道的健康检查 + 快速修复
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== gateway ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 不需要听证会就能用的聊天 API。
+   中文版由 @olwater 维护
+
+Usage: openclaw gateway [options]
+
+运行、检查和查询 WebSocket Gateway
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== health ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我像金库一样保守秘密……除非你又把它们打印在 debug 日志里。
+   中文版由 @olwater 维护
+
+Usage: openclaw health [options]
+
+从运行中的 Gateway 获取健康状态
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== hooks ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — iMessage 绿泡泡能量，每个人都能拥有。
+   中文版由 @olwater 维护
+
+Usage: openclaw hooks [options]
+
+管理内部 Agent Hooks
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== logs ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 更少的中间人，更多的消息。
+   中文版由 @olwater 维护
+
+Usage: openclaw logs [options]
+
+通过 RPC 追踪 Gateway 文件日志
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== memory ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 端到端加密，戏精模式除外。
+   中文版由 @olwater 维护
+
+Usage: openclaw memory [options]
+
+搜索并重建记忆文件索引
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== message ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 少点鼠标，多发代码，少点“那文件去哪了”的懵圈时刻。
+   中文版由 @olwater 维护
+
+Usage: openclaw message [options]
+
+发送、读取和管理消息
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== models ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 通过了 lint 不代表代码有品味，但我确实能搞定构建和积压的任务。
+   中文版由 @olwater 维护
+
+Usage: openclaw models [options]
+
+发现、扫描和配置模型
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== node ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 是 IPC，但连通的是你的手机。
+   中文版由 @olwater 维护
+
+Usage: openclaw node [options]
+
+运行和管理无头节点的本地宿主服务
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== nodes ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的配置有效，你的假设无效。
+   中文版由 @olwater 维护
+
+Usage: openclaw nodes [options]
+
+管理 Gateway 所属的节点配对和节点级命令
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== onboard ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 不需要听证会就能用的聊天 API。
+   中文版由 @olwater 维护
+
+Usage: openclaw onboard [options]
+
+用于 Gateway、工作区和 Skills 的交互式引导向导
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== pairing ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 更少的中间人，更多的消息。
+   中文版由 @olwater 维护
+
+Usage: openclaw pairing [options]
+
+安全私信配对 (批准入站请求)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== plugins ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的任务已入队；你的尊严已弃用。
+   中文版由 @olwater 维护
+
+Usage: openclaw plugins [options]
+
+管理 OpenClaw 插件和扩展
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== qr ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我是你终端渴望的助手，却也是你睡眠时间表的噩梦。
+   中文版由 @olwater 维护
+
+Usage: openclaw qr [options]
+
+Generate iOS pairing QR/setup code
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== reset ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 我精通 bash、轻度讽刺和狂热Tab补全。
+   中文版由 @olwater 维护
+
+Usage: openclaw reset [options]
+
+重置本地配置/状态 (保留 CLI 安装)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== sandbox ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 欢迎来到命令行：梦想在这里编译，信心在这里浇灭 (Segfault)。
+   中文版由 @olwater 维护
+
+Usage: openclaw sandbox [options]
+
+管理用于智能体隔离的沙箱容器
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== security ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 因为正确答案通常是一个脚本。
+   中文版由 @olwater 维护
+
+Usage: openclaw security [options]
+
+安全工具和本地配置审计
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== sessions ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 这不叫"失败"，这叫"探索配置错误的全新方式"。
+   中文版由 @olwater 维护
+
+Usage: openclaw sessions [options]
+
+列出存储的对话会话
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== setup ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的 .env 文件内容暴露了；别担心，我会假装没看见。
+   中文版由 @olwater 维护
+
+Usage: openclaw setup [options]
+
+初始化本地配置和智能体工作空间
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== skills ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的配置有效，你的假设无效。
+   中文版由 @olwater 维护
+
+Usage: openclaw skills [options]
+
+列出并检查可用 Skills
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== status ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — Shell yeah——我来帮你解决苦差事，把荣耀留给你。
+   中文版由 @olwater 维护
+
+Usage: openclaw status [options]
+
+显示频道健康状况和最近的会话接收者
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== system ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的 Shell 历史记录看起来像黑客电影蒙太奇，全是因为我。
+   中文版由 @olwater 维护
+
+Usage: openclaw system [options]
+
+系统事件、心跳和在线状态
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== tui ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的联系人里唯一你想搭理的那只螃蟹。🦞
+   中文版由 @olwater 维护
+
+Usage: openclaw tui [options]
+
+打开连接到 Gateway 的终端 UI
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== uninstall ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 更少的中间人，更多的消息。
+   中文版由 @olwater 维护
+
+Usage: openclaw uninstall [options]
+
+卸载 Gateway 服务 + 本地数据 (CLI 将保留)
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== update ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 你的 .env 文件内容暴露了；别担心，我会假装没看见。
+   中文版由 @olwater 维护
+
+Usage: openclaw update [options]
+
+更新 OpenClaw 并检查更新通道状态
+
+Options:
+  -h, --help  显示命令帮助
+\n\n========== webhooks ==========\n\n
+🦞 OpenClaw 2026.2.18 (af76b5b) — 配对码之所以存在，是因为即使是机器人也相信许可——以及良好的安全习惯。
+   中文版由 @olwater 维护
+
+Usage: openclaw webhooks [options]
+
+Webhook 助手和集成
+
+Options:
+  -h, --help  显示命令帮助

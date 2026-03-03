@@ -1,12 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
+import {
+  DEFAULT_SANDBOX_BROWSER_IMAGE,
+  DEFAULT_SANDBOX_COMMON_IMAGE,
+  DEFAULT_SANDBOX_IMAGE,
+  resolveSandboxScope,
+} from "../agents/sandbox.js";
 import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
-import type { DoctorPrompter } from "./doctor-prompter.js";
-import { resolveSandboxConfigForAgent } from "../agents/sandbox.js";
-import { t } from "../i18n/index.js";
 import { runCommandWithTimeout, runExec } from "../process/exec.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
+import type { DoctorPrompter } from "./doctor-prompter.js";
 
 type SandboxScriptInfo = {
   scriptPath: string;
@@ -36,29 +40,25 @@ function resolveSandboxScript(scriptRel: string): SandboxScriptInfo | null {
 async function runSandboxScript(scriptRel: string, runtime: RuntimeEnv): Promise<boolean> {
   const script = resolveSandboxScript(scriptRel);
   if (!script) {
-    note(
-      t("Unable to locate {{script}}. Run it from the repo root.", { script: scriptRel }),
-      "Sandbox",
-    );
+    note(`Unable to locate ${scriptRel}. Run it from the repo root.`, "Sandbox");
     return false;
   }
 
-  runtime.log(t("Running {{script}}...", { script: scriptRel }));
+  runtime.log(`Running ${scriptRel}...`);
   const result = await runCommandWithTimeout(["bash", script.scriptPath], {
     timeoutMs: 20 * 60 * 1000,
     cwd: script.cwd,
   });
   if (result.code !== 0) {
     runtime.error(
-      t("Failed running {{script}}: {{error}}", {
-        script: scriptRel,
-        error: result.stderr.trim() || result.stdout.trim() || t("unknown error"),
-      }),
+      `Failed running ${scriptRel}: ${
+        result.stderr.trim() || result.stdout.trim() || "unknown error"
+      }`,
     );
     return false;
   }
 
-  runtime.log(t("Completed {{script}}.", { script: scriptRel }));
+  runtime.log(`Completed ${scriptRel}.`);
   return true;
 }
 
@@ -77,14 +77,26 @@ async function dockerImageExists(image: string): Promise<boolean> {
   try {
     await runExec("docker", ["image", "inspect", image], { timeoutMs: 5_000 });
     return true;
-  } catch (error: unknown) {
-    const err = error as { stderr?: string; message?: string };
-    const stderr = err?.stderr || err?.message || "";
-    if (String(stderr).includes(t("No such image"))) {
+  } catch (error) {
+    const stderr =
+      (error as { stderr: string } | undefined)?.stderr ||
+      (error as { message: string } | undefined)?.message ||
+      "";
+    if (String(stderr).includes("No such image")) {
       return false;
     }
     throw error;
   }
+}
+
+function resolveSandboxDockerImage(cfg: OpenClawConfig): string {
+  const image = cfg.agents?.defaults?.sandbox?.docker?.image?.trim();
+  return image ? image : DEFAULT_SANDBOX_IMAGE;
+}
+
+function resolveSandboxBrowserImage(cfg: OpenClawConfig): string {
+  const image = cfg.agents?.defaults?.sandbox?.browser?.image?.trim();
+  return image ? image : DEFAULT_SANDBOX_BROWSER_IMAGE;
 }
 
 function updateSandboxDockerImage(cfg: OpenClawConfig, image: string): OpenClawConfig {
@@ -143,21 +155,14 @@ async function handleMissingSandboxImage(
   }
 
   const buildHint = params.buildScript
-    ? t("Build it with {{script}}.", { script: params.buildScript })
-    : t("Build or pull it first.");
-  note(
-    t("Sandbox {{kind}} image missing: {{image}}. {{hint}}", {
-      kind: params.kind,
-      image: params.image,
-      hint: buildHint,
-    }),
-    "Sandbox",
-  );
+    ? `Build it with ${params.buildScript}.`
+    : "Build or pull it first.";
+  note(`Sandbox ${params.kind} image missing: ${params.image}. ${buildHint}`, "Sandbox");
 
   let built = false;
   if (params.buildScript) {
     const build = await prompter.confirmSkipInNonInteractive({
-      message: t("Build {{kind}} sandbox image now?", { kind: params.kind }),
+      message: `Build ${params.kind} sandbox image now?`,
       initialValue: true,
     });
     if (build) {
@@ -183,86 +188,110 @@ export async function maybeRepairSandboxImages(
 
   const dockerAvailable = await isDockerAvailable();
   if (!dockerAvailable) {
-    note(t("Docker not available; skipping sandbox image checks."), "Sandbox");
+    const lines = [
+      `Sandbox mode is enabled (mode: "${mode}") but Docker is not available.`,
+      "Docker is required for sandbox mode to function.",
+      "Isolated sessions (cron jobs, sub-agents) will fail without Docker.",
+      "",
+      "Options:",
+      "- Install Docker and restart the gateway",
+      "- Disable sandbox mode: openclaw config set agents.defaults.sandbox.mode off",
+    ];
+    note(lines.join("\n"), "Sandbox");
     return cfg;
   }
 
-  const images: SandboxImageCheck[] = [];
-  const sandboxConfig = resolveSandboxConfigForAgent(cfg);
+  let next = cfg;
+  const changes: string[] = [];
 
-  images.push({
-    kind: "Docker",
-    image: sandboxConfig.docker.image,
-    buildScript: "scripts/build-sandbox-docker.sh",
-    updateConfig: (image) => (cfg = updateSandboxDockerImage(cfg, image)),
-  });
+  const dockerImage = resolveSandboxDockerImage(cfg);
+  await handleMissingSandboxImage(
+    {
+      kind: "base",
+      image: dockerImage,
+      buildScript:
+        dockerImage === DEFAULT_SANDBOX_COMMON_IMAGE
+          ? "scripts/sandbox-common-setup.sh"
+          : dockerImage === DEFAULT_SANDBOX_IMAGE
+            ? "scripts/sandbox-setup.sh"
+            : undefined,
+      updateConfig: (image) => {
+        next = updateSandboxDockerImage(next, image);
+        changes.push(`Updated agents.defaults.sandbox.docker.image → ${image}`);
+      },
+    },
+    runtime,
+    prompter,
+  );
 
-  if (sandboxConfig.browser.enabled) {
-    images.push({
-      kind: "Browser",
-      image: sandboxConfig.browser.image,
-      buildScript: "scripts/build-sandbox-browser.sh",
-      updateConfig: (image) => (cfg = updateSandboxBrowserImage(cfg, image)),
-    });
+  if (sandbox.browser?.enabled) {
+    await handleMissingSandboxImage(
+      {
+        kind: "browser",
+        image: resolveSandboxBrowserImage(cfg),
+        buildScript: "scripts/sandbox-browser-setup.sh",
+        updateConfig: (image) => {
+          next = updateSandboxBrowserImage(next, image);
+          changes.push(`Updated agents.defaults.sandbox.browser.image → ${image}`);
+        },
+      },
+      runtime,
+      prompter,
+    );
   }
 
-  for (const img of images) {
-    await handleMissingSandboxImage(img, runtime, prompter);
+  if (changes.length > 0) {
+    note(changes.join("\n"), "Doctor changes");
   }
 
-  return cfg;
+  return next;
 }
 
 export function noteSandboxScopeWarnings(cfg: OpenClawConfig) {
   const globalSandbox = cfg.agents?.defaults?.sandbox;
-  if (!globalSandbox || globalSandbox.mode === "off") {
-    return;
-  }
-
-  const globalSandboxConfig = resolveSandboxConfigForAgent(cfg);
-  if (globalSandboxConfig.scope === "shared") {
-    note(
-      t(
-        "Sandbox scope is set to 'shared'. This means all agents and sessions share the same container and workspace. This is less secure and can lead to side effects between tasks.",
-      ),
-      "Sandbox",
-    );
-  }
-
-  const agents = cfg.agents?.list;
-  if (!Array.isArray(agents)) {
-    return;
-  }
+  const agents = Array.isArray(cfg.agents?.list) ? cfg.agents.list : [];
+  const warnings: string[] = [];
 
   for (const agent of agents) {
-    if (!agent?.id || !agent.sandbox) {
+    const agentId = agent.id;
+    const agentSandbox = agent.sandbox;
+    if (!agentSandbox) {
       continue;
     }
 
-    const agentSandboxConfig = resolveSandboxConfigForAgent(cfg, agent.id);
-    if (agentSandboxConfig.scope !== "shared") {
+    const scope = resolveSandboxScope({
+      scope: agentSandbox.scope ?? globalSandbox?.scope,
+      perSession: agentSandbox.perSession ?? globalSandbox?.perSession,
+    });
+
+    if (scope !== "shared") {
       continue;
     }
 
     const overrides: string[] = [];
-    if (agent.sandbox.docker) {
+    if (agentSandbox.docker && Object.keys(agentSandbox.docker).length > 0) {
       overrides.push("docker");
     }
-    if (agent.sandbox.browser) {
+    if (agentSandbox.browser && Object.keys(agentSandbox.browser).length > 0) {
       overrides.push("browser");
     }
-    if (agent.sandbox.prune) {
+    if (agentSandbox.prune && Object.keys(agentSandbox.prune).length > 0) {
       overrides.push("prune");
     }
 
-    if (overrides.length > 0) {
-      note(
-        t(
-          'Sandbox overrides for agents.list (id "{{agentId}}") sandbox {{overrides}} are ignored because the scope resolves to "shared". Shared sandboxes always use the global configuration for these settings.',
-          { agentId: agent.id, overrides: overrides.join(", ") },
-        ),
-        "Sandbox",
-      );
+    if (overrides.length === 0) {
+      continue;
     }
+
+    warnings.push(
+      [
+        `- agents.list (id "${agentId}") sandbox ${overrides.join("/")} overrides ignored.`,
+        `  scope resolves to "shared".`,
+      ].join("\n"),
+    );
+  }
+
+  if (warnings.length > 0) {
+    note(warnings.join("\n"), "Sandbox");
   }
 }

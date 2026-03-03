@@ -1,7 +1,6 @@
-import type { RuntimeEnv } from "../../runtime.js";
-import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
-import { t } from "../../i18n/index.js";
+import type { RuntimeEnv } from "../../runtime.js";
+import { loadModelsConfig } from "./load-config.js";
 import {
   ensureFlagCompatibility,
   normalizeAlias,
@@ -14,7 +13,7 @@ export async function modelsAliasesListCommand(
   runtime: RuntimeEnv,
 ) {
   ensureFlagCompatibility(opts);
-  const cfg = loadConfig();
+  const cfg = await loadModelsConfig({ commandName: "models aliases list", runtime });
   const models = cfg.agents?.defaults?.models ?? {};
   const aliases = Object.entries(models).reduce<Record<string, string>>(
     (acc, [modelKey, entry]) => {
@@ -54,7 +53,8 @@ export async function modelsAliasesAddCommand(
   runtime: RuntimeEnv,
 ) {
   const alias = normalizeAlias(aliasRaw);
-  const resolved = resolveModelTarget({ raw: modelRaw, cfg: loadConfig() });
+  const cfg = await loadModelsConfig({ commandName: "models aliases add", runtime });
+  const resolved = resolveModelTarget({ raw: modelRaw, cfg });
   const _updated = await updateConfig((cfg) => {
     const modelKey = `${resolved.provider}/${resolved.model}`;
     const nextModels = { ...cfg.agents?.defaults?.models };
@@ -114,6 +114,6 @@ export async function modelsAliasesRemoveCommand(aliasRaw: string, runtime: Runt
     !updated.agents?.defaults?.models ||
     Object.values(updated.agents.defaults.models).every((entry) => !entry?.alias?.trim())
   ) {
-    runtime.log(t("No aliases configured."));
+    runtime.log("No aliases configured.");
   }
 }

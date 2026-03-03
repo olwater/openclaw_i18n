@@ -1,6 +1,6 @@
 ---
 name: imsg
-description: 用于列出聊天、历史记录、监控和发送的 iMessage/SMS CLI。
+description: iMessage/SMS CLI for listing chats, history, and sending messages via Messages.app.
 homepage: https://imsg.to
 metadata:
   {
@@ -16,59 +16,107 @@ metadata:
               "kind": "brew",
               "formula": "steipete/tap/imsg",
               "bins": ["imsg"],
-              "label": "安装 imsg (brew)",
+              "label": "Install imsg (brew)",
             },
           ],
       },
   }
 ---
 
-# imsg 动作
+# imsg
 
-## 概述
+Use `imsg` to read and send iMessage/SMS via macOS Messages.app.
 
-使用 `imsg` 在 macOS 上阅读和发送 Messages.app iMessage/SMS。
+## When to Use
 
-要求：Messages.app 已登录，终端具有全磁盘访问权限（Full Disk Access），以及控制 Messages.app 进行发送的自动化权限（Automation permission）。
+✅ **USE this skill when:**
 
-## 需要收集的输入
+- User explicitly asks to send iMessage or SMS
+- Reading iMessage conversation history
+- Checking recent Messages.app chats
+- Sending to phone numbers or Apple IDs
 
-- 接收者句柄（电话/电子邮件）用于 `send`
-- `chatId` 用于历史记录/监控（来自 `imsg chats --limit 10 --json`）
-- `text` 和可选的 `file` 路径用于发送
+## When NOT to Use
 
-## 动作
+❌ **DON'T use this skill when:**
 
-### 列出聊天
+- Telegram messages → use `message` tool with `channel:telegram`
+- Signal messages → use Signal channel if configured
+- WhatsApp messages → use WhatsApp channel if configured
+- Discord messages → use `message` tool with `channel:discord`
+- Slack messages → use `slack` skill
+- Group chat management (adding/removing members) → not supported
+- Bulk/mass messaging → always confirm with user first
+- Replying in current conversation → just reply normally (Clawdbot routes automatically)
+
+## Requirements
+
+- macOS with Messages.app signed in
+- Full Disk Access for terminal
+- Automation permission for Messages.app (for sending)
+
+## Common Commands
+
+### List Chats
 
 ```bash
 imsg chats --limit 10 --json
 ```
 
-### 获取聊天记录
+### View History
 
 ```bash
+# By chat ID
+imsg history --chat-id 1 --limit 20 --json
+
+# With attachments info
 imsg history --chat-id 1 --limit 20 --attachments --json
 ```
 
-### 监控聊天
+### Watch for New Messages
 
 ```bash
 imsg watch --chat-id 1 --attachments
 ```
 
-### 发送消息
+### Send Messages
 
 ```bash
-imsg send --to "+14155551212" --text "hi" --file /path/pic.jpg
+# Text only
+imsg send --to "+14155551212" --text "Hello!"
+
+# With attachment
+imsg send --to "+14155551212" --text "Check this out" --file /path/to/image.jpg
+
+# Specify service
+imsg send --to "+14155551212" --text "Hi" --service imessage
+imsg send --to "+14155551212" --text "Hi" --service sms
 ```
 
-## 注意
+## Service Options
 
-- `--service imessage|sms|auto` 控制投递方式。
-- 发送前确认接收者 + 消息。
+- `--service imessage` — Force iMessage (requires recipient has iMessage)
+- `--service sms` — Force SMS (green bubble)
+- `--service auto` — Let Messages.app decide (default)
 
-## 尝试的想法
+## Safety Rules
 
-- 使用 `imsg chats --limit 10 --json` 发现聊天 ID。
-- 监控高信号聊天以流式传输传入消息。
+1. **Always confirm recipient and message content** before sending
+2. **Never send to unknown numbers** without explicit user approval
+3. **Be careful with attachments** — confirm file path exists
+4. **Rate limit yourself** — don't spam
+
+## Example Workflow
+
+User: "Text mom that I'll be late"
+
+```bash
+# 1. Find mom's chat
+imsg chats --limit 20 --json | jq '.[] | select(.displayName | contains("Mom"))'
+
+# 2. Confirm with user
+# "Found Mom at +1555123456. Send 'I'll be late' via iMessage?"
+
+# 3. Send after confirmation
+imsg send --to "+1555123456" --text "I'll be late"
+```

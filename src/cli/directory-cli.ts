@@ -9,6 +9,7 @@ import { defaultRuntime } from "../runtime.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { renderTable } from "../terminal/table.js";
 import { theme } from "../terminal/theme.js";
+import { formatHelpExamples } from "./help-format.js";
 
 function parseLimit(value: unknown): number | null {
   if (typeof value === "number" && Number.isFinite(value)) {
@@ -38,14 +39,51 @@ function buildRows(entries: Array<{ id: string; name?: string | undefined }>) {
   }));
 }
 
+function printDirectoryList(params: {
+  title: string;
+  emptyMessage: string;
+  entries: Array<{ id: string; name?: string | undefined }>;
+}): void {
+  if (params.entries.length === 0) {
+    defaultRuntime.log(theme.muted(params.emptyMessage));
+    return;
+  }
+
+  const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
+  defaultRuntime.log(`${theme.heading(params.title)} ${theme.muted(`(${params.entries.length})`)}`);
+  defaultRuntime.log(
+    renderTable({
+      width: tableWidth,
+      columns: [
+        { key: "ID", header: "ID", minWidth: 16, flex: true },
+        { key: "Name", header: "Name", minWidth: 18, flex: true },
+      ],
+      rows: buildRows(params.entries),
+    }).trimEnd(),
+  );
+}
+
 export function registerDirectoryCli(program: Command) {
   const directory = program
     .command("directory")
-    .description(t("Directory lookups (self, peers, groups) for channels that support it"))
+    .description(
+      t("Lookup contact and group IDs (self, peers, groups) for supported chat channels"),
+    )
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink(
+        `\n${theme.heading("Examples:")}\n${formatHelpExamples([
+          ["openclaw directory self --channel slack", "Show the connected account identity."],
+          [
+            'openclaw directory peers list --channel slack --query "alice"',
+            "Search contact/user IDs by name.",
+          ],
+          ["openclaw directory groups list --channel discord", "List available groups/channels."],
+          [
+            "openclaw directory groups members --channel discord --group-id <id>",
+            "List members for a specific group.",
+          ],
+        ])}\n\n${theme.muted("Docs:")} ${formatDocsLink(
           "/cli/directory",
           "docs.openclaw.ai/cli/directory",
         )}\n`,
@@ -56,9 +94,9 @@ export function registerDirectoryCli(program: Command) {
 
   const withChannel = (cmd: Command) =>
     cmd
-      .option("--channel <name>", t("Channel (auto when only one is configured)"))
-      .option("--account <id>", t("Account id (accountId)"))
-      .option("--json", t("Output JSON"), false);
+      .option("--channel <name>", "Channel (auto when only one is configured)")
+      .option("--account <id>", "Account id (accountId)")
+      .option("--json", "Output JSON", false);
 
   const resolve = async (opts: { channel?: string; account?: string }) => {
     const cfg = loadConfig();
@@ -73,6 +111,42 @@ export function registerDirectoryCli(program: Command) {
     }
     const accountId = opts.account?.trim() || resolveChannelDefaultAccountId({ plugin, cfg });
     return { cfg, channelId, accountId, plugin };
+  };
+
+  const runDirectoryList = async (params: {
+    opts: {
+      channel?: unknown;
+      account?: unknown;
+      query?: unknown;
+      limit?: unknown;
+      json?: unknown;
+    };
+    action: "listPeers" | "listGroups";
+    unsupported: string;
+    title: string;
+    emptyMessage: string;
+  }) => {
+    const { cfg, channelId, accountId, plugin } = await resolve({
+      channel: params.opts.channel as string | undefined,
+      account: params.opts.account as string | undefined,
+    });
+    const fn =
+      params.action === "listPeers" ? plugin.directory?.listPeers : plugin.directory?.listGroups;
+    if (!fn) {
+      throw new Error(`Channel ${channelId} does not support directory ${params.unsupported}`);
+    }
+    const result = await fn({
+      cfg,
+      accountId,
+      query: (params.opts.query as string | undefined) ?? null,
+      limit: parseLimit(params.opts.limit),
+      runtime: defaultRuntime,
+    });
+    if (params.opts.json) {
+      defaultRuntime.log(JSON.stringify(result, null, 2));
+      return;
+    }
+    printDirectoryList({ title: params.title, emptyMessage: params.emptyMessage, entries: result });
   };
 
   withChannel(directory.command("self").description(t("Show the current account user"))).action(
@@ -92,7 +166,7 @@ export function registerDirectoryCli(program: Command) {
           return;
         }
         if (!result) {
-          defaultRuntime.log(theme.muted(t("Not available.")));
+          defaultRuntime.log(theme.muted("Not available."));
           return;
         }
         const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
@@ -116,45 +190,17 @@ export function registerDirectoryCli(program: Command) {
 
   const peers = directory.command("peers").description(t("Peer directory (contacts/users)"));
   withChannel(peers.command("list").description(t("List peers")))
-    .option("--query <text>", t("Optional search query"))
-    .option("--limit <n>", t("Limit results"))
+    .option("--query <text>", "Optional search query")
+    .option("--limit <n>", "Limit results")
     .action(async (opts) => {
       try {
-        const { cfg, channelId, accountId, plugin } = await resolve({
-          channel: opts.channel as string | undefined,
-          account: opts.account as string | undefined,
+        await runDirectoryList({
+          opts,
+          action: "listPeers",
+          unsupported: "peers",
+          title: "Peers",
+          emptyMessage: "No peers found.",
         });
-        const fn = plugin.directory?.listPeers;
-        if (!fn) {
-          throw new Error(`Channel ${channelId} does not support directory peers`);
-        }
-        const result = await fn({
-          cfg,
-          accountId,
-          query: (opts.query as string | undefined) ?? null,
-          limit: parseLimit(opts.limit),
-          runtime: defaultRuntime,
-        });
-        if (opts.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        if (result.length === 0) {
-          defaultRuntime.log(theme.muted(t("No peers found.")));
-          return;
-        }
-        const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-        defaultRuntime.log(`${theme.heading("Peers")} ${theme.muted(`(${result.length})`)}`);
-        defaultRuntime.log(
-          renderTable({
-            width: tableWidth,
-            columns: [
-              { key: "ID", header: "ID", minWidth: 16, flex: true },
-              { key: "Name", header: "Name", minWidth: 18, flex: true },
-            ],
-            rows: buildRows(result),
-          }).trimEnd(),
-        );
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -163,45 +209,17 @@ export function registerDirectoryCli(program: Command) {
 
   const groups = directory.command("groups").description(t("Group directory"));
   withChannel(groups.command("list").description(t("List groups")))
-    .option("--query <text>", t("Optional search query"))
-    .option("--limit <n>", t("Limit results"))
+    .option("--query <text>", "Optional search query")
+    .option("--limit <n>", "Limit results")
     .action(async (opts) => {
       try {
-        const { cfg, channelId, accountId, plugin } = await resolve({
-          channel: opts.channel as string | undefined,
-          account: opts.account as string | undefined,
+        await runDirectoryList({
+          opts,
+          action: "listGroups",
+          unsupported: "groups",
+          title: "Groups",
+          emptyMessage: "No groups found.",
         });
-        const fn = plugin.directory?.listGroups;
-        if (!fn) {
-          throw new Error(`Channel ${channelId} does not support directory groups`);
-        }
-        const result = await fn({
-          cfg,
-          accountId,
-          query: (opts.query as string | undefined) ?? null,
-          limit: parseLimit(opts.limit),
-          runtime: defaultRuntime,
-        });
-        if (opts.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        if (result.length === 0) {
-          defaultRuntime.log(theme.muted(t("No groups found.")));
-          return;
-        }
-        const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-        defaultRuntime.log(`${theme.heading("Groups")} ${theme.muted(`(${result.length})`)}`);
-        defaultRuntime.log(
-          renderTable({
-            width: tableWidth,
-            columns: [
-              { key: "ID", header: "ID", minWidth: 16, flex: true },
-              { key: "Name", header: "Name", minWidth: 18, flex: true },
-            ],
-            rows: buildRows(result),
-          }).trimEnd(),
-        );
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -212,9 +230,9 @@ export function registerDirectoryCli(program: Command) {
     groups
       .command("members")
       .description(t("List group members"))
-      .requiredOption("--group-id <id>", t("Group id")),
+      .requiredOption("--group-id <id>", "Group id"),
   )
-    .option("--limit <n>", t("Limit results"))
+    .option("--limit <n>", "Limit results")
     .action(async (opts) => {
       try {
         const { cfg, channelId, accountId, plugin } = await resolve({
@@ -227,7 +245,7 @@ export function registerDirectoryCli(program: Command) {
         }
         const groupId = String(opts.groupId ?? "").trim();
         if (!groupId) {
-          throw new Error(t("Missing --group-id"));
+          throw new Error("Missing --group-id");
         }
         const result = await fn({
           cfg,
@@ -240,24 +258,11 @@ export function registerDirectoryCli(program: Command) {
           defaultRuntime.log(JSON.stringify(result, null, 2));
           return;
         }
-        if (result.length === 0) {
-          defaultRuntime.log(theme.muted(t("No group members found.")));
-          return;
-        }
-        const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
-        defaultRuntime.log(
-          `${theme.heading(t("Group Members"))} ${theme.muted(`(${result.length})`)}`,
-        );
-        defaultRuntime.log(
-          renderTable({
-            width: tableWidth,
-            columns: [
-              { key: "ID", header: "ID", minWidth: 16, flex: true },
-              { key: "Name", header: "Name", minWidth: 18, flex: true },
-            ],
-            rows: buildRows(result),
-          }).trimEnd(),
-        );
+        printDirectoryList({
+          title: "Group Members",
+          emptyMessage: "No group members found.",
+          entries: result,
+        });
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);

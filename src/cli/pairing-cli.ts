@@ -27,7 +27,7 @@ function parseChannel(raw: unknown, channels: PairingChannel[]): PairingChannel 
     .trim()
     .toLowerCase();
   if (!value) {
-    throw new Error(t("Channel required"));
+    throw new Error("Channel required");
   }
 
   const normalized = normalizeChannelId(value);
@@ -64,18 +64,22 @@ export function registerPairingCli(program: Command) {
   pairing
     .command("list")
     .description(t("List pending pairing requests"))
-    .option("--channel <channel>", `Channel (${channels.join(t(", "))})`)
-    .argument("[channel]", `Channel (${channels.join(t(", "))})`)
-    .option("--json", t("Print JSON"), false)
+    .option("--channel <channel>", `Channel (${channels.join(", ")})`)
+    .option("--account <accountId>", "Account id (for multi-account channels)")
+    .argument("[channel]", `Channel (${channels.join(", ")})`)
+    .option("--json", "Print JSON", false)
     .action(async (channelArg, opts) => {
-      const channelRaw = opts.channel ?? channelArg;
+      const channelRaw = opts.channel ?? channelArg ?? (channels.length === 1 ? channels[0] : "");
       if (!channelRaw) {
         throw new Error(
-          `Channel required. Use --channel <channel> or pass it as the first argument (expected one of: ${channels.join(t(", "))})`,
+          `Channel required. Use --channel <channel> or pass it as the first argument (expected one of: ${channels.join(", ")})`,
         );
       }
       const channel = parseChannel(channelRaw, channels);
-      const requests = await listChannelPairingRequests(channel);
+      const accountId = String(opts.account ?? "").trim();
+      const requests = accountId
+        ? await listChannelPairingRequests(channel, process.env, accountId)
+        : await listChannelPairingRequests(channel);
       if (opts.json) {
         defaultRuntime.log(JSON.stringify({ channel, requests }, null, 2));
         return;
@@ -87,7 +91,7 @@ export function registerPairingCli(program: Command) {
       const idLabel = resolvePairingIdLabel(channel);
       const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
       defaultRuntime.log(
-        `${theme.heading(t("Pairing requests"))} ${theme.muted(`(${requests.length})`)}`,
+        `${theme.heading("Pairing requests")} ${theme.muted(`(${requests.length})`)}`,
       );
       defaultRuntime.log(
         renderTable({
@@ -111,28 +115,47 @@ export function registerPairingCli(program: Command) {
   pairing
     .command("approve")
     .description(t("Approve a pairing code and allow that sender"))
-    .option("--channel <channel>", `Channel (${channels.join(t(", "))})`)
-    .argument("<codeOrChannel>", t("Pairing code (or channel when using 2 args)"))
-    .argument("[code]", t("Pairing code (when channel is passed as the 1st arg)"))
-    .option("--notify", t("Notify the requester on the same channel"), false)
+    .option("--channel <channel>", `Channel (${channels.join(", ")})`)
+    .option("--account <accountId>", "Account id (for multi-account channels)")
+    .argument("<codeOrChannel>", "Pairing code (or channel when using 2 args)")
+    .argument("[code]", "Pairing code (when channel is passed as the 1st arg)")
+    .option("--notify", "Notify the requester on the same channel", false)
     .action(async (codeOrChannel, code, opts) => {
-      const channelRaw = opts.channel ?? codeOrChannel;
-      const resolvedCode = opts.channel ? codeOrChannel : code;
-      if (!opts.channel && !code) {
+      const defaultChannel = channels.length === 1 ? channels[0] : "";
+      const usingExplicitChannel = Boolean(opts.channel);
+      const hasPositionalCode = code != null;
+      const channelRaw = usingExplicitChannel
+        ? opts.channel
+        : hasPositionalCode
+          ? codeOrChannel
+          : defaultChannel;
+      const resolvedCode = usingExplicitChannel
+        ? codeOrChannel
+        : hasPositionalCode
+          ? code
+          : codeOrChannel;
+      if (!channelRaw || !resolvedCode) {
         throw new Error(
-          `Usage: ${formatCliCommand(t("openclaw pairing approve <channel> <code>"))} (or: ${formatCliCommand(t("openclaw pairing approve --channel <channel> <code>"))})`,
+          `Usage: ${formatCliCommand("openclaw pairing approve <channel> <code>")} (or: ${formatCliCommand("openclaw pairing approve --channel <channel> <code>")})`,
         );
       }
       if (opts.channel && code != null) {
         throw new Error(
-          `Too many arguments. Use: ${formatCliCommand(t("openclaw pairing approve --channel <channel> <code>"))}`,
+          `Too many arguments. Use: ${formatCliCommand("openclaw pairing approve --channel <channel> <code>")}`,
         );
       }
       const channel = parseChannel(channelRaw, channels);
-      const approved = await approveChannelPairingCode({
-        channel,
-        code: String(resolvedCode),
-      });
+      const accountId = String(opts.account ?? "").trim();
+      const approved = accountId
+        ? await approveChannelPairingCode({
+            channel,
+            code: String(resolvedCode),
+            accountId,
+          })
+        : await approveChannelPairingCode({
+            channel,
+            code: String(resolvedCode),
+          });
       if (!approved) {
         throw new Error(`No pending pairing request found for code: ${String(resolvedCode)}`);
       }

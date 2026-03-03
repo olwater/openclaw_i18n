@@ -1,9 +1,14 @@
 import type { Command } from "commander";
-import type { BrowserParentOpts } from "../browser-cli-shared.js";
 import { danger } from "../../globals.js";
 import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
-import { callBrowserAct, readFields, resolveBrowserActionContext } from "./shared.js";
+import type { BrowserParentOpts } from "../browser-cli-shared.js";
+import {
+  callBrowserAct,
+  logBrowserActionResult,
+  readFields,
+  resolveBrowserActionContext,
+} from "./shared.js";
 
 export function registerBrowserFormWaitEvalCommands(
   browser: Command,
@@ -12,9 +17,9 @@ export function registerBrowserFormWaitEvalCommands(
   browser
     .command("fill")
     .description(t("Fill a form with JSON field descriptors"))
-    .option("--fields <json>", t("JSON array of field objects"))
-    .option("--fields-file <path>", t("Read JSON array from a file"))
-    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
+    .option("--fields <json>", "JSON array of field objects")
+    .option("--fields-file <path>", "Read JSON array from a file")
+    .option("--target-id <id>", "CDP target id (or unique prefix)")
     .action(async (opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       try {
@@ -31,11 +36,7 @@ export function registerBrowserFormWaitEvalCommands(
             targetId: opts.targetId?.trim() || undefined,
           },
         });
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        defaultRuntime.log(`filled ${fields.length} field(s)`);
+        logBrowserActionResult(parent, result, `filled ${fields.length} field(s)`);
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -45,19 +46,19 @@ export function registerBrowserFormWaitEvalCommands(
   browser
     .command("wait")
     .description(t("Wait for time, selector, URL, load state, or JS conditions"))
-    .argument("[selector]", t("CSS selector to wait for (visible)"))
-    .option("--time <ms>", t("Wait for N milliseconds"), (v: string) => Number(v))
-    .option("--text <value>", t("Wait for text to appear"))
-    .option("--text-gone <value>", t("Wait for text to disappear"))
-    .option("--url <pattern>", t("Wait for URL (supports globs like **/dash)"))
-    .option("--load <load|domcontentloaded|networkidle>", t("Wait for load state"))
-    .option("--fn <js>", t("Wait for JS condition (passed to waitForFunction)"))
+    .argument("[selector]", "CSS selector to wait for (visible)")
+    .option("--time <ms>", "Wait for N milliseconds", (v: string) => Number(v))
+    .option("--text <value>", "Wait for text to appear")
+    .option("--text-gone <value>", "Wait for text to disappear")
+    .option("--url <pattern>", "Wait for URL (supports globs like **/dash)")
+    .option("--load <load|domcontentloaded|networkidle>", "Wait for load state")
+    .option("--fn <js>", "Wait for JS condition (passed to waitForFunction)")
     .option(
       "--timeout-ms <ms>",
-      t("How long to wait for each condition (default: 20000)"),
+      "How long to wait for each condition (default: 20000)",
       (v: string) => Number(v),
     )
-    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
+    .option("--target-id <id>", "CDP target id (or unique prefix)")
     .action(async (selector: string | undefined, opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       try {
@@ -84,11 +85,7 @@ export function registerBrowserFormWaitEvalCommands(
           },
           timeoutMs,
         });
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        defaultRuntime.log(t("wait complete"));
+        logBrowserActionResult(parent, result, "wait complete");
       } catch (err) {
         defaultRuntime.error(danger(String(err)));
         defaultRuntime.exit(1);
@@ -98,13 +95,13 @@ export function registerBrowserFormWaitEvalCommands(
   browser
     .command("evaluate")
     .description(t("Evaluate a function against the page or a ref"))
-    .option("--fn <code>", t("Function source, e.g. (el) => el.textContent"))
-    .option("--ref <id>", t("Ref from snapshot"))
-    .option("--target-id <id>", t("CDP target id (or unique prefix)"))
+    .option("--fn <code>", "Function source, e.g. (el) => el.textContent")
+    .option("--ref <id>", "Ref from snapshot")
+    .option("--target-id <id>", "CDP target id (or unique prefix)")
     .action(async (opts, cmd) => {
       const { parent, profile } = resolveBrowserActionContext(cmd, parentOpts);
       if (!opts.fn) {
-        defaultRuntime.error(danger(t("Missing --fn")));
+        defaultRuntime.error(danger("Missing --fn"));
         defaultRuntime.exit(1);
         return;
       }

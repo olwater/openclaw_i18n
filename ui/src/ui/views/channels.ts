@@ -1,4 +1,5 @@
 import { html, nothing } from "lit";
+import { formatRelativeTimestamp } from "../format.ts";
 import type {
   ChannelAccountSnapshot,
   ChannelUiMetaEntry,
@@ -13,9 +14,6 @@ import type {
   TelegramStatus,
   WhatsAppStatus,
 } from "../types.ts";
-import type { ChannelKey, ChannelsChannelData, ChannelsProps } from "./channels.types.ts";
-import { formatRelativeTimestamp } from "../format.ts";
-import { t } from "../i18n/index.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
 import { renderDiscordCard } from "./channels.discord.ts";
 import { renderGoogleChatCard } from "./channels.googlechat.ts";
@@ -25,6 +23,7 @@ import { channelEnabled, renderChannelAccountCount } from "./channels.shared.ts"
 import { renderSignalCard } from "./channels.signal.ts";
 import { renderSlackCard } from "./channels.slack.ts";
 import { renderTelegramCard } from "./channels.telegram.ts";
+import type { ChannelKey, ChannelsChannelData, ChannelsProps } from "./channels.types.ts";
 import { renderWhatsAppCard } from "./channels.whatsapp.ts";
 
 export function renderChannels(props: ChannelsProps) {
@@ -71,8 +70,8 @@ export function renderChannels(props: ChannelsProps) {
     <section class="card" style="margin-top: 18px;">
       <div class="row" style="justify-content: space-between;">
         <div>
-          <div class="card-title">${t("Channel health")}</div>
-          <div class="card-sub">${t("Channel status snapshots from the gateway.")}</div>
+          <div class="card-title">Channel health</div>
+          <div class="card-sub">Channel status snapshots from the gateway.</div>
         </div>
         <div class="muted">${props.lastSuccessAt ? formatRelativeTimestamp(props.lastSuccessAt) : "n/a"}</div>
       </div>
@@ -84,7 +83,7 @@ export function renderChannels(props: ChannelsProps) {
           : nothing
       }
       <pre class="code-block" style="margin-top: 12px;">
-${props.snapshot ? JSON.stringify(props.snapshot, null, 2) : t("No snapshot yet.")}
+${props.snapshot ? JSON.stringify(props.snapshot, null, 2) : "No snapshot yet."}
       </pre>
     </section>
   `;
@@ -195,7 +194,7 @@ function renderGenericChannelCard(
   return html`
     <div class="card">
       <div class="card-title">${label}</div>
-      <div class="card-sub">${t("Channel status and configuration.")}</div>
+      <div class="card-sub">Channel status and configuration.</div>
       ${accountCountLabel}
 
       ${
@@ -208,16 +207,16 @@ function renderGenericChannelCard(
           : html`
             <div class="status-list" style="margin-top: 16px;">
               <div>
-                <span class="label">${t("Configured")}</span>
-                <span>${configured == null ? t("n/a") : configured ? t("Yes") : t("No")}</span>
+                <span class="label">Configured</span>
+                <span>${configured == null ? "n/a" : configured ? "Yes" : "No"}</span>
               </div>
               <div>
-                <span class="label">${t("Running")}</span>
-                <span>${running == null ? t("n/a") : running ? t("Yes") : t("No")}</span>
+                <span class="label">Running</span>
+                <span>${running == null ? "n/a" : running ? "Yes" : "No"}</span>
               </div>
               <div>
-                <span class="label">${t("Connected")}</span>
-                <span>${connected == null ? t("n/a") : connected ? t("Yes") : t("No")}</span>
+                <span class="label">Connected</span>
+                <span>${connected == null ? "n/a" : connected ? "Yes" : "No"}</span>
               </div>
             </div>
           `
@@ -261,25 +260,25 @@ function hasRecentActivity(account: ChannelAccountSnapshot): boolean {
 
 function deriveRunningStatus(account: ChannelAccountSnapshot): "Yes" | "No" | "Active" {
   if (account.running) {
-    return t("Yes") as "Yes";
+    return "Yes";
   }
   // If we have recent inbound activity, the channel is effectively running
   if (hasRecentActivity(account)) {
-    return t("Active") as "Active";
+    return "Active";
   }
-  return t("No") as "No";
+  return "No";
 }
 
 function deriveConnectedStatus(account: ChannelAccountSnapshot): "Yes" | "No" | "Active" | "n/a" {
   if (account.connected === true) {
-    return t("Yes") as "Yes";
+    return "Yes";
   }
   if (account.connected === false) {
-    return t("No") as "No";
+    return "No";
   }
   // If connected is null/undefined but we have recent activity, show as active
   if (hasRecentActivity(account)) {
-    return t("Active") as "Active";
+    return "Active";
   }
   return "n/a";
 }
@@ -296,20 +295,20 @@ function renderGenericAccount(account: ChannelAccountSnapshot) {
       </div>
       <div class="status-list account-card-status">
         <div>
-          <span class="label">${t("Running")}</span>
+          <span class="label">Running</span>
           <span>${runningStatus}</span>
         </div>
         <div>
-          <span class="label">${t("Configured")}</span>
-          <span>${account.configured ? t("Yes") : t("No")}</span>
+          <span class="label">Configured</span>
+          <span>${account.configured ? "Yes" : "No"}</span>
         </div>
         <div>
-          <span class="label">${t("Connected")}</span>
+          <span class="label">Connected</span>
           <span>${connectedStatus}</span>
         </div>
         <div>
-          <span class="label">${t("Last inbound")}</span>
-          <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : t("n/a")}</span>
+          <span class="label">Last inbound</span>
+          <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : "n/a"}</span>
         </div>
         ${
           account.lastError

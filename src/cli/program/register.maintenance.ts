@@ -18,14 +18,14 @@ export function registerMaintenanceCommands(program: Command) {
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/doctor", "docs.openclaw.ai/cli/doctor")}\n`,
     )
-    .option("--no-workspace-suggestions", t("Disable workspace memory system suggestions"), false)
-    .option("--yes", t("Accept defaults without prompting"), false)
-    .option("--repair", t("Apply recommended repairs without prompting"), false)
-    .option("--fix", t("Apply recommended repairs (alias for --repair)"), false)
-    .option("--force", t("Apply aggressive repairs (overwrites custom service config)"), false)
-    .option("--non-interactive", t("Run without prompts (safe migrations only)"), false)
-    .option("--generate-gateway-token", t("Generate and configure a gateway token"), false)
-    .option("--deep", t("Scan system services for extra gateway installs"), false)
+    .option("--no-workspace-suggestions", "Disable workspace memory system suggestions", false)
+    .option("--yes", "Accept defaults without prompting", false)
+    .option("--repair", "Apply recommended repairs without prompting", false)
+    .option("--fix", "Apply recommended repairs (alias for --repair)", false)
+    .option("--force", "Apply aggressive repairs (overwrites custom service config)", false)
+    .option("--non-interactive", "Run without prompts (safe migrations only)", false)
+    .option("--generate-gateway-token", "Generate and configure a gateway token", false)
+    .option("--deep", "Scan system services for extra gateway installs", false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await doctorCommand(defaultRuntime, {
@@ -37,6 +37,7 @@ export function registerMaintenanceCommands(program: Command) {
           generateGatewayToken: Boolean(opts.generateGatewayToken),
           deep: Boolean(opts.deep),
         });
+        defaultRuntime.exit(0);
       });
     });
 
@@ -48,11 +49,11 @@ export function registerMaintenanceCommands(program: Command) {
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/dashboard", "docs.openclaw.ai/cli/dashboard")}\n`,
     )
-    .option("--no-open", t("Print URL but do not launch a browser"), false)
+    .option("--no-open", "Print URL but do not launch a browser")
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await dashboardCommand(defaultRuntime, {
-          noOpen: Boolean(opts.noOpen),
+          noOpen: opts.open === false,
         });
       });
     });
@@ -65,10 +66,10 @@ export function registerMaintenanceCommands(program: Command) {
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/reset", "docs.openclaw.ai/cli/reset")}\n`,
     )
-    .option("--scope <scope>", t("config|config+creds+sessions|full (default: interactive prompt)"))
-    .option("--yes", t("Skip confirmation prompts"), false)
-    .option("--non-interactive", t("Disable prompts (requires --scope + --yes)"), false)
-    .option("--dry-run", t("Print actions without removing files"), false)
+    .option("--scope <scope>", "config|config+creds+sessions|full (default: interactive prompt)")
+    .option("--yes", "Skip confirmation prompts", false)
+    .option("--non-interactive", "Disable prompts (requires --scope + --yes)", false)
+    .option("--dry-run", "Print actions without removing files", false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await resetCommand(defaultRuntime, {
@@ -88,14 +89,14 @@ export function registerMaintenanceCommands(program: Command) {
       () =>
         `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/uninstall", "docs.openclaw.ai/cli/uninstall")}\n`,
     )
-    .option("--service", t("Remove the gateway service"), false)
-    .option("--state", t("Remove state + config"), false)
-    .option("--workspace", t("Remove workspace dirs"), false)
-    .option("--app", t("Remove the macOS app"), false)
-    .option("--all", t("Remove service + state + workspace + app"), false)
-    .option("--yes", t("Skip confirmation prompts"), false)
-    .option("--non-interactive", t("Disable prompts (requires --yes)"), false)
-    .option("--dry-run", t("Print actions without removing files"), false)
+    .option("--service", "Remove the gateway service", false)
+    .option("--state", "Remove state + config", false)
+    .option("--workspace", "Remove workspace dirs", false)
+    .option("--app", "Remove the macOS app", false)
+    .option("--all", "Remove service + state + workspace + app", false)
+    .option("--yes", "Skip confirmation prompts", false)
+    .option("--non-interactive", "Disable prompts (requires --yes)", false)
+    .option("--dry-run", "Print actions without removing files", false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await uninstallCommand(defaultRuntime, {

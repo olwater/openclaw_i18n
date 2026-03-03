@@ -1,6 +1,4 @@
 import type { Command } from "commander";
-import type { NodesRpcOpts } from "./types.js";
-import { randomIdempotencyKey } from "../../gateway/call.js";
 import { t } from "../../i18n/index.js";
 import { defaultRuntime } from "../../runtime.js";
 import { shortenHomePath } from "../../utils.js";
@@ -11,7 +9,8 @@ import {
 } from "../nodes-screen.js";
 import { parseDurationMs } from "../parse-duration.js";
 import { runNodesCommand } from "./cli-utils.js";
-import { callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
+import { buildNodeInvokeParams, callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
+import type { NodesRpcOpts } from "./types.js";
 
 export function registerNodesScreenCommands(nodes: Command) {
   const screen = nodes
@@ -22,15 +21,15 @@ export function registerNodesScreenCommands(nodes: Command) {
     screen
       .command("record")
       .description(t("Capture a short screen recording from a node (prints MEDIA:<path>)"))
-      .requiredOption("--node <idOrNameOrIp>", t("Node id, name, or IP"))
-      .option("--screen <index>", t("Screen index (0 = primary)"), "0")
-      .option("--duration <ms|10s>", t("Clip duration (ms or 10s)"), "10000")
-      .option("--fps <fps>", t("Frames per second"), "10")
-      .option("--no-audio", t("Disable microphone audio capture"))
-      .option("--out <path>", t("Output path"))
-      .option("--invoke-timeout <ms>", t("Node invoke timeout in ms (default 120000)"), "120000")
+      .requiredOption("--node <idOrNameOrIp>", "Node id, name, or IP")
+      .option("--screen <index>", "Screen index (0 = primary)", "0")
+      .option("--duration <ms|10s>", "Clip duration (ms or 10s)", "10000")
+      .option("--fps <fps>", "Frames per second", "10")
+      .option("--no-audio", "Disable microphone audio capture")
+      .option("--out <path>", "Output path")
+      .option("--invoke-timeout <ms>", "Node invoke timeout in ms (default 120000)", "120000")
       .action(async (opts: NodesRpcOpts & { out?: string }) => {
-        await runNodesCommand(t("screen record"), async () => {
+        await runNodesCommand("screen record", async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
           const durationMs = parseDurationMs(opts.duration ?? "");
           const screenIndex = Number.parseInt(String(opts.screen ?? "0"), 10);
@@ -39,7 +38,7 @@ export function registerNodesScreenCommands(nodes: Command) {
             ? Number.parseInt(String(opts.invokeTimeout), 10)
             : undefined;
 
-          const invokeParams: Record<string, unknown> = {
+          const invokeParams = buildNodeInvokeParams({
             nodeId,
             command: "screen.record",
             params: {
@@ -49,11 +48,8 @@ export function registerNodesScreenCommands(nodes: Command) {
               format: "mp4",
               includeAudio: opts.audio !== false,
             },
-            idempotencyKey: randomIdempotencyKey(),
-          };
-          if (typeof timeoutMs === "number" && Number.isFinite(timeoutMs)) {
-            invokeParams.timeoutMs = timeoutMs;
-          }
+            timeoutMs,
+          });
 
           const raw = await callGatewayCli("node.invoke", opts, invokeParams);
           const res = typeof raw === "object" && raw !== null ? (raw as { payload?: unknown }) : {};

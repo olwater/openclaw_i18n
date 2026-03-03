@@ -1,6 +1,6 @@
 ---
 name: sonoscli
-description: 控制 Sonos 扬声器（发现/状态/播放/音量/分组）。
+description: Control Sonos speakers (discover/status/play/volume/group).
 homepage: https://sonoscli.sh
 metadata:
   {
@@ -15,7 +15,7 @@ metadata:
               "kind": "go",
               "module": "github.com/steipete/sonoscli/cmd/sonos@latest",
               "bins": ["sonos"],
-              "label": "安装 sonoscli (go)",
+              "label": "Install sonoscli (go)",
             },
           ],
       },
@@ -24,23 +24,42 @@ metadata:
 
 # Sonos CLI
 
-使用 `sonos` 控制本地网络中的 Sonos 扬声器。
+Use `sonos` to control Sonos speakers on the local network.
 
-## 快速开始
+## Quick start
 
 - `sonos discover`
-- `sonos status --name "厨房"`
-- `sonos play|pause|stop --name "厨房"`
-- `sonos volume set 15 --name "厨房"`
+- `sonos status --name "Kitchen"`
+- `sonos play|pause|stop --name "Kitchen"`
+- `sonos volume set 15 --name "Kitchen"`
 
-## 常用任务
+## Common tasks
 
-- 分组：`sonos group status|join|unjoin|party|solo`
-- 收藏夹：`sonos favorites list|open`
-- 队列：`sonos queue list|play|clear`
-- Spotify 搜索（通过 SMAPI）：`sonos smapi search --service "Spotify" --category tracks "查询内容"`
+- Grouping: `sonos group status|join|unjoin|party|solo`
+- Favorites: `sonos favorites list|open`
+- Queue: `sonos queue list|play|clear`
+- Spotify search (via SMAPI): `sonos smapi search --service "Spotify" --category tracks "query"`
 
-## 注意事项
+## Notes
 
-- 如果 SSDP 发现失败，请指定 `--ip <扬声器 IP>`。
-- Spotify Web API 搜索是可选的，需要设置 `SPOTIFY_CLIENT_ID/SECRET`。
+- If SSDP fails, specify `--ip <speaker-ip>`.
+- Spotify Web API search is optional and requires `SPOTIFY_CLIENT_ID/SECRET`.
+- If there is an error, check the troubleshooting section and offer advice if there is a decent match.
+
+## Troubleshooting
+
+### `sonos discover` - `no route to host`
+
+- On error `Error: write udp4 0.0.0.0:64326->239.255.255.250:1900: sendto: no route to host (Command exited with code 1)`
+  - Note that the port number after `0.0.0.0:` is ephemeral and will change and the netmask may not match exactly either
+  - The `sendto: no route to host` should stay consistent
+- Advise the user that in `direct` (no Docker sandbox) mode on Mac OS that Settings -> Privacy & Security -> Local Network will need to be enabled for the top-level host parent process of the Gateway
+  - `node` if running via `launchd`
+  - `Terminal` if running the gateway directly in the terminal
+  - `Visual Studio Code` if running via terminal in VS Code
+- An alternative option is to use `sandbox` (docker container) with network access allowed for that sandbox
+
+### `sonos discover` - `bind: operation not permitted`
+
+- On error `Error: listen udp4 0.0.0.0:0: bind: operation not permitted`
+- Advise the user that they may be running via a Codex or other sandbox that does not permit network access (this can be replicated by running `sonos discover` within a Codex CLI session with sandbox enabled and not approving the escalation request)

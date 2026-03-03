@@ -1,23 +1,22 @@
-import type { GatewayStatusSummary } from "./tui-types.js";
-import { t } from "../i18n/index.js";
 import { formatTimeAgo } from "../infra/format-time/format-relative.ts";
 import { formatTokenCount } from "../utils/usage-format.js";
 import { formatContextUsageLine } from "./tui-formatters.js";
+import type { GatewayStatusSummary } from "./tui-types.js";
 
 export function formatStatusSummary(summary: GatewayStatusSummary) {
   const lines: string[] = [];
-  lines.push(t("Gateway status"));
+  lines.push("Gateway status");
 
   if (!summary.linkChannel) {
-    lines.push(t("Link channel: unknown"));
+    lines.push("Link channel: unknown");
   } else {
-    const linkLabel = summary.linkChannel.label ?? t("Link channel");
+    const linkLabel = summary.linkChannel.label ?? "Link channel";
     const linked = summary.linkChannel.linked === true;
     const authAge =
       linked && typeof summary.linkChannel.authAgeMs === "number"
         ? ` (last refreshed ${formatTimeAgo(summary.linkChannel.authAgeMs)})`
         : "";
-    lines.push(`${linkLabel}: ${linked ? "linked" : t("not linked")}${authAge}`);
+    lines.push(`${linkLabel}: ${linked ? "linked" : "not linked"}${authAge}`);
   }
 
   const providerSummary = Array.isArray(summary.providerSummary) ? summary.providerSummary : [];
@@ -39,7 +38,7 @@ export function formatStatusSummary(summary: GatewayStatusSummary) {
       return `${agent.every ?? "unknown"} (${agentId})`;
     });
     lines.push("");
-    lines.push(`Heartbeat: ${heartbeatParts.join(t(", "))}`);
+    lines.push(`Heartbeat: ${heartbeatParts.join(", ")}`);
   }
 
   const sessionPaths = summary.sessions?.paths ?? [];
@@ -62,9 +61,9 @@ export function formatStatusSummary(summary: GatewayStatusSummary) {
 
   const recent = Array.isArray(summary.sessions?.recent) ? summary.sessions?.recent : [];
   if (recent.length > 0) {
-    lines.push(t("Recent sessions:"));
+    lines.push("Recent sessions:");
     for (const entry of recent) {
-      const ageLabel = typeof entry.age === "number" ? formatTimeAgo(entry.age) : t("no activity");
+      const ageLabel = typeof entry.age === "number" ? formatTimeAgo(entry.age) : "no activity";
       const model = entry.model ?? "unknown";
       const usage = formatContextUsageLine({
         total: entry.totalTokens ?? null,
@@ -72,7 +71,7 @@ export function formatStatusSummary(summary: GatewayStatusSummary) {
         remaining: entry.remainingTokens ?? null,
         percent: entry.percentUsed ?? null,
       });
-      const flags = entry.flags?.length ? ` | flags: ${entry.flags.join(t(", "))}` : "";
+      const flags = entry.flags?.length ? ` | flags: ${entry.flags.join(", ")}` : "";
       lines.push(
         `- ${entry.key}${entry.kind ? ` [${entry.kind}]` : ""} | ${ageLabel} | model ${model} | ${usage}${flags}`,
       );
@@ -81,7 +80,7 @@ export function formatStatusSummary(summary: GatewayStatusSummary) {
 
   const queued = Array.isArray(summary.queuedSystemEvents) ? summary.queuedSystemEvents : [];
   if (queued.length > 0) {
-    const preview = queued.slice(0, 3).join(t(" | "));
+    const preview = queued.slice(0, 3).join(" | ");
     lines.push(`Queued system events (${queued.length}): ${preview}`);
   }
 

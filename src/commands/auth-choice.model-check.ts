@@ -1,12 +1,9 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { WizardPrompter } from "../wizard/prompts.js";
-import { resolveAgentModelPrimary } from "../agents/agent-scope.js";
 import { ensureAuthProfileStore, listProfilesForProvider } from "../agents/auth-profiles.js";
-import { DEFAULT_MODEL, DEFAULT_PROVIDER } from "../agents/defaults.js";
 import { getCustomProviderApiKey, resolveEnvApiKey } from "../agents/model-auth.js";
 import { loadModelCatalog } from "../agents/model-catalog.js";
-import { resolveConfiguredModelRef } from "../agents/model-selection.js";
-import { t } from "../i18n/index.js";
+import { resolveDefaultModelForAgent } from "../agents/model-selection.js";
+import type { OpenClawConfig } from "../config/config.js";
+import type { WizardPrompter } from "../wizard/prompts.js";
 import { OPENAI_CODEX_DEFAULT_MODEL } from "./openai-codex-model-default.js";
 
 export async function warnIfModelConfigLooksOff(
@@ -14,35 +11,13 @@ export async function warnIfModelConfigLooksOff(
   prompter: WizardPrompter,
   options?: { agentId?: string; agentDir?: string },
 ) {
-  const agentModelOverride = options?.agentId
-    ? resolveAgentModelPrimary(config, options.agentId)
-    : undefined;
-  const configWithModel =
-    agentModelOverride && agentModelOverride.length > 0
-      ? {
-          ...config,
-          agents: {
-            ...config.agents,
-            defaults: {
-              ...config.agents?.defaults,
-              model: {
-                ...(typeof config.agents?.defaults?.model === "object"
-                  ? config.agents.defaults.model
-                  : undefined),
-                primary: agentModelOverride,
-              },
-            },
-          },
-        }
-      : config;
-  const ref = resolveConfiguredModelRef({
-    cfg: configWithModel,
-    defaultProvider: DEFAULT_PROVIDER,
-    defaultModel: DEFAULT_MODEL,
+  const ref = resolveDefaultModelForAgent({
+    cfg: config,
+    agentId: options?.agentId,
   });
   const warnings: string[] = [];
   const catalog = await loadModelCatalog({
-    config: configWithModel,
+    config,
     useCache: false,
   });
   if (catalog.length > 0) {
@@ -51,9 +26,7 @@ export async function warnIfModelConfigLooksOff(
     );
     if (!known) {
       warnings.push(
-        t("Model not found: {provider}/{model}. Update agents.defaults.model or run /models list.")
-          .replace("{provider}", ref.provider)
-          .replace("{model}", ref.model),
+        `Model not found: ${ref.provider}/${ref.model}. Update agents.defaults.model or run /models list.`,
       );
     }
   }
@@ -64,9 +37,7 @@ export async function warnIfModelConfigLooksOff(
   const customKey = getCustomProviderApiKey(config, ref.provider);
   if (!hasProfile && !envKey && !customKey) {
     warnings.push(
-      t(
-        'No auth configured for provider "{provider}". The agent may fail until credentials are added.',
-      ).replace("{provider}", ref.provider),
+      `No auth configured for provider "${ref.provider}". The agent may fail until credentials are added.`,
     );
   }
 
@@ -74,14 +45,12 @@ export async function warnIfModelConfigLooksOff(
     const hasCodex = listProfilesForProvider(store, "openai-codex").length > 0;
     if (hasCodex) {
       warnings.push(
-        t(
-          "Detected OpenAI Codex OAuth. Consider setting agents.defaults.model to {model}.",
-        ).replace("{model}", OPENAI_CODEX_DEFAULT_MODEL),
+        `Detected OpenAI Codex OAuth. Consider setting agents.defaults.model to ${OPENAI_CODEX_DEFAULT_MODEL}.`,
       );
     }
   }
 
   if (warnings.length > 0) {
-    await prompter.note(warnings.join("\n"), t("Model check"));
+    await prompter.note(warnings.join("\n"), "Model check");
   }
 }

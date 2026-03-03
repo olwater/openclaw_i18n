@@ -1,8 +1,9 @@
-import type { Command } from "commander";
 import { setTimeout as delay } from "node:timers/promises";
+import type { Command } from "commander";
 import { buildGatewayConnectionDetails } from "../gateway/call.js";
 import { t } from "../i18n/index.js";
 import { parseLogLine } from "../logging/parse-log-line.js";
+import { formatLocalIsoWithOffset, isValidTimeZone } from "../logging/timestamps.js";
 import { formatDocsLink } from "../terminal/links.js";
 import { clearActiveProgressLine } from "../terminal/progress-line.js";
 import { createSafeStreamWriter } from "../terminal/stream-writer.js";
@@ -27,6 +28,7 @@ type LogsCliOptions = {
   json?: boolean;
   plain?: boolean;
   color?: boolean;
+  localTime?: boolean;
   url?: string;
   token?: string;
   timeout?: string;
@@ -55,12 +57,16 @@ async function fetchLogs(
     { progress: showProgress },
   );
   if (!payload || typeof payload !== "object") {
-    throw new Error(t("Unexpected logs.tail response"));
+    throw new Error("Unexpected logs.tail response");
   }
   return payload as LogsTailPayload;
 }
 
-function formatLogTimestamp(value?: string, mode: "pretty" | "plain" = "plain") {
+export function formatLogTimestamp(
+  value?: string,
+  mode: "pretty" | "plain" = "plain",
+  localTime = false,
+) {
   if (!value) {
     return "";
   }
@@ -68,10 +74,17 @@ function formatLogTimestamp(value?: string, mode: "pretty" | "plain" = "plain") 
   if (Number.isNaN(parsed.getTime())) {
     return value;
   }
-  if (mode === "pretty") {
-    return parsed.toISOString().slice(11, 19);
+
+  let timeString: string;
+  if (localTime) {
+    timeString = formatLocalIsoWithOffset(parsed);
+  } else {
+    timeString = parsed.toISOString();
   }
-  return parsed.toISOString();
+  if (mode === "pretty") {
+    return timeString.slice(11, 19);
+  }
+  return timeString;
 }
 
 function formatLogLine(
@@ -79,6 +92,7 @@ function formatLogLine(
   opts: {
     pretty: boolean;
     rich: boolean;
+    localTime: boolean;
   },
 ): string {
   const parsed = parseLogLine(raw);
@@ -86,7 +100,7 @@ function formatLogLine(
     return raw;
   }
   const label = parsed.subsystem ?? parsed.module ?? "";
-  const time = formatLogTimestamp(parsed.time, opts.pretty ? "pretty" : "plain");
+  const time = formatLogTimestamp(parsed.time, opts.pretty ? "pretty" : "plain", opts.localTime);
   const level = parsed.level ?? "";
   const levelLabel = level.padEnd(5).trim();
   const message = parsed.message || parsed.raw;
@@ -151,8 +165,8 @@ function emitGatewayError(
   errorLine: (text: string) => boolean,
 ) {
   const details = buildGatewayConnectionDetails({ url: opts.url });
-  const message = t("Gateway not reachable. Is it running and accessible?");
-  const hint = `Hint: run \`${formatCliCommand(t("openclaw doctor"))}\`.`;
+  const message = "Gateway not reachable. Is it running and accessible?";
+  const hint = `Hint: run \`${formatCliCommand("openclaw doctor")}\`.`;
   const errorText = err instanceof Error ? err.message : String(err);
 
   if (mode === "json") {
@@ -186,13 +200,14 @@ export function registerLogsCli(program: Command) {
   const logs = program
     .command("logs")
     .description(t("Tail gateway file logs via RPC"))
-    .option("--limit <n>", t("Max lines to return"), "200")
-    .option("--max-bytes <n>", t("Max bytes to read"), "250000")
-    .option("--follow", t("Follow log output"), false)
-    .option("--interval <ms>", t("Polling interval in ms"), "1000")
-    .option("--json", t("Emit JSON log lines"), false)
-    .option("--plain", t("Plain text output (no ANSI styling)"), false)
-    .option("--no-color", t("Disable ANSI colors"))
+    .option("--limit <n>", "Max lines to return", "200")
+    .option("--max-bytes <n>", "Max bytes to read", "250000")
+    .option("--follow", "Follow log output", false)
+    .option("--interval <ms>", "Polling interval in ms", "1000")
+    .option("--json", "Emit JSON log lines", false)
+    .option("--plain", "Plain text output (no ANSI styling)", false)
+    .option("--no-color", "Disable ANSI colors")
+    .option("--local-time", "Display timestamps in local timezone", false)
     .addHelpText(
       "after",
       () =>
@@ -209,6 +224,8 @@ export function registerLogsCli(program: Command) {
     const jsonMode = Boolean(opts.json);
     const pretty = !jsonMode && Boolean(process.stdout.isTTY) && !opts.plain;
     const rich = isRich() && opts.color !== false;
+    const localTime =
+      Boolean(opts.localTime) || (!!process.env.TZ && isValidTimeZone(process.env.TZ));
 
     while (true) {
       let payload: LogsTailPayload;
@@ -251,7 +268,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: t("Log tail truncated (increase --max-bytes)."),
+              message: "Log tail truncated (increase --max-bytes).",
             })
           ) {
             return;
@@ -261,7 +278,7 @@ export function registerLogsCli(program: Command) {
           if (
             !emitJsonLine({
               type: "notice",
-              message: t("Log cursor reset (file rotated)."),
+              message: "Log cursor reset (file rotated).",
             })
           ) {
             return;
@@ -269,7 +286,7 @@ export function registerLogsCli(program: Command) {
         }
       } else {
         if (first && payload.file) {
-          const prefix = pretty ? colorize(rich, theme.muted, t("Log file:")) : t("Log file:");
+          const prefix = pretty ? colorize(rich, theme.muted, "Log file:") : "Log file:";
           if (!logLine(`${prefix} ${payload.file}`)) {
             return;
           }
@@ -280,6 +297,7 @@ export function registerLogsCli(program: Command) {
               formatLogLine(line, {
                 pretty,
                 rich,
+                localTime,
               }),
             )
           ) {
@@ -287,12 +305,12 @@ export function registerLogsCli(program: Command) {
           }
         }
         if (payload.truncated) {
-          if (!errorLine(t("Log tail truncated (increase --max-bytes)."))) {
+          if (!errorLine("Log tail truncated (increase --max-bytes).")) {
             return;
           }
         }
         if (payload.reset) {
-          if (!errorLine(t("Log cursor reset (file rotated)."))) {
+          if (!errorLine("Log cursor reset (file rotated).")) {
             return;
           }
         }

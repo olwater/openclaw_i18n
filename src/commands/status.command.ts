@@ -1,30 +1,27 @@
-import type { HeartbeatEventPayload } from "../infra/heartbeat-events.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { withProgress } from "../cli/progress.js";
-import { resolveGatewayPort } from "../config/config.js";
+import { loadConfig, resolveGatewayPort } from "../config/config.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { info } from "../globals.js";
-import { t } from "../i18n/index.js";
 import { formatTimeAgo } from "../infra/format-time/format-relative.ts";
+import type { HeartbeatEventPayload } from "../infra/heartbeat-events.js";
 import { formatUsageReportLines, loadProviderUsageSummary } from "../infra/provider-usage.js";
-import {
-  formatUpdateChannelLabel,
-  normalizeUpdateChannel,
-  resolveEffectiveUpdateChannel,
-} from "../infra/update-channels.js";
+import { normalizeUpdateChannel, resolveUpdateChannelDisplay } from "../infra/update-channels.js";
+import { formatGitInstallLabel } from "../infra/update-check.js";
 import {
   resolveMemoryCacheSummary,
   resolveMemoryFtsState,
   resolveMemoryVectorState,
   type Tone,
 } from "../memory/status-format.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { runSecurityAudit } from "../security/audit.js";
 import { renderTable } from "../terminal/table.js";
 import { theme } from "../terminal/theme.js";
 import { formatHealthChannelLines, type HealthSummary } from "./health.js";
 import { resolveControlUiLinks } from "./onboard-helpers.js";
 import { statusAllCommand } from "./status-all.js";
+import { groupChannelIssuesByChannel } from "./status-all/channel-issues.js";
 import { formatGatewayAuthUsed } from "./status-all/format.js";
 import { getDaemonStatusSummary, getNodeDaemonStatusSummary } from "./status.daemon.js";
 import {
@@ -40,6 +37,33 @@ import {
   formatUpdateOneLiner,
   resolveUpdateAvailability,
 } from "./status.update.js";
+
+function resolvePairingRecoveryContext(params: {
+  error?: string | null;
+  closeReason?: string | null;
+}): { requestId: string | null } | null {
+  const sanitizeRequestId = (value: string): string | null => {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return null;
+    }
+    // Keep CLI guidance injection-safe: allow only compact id characters.
+    if (!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/.test(trimmed)) {
+      return null;
+    }
+    return trimmed;
+  };
+  const source = [params.error, params.closeReason]
+    .filter((part) => typeof part === "string" && part.trim().length > 0)
+    .join(" ");
+  if (!source || !/pairing required/i.test(source)) {
+    return null;
+  }
+  const requestIdMatch = source.match(/requestId:\s*([^\s)]+)/i);
+  const requestId =
+    requestIdMatch && requestIdMatch[1] ? sanitizeRequestId(requestIdMatch[1]) : null;
+  return { requestId: requestId || null };
+}
 
 export async function statusCommand(
   opts: {
@@ -57,10 +81,33 @@ export async function statusCommand(
     return;
   }
 
-  const scan = await scanStatus(
-    { json: opts.json, timeoutMs: opts.timeoutMs, all: opts.all },
-    runtime,
-  );
+  const [scan, securityAudit] = opts.json
+    ? await Promise.all([
+        scanStatus({ json: opts.json, timeoutMs: opts.timeoutMs, all: opts.all }, runtime),
+        runSecurityAudit({
+          config: loadConfig(),
+          deep: false,
+          includeFilesystem: true,
+          includeChannelSecurity: true,
+        }),
+      ])
+    : [
+        await scanStatus({ json: opts.json, timeoutMs: opts.timeoutMs, all: opts.all }, runtime),
+        await withProgress(
+          {
+            label: "Running security audit…",
+            indeterminate: true,
+            enabled: true,
+          },
+          async () =>
+            await runSecurityAudit({
+              config: loadConfig(),
+              deep: false,
+              includeFilesystem: true,
+              includeChannelSecurity: true,
+            }),
+        ),
+      ];
   const {
     cfg,
     osSummary,
@@ -82,25 +129,10 @@ export async function statusCommand(
     memoryPlugin,
   } = scan;
 
-  const securityAudit = await withProgress(
-    {
-      label: t("Running security audit…"),
-      indeterminate: true,
-      enabled: opts.json !== true,
-    },
-    async () =>
-      await runSecurityAudit({
-        config: cfg,
-        deep: false,
-        includeFilesystem: true,
-        includeChannelSecurity: true,
-      }),
-  );
-
   const usage = opts.usage
     ? await withProgress(
         {
-          label: t("Fetching usage snapshot…"),
+          label: "Fetching usage snapshot…",
           indeterminate: true,
           enabled: opts.json !== true,
         },
@@ -110,7 +142,7 @@ export async function statusCommand(
   const health: HealthSummary | undefined = opts.deep
     ? await withProgress(
         {
-          label: t("Checking gateway health…"),
+          label: "Checking gateway health…",
           indeterminate: true,
           enabled: opts.json !== true,
         },
@@ -132,10 +164,11 @@ export async function statusCommand(
       : null;
 
   const configChannel = normalizeUpdateChannel(cfg.update?.channel);
-  const channelInfo = resolveEffectiveUpdateChannel({
+  const channelInfo = resolveUpdateChannelDisplay({
     configChannel,
     installKind: update.installKind,
-    git: update.git ? { tag: update.git.tag, branch: update.git.branch } : undefined,
+    gitTag: update.git?.tag ?? null,
+    gitBranch: update.git?.branch ?? null,
   });
 
   if (opts.json) {
@@ -183,14 +216,14 @@ export async function statusCommand(
 
   if (opts.verbose) {
     const details = buildGatewayConnectionDetails();
-    runtime.log(info(t("Gateway connection:")));
+    runtime.log(info("Gateway connection:"));
     for (const line of details.message.split("\n")) {
       runtime.log(`  ${line}`);
     }
     runtime.log("");
   }
 
-  const tableWidth = Math.max(60, (process.stdout.columns ?? 100) - 1);
+  const tableWidth = Math.max(60, (process.stdout.columns ?? 120) - 1);
 
   const dashboard = (() => {
     const controlUiEnabled = cfg.gateway?.controlUi?.enabled ?? true;
@@ -211,7 +244,7 @@ export async function statusCommand(
       ? `fallback ${gatewayConnection.url}`
       : `${gatewayConnection.url}${gatewayConnection.urlSource ? ` (${gatewayConnection.urlSource})` : ""}`;
     const reach = remoteUrlMissing
-      ? warn(t("misconfigured (remote.url missing)"))
+      ? warn("misconfigured (remote.url missing)")
       : gatewayReachable
         ? ok(`reachable ${formatDuration(gatewayProbe?.connectLatencyMs)}`)
         : warn(gatewayProbe?.error ? `unreachable (${gatewayProbe.error})` : "unreachable");
@@ -233,12 +266,16 @@ export async function statusCommand(
     const suffix = self ? ` · ${self}` : "";
     return `${gatewayMode} · ${target} · ${reach}${auth}${suffix}`;
   })();
+  const pairingRecovery = resolvePairingRecoveryContext({
+    error: gatewayProbe?.error ?? null,
+    closeReason: gatewayProbe?.close?.reason ?? null,
+  });
 
   const agentsValue = (() => {
     const pending =
       agentStatus.bootstrapPendingCount > 0
-        ? `${agentStatus.bootstrapPendingCount} bootstrapping`
-        : t("no bootstraps");
+        ? `${agentStatus.bootstrapPendingCount} bootstrap file${agentStatus.bootstrapPendingCount === 1 ? "" : "s"} present`
+        : "no bootstrap files";
     const def = agentStatus.agents.find((a) => a.id === agentStatus.defaultId);
     const defActive = def?.lastActiveAgeMs != null ? formatTimeAgo(def.lastActiveAgeMs) : "unknown";
     const defSuffix = def ? ` · default ${def.id} active ${defActive}` : "";
@@ -253,14 +290,14 @@ export async function statusCommand(
     if (daemon.installed === false) {
       return `${daemon.label} not installed`;
     }
-    const installedPrefix = daemon.installed === true ? t("installed · ") : "";
+    const installedPrefix = daemon.installed === true ? "installed · " : "";
     return `${daemon.label} ${installedPrefix}${daemon.loadedText}${daemon.runtimeShort ? ` · ${daemon.runtimeShort}` : ""}`;
   })();
   const nodeDaemonValue = (() => {
     if (nodeDaemon.installed === false) {
       return `${nodeDaemon.label} not installed`;
     }
-    const installedPrefix = nodeDaemon.installed === true ? t("installed · ") : "";
+    const installedPrefix = nodeDaemon.installed === true ? "installed · " : "";
     return `${nodeDaemon.label} ${installedPrefix}${nodeDaemon.loadedText}${nodeDaemon.runtimeShort ? ` · ${nodeDaemon.runtimeShort}` : ""}`;
   })();
 
@@ -271,7 +308,7 @@ export async function statusCommand(
   const eventsValue =
     summary.queuedSystemEvents.length > 0 ? `${summary.queuedSystemEvents.length} queued` : "none";
 
-  const probesValue = health ? ok("enabled") : muted(t("skipped (use --deep)"));
+  const probesValue = health ? ok("enabled") : muted("skipped (use --deep)");
 
   const heartbeatValue = (() => {
     const parts = summary.heartbeat.agents
@@ -283,7 +320,7 @@ export async function statusCommand(
         return `${everyLabel} (${agent.agentId})`;
       })
       .filter(Boolean);
-    return parts.length > 0 ? parts.join(t(", ")) : "disabled";
+    return parts.length > 0 ? parts.join(", ") : "disabled";
   })();
   const lastHeartbeatValue = (() => {
     if (!opts.deep) {
@@ -313,13 +350,17 @@ export async function statusCommand(
     }
     if (!memory) {
       const slot = memoryPlugin.slot ? `plugin ${memoryPlugin.slot}` : "plugin";
+      // Custom (non-built-in) memory plugins can't be probed — show enabled, not unavailable
+      if (memoryPlugin.slot && memoryPlugin.slot !== "memory-core") {
+        return `enabled (${slot})`;
+      }
       return muted(`enabled (${slot}) · unavailable`);
     }
     const parts: string[] = [];
     const dirtySuffix = memory.dirty ? ` · ${warn("dirty")}` : "";
     parts.push(`${memory.files} files · ${memory.chunks} chunks${dirtySuffix}`);
     if (memory.sources?.length) {
-      parts.push(`sources ${memory.sources.join(t(", "))}`);
+      parts.push(`sources ${memory.sources.join(", ")}`);
     }
     if (memoryPlugin.slot) {
       parts.push(`plugin ${memoryPlugin.slot}`);
@@ -329,13 +370,13 @@ export async function statusCommand(
     const vector = memory.vector;
     if (vector) {
       const state = resolveMemoryVectorState(vector);
-      const label = state.state === "disabled" ? t("vector off") : `vector ${state.state}`;
+      const label = state.state === "disabled" ? "vector off" : `vector ${state.state}`;
       parts.push(colorByTone(state.tone, label));
     }
     const fts = memory.fts;
     if (fts) {
       const state = resolveMemoryFtsState(fts);
-      const label = state.state === "disabled" ? t("fts off") : `fts ${state.state}`;
+      const label = state.state === "disabled" ? "fts off" : `fts ${state.state}`;
       parts.push(colorByTone(state.tone, label));
     }
     const cache = memory.cache;
@@ -343,32 +384,13 @@ export async function statusCommand(
       const summary = resolveMemoryCacheSummary(cache);
       parts.push(colorByTone(summary.tone, summary.text));
     }
-    return parts.join(t(" · "));
+    return parts.join(" · ");
   })();
 
   const updateAvailability = resolveUpdateAvailability(update);
   const updateLine = formatUpdateOneLiner(update).replace(/^Update:\s*/i, "");
-  const channelLabel = formatUpdateChannelLabel({
-    channel: channelInfo.channel,
-    source: channelInfo.source,
-    gitTag: update.git?.tag ?? null,
-    gitBranch: update.git?.branch ?? null,
-  });
-  const gitLabel =
-    update.installKind === "git"
-      ? (() => {
-          const shortSha = update.git?.sha ? update.git.sha.slice(0, 8) : null;
-          const branch =
-            update.git?.branch && update.git.branch !== "HEAD" ? update.git.branch : null;
-          const tag = update.git?.tag ?? null;
-          const parts = [
-            branch ?? (tag ? "detached" : "git"),
-            tag ? `tag ${tag}` : null,
-            shortSha ? `@ ${shortSha}` : null,
-          ].filter(Boolean);
-          return parts.join(t(" · "));
-        })()
-      : null;
+  const channelLabel = channelInfo.label;
+  const gitLabel = formatGitInstallLabel(update);
 
   const overviewRows = [
     { Item: "Dashboard", Value: dashboard },
@@ -389,8 +411,8 @@ export async function statusCommand(
       Value: updateAvailability.available ? warn(`available · ${updateLine}`) : updateLine,
     },
     { Item: "Gateway", Value: gatewayValue },
-    { Item: t("Gateway service"), Value: daemonValue },
-    { Item: t("Node service"), Value: nodeDaemonValue },
+    { Item: "Gateway service", Value: daemonValue },
+    { Item: "Node service", Value: nodeDaemonValue },
     { Item: "Agents", Value: agentsValue },
     { Item: "Memory", Value: memoryValue },
     { Item: "Probes", Value: probesValue },
@@ -403,7 +425,7 @@ export async function statusCommand(
     },
   ];
 
-  runtime.log(theme.heading(t("OpenClaw status")));
+  runtime.log(theme.heading("OpenClaw status"));
   runtime.log("");
   runtime.log(theme.heading("Overview"));
   runtime.log(
@@ -411,35 +433,49 @@ export async function statusCommand(
       width: tableWidth,
       columns: [
         { key: "Item", header: "Item", minWidth: 12 },
-        { key: "Value", header: "Value", flex: true, minWidth: 32, maxWidth: 80 },
+        { key: "Value", header: "Value", flex: true, minWidth: 32 },
       ],
       rows: overviewRows,
     }).trimEnd(),
   );
 
+  if (pairingRecovery) {
+    runtime.log("");
+    runtime.log(theme.warn("Gateway pairing approval required."));
+    if (pairingRecovery.requestId) {
+      runtime.log(
+        theme.muted(
+          `Recovery: ${formatCliCommand(`openclaw devices approve ${pairingRecovery.requestId}`)}`,
+        ),
+      );
+    }
+    runtime.log(theme.muted(`Fallback: ${formatCliCommand("openclaw devices approve --latest")}`));
+    runtime.log(theme.muted(`Inspect: ${formatCliCommand("openclaw devices list")}`));
+  }
+
   runtime.log("");
-  runtime.log(theme.heading(t("Security audit")));
+  runtime.log(theme.heading("Security audit"));
   const fmtSummary = (value: { critical: number; warn: number; info: number }) => {
     const parts = [
       theme.error(`${value.critical} critical`),
       theme.warn(`${value.warn} warn`),
       theme.muted(`${value.info} info`),
     ];
-    return parts.join(t(" · "));
+    return parts.join(" · ");
   };
   runtime.log(theme.muted(`Summary: ${fmtSummary(securityAudit.summary)}`));
   const importantFindings = securityAudit.findings.filter(
     (f) => f.severity === "critical" || f.severity === "warn",
   );
   if (importantFindings.length === 0) {
-    runtime.log(theme.muted(t("No critical or warn findings detected.")));
+    runtime.log(theme.muted("No critical or warn findings detected."));
   } else {
     const severityLabel = (sev: "critical" | "warn" | "info") => {
       if (sev === "critical") {
-        return theme.error(t("CRITICAL"));
+        return theme.error("CRITICAL");
       }
       if (sev === "warn") {
-        return theme.warn(t("WARN"));
+        return theme.warn("WARN");
       }
       return theme.muted("INFO");
     };
@@ -460,24 +496,12 @@ export async function statusCommand(
       runtime.log(theme.muted(`… +${sorted.length - shown.length} more`));
     }
   }
-  runtime.log(theme.muted(`Full report: ${formatCliCommand(t("openclaw security audit"))}`));
-  runtime.log(theme.muted(`Deep probe: ${formatCliCommand(t("openclaw security audit --deep"))}`));
+  runtime.log(theme.muted(`Full report: ${formatCliCommand("openclaw security audit")}`));
+  runtime.log(theme.muted(`Deep probe: ${formatCliCommand("openclaw security audit --deep")}`));
 
   runtime.log("");
   runtime.log(theme.heading("Channels"));
-  const channelIssuesByChannel = (() => {
-    const map = new Map<string, typeof channelIssues>();
-    for (const issue of channelIssues) {
-      const key = issue.channel;
-      const list = map.get(key);
-      if (list) {
-        list.push(issue);
-      } else {
-        map.set(key, [issue]);
-      }
-    }
-    return map;
-  })();
+  const channelIssuesByChannel = groupChannelIssuesByChannel(channelIssues);
   runtime.log(
     renderTable({
       width: tableWidth,
@@ -485,7 +509,7 @@ export async function statusCommand(
         { key: "Channel", header: "Channel", minWidth: 10 },
         { key: "Enabled", header: "Enabled", minWidth: 7 },
         { key: "State", header: "State", minWidth: 8 },
-        { key: "Detail", header: "Detail", flex: true, minWidth: 24, maxWidth: 60 },
+        { key: "Detail", header: "Detail", flex: true, minWidth: 24 },
       ],
       rows: channels.rows.map((row) => {
         const issues = channelIssuesByChannel.get(row.id) ?? [];
@@ -517,7 +541,7 @@ export async function statusCommand(
     renderTable({
       width: tableWidth,
       columns: [
-        { key: "Key", header: "Key", minWidth: 20, flex: true, maxWidth: 40 },
+        { key: "Key", header: "Key", minWidth: 20, flex: true },
         { key: "Kind", header: "Kind", minWidth: 6 },
         { key: "Age", header: "Age", minWidth: 9 },
         { key: "Model", header: "Model", minWidth: 14 },
@@ -528,13 +552,13 @@ export async function statusCommand(
           ? summary.sessions.recent.map((sess) => ({
               Key: shortenText(sess.key, 32),
               Kind: sess.kind,
-              Age: sess.updatedAt ? formatTimeAgo(sess.age) : t("no activity"),
+              Age: sess.updatedAt ? formatTimeAgo(sess.age) : "no activity",
               Model: sess.model ?? "unknown",
               Tokens: formatTokensCompact(sess),
             }))
           : [
               {
-                Key: muted(t("no sessions yet")),
+                Key: muted("no sessions yet"),
                 Kind: "",
                 Age: "",
                 Model: "",
@@ -546,7 +570,7 @@ export async function statusCommand(
 
   if (summary.queuedSystemEvents.length > 0) {
     runtime.log("");
-    runtime.log(theme.heading(t("System events")));
+    runtime.log(theme.heading("System events"));
     runtime.log(
       renderTable({
         width: tableWidth,
@@ -586,7 +610,7 @@ export async function statusCommand(
         if (normalized.startsWith("failed")) {
           return warn("WARN");
         }
-        if (normalized.startsWith(t("not configured"))) {
+        if (normalized.startsWith("not configured")) {
           return muted("OFF");
         }
         if (normalized.startsWith("configured")) {
@@ -595,7 +619,7 @@ export async function statusCommand(
         if (normalized.startsWith("linked")) {
           return ok("LINKED");
         }
-        if (normalized.startsWith(t("not linked"))) {
+        if (normalized.startsWith("not linked")) {
           return warn("UNLINKED");
         }
         return warn("WARN");
@@ -625,20 +649,20 @@ export async function statusCommand(
   }
 
   runtime.log("");
-  runtime.log(t("FAQ: https://docs.openclaw.ai/faq"));
-  runtime.log(t("Troubleshooting: https://docs.openclaw.ai/troubleshooting"));
+  runtime.log("FAQ: https://docs.openclaw.ai/faq");
+  runtime.log("Troubleshooting: https://docs.openclaw.ai/troubleshooting");
   runtime.log("");
   const updateHint = formatUpdateAvailableHint(update);
   if (updateHint) {
     runtime.log(theme.warn(updateHint));
     runtime.log("");
   }
-  runtime.log(t("Next steps:"));
-  runtime.log(`  Need to share?      ${formatCliCommand(t("openclaw status --all"))}`);
-  runtime.log(`  Need to debug live? ${formatCliCommand(t("openclaw logs --follow"))}`);
+  runtime.log("Next steps:");
+  runtime.log(`  Need to share?      ${formatCliCommand("openclaw status --all")}`);
+  runtime.log(`  Need to debug live? ${formatCliCommand("openclaw logs --follow")}`);
   if (gatewayReachable) {
-    runtime.log(`  Need to test channels? ${formatCliCommand(t("openclaw status --deep"))}`);
+    runtime.log(`  Need to test channels? ${formatCliCommand("openclaw status --deep")}`);
   } else {
-    runtime.log(`  Fix reachability first: ${formatCliCommand(t("openclaw gateway probe"))}`);
+    runtime.log(`  Fix reachability first: ${formatCliCommand("openclaw gateway probe")}`);
   }
 }

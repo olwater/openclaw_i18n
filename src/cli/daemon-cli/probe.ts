@@ -7,6 +7,7 @@ export async function probeGatewayStatus(opts: {
   url: string;
   token?: string;
   password?: string;
+  tlsFingerprint?: string;
   timeoutMs: number;
   json?: boolean;
   configPath?: string;
@@ -23,6 +24,7 @@ export async function probeGatewayStatus(opts: {
           url: opts.url,
           token: opts.token,
           password: opts.password,
+          tlsFingerprint: opts.tlsFingerprint,
           method: "status",
           timeoutMs: opts.timeoutMs,
           clientName: GATEWAY_CLIENT_NAMES.CLI,

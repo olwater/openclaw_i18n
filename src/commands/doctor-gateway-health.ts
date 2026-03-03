@@ -1,11 +1,17 @@
 import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
-import { t } from "../i18n/index.js";
+import type { DoctorMemoryStatusPayload } from "../gateway/server-methods/doctor.js";
 import { collectChannelStatusIssues } from "../infra/channels-status-issues.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { formatHealthCheckFailure } from "./health-format.js";
 import { healthCommand } from "./health.js";
+
+export type GatewayMemoryProbe = {
+  checked: boolean;
+  ready: boolean;
+  error?: string;
+};
 
 export async function checkGatewayHealth(params: {
   runtime: RuntimeEnv;
@@ -21,9 +27,9 @@ export async function checkGatewayHealth(params: {
     healthOk = true;
   } catch (err) {
     const message = String(err);
-    if (message.includes(t("gateway closed"))) {
-      note(t("Gateway not running."), "Gateway");
-      note(gatewayDetails.message, t("Gateway connection"));
+    if (message.includes("gateway closed")) {
+      note("Gateway not running.", "Gateway");
+      note(gatewayDetails.message, "Gateway connection");
     } else {
       params.runtime.error(formatHealthCheckFailure(err));
     }
@@ -47,7 +53,7 @@ export async function checkGatewayHealth(params: {
                 }`,
             )
             .join("\n"),
-          t("Channel warnings"),
+          "Channel warnings",
         );
       }
     } catch {
@@ -56,4 +62,31 @@ export async function checkGatewayHealth(params: {
   }
 
   return { healthOk };
+}
+
+export async function probeGatewayMemoryStatus(params: {
+  cfg: OpenClawConfig;
+  timeoutMs?: number;
+}): Promise<GatewayMemoryProbe> {
+  const timeoutMs =
+    typeof params.timeoutMs === "number" && params.timeoutMs > 0 ? params.timeoutMs : 8_000;
+  try {
+    const payload = await callGateway<DoctorMemoryStatusPayload>({
+      method: "doctor.memory.status",
+      timeoutMs,
+      config: params.cfg,
+    });
+    return {
+      checked: true,
+      ready: payload.embedding.ok,
+      error: payload.embedding.error,
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      checked: true,
+      ready: false,
+      error: `gateway memory probe unavailable: ${message}`,
+    };
+  }
 }

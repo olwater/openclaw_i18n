@@ -1,6 +1,6 @@
-import type { Locale, TranslationMap, TranslationSet } from "./types.js";
 import en_US from "./locales/en_US.js";
 import zh_CN from "./locales/zh_CN.js";
+import type { Locale, TranslationMap, TranslationSet } from "./types.js";
 
 export type { Locale, TranslationMap, TranslationSet };
 

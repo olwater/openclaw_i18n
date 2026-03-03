@@ -1,5 +1,3 @@
-import type { OpenClawConfig } from "../../config/config.js";
-import type { ProviderAuthOverview } from "./list.types.js";
 import { formatRemainingShort } from "../../agents/auth-health.js";
 import {
   type AuthProfileStore,
@@ -9,9 +7,26 @@ import {
   resolveProfileUnusableUntilForDisplay,
 } from "../../agents/auth-profiles.js";
 import { getCustomProviderApiKey, resolveEnvApiKey } from "../../agents/model-auth.js";
-import { t } from "../../i18n/index.js";
+import type { OpenClawConfig } from "../../config/config.js";
 import { shortenHomePath } from "../../utils.js";
 import { maskApiKey } from "./list.format.js";
+import type { ProviderAuthOverview } from "./list.types.js";
+
+function formatProfileSecretLabel(params: {
+  value: string | undefined;
+  ref: { source: string; id: string } | undefined;
+  kind: "api-key" | "token";
+}): string {
+  const value = typeof params.value === "string" ? params.value.trim() : "";
+  if (value) {
+    return params.kind === "token" ? `token:${maskApiKey(value)}` : maskApiKey(value);
+  }
+  if (params.ref) {
+    const refLabel = `ref(${params.ref.source}:${params.ref.id})`;
+    return params.kind === "token" ? `token:${refLabel}` : refLabel;
+  }
+  return params.kind === "token" ? "token:missing" : "missing";
+}
 
 export function resolveProviderAuthOverview(params: {
   provider: string;
@@ -41,10 +56,24 @@ export function resolveProviderAuthOverview(params: {
       return `${profileId}=missing`;
     }
     if (profile.type === "api_key") {
-      return withUnusableSuffix(`${profileId}=${maskApiKey(profile.key ?? "")}`, profileId);
+      return withUnusableSuffix(
+        `${profileId}=${formatProfileSecretLabel({
+          value: profile.key,
+          ref: profile.keyRef,
+          kind: "api-key",
+        })}`,
+        profileId,
+      );
     }
     if (profile.type === "token") {
-      return withUnusableSuffix(`${profileId}=token:${maskApiKey(profile.token)}`, profileId);
+      return withUnusableSuffix(
+        `${profileId}=${formatProfileSecretLabel({
+          value: profile.token,
+          ref: profile.tokenRef,
+          kind: "token",
+        })}`,
+        profileId,
+      );
     }
     const display = resolveAuthProfileDisplayLabel({ cfg, store, profileId });
     const suffix =
@@ -75,7 +104,7 @@ export function resolveProviderAuthOverview(params: {
         envKey.source.includes("OAUTH_TOKEN") || envKey.source.toLowerCase().includes("oauth");
       return {
         kind: "env",
-        detail: isOAuthEnv ? t("OAuth (env)") : maskApiKey(envKey.apiKey),
+        detail: isOAuthEnv ? "OAuth (env)" : maskApiKey(envKey.apiKey),
       };
     }
     if (customKey) {
@@ -99,7 +128,7 @@ export function resolveProviderAuthOverview(params: {
           env: {
             value:
               envKey.source.includes("OAUTH_TOKEN") || envKey.source.toLowerCase().includes("oauth")
-                ? t("OAuth (env)")
+                ? "OAuth (env)"
                 : maskApiKey(envKey.apiKey),
             source: envKey.source,
           },

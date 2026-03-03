@@ -4,10 +4,12 @@ import os from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
 import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
-import type { DoctorOptions, DoctorPrompter } from "./doctor-prompter.js";
 import { resolveGatewayPort, resolveIsNixMode } from "../config/paths.js";
-import { findExtraGatewayServices, renderGatewayServiceCleanupHints } from "../daemon/inspect.js";
+import {
+  findExtraGatewayServices,
+  renderGatewayServiceCleanupHints,
+  type ExtraGatewayService,
+} from "../daemon/inspect.js";
 import { renderSystemNodeWarning, resolveSystemNodeInfo } from "../daemon/runtime-paths.js";
 import {
   auditGatewayServiceConfig,
@@ -15,10 +17,12 @@ import {
   SERVICE_AUDIT_CODES,
 } from "../daemon/service-audit.js";
 import { resolveGatewayService } from "../daemon/service.js";
-import { t } from "../i18n/index.js";
+import { uninstallLegacySystemdUnits } from "../daemon/systemd.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { note } from "../terminal/note.js";
 import { buildGatewayInstallPlan } from "./daemon-install-helpers.js";
 import { DEFAULT_GATEWAY_DAEMON_RUNTIME, type GatewayDaemonRuntime } from "./daemon-runtime.js";
+import type { DoctorOptions, DoctorPrompter } from "./doctor-prompter.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -49,6 +53,16 @@ function findGatewayEntrypoint(programArguments?: string[]): string | null {
 
 function normalizeExecutablePath(value: string): string {
   return path.resolve(value);
+}
+
+function resolveGatewayAuthToken(cfg: OpenClawConfig, env: NodeJS.ProcessEnv): string | undefined {
+  const configToken = cfg.gateway?.auth?.token?.trim();
+  if (configToken) {
+    return configToken;
+  }
+  const envToken = env.OPENCLAW_GATEWAY_TOKEN ?? env.CLAWDBOT_GATEWAY_TOKEN;
+  const trimmedEnvToken = envToken?.trim();
+  return trimmedEnvToken || undefined;
 }
 
 function extractDetailPath(detail: string, prefix: string): string | null {
@@ -89,6 +103,95 @@ async function cleanupLegacyLaunchdService(params: {
   }
 }
 
+function classifyLegacyServices(legacyServices: ExtraGatewayService[]): {
+  darwinUserServices: ExtraGatewayService[];
+  linuxUserServices: ExtraGatewayService[];
+  failed: string[];
+} {
+  const darwinUserServices: ExtraGatewayService[] = [];
+  const linuxUserServices: ExtraGatewayService[] = [];
+  const failed: string[] = [];
+
+  for (const svc of legacyServices) {
+    if (svc.platform === "darwin") {
+      if (svc.scope === "user") {
+        darwinUserServices.push(svc);
+      } else {
+        failed.push(`${svc.label} (${svc.scope})`);
+      }
+      continue;
+    }
+
+    if (svc.platform === "linux") {
+      if (svc.scope === "user") {
+        linuxUserServices.push(svc);
+      } else {
+        failed.push(`${svc.label} (${svc.scope})`);
+      }
+      continue;
+    }
+
+    failed.push(`${svc.label} (${svc.platform})`);
+  }
+
+  return { darwinUserServices, linuxUserServices, failed };
+}
+
+async function cleanupLegacyDarwinServices(
+  services: ExtraGatewayService[],
+): Promise<{ removed: string[]; failed: string[] }> {
+  const removed: string[] = [];
+  const failed: string[] = [];
+
+  for (const svc of services) {
+    const plistPath = extractDetailPath(svc.detail, "plist:");
+    if (!plistPath) {
+      failed.push(`${svc.label} (missing plist path)`);
+      continue;
+    }
+    const dest = await cleanupLegacyLaunchdService({
+      label: svc.label,
+      plistPath,
+    });
+    removed.push(dest ? `${svc.label} -> ${dest}` : svc.label);
+  }
+
+  return { removed, failed };
+}
+
+async function cleanupLegacyLinuxUserServices(
+  services: ExtraGatewayService[],
+  runtime: RuntimeEnv,
+): Promise<{ removed: string[]; failed: string[] }> {
+  const removed: string[] = [];
+  const failed: string[] = [];
+
+  try {
+    const removedUnits = await uninstallLegacySystemdUnits({
+      env: process.env,
+      stdout: process.stdout,
+    });
+    const removedByLabel: Map<string, (typeof removedUnits)[number]> = new Map(
+      removedUnits.map((unit) => [`${unit.name}.service`, unit] as const),
+    );
+    for (const svc of services) {
+      const removedUnit = removedByLabel.get(svc.label);
+      if (!removedUnit) {
+        failed.push(`${svc.label} (legacy unit name not recognized)`);
+        continue;
+      }
+      removed.push(`${svc.label} -> ${removedUnit.unitPath}`);
+    }
+  } catch (err) {
+    runtime.error(`Legacy Linux gateway cleanup failed: ${String(err)}`);
+    for (const svc of services) {
+      failed.push(`${svc.label} (linux cleanup failed)`);
+    }
+  }
+
+  return { removed, failed };
+}
+
 export async function maybeRepairGatewayServiceConfig(
   cfg: OpenClawConfig,
   mode: "local" | "remote",
@@ -96,12 +199,12 @@ export async function maybeRepairGatewayServiceConfig(
   prompter: DoctorPrompter,
 ) {
   if (resolveIsNixMode(process.env)) {
-    note(t("Nix mode detected; skip service updates."), "Gateway");
+    note("Nix mode detected; skip service updates.", "Gateway");
     return;
   }
 
   if (mode === "remote") {
-    note(t("Gateway mode is remote; skipped local service audit."), "Gateway");
+    note("Gateway mode is remote; skipped local service audit.", "Gateway");
     return;
   }
 
@@ -116,9 +219,11 @@ export async function maybeRepairGatewayServiceConfig(
     return;
   }
 
+  const expectedGatewayToken = resolveGatewayAuthToken(cfg, process.env);
   const audit = await auditGatewayServiceConfig({
     env: process.env,
     command,
+    expectedGatewayToken,
   });
   const needsNodeRuntime = needsNodeRuntimeMigration(audit.issues);
   const systemNodeInfo = needsNodeRuntime
@@ -128,13 +233,11 @@ export async function maybeRepairGatewayServiceConfig(
   if (needsNodeRuntime && !systemNodePath) {
     const warning = renderSystemNodeWarning(systemNodeInfo);
     if (warning) {
-      note(warning, t("Gateway runtime"));
+      note(warning, "Gateway runtime");
     }
     note(
-      t(
-        "System Node 22+ not found. Install via Homebrew/apt/choco and rerun doctor to migrate off Bun/version managers.",
-      ),
-      t("Gateway runtime"),
+      "System Node 22+ not found. Install via Homebrew/apt/choco and rerun doctor to migrate off Bun/version managers.",
+      "Gateway runtime",
     );
   }
 
@@ -143,7 +246,7 @@ export async function maybeRepairGatewayServiceConfig(
   const { programArguments, workingDirectory, environment } = await buildGatewayInstallPlan({
     env: process.env,
     port,
-    token: cfg.gateway?.auth?.token ?? process.env.OPENCLAW_GATEWAY_TOKEN,
+    token: expectedGatewayToken,
     runtime: needsNodeRuntime && systemNodePath ? "node" : runtimeChoice,
     nodePath: systemNodePath ?? undefined,
     warn: (message, title) => note(message, title),
@@ -158,7 +261,7 @@ export async function maybeRepairGatewayServiceConfig(
   ) {
     audit.issues.push({
       code: SERVICE_AUDIT_CODES.gatewayEntrypointMismatch,
-      message: t("Gateway service entrypoint does not match the current install."),
+      message: "Gateway service entrypoint does not match the current install.",
       detail: `${currentEntrypoint} -> ${expectedEntrypoint}`,
       level: "recommended",
     });
@@ -174,7 +277,7 @@ export async function maybeRepairGatewayServiceConfig(
         issue.detail ? `- ${issue.message} (${issue.detail})` : `- ${issue.message}`,
       )
       .join("\n"),
-    t("Gateway service config"),
+    "Gateway service config",
   );
 
   const aggressiveIssues = audit.issues.filter((issue) => issue.level === "aggressive");
@@ -182,18 +285,18 @@ export async function maybeRepairGatewayServiceConfig(
 
   if (needsAggressive && !prompter.shouldForce) {
     note(
-      t("Custom or unexpected service edits detected. Rerun with --force to overwrite."),
-      t("Gateway service config"),
+      "Custom or unexpected service edits detected. Rerun with --force to overwrite.",
+      "Gateway service config",
     );
   }
 
   const repair = needsAggressive
     ? await prompter.confirmAggressive({
-        message: t("Overwrite gateway service config with current defaults now?"),
+        message: "Overwrite gateway service config with current defaults now?",
         initialValue: Boolean(prompter.shouldForce),
       })
     : await prompter.confirmRepair({
-        message: t("Update gateway service config to the recommended defaults now?"),
+        message: "Update gateway service config to the recommended defaults now?",
         initialValue: true,
       });
   if (!repair) {
@@ -226,63 +329,55 @@ export async function maybeScanExtraGatewayServices(
 
   note(
     extraServices.map((svc) => `- ${svc.label} (${svc.scope}, ${svc.detail})`).join("\n"),
-    t("Other gateway-like services detected"),
+    "Other gateway-like services detected",
   );
 
   const legacyServices = extraServices.filter((svc) => svc.legacy === true);
   if (legacyServices.length > 0) {
     const shouldRemove = await prompter.confirmSkipInNonInteractive({
-      message: t("Remove legacy gateway services (clawdbot/moltbot) now?"),
+      message: "Remove legacy gateway services (clawdbot/moltbot) now?",
       initialValue: true,
     });
     if (shouldRemove) {
       const removed: string[] = [];
-      const failed: string[] = [];
-      for (const svc of legacyServices) {
-        if (svc.platform !== "darwin") {
-          failed.push(`${svc.label} (${svc.platform})`);
-          continue;
-        }
-        if (svc.scope !== "user") {
-          failed.push(`${svc.label} (${svc.scope})`);
-          continue;
-        }
-        const plistPath = extractDetailPath(svc.detail, "plist:");
-        if (!plistPath) {
-          failed.push(`${svc.label} (missing plist path)`);
-          continue;
-        }
-        const dest = await cleanupLegacyLaunchdService({
-          label: svc.label,
-          plistPath,
-        });
-        removed.push(dest ? `${svc.label} -> ${dest}` : svc.label);
+      const { darwinUserServices, linuxUserServices, failed } =
+        classifyLegacyServices(legacyServices);
+
+      if (darwinUserServices.length > 0) {
+        const result = await cleanupLegacyDarwinServices(darwinUserServices);
+        removed.push(...result.removed);
+        failed.push(...result.failed);
       }
+
+      if (linuxUserServices.length > 0) {
+        const result = await cleanupLegacyLinuxUserServices(linuxUserServices, runtime);
+        removed.push(...result.removed);
+        failed.push(...result.failed);
+      }
+
       if (removed.length > 0) {
-        note(removed.map((line) => `- ${line}`).join("\n"), t("Legacy gateway removed"));
+        note(removed.map((line) => `- ${line}`).join("\n"), "Legacy gateway removed");
       }
       if (failed.length > 0) {
-        note(failed.map((line) => `- ${line}`).join("\n"), t("Legacy gateway cleanup skipped"));
+        note(failed.map((line) => `- ${line}`).join("\n"), "Legacy gateway cleanup skipped");
       }
       if (removed.length > 0) {
-        runtime.log(t("Legacy gateway services removed. Installing OpenClaw gateway next."));
+        runtime.log("Legacy gateway services removed. Installing OpenClaw gateway next.");
       }
     }
   }
 
   const cleanupHints = renderGatewayServiceCleanupHints();
   if (cleanupHints.length > 0) {
-    note(cleanupHints.map((hint) => `- ${hint}`).join("\n"), t("Cleanup hints"));
+    note(cleanupHints.map((hint) => `- ${hint}`).join("\n"), "Cleanup hints");
   }
 
   note(
     [
-      t("Recommendation: run a single gateway per machine for most setups."),
-      t("One gateway supports multiple agents."),
-      t(
-        "If you need multiple gateways (e.g., a rescue bot on the same host), isolate ports + config/state (see docs: /gateway#multiple-gateways-same-host).",
-      ),
+      "Recommendation: run a single gateway per machine for most setups.",
+      "One gateway supports multiple agents.",
+      "If you need multiple gateways (e.g., a rescue bot on the same host), isolate ports + config/state (see docs: /gateway#multiple-gateways-same-host).",
     ].join("\n"),
-    t("Gateway recommendation"),
+    "Gateway recommendation",
   );
 }

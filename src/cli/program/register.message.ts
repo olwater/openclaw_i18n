@@ -1,9 +1,9 @@
 import type { Command } from "commander";
-import type { ProgramContext } from "./context.js";
 import { t } from "../../i18n/index.js";
 import { formatDocsLink } from "../../terminal/links.js";
 import { theme } from "../../terminal/theme.js";
 import { formatHelpExamples } from "../help-format.js";
+import type { ProgramContext } from "./context.js";
 import { createMessageCliHelpers } from "./message/helpers.js";
 import { registerMessageBroadcastCommand } from "./message/register.broadcast.js";
 import { registerMessageDiscordAdminCommands } from "./message/register.discord-admin.js";
@@ -25,27 +25,25 @@ import { registerMessageThreadCommands } from "./message/register.thread.js";
 export function registerMessageCommands(program: Command, ctx: ProgramContext) {
   const message = program
     .command("message")
-    .description(t("Send messages and channel actions"))
+    .description(t("Send, read, and manage messages and channel actions"))
     .addHelpText(
       "after",
       () =>
         `
 ${theme.heading("Examples:")}
 ${formatHelpExamples([
-  [t('openclaw message send --target +15555550123 --message "Hi"'), t("Send a text message.")],
+  ['openclaw message send --target +15555550123 --message "Hi"', "Send a text message."],
   [
-    t('openclaw message send --target +15555550123 --message "Hi" --media photo.jpg'),
-    t("Send a message with media."),
+    'openclaw message send --target +15555550123 --message "Hi" --media photo.jpg',
+    "Send a message with media.",
   ],
   [
-    t(
-      'openclaw message poll --channel discord --target channel:123 --poll-question "Snack?" --poll-option Pizza --poll-option Sushi',
-    ),
-    t("Create a Discord poll."),
+    'openclaw message poll --channel discord --target channel:123 --poll-question "Snack?" --poll-option Pizza --poll-option Sushi',
+    "Create a Discord poll.",
   ],
   [
-    t('openclaw message react --channel discord --target 123 --message-id 456 --emoji "✅"'),
-    t("React to a message."),
+    'openclaw message react --channel discord --target 123 --message-id 456 --emoji "✅"',
+    "React to a message.",
   ],
 ])}
 

@@ -1,13 +1,10 @@
 import type { WizardPrompter } from "../../../wizard/prompts.js";
-import { t } from "../../../i18n/translations.js";
+import { splitOnboardingEntries } from "./helpers.js";
 
 export type ChannelAccessPolicy = "allowlist" | "open" | "disabled";
 
 export function parseAllowlistEntries(raw: string): string[] {
-  return String(raw ?? "")
-    .split(/[,\n]/g)
-    .map((entry) => entry.trim())
-    .filter(Boolean);
+  return splitOnboardingEntries(String(raw ?? ""));
 }
 
 export function formatAllowlistEntries(entries: string[]): string {
@@ -25,17 +22,17 @@ export async function promptChannelAccessPolicy(params: {
   allowDisabled?: boolean;
 }): Promise<ChannelAccessPolicy> {
   const options: Array<{ value: ChannelAccessPolicy; label: string }> = [
-    { value: "allowlist", label: t("Allowlist (recommended)") },
+    { value: "allowlist", label: "Allowlist (recommended)" },
   ];
   if (params.allowOpen !== false) {
-    options.push({ value: "open", label: t("Open (allow all channels)") });
+    options.push({ value: "open", label: "Open (allow all channels)" });
   }
   if (params.allowDisabled !== false) {
-    options.push({ value: "disabled", label: t("Disabled (block all channels)") });
+    options.push({ value: "disabled", label: "Disabled (block all channels)" });
   }
   const initialValue = params.currentPolicy ?? "allowlist";
   return await params.prompter.select({
-    message: t("{label} access").replace("{label}", params.label),
+    message: `${params.label} access`,
     options,
     initialValue,
   });
@@ -52,7 +49,7 @@ export async function promptChannelAllowlist(params: {
       ? formatAllowlistEntries(params.currentEntries)
       : undefined;
   const raw = await params.prompter.text({
-    message: t("{label} allowlist (comma-separated)").replace("{label}", params.label),
+    message: `${params.label} allowlist (comma-separated)`,
     placeholder: params.placeholder,
     initialValue,
   });
@@ -74,8 +71,8 @@ export async function promptChannelAccessConfig(params: {
   const shouldPrompt = params.defaultPrompt ?? !hasEntries;
   const wants = await params.prompter.confirm({
     message: params.updatePrompt
-      ? t("Update {label} access?").replace("{label}", params.label)
-      : t("Configure {label} access?").replace("{label}", params.label),
+      ? `Update ${params.label} access?`
+      : `Configure ${params.label} access?`,
     initialValue: shouldPrompt,
   });
   if (!wants) {

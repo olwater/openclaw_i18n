@@ -1,9 +1,9 @@
+import { resolveGatewayPort } from "../../config/config.js";
 import type { OpenClawConfig, ConfigFileSnapshot } from "../../config/types.js";
 import type { GatewayProbeResult } from "../../gateway/probe.js";
-import { resolveGatewayPort } from "../../config/config.js";
-import { t } from "../../i18n/index.js";
 import { pickPrimaryTailnetIPv4 } from "../../infra/tailnet.js";
 import { colorize, theme } from "../../terminal/theme.js";
+import { pickGatewaySelfPresence } from "../gateway-presence.js";
 
 type TargetKind = "explicit" | "configRemote" | "localLoopback" | "sshTunnel";
 
@@ -179,27 +179,7 @@ export function resolveAuthForTarget(
   };
 }
 
-export function pickGatewaySelfPresence(
-  presence: unknown,
-): { host?: string; ip?: string; version?: string; platform?: string } | null {
-  if (!Array.isArray(presence)) {
-    return null;
-  }
-  const entries = presence as Array<Record<string, unknown>>;
-  const self =
-    entries.find((e) => e.mode === "gateway" && e.reason === "self") ??
-    entries.find((e) => typeof e.text === "string" && String(e.text).startsWith("Gateway:")) ??
-    null;
-  if (!self) {
-    return null;
-  }
-  return {
-    host: typeof self.host === "string" ? self.host : undefined,
-    ip: typeof self.ip === "string" ? self.ip : undefined,
-    version: typeof self.version === "string" ? self.version : undefined,
-    platform: typeof self.platform === "string" ? self.platform : undefined,
-  };
-}
+export { pickGatewaySelfPresence };
 
 export function extractConfigSummary(snapshotUnknown: unknown): GatewayConfigSummary {
   const snap = snapshotUnknown as Partial<ConfigFileSnapshot> | null;
@@ -277,14 +257,14 @@ export function buildNetworkHints(cfg: OpenClawConfig) {
 export function renderTargetHeader(target: GatewayStatusTarget, rich: boolean) {
   const kindLabel =
     target.kind === "localLoopback"
-      ? t("Local loopback")
+      ? "Local loopback"
       : target.kind === "sshTunnel"
-        ? t("Remote over SSH")
+        ? "Remote over SSH"
         : target.kind === "configRemote"
           ? target.active
-            ? t("Remote (configured)")
-            : t("Remote (configured, inactive)")
-          : t("URL (explicit)");
+            ? "Remote (configured)"
+            : "Remote (configured, inactive)"
+          : "URL (explicit)";
   return `${colorize(rich, theme.heading, kindLabel)} ${colorize(rich, theme.muted, target.url)}`;
 }
 
@@ -292,15 +272,15 @@ export function renderProbeSummaryLine(probe: GatewayProbeResult, rich: boolean)
   if (probe.ok) {
     const latency =
       typeof probe.connectLatencyMs === "number" ? `${probe.connectLatencyMs}ms` : "unknown";
-    return `${colorize(rich, theme.success, t("Connect: ok"))} (${latency}) · ${colorize(rich, theme.success, t("RPC: ok"))}`;
+    return `${colorize(rich, theme.success, "Connect: ok")} (${latency}) · ${colorize(rich, theme.success, "RPC: ok")}`;
   }
 
   const detail = probe.error ? ` - ${probe.error}` : "";
   if (probe.connectLatencyMs != null) {
     const latency =
       typeof probe.connectLatencyMs === "number" ? `${probe.connectLatencyMs}ms` : "unknown";
-    return `${colorize(rich, theme.success, t("Connect: ok"))} (${latency}) · ${colorize(rich, theme.error, t("RPC: failed"))}${detail}`;
+    return `${colorize(rich, theme.success, "Connect: ok")} (${latency}) · ${colorize(rich, theme.error, "RPC: failed")}${detail}`;
   }
 
-  return `${colorize(rich, theme.error, t("Connect: failed"))}${detail}`;
+  return `${colorize(rich, theme.error, "Connect: failed")}${detail}`;
 }

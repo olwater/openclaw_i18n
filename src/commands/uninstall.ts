@@ -1,18 +1,12 @@
-import { cancel, confirm, isCancel, multiselect } from "@clack/prompts";
 import path from "node:path";
-import type { RuntimeEnv } from "../runtime.js";
-import {
-  isNixMode,
-  loadConfig,
-  resolveConfigPath,
-  resolveOAuthDir,
-  resolveStateDir,
-} from "../config/config.js";
+import { cancel, confirm, isCancel, multiselect } from "@clack/prompts";
+import { isNixMode } from "../config/config.js";
 import { resolveGatewayService } from "../daemon/service.js";
-import { t } from "../i18n/index.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { stylePromptHint, stylePromptMessage, stylePromptTitle } from "../terminal/prompt-style.js";
 import { resolveHomeDir } from "../utils.js";
-import { collectWorkspaceDirs, isPathWithin, removePath } from "./cleanup-utils.js";
+import { resolveCleanupPlanFromDisk } from "./cleanup-plan.js";
+import { removePath, removeStateAndLinkedPaths, removeWorkspaceDirs } from "./cleanup-utils.js";
 
 type UninstallScope = "service" | "state" | "workspace" | "app";
 
@@ -59,7 +53,7 @@ function buildScopeSelection(opts: UninstallOptions): {
 
 async function stopAndUninstallService(runtime: RuntimeEnv): Promise<boolean> {
   if (isNixMode) {
-    runtime.error(t("Nix mode detected; service uninstall is disabled."));
+    runtime.error("Nix mode detected; service uninstall is disabled.");
     return false;
   }
   const service = resolveGatewayService();
@@ -94,7 +88,7 @@ async function removeMacApp(runtime: RuntimeEnv, dryRun?: boolean) {
   }
   await removePath("/Applications/OpenClaw.app", runtime, {
     dryRun,
-    label: t("/Applications/OpenClaw.app"),
+    label: "/Applications/OpenClaw.app",
   });
 }
 
@@ -102,37 +96,37 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
   const { scopes, hadExplicit } = buildScopeSelection(opts);
   const interactive = !opts.nonInteractive;
   if (!interactive && !opts.yes) {
-    runtime.error(t("Non-interactive mode requires --yes."));
+    runtime.error("Non-interactive mode requires --yes.");
     runtime.exit(1);
     return;
   }
 
   if (!hadExplicit) {
     if (!interactive) {
-      runtime.error(t("Non-interactive mode requires explicit scopes (use --all)."));
+      runtime.error("Non-interactive mode requires explicit scopes (use --all).");
       runtime.exit(1);
       return;
     }
     const selection = await multiselectStyled<UninstallScope>({
-      message: t("Uninstall which components?"),
+      message: "Uninstall which components?",
       options: [
         {
           value: "service",
-          label: t("Gateway service"),
-          hint: t("launchd / systemd / schtasks"),
+          label: "Gateway service",
+          hint: "launchd / systemd / schtasks",
         },
-        { value: "state", label: t("State + config"), hint: t("~/.openclaw") },
-        { value: "workspace", label: t("Workspace"), hint: t("agent files") },
+        { value: "state", label: "State + config", hint: "~/.openclaw" },
+        { value: "workspace", label: "Workspace", hint: "agent files" },
         {
           value: "app",
-          label: t("macOS app"),
-          hint: t("/Applications/OpenClaw.app"),
+          label: "macOS app",
+          hint: "/Applications/OpenClaw.app",
         },
       ],
       initialValues: ["service", "state", "workspace"],
     });
     if (isCancel(selection)) {
-      cancel(stylePromptTitle(t("Uninstall cancelled.")) ?? t("Uninstall cancelled."));
+      cancel(stylePromptTitle("Uninstall cancelled.") ?? "Uninstall cancelled.");
       runtime.exit(0);
       return;
     }
@@ -142,64 +136,55 @@ export async function uninstallCommand(runtime: RuntimeEnv, opts: UninstallOptio
   }
 
   if (scopes.size === 0) {
-    runtime.log(t("Nothing selected."));
+    runtime.log("Nothing selected.");
     return;
   }
 
   if (interactive && !opts.yes) {
     const ok = await confirm({
-      message: stylePromptMessage(t("Proceed with uninstall?")),
+      message: stylePromptMessage("Proceed with uninstall?"),
     });
     if (isCancel(ok) || !ok) {
-      cancel(stylePromptTitle(t("Uninstall cancelled.")) ?? t("Uninstall cancelled."));
+      cancel(stylePromptTitle("Uninstall cancelled.") ?? "Uninstall cancelled.");
       runtime.exit(0);
       return;
     }
   }
 
   const dryRun = Boolean(opts.dryRun);
-  const cfg = loadConfig();
-  const stateDir = resolveStateDir();
-  const configPath = resolveConfigPath();
-  const oauthDir = resolveOAuthDir();
-  const configInsideState = isPathWithin(configPath, stateDir);
-  const oauthInsideState = isPathWithin(oauthDir, stateDir);
-  const workspaceDirs = collectWorkspaceDirs(cfg);
+  const { stateDir, configPath, oauthDir, configInsideState, oauthInsideState, workspaceDirs } =
+    resolveCleanupPlanFromDisk();
 
   if (scopes.has("service")) {
     if (dryRun) {
-      runtime.log(t("[dry-run] remove gateway service"));
+      runtime.log("[dry-run] remove gateway service");
     } else {
       await stopAndUninstallService(runtime);
     }
   }
 
   if (scopes.has("state")) {
-    await removePath(stateDir, runtime, { dryRun, label: stateDir });
-    if (!configInsideState) {
-      await removePath(configPath, runtime, { dryRun, label: configPath });
-    }
-    if (!oauthInsideState) {
-      await removePath(oauthDir, runtime, { dryRun, label: oauthDir });
-    }
+    await removeStateAndLinkedPaths(
+      { stateDir, configPath, oauthDir, configInsideState, oauthInsideState },
+      runtime,
+      { dryRun },
+    );
   }
 
   if (scopes.has("workspace")) {
-    for (const workspace of workspaceDirs) {
-      await removePath(workspace, runtime, { dryRun, label: workspace });
-    }
+    await removeWorkspaceDirs(workspaceDirs, runtime, { dryRun });
   }
 
   if (scopes.has("app")) {
     await removeMacApp(runtime, dryRun);
   }
 
-  runtime.log(t("CLI still installed. Remove via npm/pnpm if desired."));
+  runtime.log("CLI still installed. Remove via npm/pnpm if desired.");
 
   if (scopes.has("state") && !scopes.has("workspace")) {
     const home = resolveHomeDir();
     if (home && workspaceDirs.some((dir) => dir.startsWith(path.resolve(home)))) {
-      runtime.log(t("Tip: workspaces were preserved. Re-run with --workspace to remove them."));
+      runtime.log("Tip: workspaces were preserved. Re-run with --workspace to remove them.");
     }
   }
 }

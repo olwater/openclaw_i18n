@@ -1,10 +1,9 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
-import type { WizardPrompter } from "../wizard/prompts.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { buildWorkspaceHookStatus } from "../hooks/hooks-status.js";
-import { t } from "../i18n/index.js";
+import type { RuntimeEnv } from "../runtime.js";
+import type { WizardPrompter } from "../wizard/prompts.js";
 
 export async function setupInternalHooks(
   cfg: OpenClawConfig,
@@ -13,12 +12,12 @@ export async function setupInternalHooks(
 ): Promise<OpenClawConfig> {
   await prompter.note(
     [
-      t("Hooks let you automate actions when agent commands are issued."),
-      t("Example: Save session context to memory when you issue /new."),
+      "Hooks let you automate actions when agent commands are issued.",
+      "Example: Save session context to memory when you issue /new or /reset.",
       "",
-      t("Learn more: https://docs.openclaw.ai/hooks"),
+      "Learn more: https://docs.openclaw.ai/automation/hooks",
     ].join("\n"),
-    t("Hooks"),
+    "Hooks",
   );
 
   // Discover available hooks using the hook discovery system
@@ -30,16 +29,16 @@ export async function setupInternalHooks(
 
   if (eligibleHooks.length === 0) {
     await prompter.note(
-      t("No eligible hooks found. You can configure hooks later in your config."),
-      t("No Hooks Available"),
+      "No eligible hooks found. You can configure hooks later in your config.",
+      "No Hooks Available",
     );
     return cfg;
   }
 
   const toEnable = await prompter.multiselect({
-    message: t("Enable hooks?"),
+    message: "Enable hooks?",
     options: [
-      { value: "__skip__", label: t("Skip for now") },
+      { value: "__skip__", label: "Skip for now" },
       ...eligibleHooks.map((hook) => ({
         value: hook.name,
         label: `${hook.emoji ?? "🔗"} ${hook.name}`,
@@ -72,18 +71,14 @@ export async function setupInternalHooks(
 
   await prompter.note(
     [
-      selected.length === 1
-        ? t("Enabled 1 hook: {hooks}").replace("{hooks}", selected[0])
-        : t("Enabled {count} hooks: {hooks}")
-            .replace("{count}", String(selected.length))
-            .replace("{hooks}", selected.join(t(", "))),
+      `Enabled ${selected.length} hook${selected.length > 1 ? "s" : ""}: ${selected.join(", ")}`,
       "",
-      t("You can manage hooks later with:"),
-      `  ${formatCliCommand(t("openclaw hooks list"))}`,
-      `  ${formatCliCommand(t("openclaw hooks enable <name>"))}`,
-      `  ${formatCliCommand(t("openclaw hooks disable <name>"))}`,
+      "You can manage hooks later with:",
+      `  ${formatCliCommand("openclaw hooks list")}`,
+      `  ${formatCliCommand("openclaw hooks enable <name>")}`,
+      `  ${formatCliCommand("openclaw hooks disable <name>")}`,
     ].join("\n"),
-    t("Hooks Configured"),
+    "Hooks Configured",
   );
 
   return next;

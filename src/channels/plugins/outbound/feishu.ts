@@ -1,7 +1,7 @@
-import type { ChannelOutboundAdapter } from "../types.js";
 import { chunkMarkdownText } from "../../../auto-reply/chunk.js";
 import { getFeishuClient } from "../../../feishu/client.js";
 import { sendMessageFeishu } from "../../../feishu/send.js";
+import type { ChannelOutboundAdapter } from "../types.js";
 
 function resolveReceiveIdType(target: string): "open_id" | "union_id" | "chat_id" {
   const trimmed = target.trim().toLowerCase();

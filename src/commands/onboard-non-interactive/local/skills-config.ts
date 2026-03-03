@@ -1,7 +1,7 @@
 import type { OpenClawConfig } from "../../../config/config.js";
+import { t } from "../../../i18n/index.js";
 import type { RuntimeEnv } from "../../../runtime.js";
 import type { OnboardOptions } from "../../onboard-types.js";
-import { t } from "../../../i18n/index.js";
 
 export function applyNonInteractiveSkillsConfig(params: {
   nextConfig: OpenClawConfig;

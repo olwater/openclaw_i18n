@@ -1,14 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import type { IdentityConfig } from "../config/types.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { identityHasValues, parseIdentityMarkdown } from "../agents/identity-file.js";
 import { DEFAULT_IDENTITY_FILENAME } from "../agents/workspace.js";
 import { writeConfigFile } from "../config/config.js";
 import { logConfigUpdated } from "../config/logging.js";
-import { t } from "../i18n/index.js";
+import type { IdentityConfig } from "../config/types.js";
 import { normalizeAgentId } from "../routing/session-key.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { resolveUserPath, shortenHomePath } from "../utils.js";
 import { requireValidConfig } from "./agents.command-shared.js";
@@ -101,7 +100,7 @@ export async function agentsSetIdentityCommand(
   let agentId = agentRaw ? normalizeAgentId(agentRaw) : undefined;
   if (!agentId) {
     if (!workspaceDir) {
-      runtime.error(t("Select an agent with --agent or provide a workspace via --workspace."));
+      runtime.error("Select an agent with --agent or provide a workspace via --workspace.");
       runtime.exit(1);
       return;
     }
@@ -115,7 +114,7 @@ export async function agentsSetIdentityCommand(
     }
     if (matches.length > 1) {
       runtime.error(
-        `Multiple agents match ${shortenHomePath(workspaceDir)}: ${matches.join(t(", "))}. Pass --agent to choose one.`,
+        `Multiple agents match ${shortenHomePath(workspaceDir)}: ${matches.join(", ")}. Pass --agent to choose one.`,
       );
       runtime.exit(1);
       return;
@@ -158,7 +157,7 @@ export async function agentsSetIdentityCommand(
     !incomingIdentity.avatar
   ) {
     runtime.error(
-      t("No identity fields provided. Use --name/--emoji/--theme/--avatar or --from-identity."),
+      "No identity fields provided. Use --name/--emoji/--theme/--avatar or --from-identity.",
     );
     runtime.exit(1);
     return;

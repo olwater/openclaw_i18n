@@ -1,54 +1,112 @@
 ---
 name: weather
-description: 获取当前天气和预报（无需 API 密钥）。
+description: "Get current weather and forecasts via wttr.in or Open-Meteo. Use when: user asks about weather, temperature, or forecasts for any location. NOT for: historical weather data, severe weather alerts, or detailed meteorological analysis. No API key needed."
 homepage: https://wttr.in/:help
 metadata: { "openclaw": { "emoji": "🌤️", "requires": { "bins": ["curl"] } } }
 ---
 
-# 天气
+# Weather Skill
 
-两个免费服务，无需 API 密钥。
+Get current weather conditions and forecasts.
 
-## wttr.in (主要)
+## When to Use
 
-快速单行命令：
+✅ **USE this skill when:**
 
-```bash
-curl -s "wttr.in/London?format=3"
-# Output: London: ⛅️ +8°C
-```
+- "What's the weather?"
+- "Will it rain today/tomorrow?"
+- "Temperature in [city]"
+- "Weather forecast for the week"
+- Travel planning weather checks
 
-紧凑格式：
+## When NOT to Use
 
-```bash
-curl -s "wttr.in/London?format=%l:+%c+%t+%h+%w"
-# Output: London: ⛅️ +8°C 71% ↙5km/h
-```
+❌ **DON'T use this skill when:**
 
-完整预报：
+- Historical weather data → use weather archives/APIs
+- Climate analysis or trends → use specialized data sources
+- Hyper-local microclimate data → use local sensors
+- Severe weather alerts → check official NWS sources
+- Aviation/marine weather → use specialized services (METAR, etc.)
 
-```bash
-curl -s "wttr.in/London?T"
-```
+## Location
 
-格式代码：`%c` 天气状况 · `%t` 温度 · `%h` 湿度 · `%w` 风 · `%l` 位置 · `%m` 月相
+Always include a city, region, or airport code in weather queries.
 
-提示：
+## Commands
 
-- 空格进行 URL 编码：`wttr.in/New+York`
-- 机场代码：`wttr.in/JFK`
-- 单位：`?m` (公制) `?u` (美制)
-- 仅今天：`?1` · 仅当前：`?0`
-- PNG：`curl -s "wttr.in/Berlin.png" -o /tmp/weather.png`
-
-## Open-Meteo (备用, JSON)
-
-免费，无密钥，适合编程使用：
+### Current Weather
 
 ```bash
-curl -s "https://api.open-meteo.com/v1/forecast?latitude=51.5&longitude=-0.12&current_weather=true"
+# One-line summary
+curl "wttr.in/London?format=3"
+
+# Detailed current conditions
+curl "wttr.in/London?0"
+
+# Specific city
+curl "wttr.in/New+York?format=3"
 ```
 
-查找城市的坐标，然后查询。返回包含温度、风速、天气代码的 JSON。
+### Forecasts
 
-文档：https://open-meteo.com/en/docs
+```bash
+# 3-day forecast
+curl "wttr.in/London"
+
+# Week forecast
+curl "wttr.in/London?format=v2"
+
+# Specific day (0=today, 1=tomorrow, 2=day after)
+curl "wttr.in/London?1"
+```
+
+### Format Options
+
+```bash
+# One-liner
+curl "wttr.in/London?format=%l:+%c+%t+%w"
+
+# JSON output
+curl "wttr.in/London?format=j1"
+
+# PNG image
+curl "wttr.in/London.png"
+```
+
+### Format Codes
+
+- `%c` — Weather condition emoji
+- `%t` — Temperature
+- `%f` — "Feels like"
+- `%w` — Wind
+- `%h` — Humidity
+- `%p` — Precipitation
+- `%l` — Location
+
+## Quick Responses
+
+**"What's the weather?"**
+
+```bash
+curl -s "wttr.in/London?format=%l:+%c+%t+(feels+like+%f),+%w+wind,+%h+humidity"
+```
+
+**"Will it rain?"**
+
+```bash
+curl -s "wttr.in/London?format=%l:+%c+%p"
+```
+
+**"Weekend forecast"**
+
+```bash
+curl "wttr.in/London?format=v2"
+```
+
+## Notes
+
+- No API key needed (uses wttr.in)
+- Rate limited; don't spam requests
+- Works for most global cities
+- Supports airport codes: `curl wttr.in/ORD`

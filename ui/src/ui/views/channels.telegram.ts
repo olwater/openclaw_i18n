@@ -1,9 +1,8 @@
 import { html, nothing } from "lit";
-import type { ChannelAccountSnapshot, TelegramStatus } from "../types.ts";
-import type { ChannelsProps } from "./channels.types.ts";
 import { formatRelativeTimestamp } from "../format.ts";
-import { t } from "../i18n/index.ts";
+import type { ChannelAccountSnapshot, TelegramStatus } from "../types.ts";
 import { renderChannelConfigSection } from "./channels.config.ts";
+import type { ChannelsProps } from "./channels.types.ts";
 
 export function renderTelegramCard(params: {
   props: ChannelsProps;
@@ -28,16 +27,16 @@ export function renderTelegramCard(params: {
         </div>
         <div class="status-list account-card-status">
           <div>
-            <span class="label">${t("Running")}</span>
-            <span>${account.running ? t("Yes") : t("No")}</span>
+            <span class="label">Running</span>
+            <span>${account.running ? "Yes" : "No"}</span>
           </div>
           <div>
-            <span class="label">${t("Configured")}</span>
-            <span>${account.configured ? t("Yes") : t("No")}</span>
+            <span class="label">Configured</span>
+            <span>${account.configured ? "Yes" : "No"}</span>
           </div>
           <div>
-            <span class="label">${t("Last inbound")}</span>
-            <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : t("n/a")}</span>
+            <span class="label">Last inbound</span>
+            <span>${account.lastInboundAt ? formatRelativeTimestamp(account.lastInboundAt) : "n/a"}</span>
           </div>
           ${
             account.lastError
@@ -55,8 +54,8 @@ export function renderTelegramCard(params: {
 
   return html`
     <div class="card">
-      <div class="card-title">${t("Telegram")}</div>
-      <div class="card-sub">${t("Bot status and channel configuration.")}</div>
+      <div class="card-title">Telegram</div>
+      <div class="card-sub">Bot status and channel configuration.</div>
       ${accountCountLabel}
 
       ${
@@ -69,24 +68,24 @@ export function renderTelegramCard(params: {
           : html`
             <div class="status-list" style="margin-top: 16px;">
               <div>
-                <span class="label">${t("Configured")}</span>
-                <span>${telegram?.configured ? t("Yes") : t("No")}</span>
+                <span class="label">Configured</span>
+                <span>${telegram?.configured ? "Yes" : "No"}</span>
               </div>
               <div>
-                <span class="label">${t("Running")}</span>
-                <span>${telegram?.running ? t("Yes") : t("No")}</span>
+                <span class="label">Running</span>
+                <span>${telegram?.running ? "Yes" : "No"}</span>
               </div>
               <div>
-                <span class="label">${t("Mode")}</span>
+                <span class="label">Mode</span>
                 <span>${telegram?.mode ?? "n/a"}</span>
               </div>
               <div>
-                <span class="label">${t("Last start")}</span>
-                <span>${telegram?.lastStartAt ? formatRelativeTimestamp(telegram.lastStartAt) : t("n/a")}</span>
+                <span class="label">Last start</span>
+                <span>${telegram?.lastStartAt ? formatRelativeTimestamp(telegram.lastStartAt) : "n/a"}</span>
               </div>
               <div>
-                <span class="label">${t("Last probe")}</span>
-                <span>${telegram?.lastProbeAt ? formatRelativeTimestamp(telegram.lastProbeAt) : t("n/a")}</span>
+                <span class="label">Last probe</span>
+                <span>${telegram?.lastProbeAt ? formatRelativeTimestamp(telegram.lastProbeAt) : "n/a"}</span>
               </div>
             </div>
           `
@@ -113,7 +112,7 @@ export function renderTelegramCard(params: {
 
       <div class="row" style="margin-top: 12px;">
         <button class="btn" @click=${() => props.onRefresh(true)}>
-          ${t("Probe")}
+          Probe
         </button>
       </div>
     </div>

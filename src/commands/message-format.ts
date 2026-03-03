@@ -1,20 +1,12 @@
+import { getChannelPlugin } from "../channels/plugins/index.js";
 import type { ChannelId, ChannelMessageActionName } from "../channels/plugins/types.js";
 import type { OutboundDeliveryResult } from "../infra/outbound/deliver.js";
-import type { MessageActionRunResult } from "../infra/outbound/message-action-runner.js";
-import { getChannelPlugin } from "../channels/plugins/index.js";
-import { t } from "../i18n/index.js";
 import { formatGatewaySummary, formatOutboundDeliverySummary } from "../infra/outbound/format.js";
+import type { MessageActionRunResult } from "../infra/outbound/message-action-runner.js";
 import { formatTargetDisplay } from "../infra/outbound/target-resolver.js";
 import { renderTable } from "../terminal/table.js";
 import { isRich, theme } from "../terminal/theme.js";
-
-const shortenText = (value: string, maxLen: number) => {
-  const chars = Array.from(value);
-  if (chars.length <= maxLen) {
-    return value;
-  }
-  return `${chars.slice(0, Math.max(0, maxLen - 1)).join("")}…`;
-};
+import { shortenText } from "./text-format.js";
 
 const resolveChannelLabel = (channel: ChannelId) =>
   getChannelPlugin(channel)?.meta.label ?? channel;
@@ -163,7 +155,7 @@ function renderMessagesFromPayload(payload: unknown, opts: FormatOpts): string[]
   if (!Array.isArray(messages)) {
     return null;
   }
-  return renderMessageList(messages, opts, t("No messages."));
+  return renderMessageList(messages, opts, "No messages.");
 }
 
 function renderPinsFromPayload(payload: unknown, opts: FormatOpts): string[] | null {
@@ -174,7 +166,7 @@ function renderPinsFromPayload(payload: unknown, opts: FormatOpts): string[] | n
   if (!Array.isArray(pins)) {
     return null;
   }
-  return renderMessageList(pins, opts, t("No pins."));
+  return renderMessageList(pins, opts, "No pins.");
 }
 
 function extractDiscordSearchResultsMessages(results: unknown): unknown[] | null {
@@ -238,12 +230,12 @@ function renderReactions(payload: unknown, opts: FormatOpts): string[] | null {
     return {
       Emoji: emoji,
       Count: count,
-      Users: shortenText(userList.join(t(", ")), 72),
+      Users: shortenText(userList.join(", "), 72),
     };
   });
 
   if (rows.length === 0) {
-    return [theme.muted(t("No reactions."))];
+    return [theme.muted("No reactions.")];
   }
 
   return [
@@ -278,7 +270,7 @@ export function formatMessageCliText(result: MessageActionRunResult): string[] {
       Channel: resolveChannelLabel(entry.channel),
       Target: shortenText(formatTargetDisplay({ channel: entry.channel, target: entry.to }), 36),
       Status: entry.ok ? "ok" : "error",
-      Error: entry.ok ? "" : shortenText(entry.error ?? t("unknown error"), 48),
+      Error: entry.ok ? "" : shortenText(entry.error ?? "unknown error", 48),
     }));
     const okCount = results.filter((entry) => entry.ok).length;
     const total = results.length;
@@ -331,7 +323,7 @@ export function formatMessageCliText(result: MessageActionRunResult): string[] {
       const lines = [
         ok(
           formatGatewaySummary({
-            action: t("Poll sent"),
+            action: "Poll sent",
             channel: poll.channel,
             messageId: msgId,
           }),
@@ -367,11 +359,11 @@ export function formatMessageCliText(result: MessageActionRunResult): string[] {
       const list = removed
         .map((x) => String(x).trim())
         .filter(Boolean)
-        .join(t(", "));
+        .join(", ");
       lines.push(ok(`✅ Reactions removed${list ? `: ${list}` : ""}`));
       return lines;
     }
-    lines.push(ok(t("✅ Reaction updated.")));
+    lines.push(ok("✅ Reaction updated."));
     return lines;
   }
 
@@ -394,7 +386,7 @@ export function formatMessageCliText(result: MessageActionRunResult): string[] {
   if (result.action === "list-pins") {
     const pinsTable = renderPinsFromPayload(payload, opts);
     if (pinsTable) {
-      lines.push(heading(t("Pinned messages")));
+      lines.push(heading("Pinned messages"));
       lines.push(pinsTable[0] ?? "");
       return lines;
     }
@@ -404,8 +396,8 @@ export function formatMessageCliText(result: MessageActionRunResult): string[] {
     const results = (payload as { results?: unknown }).results;
     const list = extractDiscordSearchResultsMessages(results);
     if (list) {
-      lines.push(heading(t("Search results")));
-      lines.push(renderMessageList(list, opts, t("No results."))[0] ?? "");
+      lines.push(heading("Search results"));
+      lines.push(renderMessageList(list, opts, "No results.")[0] ?? "");
       return lines;
     }
   }
@@ -417,7 +409,7 @@ export function formatMessageCliText(result: MessageActionRunResult): string[] {
     lines.push("");
     lines.push(...summary);
     lines.push("");
-    lines.push(muted(t("Tip: use --json for full output.")));
+    lines.push(muted("Tip: use --json for full output."));
   }
   return lines;
 }

@@ -14,11 +14,90 @@ import { shortenHomePath } from "../utils.js";
 import { callBrowserRequest, type BrowserParentOpts } from "./browser-cli-shared.js";
 import { runCommandWithRuntime } from "./cli-utils.js";
 
+function resolveProfileQuery(profile?: string) {
+  return profile ? { profile } : undefined;
+}
+
+function printJsonResult(parent: BrowserParentOpts, payload: unknown): boolean {
+  if (!parent?.json) {
+    return false;
+  }
+  defaultRuntime.log(JSON.stringify(payload, null, 2));
+  return true;
+}
+
+async function callTabAction(
+  parent: BrowserParentOpts,
+  profile: string | undefined,
+  body: { action: "new" | "select" | "close"; index?: number },
+) {
+  return callBrowserRequest(
+    parent,
+    {
+      method: "POST",
+      path: "/tabs/action",
+      query: resolveProfileQuery(profile),
+      body,
+    },
+    { timeoutMs: 10_000 },
+  );
+}
+
+async function fetchBrowserStatus(
+  parent: BrowserParentOpts,
+  profile?: string,
+): Promise<BrowserStatus> {
+  return await callBrowserRequest<BrowserStatus>(
+    parent,
+    {
+      method: "GET",
+      path: "/",
+      query: resolveProfileQuery(profile),
+    },
+    {
+      timeoutMs: 1500,
+    },
+  );
+}
+
+async function runBrowserToggle(
+  parent: BrowserParentOpts,
+  params: { profile?: string; path: string },
+) {
+  await callBrowserRequest(parent, {
+    method: "POST",
+    path: params.path,
+    query: resolveProfileQuery(params.profile),
+  });
+  const status = await fetchBrowserStatus(parent, params.profile);
+  if (printJsonResult(parent, status)) {
+    return;
+  }
+  const name = status.profile ?? "openclaw";
+  defaultRuntime.log(info(`🦞 browser [${name}] running: ${status.running}`));
+}
+
 function runBrowserCommand(action: () => Promise<void>) {
   return runCommandWithRuntime(defaultRuntime, action, (err) => {
     defaultRuntime.error(danger(String(err)));
     defaultRuntime.exit(1);
   });
+}
+
+function logBrowserTabs(tabs: BrowserTab[], json?: boolean) {
+  if (json) {
+    defaultRuntime.log(JSON.stringify({ tabs }, null, 2));
+    return;
+  }
+  if (tabs.length === 0) {
+    defaultRuntime.log("No tabs (browser closed or no targets).");
+    return;
+  }
+  defaultRuntime.log(
+    tabs
+      .map((t, i) => `${i + 1}. ${t.title || "(untitled)"}\n   ${t.url}\n   id: ${t.targetId}`)
+      .join("\n"),
+  );
 }
 
 export function registerBrowserManageCommands(
@@ -27,23 +106,12 @@ export function registerBrowserManageCommands(
 ) {
   browser
     .command("status")
-    .description(t("Show browser status") as unknown as string)
+    .description(t("Show browser status"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       await runBrowserCommand(async () => {
-        const status = await callBrowserRequest<BrowserStatus>(
-          parent,
-          {
-            method: "GET",
-            path: "/",
-            query: parent?.browserProfile ? { profile: parent.browserProfile } : undefined,
-          },
-          {
-            timeoutMs: 1500,
-          },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(status, null, 2));
+        const status = await fetchBrowserStatus(parent, parent?.browserProfile);
+        if (printJsonResult(parent, status)) {
           return;
         }
         const detectedPath = status.detectedExecutablePath ?? status.executablePath;
@@ -67,75 +135,29 @@ export function registerBrowserManageCommands(
 
   browser
     .command("start")
-    .description(t("Start the browser (no-op if already running)") as unknown as string)
+    .description(t("Start the browser (no-op if already running)"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
       await runBrowserCommand(async () => {
-        await callBrowserRequest(
-          parent,
-          {
-            method: "POST",
-            path: "/start",
-            query: profile ? { profile } : undefined,
-          },
-          { timeoutMs: 15000 },
-        );
-        const status = await callBrowserRequest<BrowserStatus>(
-          parent,
-          {
-            method: "GET",
-            path: "/",
-            query: profile ? { profile } : undefined,
-          },
-          { timeoutMs: 1500 },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(status, null, 2));
-          return;
-        }
-        const name = status.profile ?? "openclaw";
-        defaultRuntime.log(info(`🦞 browser [${name}] running: ${status.running}`));
+        await runBrowserToggle(parent, { profile, path: "/start" });
       });
     });
 
   browser
     .command("stop")
-    .description(t("Stop the browser (best-effort)") as unknown as string)
+    .description(t("Stop the browser (best-effort)"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
       await runBrowserCommand(async () => {
-        await callBrowserRequest(
-          parent,
-          {
-            method: "POST",
-            path: "/stop",
-            query: profile ? { profile } : undefined,
-          },
-          { timeoutMs: 15000 },
-        );
-        const status = await callBrowserRequest<BrowserStatus>(
-          parent,
-          {
-            method: "GET",
-            path: "/",
-            query: profile ? { profile } : undefined,
-          },
-          { timeoutMs: 1500 },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(status, null, 2));
-          return;
-        }
-        const name = status.profile ?? "openclaw";
-        defaultRuntime.log(info(`🦞 browser [${name}] running: ${status.running}`));
+        await runBrowserToggle(parent, { profile, path: "/stop" });
       });
     });
 
   browser
     .command("reset-profile")
-    .description(t("Reset browser profile (moves it to Trash)") as unknown as string)
+    .description(t("Reset browser profile (moves it to Trash)"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -145,16 +167,15 @@ export function registerBrowserManageCommands(
           {
             method: "POST",
             path: "/reset-profile",
-            query: profile ? { profile } : undefined,
+            query: resolveProfileQuery(profile),
           },
           { timeoutMs: 20000 },
         );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
+        if (printJsonResult(parent, result)) {
           return;
         }
         if (!result.moved) {
-          defaultRuntime.log(info(t("🦞 browser profile already missing.") as unknown as string));
+          defaultRuntime.log(info(`🦞 browser profile already missing.`));
           return;
         }
         const dest = result.to ?? result.from;
@@ -164,7 +185,7 @@ export function registerBrowserManageCommands(
 
   browser
     .command("tabs")
-    .description(t("List open tabs") as unknown as string)
+    .description(t("List open tabs"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -174,32 +195,18 @@ export function registerBrowserManageCommands(
           {
             method: "GET",
             path: "/tabs",
-            query: profile ? { profile } : undefined,
+            query: resolveProfileQuery(profile),
           },
           { timeoutMs: 3000 },
         );
         const tabs = result.tabs ?? [];
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify({ tabs }, null, 2));
-          return;
-        }
-        if (tabs.length === 0) {
-          defaultRuntime.log(t("No tabs (browser closed or no targets).") as unknown as string);
-          return;
-        }
-        defaultRuntime.log(
-          tabs
-            .map(
-              (t, i) => `${i + 1}. ${t.title || "(untitled)"}\n   ${t.url}\n   id: ${t.targetId}`,
-            )
-            .join("\n"),
-        );
+        logBrowserTabs(tabs, parent?.json);
       });
     });
 
   const tab = browser
     .command("tab")
-    .description(t("Tab shortcuts (index-based)") as unknown as string)
+    .description(t("Tab shortcuts (index-based)"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -209,7 +216,7 @@ export function registerBrowserManageCommands(
           {
             method: "POST",
             path: "/tabs/action",
-            query: profile ? { profile } : undefined,
+            query: resolveProfileQuery(profile),
             body: {
               action: "list",
             },
@@ -217,74 +224,43 @@ export function registerBrowserManageCommands(
           { timeoutMs: 10_000 },
         );
         const tabs = result.tabs ?? [];
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify({ tabs }, null, 2));
-          return;
-        }
-        if (tabs.length === 0) {
-          defaultRuntime.log(t("No tabs (browser closed or no targets).") as unknown as string);
-          return;
-        }
-        defaultRuntime.log(
-          tabs
-            .map(
-              (t, i) => `${i + 1}. ${t.title || "(untitled)"}\n   ${t.url}\n   id: ${t.targetId}`,
-            )
-            .join("\n"),
-        );
+        logBrowserTabs(tabs, parent?.json);
       });
     });
 
   tab
     .command("new")
-    .description(t("Open a new tab (about:blank)") as unknown as string)
+    .description(t("Open a new tab (about:blank)"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
       await runBrowserCommand(async () => {
-        const result = await callBrowserRequest(
-          parent,
-          {
-            method: "POST",
-            path: "/tabs/action",
-            query: profile ? { profile } : undefined,
-            body: { action: "new" },
-          },
-          { timeoutMs: 10_000 },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
+        const result = await callTabAction(parent, profile, { action: "new" });
+        if (printJsonResult(parent, result)) {
           return;
         }
-        defaultRuntime.log(t("opened new tab") as unknown as string);
+        defaultRuntime.log("opened new tab");
       });
     });
 
   tab
     .command("select")
-    .description(t("Focus tab by index (1-based)") as unknown as string)
-    .argument("<index>", t("Tab index (1-based)") as unknown as string, (v: string) => Number(v))
+    .description(t("Focus tab by index (1-based)"))
+    .argument("<index>", "Tab index (1-based)", (v: string) => Number(v))
     .action(async (index: number, _opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
       if (!Number.isFinite(index) || index < 1) {
-        defaultRuntime.error(danger(t("index must be a positive number") as unknown as string));
+        defaultRuntime.error(danger("index must be a positive number"));
         defaultRuntime.exit(1);
         return;
       }
       await runBrowserCommand(async () => {
-        const result = await callBrowserRequest(
-          parent,
-          {
-            method: "POST",
-            path: "/tabs/action",
-            query: profile ? { profile } : undefined,
-            body: { action: "select", index: Math.floor(index) - 1 },
-          },
-          { timeoutMs: 10_000 },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
+        const result = await callTabAction(parent, profile, {
+          action: "select",
+          index: Math.floor(index) - 1,
+        });
+        if (printJsonResult(parent, result)) {
           return;
         }
         defaultRuntime.log(`selected tab ${Math.floor(index)}`);
@@ -293,41 +269,31 @@ export function registerBrowserManageCommands(
 
   tab
     .command("close")
-    .description(t("Close tab by index (1-based); default: first tab") as unknown as string)
-    .argument("[index]", t("Tab index (1-based)") as unknown as string, (v: string) => Number(v))
+    .description(t("Close tab by index (1-based); default: first tab"))
+    .argument("[index]", "Tab index (1-based)", (v: string) => Number(v))
     .action(async (index: number | undefined, _opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
       const idx =
         typeof index === "number" && Number.isFinite(index) ? Math.floor(index) - 1 : undefined;
       if (typeof idx === "number" && idx < 0) {
-        defaultRuntime.error(danger(t("index must be >= 1") as unknown as string));
+        defaultRuntime.error(danger("index must be >= 1"));
         defaultRuntime.exit(1);
         return;
       }
       await runBrowserCommand(async () => {
-        const result = await callBrowserRequest(
-          parent,
-          {
-            method: "POST",
-            path: "/tabs/action",
-            query: profile ? { profile } : undefined,
-            body: { action: "close", index: idx },
-          },
-          { timeoutMs: 10_000 },
-        );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
+        const result = await callTabAction(parent, profile, { action: "close", index: idx });
+        if (printJsonResult(parent, result)) {
           return;
         }
-        defaultRuntime.log(t("closed tab") as unknown as string);
+        defaultRuntime.log("closed tab");
       });
     });
 
   browser
     .command("open")
-    .description(t("Open a URL in a new tab") as unknown as string)
-    .argument("<url>", t("URL to open") as unknown as string)
+    .description(t("Open a URL in a new tab"))
+    .argument("<url>", "URL to open")
     .action(async (url: string, _opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -337,13 +303,12 @@ export function registerBrowserManageCommands(
           {
             method: "POST",
             path: "/tabs/open",
-            query: profile ? { profile } : undefined,
+            query: resolveProfileQuery(profile),
             body: { url },
           },
           { timeoutMs: 15000 },
         );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(tab, null, 2));
+        if (printJsonResult(parent, tab)) {
           return;
         }
         defaultRuntime.log(`opened: ${tab.url}\nid: ${tab.targetId}`);
@@ -352,8 +317,8 @@ export function registerBrowserManageCommands(
 
   browser
     .command("focus")
-    .description(t("Focus a tab by target id (or unique prefix)") as unknown as string)
-    .argument("<targetId>", t("Target id or unique prefix") as unknown as string)
+    .description(t("Focus a tab by target id (or unique prefix)"))
+    .argument("<targetId>", "Target id or unique prefix")
     .action(async (targetId: string, _opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -363,13 +328,12 @@ export function registerBrowserManageCommands(
           {
             method: "POST",
             path: "/tabs/focus",
-            query: profile ? { profile } : undefined,
+            query: resolveProfileQuery(profile),
             body: { targetId },
           },
           { timeoutMs: 5000 },
         );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify({ ok: true }, null, 2));
+        if (printJsonResult(parent, { ok: true })) {
           return;
         }
         defaultRuntime.log(`focused tab ${targetId}`);
@@ -378,8 +342,8 @@ export function registerBrowserManageCommands(
 
   browser
     .command("close")
-    .description(t("Close a tab (target id optional)") as unknown as string)
-    .argument("[targetId]", t("Target id or unique prefix (optional)") as unknown as string)
+    .description(t("Close a tab (target id optional)"))
+    .argument("[targetId]", "Target id or unique prefix (optional)")
     .action(async (targetId: string | undefined, _opts, cmd) => {
       const parent = parentOpts(cmd);
       const profile = parent?.browserProfile;
@@ -390,7 +354,7 @@ export function registerBrowserManageCommands(
             {
               method: "DELETE",
               path: `/tabs/${encodeURIComponent(targetId.trim())}`,
-              query: profile ? { profile } : undefined,
+              query: resolveProfileQuery(profile),
             },
             { timeoutMs: 5000 },
           );
@@ -400,24 +364,23 @@ export function registerBrowserManageCommands(
             {
               method: "POST",
               path: "/act",
-              query: profile ? { profile } : undefined,
+              query: resolveProfileQuery(profile),
               body: { kind: "close" },
             },
             { timeoutMs: 20000 },
           );
         }
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify({ ok: true }, null, 2));
+        if (printJsonResult(parent, { ok: true })) {
           return;
         }
-        defaultRuntime.log(t("closed tab") as unknown as string);
+        defaultRuntime.log("closed tab");
       });
     });
 
   // Profile management commands
   browser
     .command("profiles")
-    .description(t("List all browser profiles") as unknown as string)
+    .description(t("List all browser profiles"))
     .action(async (_opts, cmd) => {
       const parent = parentOpts(cmd);
       await runBrowserCommand(async () => {
@@ -430,12 +393,11 @@ export function registerBrowserManageCommands(
           { timeoutMs: 3000 },
         );
         const profiles = result.profiles ?? [];
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify({ profiles }, null, 2));
+        if (printJsonResult(parent, { profiles })) {
           return;
         }
         if (profiles.length === 0) {
-          defaultRuntime.log(t("No profiles configured.") as unknown as string);
+          defaultRuntime.log("No profiles configured.");
           return;
         }
         defaultRuntime.log(
@@ -443,9 +405,9 @@ export function registerBrowserManageCommands(
             .map((p) => {
               const status = p.running ? "running" : "stopped";
               const tabs = p.running ? ` (${p.tabCount} tabs)` : "";
-              const def = p.isDefault ? (t(" [default]") as unknown as string) : "";
+              const def = p.isDefault ? " [default]" : "";
               const loc = p.isRemote ? `cdpUrl: ${p.cdpUrl}` : `port: ${p.cdpPort}`;
-              const remote = p.isRemote ? (t(" [remote]") as unknown as string) : "";
+              const remote = p.isRemote ? " [remote]" : "";
               return `${p.name}: ${status}${tabs}${def}${remote}\n  ${loc}, color: ${p.color}`;
             })
             .join("\n"),
@@ -455,17 +417,11 @@ export function registerBrowserManageCommands(
 
   browser
     .command("create-profile")
-    .description(t("Create a new browser profile") as unknown as string)
-    .requiredOption(
-      "--name <name>",
-      t("Profile name (lowercase, numbers, hyphens)") as unknown as string,
-    )
-    .option("--color <hex>", t("Profile color (hex format, e.g. #0066CC)") as unknown as string)
-    .option("--cdp-url <url>", t("CDP URL for remote Chrome (http/https)") as unknown as string)
-    .option(
-      "--driver <driver>",
-      t("Profile driver (openclaw|extension). Default: openclaw") as unknown as string,
-    )
+    .description(t("Create a new browser profile"))
+    .requiredOption("--name <name>", "Profile name (lowercase, numbers, hyphens)")
+    .option("--color <hex>", "Profile color (hex format, e.g. #0066CC)")
+    .option("--cdp-url <url>", "CDP URL for remote Chrome (http/https)")
+    .option("--driver <driver>", "Profile driver (openclaw|extension). Default: openclaw")
     .action(
       async (opts: { name: string; color?: string; cdpUrl?: string; driver?: string }, cmd) => {
         const parent = parentOpts(cmd);
@@ -484,15 +440,14 @@ export function registerBrowserManageCommands(
             },
             { timeoutMs: 10_000 },
           );
-          if (parent?.json) {
-            defaultRuntime.log(JSON.stringify(result, null, 2));
+          if (printJsonResult(parent, result)) {
             return;
           }
           const loc = result.isRemote ? `  cdpUrl: ${result.cdpUrl}` : `  port: ${result.cdpPort}`;
           defaultRuntime.log(
             info(
               `🦞 Created profile "${result.profile}"\n${loc}\n  color: ${result.color}${
-                opts.driver === "extension" ? (t("\n  driver: extension") as unknown as string) : ""
+                opts.driver === "extension" ? "\n  driver: extension" : ""
               }`,
             ),
           );
@@ -502,8 +457,8 @@ export function registerBrowserManageCommands(
 
   browser
     .command("delete-profile")
-    .description(t("Delete a browser profile") as unknown as string)
-    .requiredOption("--name <name>", t("Profile name to delete") as unknown as string)
+    .description(t("Delete a browser profile"))
+    .requiredOption("--name <name>", "Profile name to delete")
     .action(async (opts: { name: string }, cmd) => {
       const parent = parentOpts(cmd);
       await runBrowserCommand(async () => {
@@ -515,8 +470,7 @@ export function registerBrowserManageCommands(
           },
           { timeoutMs: 20_000 },
         );
-        if (parent?.json) {
-          defaultRuntime.log(JSON.stringify(result, null, 2));
+        if (printJsonResult(parent, result)) {
           return;
         }
         const msg = result.deleted

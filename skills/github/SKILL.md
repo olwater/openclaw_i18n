@@ -1,6 +1,6 @@
 ---
 name: github
-description: "使用 `gh` CLI 与 GitHub 交互。使用 `gh issue`、`gh pr`、`gh run` 和 `gh api` 来处理 issue、PR、CI 运行和高级查询。"
+description: "GitHub operations via `gh` CLI: issues, PRs, CI runs, code review, API queries. Use when: (1) checking PR status or CI, (2) creating/commenting on issues, (3) listing/filtering PRs or issues, (4) viewing run logs. NOT for: complex web UI interactions requiring manual browser flows (use browser tooling when available), bulk operations across many repos (script with gh api), or when gh auth is not configured."
 metadata:
   {
     "openclaw":
@@ -14,64 +14,150 @@ metadata:
               "kind": "brew",
               "formula": "gh",
               "bins": ["gh"],
-              "label": "安装 GitHub CLI (brew)",
+              "label": "Install GitHub CLI (brew)",
             },
             {
               "id": "apt",
               "kind": "apt",
               "package": "gh",
               "bins": ["gh"],
-              "label": "安装 GitHub CLI (apt)",
+              "label": "Install GitHub CLI (apt)",
             },
           ],
       },
   }
 ---
 
-# GitHub 技能
+# GitHub Skill
 
-使用 `gh` CLI 与 GitHub 进行交互。当不在 git 目录中时，请务必指定 `--repo owner/repo`，或直接使用 URL。
+Use the `gh` CLI to interact with GitHub repositories, issues, PRs, and CI.
 
-## Pull Requests
+## When to Use
 
-检查 PR 的 CI 状态：
+✅ **USE this skill when:**
+
+- Checking PR status, reviews, or merge readiness
+- Viewing CI/workflow run status and logs
+- Creating, closing, or commenting on issues
+- Creating or merging pull requests
+- Querying GitHub API for repository data
+- Listing repos, releases, or collaborators
+
+## When NOT to Use
+
+❌ **DON'T use this skill when:**
+
+- Local git operations (commit, push, pull, branch) → use `git` directly
+- Non-GitHub repos (GitLab, Bitbucket, self-hosted) → different CLIs
+- Cloning repositories → use `git clone`
+- Reviewing actual code changes → use `coding-agent` skill
+- Complex multi-file diffs → use `coding-agent` or read files directly
+
+## Setup
 
 ```bash
+# Authenticate (one-time)
+gh auth login
+
+# Verify
+gh auth status
+```
+
+## Common Commands
+
+### Pull Requests
+
+```bash
+# List PRs
+gh pr list --repo owner/repo
+
+# Check CI status
 gh pr checks 55 --repo owner/repo
+
+# View PR details
+gh pr view 55 --repo owner/repo
+
+# Create PR
+gh pr create --title "feat: add feature" --body "Description"
+
+# Merge PR
+gh pr merge 55 --squash --repo owner/repo
 ```
 
-列出最近的工作流运行（workflow runs）：
+### Issues
 
 ```bash
+# List issues
+gh issue list --repo owner/repo --state open
+
+# Create issue
+gh issue create --title "Bug: something broken" --body "Details..."
+
+# Close issue
+gh issue close 42 --repo owner/repo
+```
+
+### CI/Workflow Runs
+
+```bash
+# List recent runs
 gh run list --repo owner/repo --limit 10
-```
 
-查看运行详情并查看哪些步骤失败：
-
-```bash
+# View specific run
 gh run view <run-id> --repo owner/repo
-```
 
-仅查看失败步骤的日志：
-
-```bash
+# View failed step logs only
 gh run view <run-id> --repo owner/repo --log-failed
+
+# Re-run failed jobs
+gh run rerun <run-id> --failed --repo owner/repo
 ```
 
-## API 高级查询
-
-`gh api` 命令用于访问其他子命令无法提供的数据。
-
-获取具有特定字段的 PR：
+### API Queries
 
 ```bash
+# Get PR with specific fields
 gh api repos/owner/repo/pulls/55 --jq '.title, .state, .user.login'
+
+# List all labels
+gh api repos/owner/repo/labels --jq '.[].name'
+
+# Get repo stats
+gh api repos/owner/repo --jq '{stars: .stargazers_count, forks: .forks_count}'
 ```
 
-## JSON 输出
+## JSON Output
 
-大多数命令支持 `--json` 以进行结构化输出。你可以使用 `--jq` 进行过滤：
+Most commands support `--json` for structured output with `--jq` filtering:
 
 ```bash
 gh issue list --repo owner/repo --json number,title --jq '.[] | "\(.number): \(.title)"'
+gh pr list --json number,title,state,mergeable --jq '.[] | select(.mergeable == "MERGEABLE")'
 ```
+
+## Templates
+
+### PR Review Summary
+
+```bash
+# Get PR overview for review
+PR=55 REPO=owner/repo
+echo "## PR #$PR Summary"
+gh pr view $PR --repo $REPO --json title,body,author,additions,deletions,changedFiles \
+  --jq '"**\(.title)** by @\(.author.login)\n\n\(.body)\n\n📊 +\(.additions) -\(.deletions) across \(.changedFiles) files"'
+gh pr checks $PR --repo $REPO
+```
+
+### Issue Triage
+
+```bash
+# Quick issue triage view
+gh issue list --repo owner/repo --state open --json number,title,labels,createdAt \
+  --jq '.[] | "[\(.number)] \(.title) - \([.labels[].name] | join(", ")) (\(.createdAt[:10]))"'
+```
+
+## Notes
+
+- Always specify `--repo owner/repo` when not in a git directory
+- Use URLs directly: `gh pr view https://github.com/owner/repo/pull/55`
+- Rate limits apply; use `gh api --cache 1h` for repeated queries

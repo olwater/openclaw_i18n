@@ -1,8 +1,7 @@
 import type { OpenClawConfig } from "../../../config/config.js";
 import type { RuntimeEnv } from "../../../runtime.js";
+import { normalizeGatewayTokenInput, randomToken } from "../../onboard-helpers.js";
 import type { OnboardOptions } from "../../onboard-types.js";
-import { t } from "../../../i18n/index.js";
-import { randomToken } from "../../onboard-helpers.js";
 
 export function applyNonInteractiveGatewayConfig(params: {
   nextConfig: OpenClawConfig;
@@ -22,7 +21,7 @@ export function applyNonInteractiveGatewayConfig(params: {
 
   const hasGatewayPort = opts.gatewayPort !== undefined;
   if (hasGatewayPort && (!Number.isFinite(opts.gatewayPort) || (opts.gatewayPort ?? 0) <= 0)) {
-    runtime.error(t("Invalid --gateway-port"));
+    runtime.error("Invalid --gateway-port");
     runtime.exit(1);
     return null;
   }
@@ -31,7 +30,7 @@ export function applyNonInteractiveGatewayConfig(params: {
   let bind = opts.gatewayBind ?? "loopback";
   const authModeRaw = opts.gatewayAuth ?? "token";
   if (authModeRaw !== "token" && authModeRaw !== "password") {
-    runtime.error(t("Invalid --gateway-auth (use token|password)."));
+    runtime.error("Invalid --gateway-auth (use token|password).");
     runtime.exit(1);
     return null;
   }
@@ -50,7 +49,10 @@ export function applyNonInteractiveGatewayConfig(params: {
   }
 
   let nextConfig = params.nextConfig;
-  let gatewayToken = opts.gatewayToken?.trim() || undefined;
+  let gatewayToken =
+    normalizeGatewayTokenInput(opts.gatewayToken) ||
+    normalizeGatewayTokenInput(process.env.OPENCLAW_GATEWAY_TOKEN) ||
+    undefined;
 
   if (authMode === "token") {
     if (!gatewayToken) {
@@ -72,7 +74,7 @@ export function applyNonInteractiveGatewayConfig(params: {
   if (authMode === "password") {
     const password = opts.gatewayPassword?.trim();
     if (!password) {
-      runtime.error(t("Missing --gateway-password for password auth."));
+      runtime.error("Missing --gateway-password for password auth.");
       runtime.exit(1);
       return null;
     }

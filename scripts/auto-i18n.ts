@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
-import { Project, Node, QuoteKind } from "ts-morph";
 import { fileURLToPath } from "url";
+import { Project, Node, QuoteKind } from "ts-morph";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

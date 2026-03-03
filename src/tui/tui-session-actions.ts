@@ -1,15 +1,14 @@
 import type { TUI } from "@mariozechner/pi-tui";
 import type { SessionsPatchResult } from "../gateway/protocol/index.js";
-import type { ChatLog } from "./components/chat-log.js";
-import type { GatewayAgentsList, GatewayChatClient } from "./gateway-chat.js";
-import type { TuiOptions, TuiStateAccess } from "./tui-types.js";
-import { t } from "../i18n/index.js";
 import {
   normalizeAgentId,
   normalizeMainKey,
   parseAgentSessionKey,
 } from "../routing/session-key.js";
+import type { ChatLog } from "./components/chat-log.js";
+import type { GatewayAgentsList, GatewayChatClient } from "./gateway-chat.js";
 import { asString, extractTextFromMessage, isCommandMessage } from "./tui-formatters.js";
+import type { SessionInfo, TuiOptions, TuiStateAccess } from "./tui-types.js";
 
 type SessionActionContext = {
   client: GatewayChatClient;
@@ -34,21 +33,9 @@ type SessionInfoDefaults = {
   contextTokens?: number | null;
 };
 
-type SessionInfoEntry = {
-  thinkingLevel?: string;
-  verboseLevel?: string;
-  reasoningLevel?: string;
-  model?: string;
-  modelProvider?: string;
+type SessionInfoEntry = SessionInfo & {
   modelOverride?: string;
   providerOverride?: string;
-  contextTokens?: number | null;
-  inputTokens?: number | null;
-  outputTokens?: number | null;
-  totalTokens?: number | null;
-  responseUsage?: "on" | "off" | "tokens" | "full";
-  updatedAt?: number | null;
-  displayName?: string;
 };
 
 export function createSessionActions(context: SessionActionContext) {
@@ -384,7 +371,7 @@ export function createSessionActions(context: SessionActionContext) {
 
   const abortActive = async () => {
     if (!state.activeChatRunId) {
-      chatLog.addSystem(t("no active run"));
+      chatLog.addSystem("no active run");
       tui.requestRender();
       return;
     }
@@ -396,7 +383,7 @@ export function createSessionActions(context: SessionActionContext) {
       setActivityStatus("aborted");
     } catch (err) {
       chatLog.addSystem(`abort failed: ${String(err)}`);
-      setActivityStatus(t("abort failed"));
+      setActivityStatus("abort failed");
     }
     tui.requestRender();
   };

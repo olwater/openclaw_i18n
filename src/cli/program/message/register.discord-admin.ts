@@ -1,6 +1,6 @@
 import type { Command } from "commander";
-import type { MessageCliHelpers } from "./helpers.js";
 import { t } from "../../../i18n/index.js";
+import type { MessageCliHelpers } from "./helpers.js";
 
 export function registerMessageDiscordAdminCommands(message: Command, helpers: MessageCliHelpers) {
   const role = message.command("role").description(t("Role actions"));

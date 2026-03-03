@@ -1,6 +1,6 @@
 import type { Client } from "@larksuiteoapi/node-sdk";
-import type { OpenClawConfig } from "../config/config.js";
 import { dispatchReplyWithBufferedBlockDispatcher } from "../auto-reply/reply/provider-dispatcher.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { loadConfig } from "../config/config.js";
 import { logVerbose } from "../globals.js";
 import { formatErrorMessage } from "../infra/errors.js";
@@ -176,6 +176,7 @@ export async function processFeishuMessage(
           try {
             const { code, created } = await upsertFeishuPairingRequest({
               openId: senderId,
+              accountId: accountId,
               unionId: senderUnionId,
               name: sender?.sender_id?.user_id,
             });

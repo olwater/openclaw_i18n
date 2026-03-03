@@ -1,15 +1,13 @@
-import type { ChannelAccountSnapshot } from "../channels/plugins/types.js";
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { resolveChannelDefaultAccountId } from "../channels/plugins/helpers.js";
 import { getChannelPlugin, listChannelPlugins } from "../channels/plugins/index.js";
+import type { ChannelAccountSnapshot } from "../channels/plugins/types.js";
 import { withProgress } from "../cli/progress.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { loadConfig } from "../config/config.js";
 import { loadSessionStore, resolveStorePath } from "../config/sessions.js";
 import { buildGatewayConnectionDetails, callGateway } from "../gateway/call.js";
 import { info } from "../globals.js";
-import { t } from "../i18n/index.js";
 import { isTruthyEnvValue } from "../infra/env.js";
 import { formatErrorMessage } from "../infra/errors.js";
 import {
@@ -18,7 +16,9 @@ import {
 } from "../infra/heartbeat-runner.js";
 import { buildChannelAccountBindings, resolvePreferredAccountId } from "../routing/bindings.js";
 import { normalizeAgentId } from "../routing/session-key.js";
-import { theme } from "../terminal/theme.js";
+import type { RuntimeEnv } from "../runtime.js";
+import { styleHealthChannelLine } from "../terminal/health-style.js";
+import { isRich } from "../terminal/theme.js";
 
 export type ChannelAccountHealthSummary = {
   accountId: string;
@@ -75,7 +75,7 @@ const DEFAULT_TIMEOUT_MS = 10_000;
 
 const debugHealth = (...args: unknown[]) => {
   if (isTruthyEnvValue(process.env.OPENCLAW_DEBUG_HEALTH)) {
-    console.warn(t("[health:debug]"), ...args);
+    console.warn("[health:debug]", ...args);
   }
 };
 
@@ -87,11 +87,11 @@ const formatDurationParts = (ms: number): string => {
     return `${Math.max(0, Math.round(ms))}ms`;
   }
   const units: Array<{ label: string; size: number }> = [
-    { label: t("w"), size: 7 * 24 * 60 * 60 * 1000 },
-    { label: t("d"), size: 24 * 60 * 60 * 1000 },
-    { label: t("h"), size: 60 * 60 * 1000 },
-    { label: t("m"), size: 60 * 1000 },
-    { label: t("s"), size: 1000 },
+    { label: "w", size: 7 * 24 * 60 * 60 * 1000 },
+    { label: "d", size: 24 * 60 * 60 * 1000 },
+    { label: "h", size: 60 * 60 * 1000 },
+    { label: "m", size: 60 * 1000 },
+    { label: "s", size: 1000 },
   ];
   let remaining = Math.max(0, Math.floor(ms));
   const parts: string[] = [];
@@ -202,7 +202,7 @@ const formatProbeLine = (probe: unknown, opts: { botUsernames?: string[] } = {})
   if (ok) {
     let label = "ok";
     if (usernames.size > 0) {
-      label += ` (@${Array.from(usernames).join(t(", @"))})`;
+      label += ` (@${Array.from(usernames).join(", @")})`;
     }
     if (elapsedMs != null) {
       label += ` (${elapsedMs}ms)`;
@@ -248,44 +248,6 @@ const isProbeFailure = (summary: ChannelAccountHealthSummary): boolean => {
   const ok = typeof probe.ok === "boolean" ? probe.ok : null;
   return ok === false;
 };
-
-function styleHealthChannelLine(line: string): string {
-  const colon = line.indexOf(":");
-  if (colon === -1) {
-    return line;
-  }
-
-  const label = line.slice(0, colon + 1);
-  const detail = line.slice(colon + 1).trimStart();
-  const normalized = detail.toLowerCase();
-
-  const applyPrefix = (prefix: string, color: (value: string) => string) =>
-    `${label} ${color(detail.slice(0, prefix.length))}${detail.slice(prefix.length)}`;
-
-  if (normalized.startsWith("failed")) {
-    return applyPrefix("failed", theme.error);
-  }
-  if (normalized.startsWith("ok")) {
-    return applyPrefix("ok", theme.success);
-  }
-  if (normalized.startsWith("linked")) {
-    return applyPrefix("linked", theme.success);
-  }
-  if (normalized.startsWith("configured")) {
-    return applyPrefix("configured", theme.success);
-  }
-  if (normalized.startsWith(t("not linked"))) {
-    return applyPrefix(t("not linked"), theme.warn);
-  }
-  if (normalized.startsWith(t("not configured"))) {
-    return applyPrefix(t("not configured"), theme.muted);
-  }
-  if (normalized.startsWith("unknown")) {
-    return applyPrefix("unknown", theme.warn);
-  }
-
-  return line;
-}
 
 export const formatHealthChannelLines = (
   summary: HealthSummary,
@@ -364,7 +326,7 @@ export const formatHealthChannelLines = (
     }
 
     if (accountTimings.length > 0) {
-      lines.push(`${label}: ok (${accountTimings.join(t(", "))})`);
+      lines.push(`${label}: ok (${accountTimings.join(", ")})`);
       continue;
     }
 
@@ -413,7 +375,7 @@ export async function getHealthSnapshot(params?: {
     buildSessionSummary(resolveStorePath(cfg.session?.store, { agentId: defaultAgentId }));
 
   const start = Date.now();
-  const cappedTimeout = Math.max(1000, timeoutMs ?? DEFAULT_TIMEOUT_MS);
+  const cappedTimeout = timeoutMs === undefined ? DEFAULT_TIMEOUT_MS : Math.max(50, timeoutMs);
   const doProbe = params?.probe !== false;
   const channels: Record<string, ChannelHealthSummary> = {};
   const channelOrder = listChannelPlugins().map((plugin) => plugin.id);
@@ -568,7 +530,7 @@ export async function healthCommand(
   // Always query the running gateway; do not open a direct Baileys socket here.
   const summary = await withProgress(
     {
-      label: t("Checking gateway health…"),
+      label: "Checking gateway health…",
       indeterminate: true,
       enabled: opts.json !== true,
     },
@@ -587,9 +549,10 @@ export async function healthCommand(
     runtime.log(JSON.stringify(summary, null, 2));
   } else {
     const debugEnabled = isTruthyEnvValue(process.env.OPENCLAW_DEBUG_HEALTH);
+    const rich = isRich();
     if (opts.verbose) {
       const details = buildGatewayConnectionDetails({ config: cfg });
-      runtime.log(info(t("Gateway connection:")));
+      runtime.log(info("Gateway connection:"));
       for (const line of details.message.split("\n")) {
         runtime.log(`  ${line}`);
       }
@@ -613,7 +576,7 @@ export async function healthCommand(
       : resolvedAgents.filter((agent) => agent.agentId === defaultAgentId);
     const channelBindings = buildChannelAccountBindings(cfg);
     if (debugEnabled) {
-      runtime.log(info(t("[debug] local channel accounts")));
+      runtime.log(info("[debug] local channel accounts"));
       for (const plugin of listChannelPlugins()) {
         const accountIds = plugin.config.listAccountIds(cfg);
         const defaultAccountId = resolveChannelDefaultAccountId({
@@ -622,7 +585,7 @@ export async function healthCommand(
           accountIds,
         });
         runtime.log(
-          `  ${plugin.id}: accounts=${accountIds.join(t(", ")) || "(none)"} default=${defaultAccountId}`,
+          `  ${plugin.id}: accounts=${accountIds.join(", ") || "(none)"} default=${defaultAccountId}`,
         );
         for (const accountId of accountIds) {
           const account = plugin.config.resolveAccount(cfg, accountId);
@@ -637,23 +600,23 @@ export async function healthCommand(
           );
         }
       }
-      runtime.log(info(t("[debug] bindings map")));
+      runtime.log(info("[debug] bindings map"));
       for (const [channelId, byAgent] of channelBindings.entries()) {
         const entries = Array.from(byAgent.entries()).map(
-          ([agentId, ids]) => `${agentId}=[${ids.join(t(", "))}]`,
+          ([agentId, ids]) => `${agentId}=[${ids.join(", ")}]`,
         );
         runtime.log(`  ${channelId}: ${entries.join(" ")}`);
       }
-      runtime.log(info(t("[debug] gateway channel probes")));
+      runtime.log(info("[debug] gateway channel probes"));
       for (const [channelId, channelSummary] of Object.entries(summary.channels ?? {})) {
         const accounts = channelSummary.accounts ?? {};
         const probes = Object.entries(accounts).map(([accountId, accountSummary]) => {
           const probe = asRecord(accountSummary.probe);
           const bot = probe ? asRecord(probe.bot) : null;
           const username = bot && typeof bot.username === "string" ? bot.username : null;
-          return `${accountId}=${username ?? t("(no bot)")}`;
+          return `${accountId}=${username ?? "(no bot)"}`;
         });
-        runtime.log(`  ${channelId}: ${probes.join(t(", ")) || "(none)"}`);
+        runtime.log(`  ${channelId}: ${probes.join(", ") || "(none)"}`);
       }
     }
     const channelAccountFallbacks = Object.fromEntries(
@@ -706,7 +669,7 @@ export async function healthCommand(
             accountMode: opts.verbose ? "all" : "default",
           });
     for (const line of channelLines) {
-      runtime.log(styleHealthChannelLine(line));
+      runtime.log(styleHealthChannelLine(line, rich));
     }
     for (const plugin of listChannelPlugins()) {
       const channelSummary = summary.channels?.[plugin.id];
@@ -741,7 +704,7 @@ export async function healthCommand(
       const agentLabels = resolvedAgents.map((agent) =>
         agent.isDefault ? `${agent.agentId} (default)` : agent.agentId,
       );
-      runtime.log(info(`Agents: ${agentLabels.join(t(", "))}`));
+      runtime.log(info(`Agents: ${agentLabels.join(", ")}`));
     }
     const heartbeatParts = displayAgents
       .map((agent) => {
@@ -751,7 +714,7 @@ export async function healthCommand(
       })
       .filter(Boolean);
     if (heartbeatParts.length > 0) {
-      runtime.log(info(`Heartbeat interval: ${heartbeatParts.join(t(", "))}`));
+      runtime.log(info(`Heartbeat interval: ${heartbeatParts.join(", ")}`));
     }
     if (displayAgents.length === 0) {
       runtime.log(
@@ -760,7 +723,7 @@ export async function healthCommand(
       if (summary.sessions.recent.length > 0) {
         for (const r of summary.sessions.recent) {
           runtime.log(
-            `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : t("no activity")})`,
+            `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : "no activity"})`,
           );
         }
       }
@@ -774,7 +737,7 @@ export async function healthCommand(
         if (agent.sessions.recent.length > 0) {
           for (const r of agent.sessions.recent) {
             runtime.log(
-              `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : t("no activity")})`,
+              `- ${r.key} (${r.updatedAt ? `${Math.round((Date.now() - r.updatedAt) / 60000)}m ago` : "no activity"})`,
             );
           }
         }

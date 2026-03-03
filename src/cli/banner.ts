@@ -1,8 +1,9 @@
-import { t } from "../i18n/index.js";
+import { loadConfig } from "../config/config.js";
 import { resolveCommitHash } from "../infra/git-commit.js";
 import { visibleWidth } from "../terminal/ansi.js";
 import { isRich, theme } from "../terminal/theme.js";
-import { pickTagline, type TaglineOptions } from "./tagline.js";
+import { hasRootVersionAlias } from "./argv.js";
+import { pickTagline, type TaglineMode, type TaglineOptions } from "./tagline.js";
 
 type BannerOptions = TaglineOptions & {
   argv?: string[];
@@ -33,45 +34,66 @@ const hasJsonFlag = (argv: string[]) =>
   argv.some((arg) => arg === "--json" || arg.startsWith("--json="));
 
 const hasVersionFlag = (argv: string[]) =>
-  argv.some((arg) => arg === "--version" || arg === "-V" || arg === "-v");
+  argv.some((arg) => arg === "--version" || arg === "-V") || hasRootVersionAlias(argv);
+
+function parseTaglineMode(value: unknown): TaglineMode | undefined {
+  if (value === "random" || value === "default" || value === "off") {
+    return value;
+  }
+  return undefined;
+}
+
+function resolveTaglineMode(options: BannerOptions): TaglineMode | undefined {
+  const explicit = parseTaglineMode(options.mode);
+  if (explicit) {
+    return explicit;
+  }
+  try {
+    return parseTaglineMode(loadConfig().cli?.banner?.taglineMode);
+  } catch {
+    // Fall back to default random behavior when config is missing/invalid.
+    return undefined;
+  }
+}
 
 export function formatCliBannerLine(version: string, options: BannerOptions = {}): string {
   const commit = options.commit ?? resolveCommitHash({ env: options.env });
   const commitLabel = commit ?? "unknown";
-  const tagline = pickTagline(options);
+  const tagline = pickTagline({ ...options, mode: resolveTaglineMode(options) });
   const rich = options.richTty ?? isRich();
-  const title = t("🦞 OpenClaw");
-  const prefix = t("🦞 ");
+  const title = "🦞 OpenClaw";
+  const prefix = "🦞 ";
   const columns = options.columns ?? process.stdout.columns ?? 120;
-  const plainFullLine = `${title} ${version} (${commitLabel}) — ${tagline}`;
+  const plainBaseLine = `${title} ${version} (${commitLabel})`;
+  const plainFullLine = tagline ? `${plainBaseLine} — ${tagline}` : plainBaseLine;
   const fitsOnOneLine = visibleWidth(plainFullLine) <= columns;
   if (rich) {
     if (fitsOnOneLine) {
-      const line1 = `${theme.heading(title)} ${theme.info(version)} ${theme.muted(
+      if (!tagline) {
+        return `${theme.heading(title)} ${theme.info(version)} ${theme.muted(`(${commitLabel})`)}`;
+      }
+      return `${theme.heading(title)} ${theme.info(version)} ${theme.muted(
         `(${commitLabel})`,
       )} ${theme.muted("—")} ${theme.accentDim(tagline)}`;
-      const attribution = `${" ".repeat(prefix.length)}${theme.success(
-        t("i18n edition maintained by @olwater"),
-      )}`;
-      return `${line1}\n${attribution}`;
     }
     const line1 = `${theme.heading(title)} ${theme.info(version)} ${theme.muted(
       `(${commitLabel})`,
     )}`;
-    const attribution = `${" ".repeat(prefix.length)}${theme.success(
-      t("i18n edition maintained by @olwater"),
-    )}`;
+    if (!tagline) {
+      return line1;
+    }
     const line2 = `${" ".repeat(prefix.length)}${theme.accentDim(tagline)}`;
-    return `${line1}\n${attribution}\n${line2}`;
+    return `${line1}\n${line2}`;
   }
   if (fitsOnOneLine) {
-    const attribution = `${" ".repeat(prefix.length)}${t("i18n edition maintained by @olwater")}`;
-    return `${plainFullLine}\n${attribution}`;
+    return plainFullLine;
   }
-  const line1 = `${title} ${version} (${commitLabel})`;
-  const attribution = `${" ".repeat(prefix.length)}${t("i18n edition maintained by @olwater")}`;
+  const line1 = plainBaseLine;
+  if (!tagline) {
+    return line1;
+  }
   const line2 = `${" ".repeat(prefix.length)}${tagline}`;
-  return `${line1}\n${attribution}\n${line2}`;
+  return `${line1}\n${line2}`;
 }
 
 const LOBSTER_ASCII = [
@@ -80,7 +102,7 @@ const LOBSTER_ASCII = [
   "██░███░██░▀▀░██░▄▄▄██░█░█░██░█████░████░▀▀░██░█░█░██",
   "██░▀▀▀░██░█████░▀▀▀██░██▄░██░▀▀▄██░▀▀░█░██░██▄▀▄▀▄██",
   "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀",
-  t("                  🦞 OPENCLAW 🦞                    "),
+  "                  🦞 OPENCLAW 🦞                    ",
   " ",
 ];
 
@@ -106,10 +128,10 @@ export function formatCliBannerArt(options: BannerOptions = {}): string {
   const colored = LOBSTER_ASCII.map((line) => {
     if (line.includes("OPENCLAW")) {
       return (
-        theme.muted(t("              ")) +
-        theme.accent(t("🦞")) +
-        theme.info(t(" OPENCLAW ")) +
-        theme.accent(t("🦞"))
+        theme.muted("              ") +
+        theme.accent("🦞") +
+        theme.info(" OPENCLAW ") +
+        theme.accent("🦞")
       );
     }
     return splitGraphemes(line).map(colorChar).join("");

@@ -1,5 +1,4 @@
 import type { Command } from "commander";
-import type { NodesRpcOpts } from "./types.js";
 import { t } from "../../i18n/index.js";
 import { formatTimeAgo } from "../../infra/format-time/format-relative.ts";
 import { defaultRuntime } from "../../runtime.js";
@@ -8,7 +7,9 @@ import { shortenHomeInString } from "../../utils.js";
 import { parseDurationMs } from "../parse-duration.js";
 import { getNodesTheme, runNodesCommand } from "./cli-utils.js";
 import { formatPermissions, parseNodeList, parsePairingList } from "./format.js";
+import { renderPendingPairingRequestsTable } from "./pairing-render.js";
 import { callGatewayCli, nodesCallOpts, resolveNodeId } from "./rpc.js";
+import type { NodesRpcOpts } from "./types.js";
 
 function formatVersionLabel(raw: string) {
   const trimmed = raw.trim();
@@ -56,7 +57,7 @@ function formatNodeVersions(node: {
   if (ui) {
     parts.push(`ui ${formatVersionLabel(ui)}`);
   }
-  return parts.length > 0 ? parts.join(t(" · ")) : null;
+  return parts.length > 0 ? parts.join(" · ") : null;
 }
 
 function formatPathEnv(raw?: string): string | null {
@@ -102,15 +103,12 @@ export function registerNodesStatusCommands(nodes: Command) {
     nodes
       .command("status")
       .description(t("List known nodes with connection status and capabilities"))
-      .option("--connected", t("Only show connected nodes"))
-      .option(
-        "--last-connected <duration>",
-        t("Only show nodes connected within duration (e.g. 24h)"),
-      )
+      .option("--connected", "Only show connected nodes")
+      .option("--last-connected <duration>", "Only show nodes connected within duration (e.g. 24h)")
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("status", async () => {
           const connectedOnly = Boolean(opts.connected);
-          const sinceMs = parseSinceMs(opts.lastConnected, t("Invalid --last-connected"));
+          const sinceMs = parseSinceMs(opts.lastConnected, "Invalid --last-connected");
           const result = await callGatewayCli("node.list", opts, {});
           const obj: Record<string, unknown> =
             typeof result === "object" && result !== null ? result : {};
@@ -177,7 +175,7 @@ export function registerNodesStatusCommands(nodes: Command) {
               pathEnv ? `path: ${pathEnv}` : null,
             ].filter(Boolean) as string[];
             const caps = Array.isArray(n.caps)
-              ? n.caps.map(String).filter(Boolean).toSorted().join(t(", "))
+              ? n.caps.map(String).filter(Boolean).toSorted().join(", ")
               : "?";
             const paired = n.paired ? ok("paired") : warn("unpaired");
             const connected = n.connected ? ok("connected") : muted("disconnected");
@@ -190,7 +188,7 @@ export function registerNodesStatusCommands(nodes: Command) {
               Node: name,
               ID: n.nodeId,
               IP: n.remoteIp ?? "",
-              Detail: detailParts.join(t(" · ")),
+              Detail: detailParts.join(" · "),
               Status: `${paired} · ${connected}${since}`,
               Caps: caps,
             };
@@ -218,7 +216,7 @@ export function registerNodesStatusCommands(nodes: Command) {
     nodes
       .command("describe")
       .description(t("Describe a node (capabilities + supported invoke commands)"))
-      .requiredOption("--node <idOrNameOrIp>", t("Node id, name, or IP"))
+      .requiredOption("--node <idOrNameOrIp>", "Node id, name, or IP")
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("describe", async () => {
           const nodeId = await resolveNodeId(opts, String(opts.node ?? ""));
@@ -270,7 +268,7 @@ export function registerNodesStatusCommands(nodes: Command) {
             versions ? { Field: "Version", Value: versions } : null,
             pathEnv ? { Field: "PATH", Value: pathEnv } : null,
             { Field: "Status", Value: status },
-            { Field: "Caps", Value: caps ? caps.join(t(", ")) : "?" },
+            { Field: "Caps", Value: caps ? caps.join(", ") : "?" },
           ].filter(Boolean) as Array<{ Field: string; Value: string }>;
 
           defaultRuntime.log(heading("Node"));
@@ -301,15 +299,12 @@ export function registerNodesStatusCommands(nodes: Command) {
     nodes
       .command("list")
       .description(t("List pending and paired nodes"))
-      .option("--connected", t("Only show connected nodes"))
-      .option(
-        "--last-connected <duration>",
-        t("Only show nodes connected within duration (e.g. 24h)"),
-      )
+      .option("--connected", "Only show connected nodes")
+      .option("--last-connected <duration>", "Only show nodes connected within duration (e.g. 24h)")
       .action(async (opts: NodesRpcOpts) => {
         await runNodesCommand("list", async () => {
           const connectedOnly = Boolean(opts.connected);
-          const sinceMs = parseSinceMs(opts.lastConnected, t("Invalid --last-connected"));
+          const sinceMs = parseSinceMs(opts.lastConnected, "Invalid --last-connected");
           const result = await callGatewayCli("node.pair.list", opts, {});
           const { pending, paired } = parsePairingList(result);
           const { heading, muted, warn } = getNodesTheme();
@@ -363,31 +358,15 @@ export function registerNodesStatusCommands(nodes: Command) {
           }
 
           if (pendingRows.length > 0) {
-            const pendingRowsRendered = pendingRows.map((r) => ({
-              Request: r.requestId,
-              Node: r.displayName?.trim() ? r.displayName.trim() : r.nodeId,
-              IP: r.remoteIp ?? "",
-              Requested:
-                typeof r.ts === "number"
-                  ? formatTimeAgo(Math.max(0, now - r.ts))
-                  : muted("unknown"),
-              Repair: r.isRepair ? warn("yes") : "",
-            }));
+            const rendered = renderPendingPairingRequestsTable({
+              pending: pendingRows,
+              now,
+              tableWidth,
+              theme: { heading, warn, muted },
+            });
             defaultRuntime.log("");
-            defaultRuntime.log(heading("Pending"));
-            defaultRuntime.log(
-              renderTable({
-                width: tableWidth,
-                columns: [
-                  { key: "Request", header: "Request", minWidth: 8 },
-                  { key: "Node", header: "Node", minWidth: 14, flex: true },
-                  { key: "IP", header: "IP", minWidth: 10 },
-                  { key: "Requested", header: "Requested", minWidth: 12 },
-                  { key: "Repair", header: "Repair", minWidth: 6 },
-                ],
-                rows: pendingRowsRendered,
-              }).trimEnd(),
-            );
+            defaultRuntime.log(rendered.heading);
+            defaultRuntime.log(rendered.table);
           }
 
           if (filteredPaired.length > 0) {
@@ -418,7 +397,7 @@ export function registerNodesStatusCommands(nodes: Command) {
                   { key: "Node", header: "Node", minWidth: 14, flex: true },
                   { key: "Id", header: "ID", minWidth: 10 },
                   { key: "IP", header: "IP", minWidth: 10 },
-                  { key: "LastConnect", header: t("Last Connect"), minWidth: 14 },
+                  { key: "LastConnect", header: "Last Connect", minWidth: 14 },
                 ],
                 rows: pairedRows,
               }).trimEnd(),

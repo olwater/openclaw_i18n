@@ -1,4 +1,3 @@
-import type { GatewayServiceRuntime } from "../daemon/service-runtime.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import {
   resolveGatewayLaunchAgentLabel,
@@ -6,11 +5,12 @@ import {
   resolveGatewayWindowsTaskName,
 } from "../daemon/constants.js";
 import { resolveGatewayLogPaths } from "../daemon/launchd.js";
+import { formatRuntimeStatus } from "../daemon/runtime-format.js";
+import type { GatewayServiceRuntime } from "../daemon/service-runtime.js";
 import {
   isSystemdUnavailableDetail,
   renderSystemdUnavailableHints,
 } from "../daemon/systemd-hints.js";
-import { t } from "../i18n/index.js";
 import { isWSLEnv } from "../infra/wsl.js";
 import { getResolvedLoggerSettings } from "../logging.js";
 
@@ -22,36 +22,7 @@ type RuntimeHintOptions = {
 export function formatGatewayRuntimeSummary(
   runtime: GatewayServiceRuntime | undefined,
 ): string | null {
-  if (!runtime) {
-    return null;
-  }
-  const status = runtime.status ?? "unknown";
-  const details: string[] = [];
-  if (runtime.pid) {
-    details.push(`pid ${runtime.pid}`);
-  }
-  if (runtime.state && runtime.state.toLowerCase() !== status) {
-    details.push(`state ${runtime.state}`);
-  }
-  if (runtime.subState) {
-    details.push(`sub ${runtime.subState}`);
-  }
-  if (runtime.lastExitStatus !== undefined) {
-    details.push(`last exit ${runtime.lastExitStatus}`);
-  }
-  if (runtime.lastExitReason) {
-    details.push(`reason ${runtime.lastExitReason}`);
-  }
-  if (runtime.lastRunResult) {
-    details.push(`last run ${runtime.lastRunResult}`);
-  }
-  if (runtime.lastRunTime) {
-    details.push(`last run time ${runtime.lastRunTime}`);
-  }
-  if (runtime.detail) {
-    details.push(runtime.detail);
-  }
-  return details.length > 0 ? `${status} (${details.join(t(", "))})` : status;
+  return formatRuntimeStatus(runtime);
 }
 
 export function buildGatewayRuntimeHints(
@@ -83,19 +54,17 @@ export function buildGatewayRuntimeHints(
     hints.push(
       `LaunchAgent label cached but plist missing. Clear with: launchctl bootout gui/$UID/${label}`,
     );
-    hints.push(`Then reinstall: ${formatCliCommand(t("openclaw gateway install"), env)}`);
+    hints.push(`Then reinstall: ${formatCliCommand("openclaw gateway install", env)}`);
   }
   if (runtime.missingUnit) {
-    hints.push(
-      `Service not installed. Run: ${formatCliCommand(t("openclaw gateway install"), env)}`,
-    );
+    hints.push(`Service not installed. Run: ${formatCliCommand("openclaw gateway install", env)}`);
     if (fileLog) {
       hints.push(`File logs: ${fileLog}`);
     }
     return hints;
   }
   if (runtime.status === "stopped") {
-    hints.push(t("Service is loaded but not running (likely exited immediately)."));
+    hints.push("Service is loaded but not running (likely exited immediately).");
     if (fileLog) {
       hints.push(`File logs: ${fileLog}`);
     }

@@ -1,12 +1,11 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
-import type { OnboardOptions } from "./onboard-types.js";
 import { formatCliCommand } from "../cli/command-format.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { readConfigFileSnapshot } from "../config/config.js";
-import { t } from "../i18n/index.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import { runNonInteractiveOnboardingLocal } from "./onboard-non-interactive/local.js";
 import { runNonInteractiveOnboardingRemote } from "./onboard-non-interactive/remote.js";
+import type { OnboardOptions } from "./onboard-types.js";
 
 export async function runNonInteractiveOnboarding(
   opts: OnboardOptions,
@@ -15,7 +14,7 @@ export async function runNonInteractiveOnboarding(
   const snapshot = await readConfigFileSnapshot();
   if (snapshot.exists && !snapshot.valid) {
     runtime.error(
-      `Config invalid. Run \`${formatCliCommand(t("openclaw doctor"))}\` to repair it, then re-run onboarding.`,
+      `Config invalid. Run \`${formatCliCommand("openclaw doctor")}\` to repair it, then re-run onboarding.`,
     );
     runtime.exit(1);
     return;

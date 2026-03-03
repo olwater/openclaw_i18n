@@ -1,20 +1,19 @@
-import type { ChannelId } from "../channels/plugins/types.js";
-import type { OpenClawConfig } from "../config/config.js";
-import type { AgentBinding } from "../config/types.js";
 import { resolveChannelDefaultAccountId } from "../channels/plugins/helpers.js";
 import {
   getChannelPlugin,
   listChannelPlugins,
   normalizeChannelId,
 } from "../channels/plugins/index.js";
-import { t } from "../i18n/index.js";
+import type { ChannelId } from "../channels/plugins/types.js";
+import type { OpenClawConfig } from "../config/config.js";
+import type { AgentBinding } from "../config/types.js";
 import { DEFAULT_ACCOUNT_ID } from "../routing/session-key.js";
 
 type ProviderAccountStatus = {
   provider: ChannelId;
   accountId: string;
   name?: string;
-  state: string;
+  state: "linked" | "not linked" | "configured" | "not configured" | "enabled" | "disabled";
   enabled?: boolean;
   configured?: boolean;
 };
@@ -40,7 +39,7 @@ function formatProviderState(entry: ProviderAccountStatus): string {
   if (entry.enabled === false && entry.state !== "disabled") {
     parts.push("disabled");
   }
-  return parts.join(t(", "));
+  return parts.join(", ");
 }
 
 export async function buildProviderStatusIndex(
@@ -73,10 +72,10 @@ export async function buildProviderStatusIndex(
         (typeof snapshot?.linked === "boolean"
           ? snapshot.linked
             ? "linked"
-            : t("not linked")
+            : "not linked"
           : resolvedConfigured
             ? "configured"
-            : t("not configured"));
+            : "not configured");
       const name = snapshot?.name ?? (account as { name?: string }).name;
       map.set(providerAccountKey(plugin.id, accountId), {
         provider: plugin.id,

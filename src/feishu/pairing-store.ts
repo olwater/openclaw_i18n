@@ -51,6 +51,7 @@ export async function listFeishuPairingRequests(
 
 export async function upsertFeishuPairingRequest(params: {
   openId: string;
+  accountId: string;
   unionId?: string;
   name?: string;
   env?: NodeJS.ProcessEnv;
@@ -58,6 +59,7 @@ export async function upsertFeishuPairingRequest(params: {
   return upsertChannelPairingRequest({
     channel: PROVIDER,
     id: params.openId,
+    accountId: params.accountId,
     env: params.env,
     meta: {
       unionId: params.unionId,
@@ -105,16 +107,16 @@ export async function resolveFeishuEffectiveAllowFrom(params: {
   const groupAllowFrom = accountCfg?.groupAllowFrom ?? feishuCfg?.groupAllowFrom ?? [];
 
   const cfgAllowFrom = allowFrom
-    .map((v) => String(v).trim())
+    .map((v: any) => String(v).trim())
     .filter(Boolean)
-    .map((v) => v.replace(/^feishu:/i, ""))
-    .filter((v) => v !== "*");
+    .map((v: string) => v.replace(/^feishu:/i, ""))
+    .filter((v: string) => v !== "*");
 
   const cfgGroupAllowFrom = groupAllowFrom
-    .map((v) => String(v).trim())
+    .map((v: any) => String(v).trim())
     .filter(Boolean)
-    .map((v) => v.replace(/^feishu:/i, ""))
-    .filter((v) => v !== "*");
+    .map((v: string) => v.replace(/^feishu:/i, ""))
+    .filter((v: string) => v !== "*");
 
   const storeAllowFrom = await readFeishuAllowFromStore(env);
 

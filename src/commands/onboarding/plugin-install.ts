@@ -1,16 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
+import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
 import type { ChannelPluginCatalogEntry } from "../../channels/plugins/catalog.js";
 import type { OpenClawConfig } from "../../config/config.js";
-import type { RuntimeEnv } from "../../runtime.js";
-import type { WizardPrompter } from "../../wizard/prompts.js";
-import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../../agents/agent-scope.js";
-import { t } from "../../i18n/index.js";
 import { createSubsystemLogger } from "../../logging/subsystem.js";
 import { enablePluginInConfig } from "../../plugins/enable.js";
 import { installPluginFromNpmSpec } from "../../plugins/install.js";
-import { recordPluginInstall } from "../../plugins/installs.js";
+import { buildNpmResolutionInstallFields, recordPluginInstall } from "../../plugins/installs.js";
 import { loadOpenClawPlugins } from "../../plugins/loader.js";
+import { createPluginLoaderLogger } from "../../plugins/logger.js";
+import type { RuntimeEnv } from "../../runtime.js";
+import type { WizardPrompter } from "../../wizard/prompts.js";
 
 type InstallChoice = "npm" | "local" | "skip";
 
@@ -84,23 +84,20 @@ async function promptInstallChoice(params: {
     ? [
         {
           value: "local",
-          label: t("Use local plugin path"),
+          label: "Use local plugin path",
           hint: localPath,
         },
       ]
     : [];
   const options: Array<{ value: InstallChoice; label: string; hint?: string }> = [
-    {
-      value: "npm",
-      label: t("Download from npm ({spec})").replace("{spec}", entry.install.npmSpec),
-    },
+    { value: "npm", label: `Download from npm (${entry.install.npmSpec})` },
     ...localOptions,
-    { value: "skip", label: t("Skip for now") },
+    { value: "skip", label: "Skip for now" },
   ];
   const initialValue: InstallChoice =
     defaultChoice === "local" && !localPath ? "npm" : defaultChoice;
   return await prompter.select<InstallChoice>({
-    message: t("Install {label} plugin?").replace("{label}", entry.meta.label),
+    message: `Install ${entry.meta.label} plugin?`,
     options,
     initialValue,
   });
@@ -178,20 +175,19 @@ export async function ensureOnboardingPluginInstalled(params: {
       spec: entry.install.npmSpec,
       installPath: result.targetDir,
       version: result.version,
+      ...buildNpmResolutionInstallFields(result.npmResolution),
     });
     return { cfg: next, installed: true };
   }
 
   await prompter.note(
-    t("Failed to install {spec}: {error}")
-      .replace("{spec}", entry.install.npmSpec)
-      .replace("{error}", result.error),
-    t("Plugin install"),
+    `Failed to install ${entry.install.npmSpec}: ${result.error}`,
+    "Plugin install",
   );
 
   if (localPath) {
     const fallback = await prompter.confirm({
-      message: t("Use local plugin path instead? ({path})").replace("{path}", localPath),
+      message: `Use local plugin path instead? (${localPath})`,
       initialValue: true,
     });
     if (fallback) {
@@ -201,7 +197,7 @@ export async function ensureOnboardingPluginInstalled(params: {
     }
   }
 
-  runtime.error?.(t("Plugin install failed: {error}").replace("{error}", result.error));
+  runtime.error?.(`Plugin install failed: ${result.error}`);
   return { cfg: next, installed: false };
 }
 
@@ -217,11 +213,6 @@ export function reloadOnboardingPluginRegistry(params: {
     config: params.cfg,
     workspaceDir,
     cache: false,
-    logger: {
-      info: (msg) => log.info(msg),
-      warn: (msg) => log.warn(msg),
-      error: (msg) => log.error(msg),
-      debug: (msg) => log.debug(msg),
-    },
+    logger: createPluginLoaderLogger(log),
   });
 }

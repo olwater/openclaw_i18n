@@ -1,11 +1,13 @@
 import type { Command } from "commander";
-import { DEFAULT_CHAT_CHANNEL } from "../../channels/registry.js";
 import { agentCliCommand } from "../../commands/agent-via-gateway.js";
 import {
   agentsAddCommand,
+  agentsBindingsCommand,
+  agentsBindCommand,
   agentsDeleteCommand,
   agentsListCommand,
   agentsSetIdentityCommand,
+  agentsUnbindCommand,
 } from "../../commands/agents.js";
 import { setVerbose } from "../../globals.js";
 import { t } from "../../i18n/index.js";
@@ -22,29 +24,29 @@ export function registerAgentCommands(program: Command, args: { agentChannelOpti
   program
     .command("agent")
     .description(t("Run an agent turn via the Gateway (use --local for embedded)"))
-    .requiredOption("-m, --message <text>", t("Message body for the agent"))
-    .option("-t, --to <number>", t("Recipient number in E.164 used to derive the session key"))
-    .option("--session-id <id>", t("Use an explicit session id"))
-    .option("--agent <id>", t("Agent id (overrides routing bindings)"))
-    .option("--thinking <level>", t("Thinking level: off | minimal | low | medium | high"))
-    .option("--verbose <on|off>", t("Persist agent verbose level for the session"))
+    .requiredOption("-m, --message <text>", "Message body for the agent")
+    .option("-t, --to <number>", "Recipient number in E.164 used to derive the session key")
+    .option("--session-id <id>", "Use an explicit session id")
+    .option("--agent <id>", "Agent id (overrides routing bindings)")
+    .option("--thinking <level>", "Thinking level: off | minimal | low | medium | high")
+    .option("--verbose <on|off>", "Persist agent verbose level for the session")
     .option(
       "--channel <channel>",
-      `Delivery channel: ${args.agentChannelOptions} (default: ${DEFAULT_CHAT_CHANNEL})`,
+      `Delivery channel: ${args.agentChannelOptions} (omit to use the main session channel)`,
     )
-    .option("--reply-to <target>", t("Delivery target override (separate from session routing)"))
-    .option("--reply-channel <channel>", t("Delivery channel override (separate from routing)"))
-    .option("--reply-account <id>", t("Delivery account id override"))
+    .option("--reply-to <target>", "Delivery target override (separate from session routing)")
+    .option("--reply-channel <channel>", "Delivery channel override (separate from routing)")
+    .option("--reply-account <id>", "Delivery account id override")
     .option(
       "--local",
-      t("Run the embedded agent locally (requires model provider API keys in your shell)"),
+      "Run the embedded agent locally (requires model provider API keys in your shell)",
       false,
     )
-    .option("--deliver", t("Send the agent's reply back to the selected channel"), false)
-    .option("--json", t("Output result as JSON"), false)
+    .option("--deliver", "Send the agent's reply back to the selected channel", false)
+    .option("--json", "Output result as JSON", false)
     .option(
       "--timeout <seconds>",
-      t("Override agent command timeout (seconds, default 600 or config value)"),
+      "Override agent command timeout (seconds, default 600 or config value)",
     )
     .addHelpText(
       "after",
@@ -52,22 +54,20 @@ export function registerAgentCommands(program: Command, args: { agentChannelOpti
         `
 ${theme.heading("Examples:")}
 ${formatHelpExamples([
-  [t('openclaw agent --to +15555550123 --message "status update"'), t("Start a new session.")],
-  [t('openclaw agent --agent ops --message "Summarize logs"'), t("Use a specific agent.")],
+  ['openclaw agent --to +15555550123 --message "status update"', "Start a new session."],
+  ['openclaw agent --agent ops --message "Summarize logs"', "Use a specific agent."],
   [
-    t('openclaw agent --session-id 1234 --message "Summarize inbox" --thinking medium'),
-    t("Target a session with explicit thinking level."),
+    'openclaw agent --session-id 1234 --message "Summarize inbox" --thinking medium',
+    "Target a session with explicit thinking level.",
   ],
   [
-    t('openclaw agent --to +15555550123 --message "Trace logs" --verbose on --json'),
-    t("Enable verbose logging and JSON output."),
+    'openclaw agent --to +15555550123 --message "Trace logs" --verbose on --json',
+    "Enable verbose logging and JSON output.",
   ],
-  [t('openclaw agent --to +15555550123 --message "Summon reply" --deliver'), t("Deliver reply.")],
+  ['openclaw agent --to +15555550123 --message "Summon reply" --deliver', "Deliver reply."],
   [
-    t(
-      'openclaw agent --agent ops --message "Generate report" --deliver --reply-channel slack --reply-to "#reports"',
-    ),
-    t("Send reply to a different channel/target."),
+    'openclaw agent --agent ops --message "Generate report" --deliver --reply-channel slack --reply-to "#reports"',
+    "Send reply to a different channel/target.",
   ],
 ])}
 
@@ -95,8 +95,8 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/age
   agents
     .command("list")
     .description(t("List configured agents"))
-    .option("--json", t("Output JSON instead of text"), false)
-    .option("--bindings", t("Include routing bindings"), false)
+    .option("--json", "Output JSON instead of text", false)
+    .option("--bindings", "Include routing bindings", false)
     .action(async (opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await agentsListCommand(
@@ -107,19 +107,76 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/age
     });
 
   agents
-    .command(t("add [name]"))
-    .description(t("Add a new isolated agent"))
-    .option("--workspace <dir>", t("Workspace directory for the new agent"))
-    .option("--model <id>", t("Model id for this agent"))
-    .option("--agent-dir <dir>", t("Agent state directory for this agent"))
+    .command("bindings")
+    .description(t("List routing bindings"))
+    .option("--agent <id>", "Filter by agent id")
+    .option("--json", "Output JSON instead of text", false)
+    .action(async (opts) => {
+      await runCommandWithRuntime(defaultRuntime, async () => {
+        await agentsBindingsCommand(
+          {
+            agent: opts.agent as string | undefined,
+            json: Boolean(opts.json),
+          },
+          defaultRuntime,
+        );
+      });
+    });
+
+  agents
+    .command("bind")
+    .description(t("Add routing bindings for an agent"))
+    .option("--agent <id>", "Agent id (defaults to current default agent)")
     .option(
       "--bind <channel[:accountId]>",
-      t("Route channel binding (repeatable)"),
+      "Binding to add (repeatable). If omitted, accountId is resolved by channel defaults/hooks.",
       collectOption,
       [],
     )
-    .option("--non-interactive", t("Disable prompts; requires --workspace"), false)
-    .option("--json", t("Output JSON summary"), false)
+    .option("--json", "Output JSON summary", false)
+    .action(async (opts) => {
+      await runCommandWithRuntime(defaultRuntime, async () => {
+        await agentsBindCommand(
+          {
+            agent: opts.agent as string | undefined,
+            bind: Array.isArray(opts.bind) ? (opts.bind as string[]) : undefined,
+            json: Boolean(opts.json),
+          },
+          defaultRuntime,
+        );
+      });
+    });
+
+  agents
+    .command("unbind")
+    .description(t("Remove routing bindings for an agent"))
+    .option("--agent <id>", "Agent id (defaults to current default agent)")
+    .option("--bind <channel[:accountId]>", "Binding to remove (repeatable)", collectOption, [])
+    .option("--all", "Remove all bindings for this agent", false)
+    .option("--json", "Output JSON summary", false)
+    .action(async (opts) => {
+      await runCommandWithRuntime(defaultRuntime, async () => {
+        await agentsUnbindCommand(
+          {
+            agent: opts.agent as string | undefined,
+            bind: Array.isArray(opts.bind) ? (opts.bind as string[]) : undefined,
+            all: Boolean(opts.all),
+            json: Boolean(opts.json),
+          },
+          defaultRuntime,
+        );
+      });
+    });
+
+  agents
+    .command("add [name]")
+    .description(t("Add a new isolated agent"))
+    .option("--workspace <dir>", "Workspace directory for the new agent")
+    .option("--model <id>", "Model id for this agent")
+    .option("--agent-dir <dir>", "Agent state directory for this agent")
+    .option("--bind <channel[:accountId]>", "Route channel binding (repeatable)", collectOption, [])
+    .option("--non-interactive", "Disable prompts; requires --workspace", false)
+    .option("--json", "Output JSON summary", false)
     .action(async (name, opts, command) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         const hasFlags = hasExplicitOptions(command, [
@@ -148,38 +205,30 @@ ${theme.muted("Docs:")} ${formatDocsLink("/cli/agent", "docs.openclaw.ai/cli/age
   agents
     .command("set-identity")
     .description(t("Update an agent identity (name/theme/emoji/avatar)"))
-    .option("--agent <id>", t("Agent id to update"))
-    .option("--workspace <dir>", t("Workspace directory used to locate the agent + IDENTITY.md"))
-    .option("--identity-file <path>", t("Explicit IDENTITY.md path to read"))
-    .option("--from-identity", t("Read values from IDENTITY.md"), false)
-    .option("--name <name>", t("Identity name"))
-    .option("--theme <theme>", t("Identity theme"))
-    .option("--emoji <emoji>", t("Identity emoji"))
-    .option("--avatar <value>", t("Identity avatar (workspace path, http(s) URL, or data URI)"))
-    .option("--json", t("Output JSON summary"), false)
+    .option("--agent <id>", "Agent id to update")
+    .option("--workspace <dir>", "Workspace directory used to locate the agent + IDENTITY.md")
+    .option("--identity-file <path>", "Explicit IDENTITY.md path to read")
+    .option("--from-identity", "Read values from IDENTITY.md", false)
+    .option("--name <name>", "Identity name")
+    .option("--theme <theme>", "Identity theme")
+    .option("--emoji <emoji>", "Identity emoji")
+    .option("--avatar <value>", "Identity avatar (workspace path, http(s) URL, or data URI)")
+    .option("--json", "Output JSON summary", false)
     .addHelpText(
       "after",
       () =>
         `
 ${theme.heading("Examples:")}
 ${formatHelpExamples([
+  ['openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"', "Set name + emoji."],
+  ["openclaw agents set-identity --agent main --avatar avatars/openclaw.png", "Set avatar path."],
   [
-    t('openclaw agents set-identity --agent main --name "OpenClaw" --emoji "🦞"'),
-    t("Set name + emoji."),
-  ],
-  [
-    t("openclaw agents set-identity --agent main --avatar avatars/openclaw.png"),
-    t("Set avatar path."),
-  ],
-  [
-    t("openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity"),
+    "openclaw agents set-identity --workspace ~/.openclaw/workspace --from-identity",
     "Load from IDENTITY.md.",
   ],
   [
-    t(
-      "openclaw agents set-identity --identity-file ~/.openclaw/workspace/IDENTITY.md --agent main",
-    ),
-    t("Use a specific IDENTITY.md."),
+    "openclaw agents set-identity --identity-file ~/.openclaw/workspace/IDENTITY.md --agent main",
+    "Use a specific IDENTITY.md.",
   ],
 ])}
 `,
@@ -204,10 +253,10 @@ ${formatHelpExamples([
     });
 
   agents
-    .command(t("delete <id>"))
+    .command("delete <id>")
     .description(t("Delete an agent and prune workspace/state"))
-    .option("--force", t("Skip confirmation"), false)
-    .option("--json", t("Output JSON summary"), false)
+    .option("--force", "Skip confirmation", false)
+    .option("--json", "Output JSON summary", false)
     .action(async (id, opts) => {
       await runCommandWithRuntime(defaultRuntime, async () => {
         await agentsDeleteCommand(

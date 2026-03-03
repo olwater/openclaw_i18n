@@ -1,5 +1,3 @@
-import type { OpenClawConfig } from "../config/config.js";
-import type { DoctorPrompter } from "./doctor-prompter.js";
 import {
   buildAuthHealthSummary,
   DEFAULT_OAUTH_WARN_MS,
@@ -15,8 +13,9 @@ import {
 } from "../agents/auth-profiles.js";
 import { updateAuthProfileStoreWithLock } from "../agents/auth-profiles/store.js";
 import { formatCliCommand } from "../cli/command-format.js";
-import { t } from "../i18n/index.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { note } from "../terminal/note.js";
+import type { DoctorPrompter } from "./doctor-prompter.js";
 
 export async function maybeRepairAnthropicOAuthProfileId(
   cfg: OpenClawConfig,
@@ -33,9 +32,9 @@ export async function maybeRepairAnthropicOAuthProfileId(
     return cfg;
   }
 
-  note(repair.changes.map((c) => `- ${c}`).join("\n"), t("Auth profiles"));
+  note(repair.changes.map((c) => `- ${c}`).join("\n"), "Auth profiles");
   const apply = await prompter.confirm({
-    message: t("Update Anthropic OAuth profile id in config now?"),
+    message: "Update Anthropic OAuth profile id in config now?",
     initialValue: true,
   });
   if (!apply) {
@@ -127,23 +126,23 @@ export async function maybeRemoveDeprecatedCliAuthProfiles(
     return cfg;
   }
 
-  const lines = [t("Deprecated external CLI auth profiles detected (no longer supported):")];
+  const lines = ["Deprecated external CLI auth profiles detected (no longer supported):"];
   if (deprecated.has(CLAUDE_CLI_PROFILE_ID)) {
     lines.push(
-      `- ${CLAUDE_CLI_PROFILE_ID} (Anthropic): use setup-token → ${formatCliCommand(t("openclaw models auth setup-token"))}`,
+      `- ${CLAUDE_CLI_PROFILE_ID} (Anthropic): use setup-token → ${formatCliCommand("openclaw models auth setup-token")}`,
     );
   }
   if (deprecated.has(CODEX_CLI_PROFILE_ID)) {
     lines.push(
       `- ${CODEX_CLI_PROFILE_ID} (OpenAI Codex): use OAuth → ${formatCliCommand(
-        t("openclaw models auth login --provider openai-codex"),
+        "openclaw models auth login --provider openai-codex",
       )}`,
     );
   }
-  note(lines.join("\n"), t("Auth profiles"));
+  note(lines.join("\n"), "Auth profiles");
 
   const shouldRemove = await prompter.confirmRepair({
-    message: t("Remove deprecated CLI auth profiles now?"),
+    message: "Remove deprecated CLI auth profiles now?",
     initialValue: true,
   });
   if (!shouldRemove) {
@@ -194,7 +193,7 @@ export async function maybeRemoveDeprecatedCliAuthProfiles(
       Array.from(deprecated.values())
         .map((id) => `- removed ${id} from config`)
         .join("\n"),
-      t("Doctor changes"),
+      "Doctor changes",
     );
   }
   return pruned.next;
@@ -207,18 +206,33 @@ type AuthIssue = {
   remainingMs?: number;
 };
 
+export function resolveUnusableProfileHint(params: {
+  kind: "cooldown" | "disabled";
+  reason?: string;
+}): string {
+  if (params.kind === "disabled") {
+    if (params.reason === "billing") {
+      return "Top up credits (provider billing) or switch provider.";
+    }
+    if (params.reason === "auth_permanent" || params.reason === "auth") {
+      return "Refresh or replace credentials, then retry.";
+    }
+  }
+  return "Wait for cooldown or switch provider.";
+}
+
 function formatAuthIssueHint(issue: AuthIssue): string | null {
   if (issue.provider === "anthropic" && issue.profileId === CLAUDE_CLI_PROFILE_ID) {
-    return `Deprecated profile. Use ${formatCliCommand(t("openclaw models auth setup-token"))} or ${formatCliCommand(
-      t("openclaw configure"),
+    return `Deprecated profile. Use ${formatCliCommand("openclaw models auth setup-token")} or ${formatCliCommand(
+      "openclaw configure",
     )}.`;
   }
   if (issue.provider === "openai-codex" && issue.profileId === CODEX_CLI_PROFILE_ID) {
     return `Deprecated profile. Use ${formatCliCommand(
-      t("openclaw models auth login --provider openai-codex"),
-    )} or ${formatCliCommand(t("openclaw configure"))}.`;
+      "openclaw models auth login --provider openai-codex",
+    )} or ${formatCliCommand("openclaw configure")}.`;
   }
-  return `Re-auth via \`${formatCliCommand(t("openclaw configure"))}\` or \`${formatCliCommand(t("openclaw onboard"))}\`.`;
+  return `Re-auth via \`${formatCliCommand("openclaw configure")}\` or \`${formatCliCommand("openclaw onboard")}\`.`;
 }
 
 function formatAuthIssueLine(issue: AuthIssue): string {
@@ -246,20 +260,21 @@ export async function noteAuthProfileHealth(params: {
       }
       const stats = store.usageStats?.[profileId];
       const remaining = formatRemainingShort(until - now);
-      const kind =
-        typeof stats?.disabledUntil === "number" && now < stats.disabledUntil
-          ? `disabled${stats.disabledReason ? `:${stats.disabledReason}` : ""}`
-          : "cooldown";
-      const hint = kind.startsWith("disabled:billing")
-        ? t("Top up credits (provider billing) or switch provider.")
-        : t("Wait for cooldown or switch provider.");
+      const disabledActive = typeof stats?.disabledUntil === "number" && now < stats.disabledUntil;
+      const kind = disabledActive
+        ? `disabled${stats.disabledReason ? `:${stats.disabledReason}` : ""}`
+        : "cooldown";
+      const hint = resolveUnusableProfileHint({
+        kind: disabledActive ? "disabled" : "cooldown",
+        reason: stats?.disabledReason,
+      });
       out.push(`- ${profileId}: ${kind} (${remaining})${hint ? ` — ${hint}` : ""}`);
     }
     return out;
   })();
 
   if (unusable.length > 0) {
-    note(unusable.join("\n"), t("Auth profile cooldowns"));
+    note(unusable.join("\n"), "Auth profile cooldowns");
   }
 
   let summary = buildAuthHealthSummary({
@@ -283,7 +298,7 @@ export async function noteAuthProfileHealth(params: {
   }
 
   const shouldRefresh = await params.prompter.confirmRepair({
-    message: t("Refresh expiring OAuth tokens now? (static tokens need re-auth)"),
+    message: "Refresh expiring OAuth tokens now? (static tokens need re-auth)",
     initialValue: true,
   });
 
@@ -305,7 +320,7 @@ export async function noteAuthProfileHealth(params: {
       }
     }
     if (errors.length > 0) {
-      note(errors.join("\n"), t("OAuth refresh errors"));
+      note(errors.join("\n"), "OAuth refresh errors");
     }
     summary = buildAuthHealthSummary({
       store: ensureAuthProfileStore(undefined, {
@@ -329,7 +344,7 @@ export async function noteAuthProfileHealth(params: {
           }),
         )
         .join("\n"),
-      t("Model auth"),
+      "Model auth",
     );
   }
 }

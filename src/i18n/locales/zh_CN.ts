@@ -49,7 +49,10 @@ const zh_CN: TranslationMap = {
   " [default]": "[默认]",
   " [remote]": "[远程]",
   " [y/N] ": " [y/N] ",
-  " \\\\n    ": " \\\\n    ",
+  " \\\
+    ":
+    " \\\
+    ",
   " expires unknown": "过期时间未知",
   initial: "初始",
   "Initial thread message text": "初始帖子消息文本",
@@ -58,14 +61,42 @@ const zh_CN: TranslationMap = {
   " · ": " · ",
   '"gateway.remote.token" is for remote CLI calls; it does not enable local gateway auth.':
     '"gateway.remote.token" 用于远程 CLI 调用；它不会启用本地 Gateway 认证。',
-  "# AGENTS.md - OpenClaw Dev Workspace\\n\\nDefault dev workspace for openclaw gateway --dev.\\n":
-    "# AGENTS.md - OpenClaw 开发工作区\\n\\nopenclaw gateway --dev 的默认开发工作区。\\n",
-  "# SOUL.md - Dev Persona\\n\\nProtocol droid for debugging and operations.\\n":
-    "# SOUL.md - 开发人设\\n\\n用于调试和运维的协议机器人。\\n",
-  "# TOOLS.md - User Tool Notes (editable)\\n\\nAdd your local tool notes here.\\n":
-    "# TOOLS.md - 用户工具笔记 (可编辑)\\n\\n在此添加您的本地工具笔记。\\n",
-  "# USER.md - User Profile\\n\\n- Name:\\n- Preferred address:\\n- Notes:\\n":
-    "# USER.md - 用户资料\\n\\n- 姓名:\\n- 首选称呼:\\n- 备注:\\n",
+  "# AGENTS.md - OpenClaw Dev Workspace\
+\
+Default dev workspace for openclaw gateway --dev.\
+":
+    "# AGENTS.md - OpenClaw 开发工作区\
+\
+openclaw gateway --dev 的默认开发工作区。\
+",
+  "# SOUL.md - Dev Persona\
+\
+Protocol droid for debugging and operations.\
+":
+    "# SOUL.md - 开发人设\
+\
+用于调试和运维的协议机器人。\
+",
+  "# TOOLS.md - User Tool Notes (editable)\
+\
+Add your local tool notes here.\
+":
+    "# TOOLS.md - 用户工具笔记 (可编辑)\
+\
+在此添加您的本地工具笔记。\
+",
+  "# USER.md - User Profile\
+\
+- Name:\
+- Preferred address:\
+- Notes:\
+":
+    "# USER.md - 用户资料\
+\
+- 姓名:\
+- 首选称呼:\
+- 备注:\
+",
   "#E8E3D5": "#E8E3D5",
   "$TTL 60": "$TTL 60",
   "(no bot)": "（无 Bot）",
@@ -2596,16 +2627,46 @@ const zh_CN: TranslationMap = {
   "[health:debug]": "[健康:调试]",
   "[openclaw] Uncaught exception:": "[openclaw] 未捕获异常:",
   "[unserializable error]": "[无法序列化的错误]",
-  "\\n      ": "\\n      ",
-  "\\n        ": "\\n        ",
-  "\\n  driver: extension": "\\n  driver: extension",
-  "\\n- ": "\\n- ",
-  "\\n- ...": "\\n- ...",
-  "\\nContainers to be recreated:\\n": "\\nContainers to be recreated:\\n",
-  "\\nContainers will be automatically recreated when the agent is next used.":
-    "\\n下次使用 Agent 时将自动重新创建容器。",
-  "\\nRemoving containers...\\n": "\\nRemoving containers...\\n",
-  "\\n🌐 Browser Containers:": "\\n🌐 Browser Containers:",
+  "\
+      ":
+    "\
+      ",
+  "\
+        ":
+    "\
+        ",
+  "\
+  driver: extension":
+    "\
+  driver: extension",
+  "\
+- ":
+    "\
+- ",
+  "\
+- ...":
+    "\
+- ...",
+  "\
+Containers to be recreated:\
+":
+    "\
+Containers to be recreated:\
+",
+  "\
+Containers will be automatically recreated when the agent is next used.":
+    "\
+下次使用 Agent 时将自动重新创建容器。",
+  "\
+Removing containers...\
+":
+    "\
+Removing containers...\
+",
+  "\
+🌐 Browser Containers:":
+    "\
+🌐 Browser Containers:",
   "_No results._": "_无结果。_",
   "`--link` requires a local path.": "`--link` 需要本地路径。",
   "abort failed": "中止失败",
@@ -3109,8 +3170,10 @@ const zh_CN: TranslationMap = {
     "hooks.path='/' 会遮蔽其他 HTTP 端点，这是不安全的。",
   "Use a dedicated path like '/hooks'.": "请使用像 '/hooks' 这样的专用路径。",
   "Some configured models look legacy": "一些已配置的模型看起来已过时",
-  "Older/legacy models can be less robust against prompt injection and tool misuse.\\n":
-    "旧/过时模型在抵御提示词注入和工具滥用方面可能不够健壮。\\n",
+  "Older/legacy models can be less robust against prompt injection and tool misuse.\
+":
+    "旧/过时模型在抵御提示词注入和工具滥用方面可能不够健壮。\
+",
   "Prefer modern, instruction-hardened models for any bot that can run tools.":
     "对于任何可以运行工具的机器人，建议使用现代的、指令强化的模型。",
   "Some configured models are below recommended tiers": "一些已配置的模型低于推荐层级",
@@ -3129,7 +3192,10 @@ const zh_CN: TranslationMap = {
   "sessions.json is readable by others": "sessions.json 可被他人读取",
   "Log file is readable by others": "日志文件可被他人读取",
   "Open groupPolicy with elevated tools enabled": "启用了提升权限工具的 Open groupPolicy",
-  'Found groupPolicy="open" at:\\n': '在以下位置发现 groupPolicy="open":\\n',
+  'Found groupPolicy="open" at:\
+':
+    '在以下位置发现 groupPolicy="open":\
+',
   'Set groupPolicy="allowlist" and keep elevated allowlists extremely tight.':
     '设置 groupPolicy="allowlist" 并保持提升权限的白名单极其严格。',
   "State dir is a symlink": "State 目录是一个符号链接",
@@ -3185,6 +3251,39 @@ const zh_CN: TranslationMap = {
     "跳过: 此 OpenClaw 安装不是 Git 签出，且无法检测到包管理器。请通过您的包管理器进行更新，然后运行 `{{doctor}}` 和 `{{restart}}`。",
   "Examples: `{{npm_example}}` or `{{pnpm_example}}`":
     "示例: `{{npm_example}}` 或 `{{pnpm_example}}`",
+
+  "Manage connected chat channels and accounts": "管理已连接的聊天频道和账户",
+  "Legacy clawbot command aliases": "旧版 clawbot 命令别名",
+  "Print the active config file path": "打印当前启用的配置文件的路径",
+  "Validate the current config against the schema without starting the gateway":
+    "在不启动 Gateway 的情况下依据 schema 验证当前配置",
+  "Remove a paired device entry": "移除已配对设备条目",
+  "Clear paired devices from the gateway table": "清除 Gateway 表中的已配对设备",
+  "Run, inspect, and query the WebSocket Gateway": "运行、检查并查询 WebSocket Gateway",
+  "Search, inspect, and reindex memory files": "搜索、检查并重建记忆文件索引",
+  "Run and manage the headless node host service": "运行并管理无头（headless）节点主机服务",
+  "Send an APNs test push to an iOS node": "向 iOS 节点发送一项 APNs 测试推送",
+  "Manage gateway-owned nodes (pairing, status, invoke, and media)":
+    "管理受 Gateway 控制的节点（配对、状态、调用及多媒体）",
+  "Manage OpenClaw plugins and extensions": "管理 OpenClaw 插件和扩展",
+  "Uninstall a plugin": "卸载插件",
+  "List routing bindings": "列出路由绑定",
+  "Add routing bindings for an agent": "为 Agent 添加路由绑定",
+  "Remove routing bindings for an agent": "移除 Agent 路由绑定",
+  "Send, read, and manage messages and channel actions": "发送、阅读并管理消息与频道操作",
+  "Run session-store maintenance now": "立即运行会话存储维护",
+  "Generate an iOS pairing QR code and setup code": "生成 iOS 配对二维码及设置码",
+  "Secrets runtime controls": "Secrets 运行时控制",
+  "Re-resolve secret references and atomically swap runtime snapshot":
+    "重新解析凭据引用，并原子化切换运行时快照",
+  "Audit plaintext secrets, unresolved refs, and precedence drift":
+    "审查明文秘密、未解析的引用以及优先级变动",
+  "Interactive secrets helper (provider setup + SecretRef mapping + preflight)":
+    "交互式 secrets 助手 (提供商设置 + SecretRef 映射 + 预检查)",
+  "Apply a previously generated secrets plan": "应用先前生成的 secrets 计划",
+  "Audit local config and state for common security foot-guns":
+    "审计本地配置及状态以排查常见安全隐患",
+  "Update OpenClaw and inspect update channel status": "更新 OpenClaw 并检查更新通道的状态",
 };
 
 export default zh_CN;

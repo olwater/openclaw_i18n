@@ -8,6 +8,7 @@ import { formatDocsLink } from "../terminal/links.js";
 import { isRich, theme } from "../terminal/theme.js";
 import { shortenHomeInString, shortenHomePath } from "../utils.js";
 import { formatCliCommand } from "./command-format.js";
+import { formatHelpExamples } from "./help-format.js";
 
 type SecurityAuditOptions = {
   json?: boolean;
@@ -24,25 +25,30 @@ function formatSummary(summary: { critical: number; warn: number; info: number }
   parts.push(rich ? theme.error(`${c} critical`) : `${c} critical`);
   parts.push(rich ? theme.warn(`${w} warn`) : `${w} warn`);
   parts.push(rich ? theme.muted(`${i} info`) : `${i} info`);
-  return parts.join(t(" · "));
+  return parts.join(" · ");
 }
 
 export function registerSecurityCli(program: Command) {
   const security = program
     .command("security")
-    .description(t("Security tools (audit)"))
+    .description(t("Audit local config and state for common security foot-guns"))
     .addHelpText(
       "after",
       () =>
-        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/security", "docs.openclaw.ai/cli/security")}\n`,
+        `\n${theme.heading("Examples:")}\n${formatHelpExamples([
+          ["openclaw security audit", "Run a local security audit."],
+          ["openclaw security audit --deep", "Include best-effort live Gateway probe checks."],
+          ["openclaw security audit --fix", "Apply safe remediations and file-permission fixes."],
+          ["openclaw security audit --json", "Output machine-readable JSON."],
+        ])}\n\n${theme.muted("Docs:")} ${formatDocsLink("/cli/security", "docs.openclaw.ai/cli/security")}\n`,
     );
 
   security
     .command("audit")
     .description(t("Audit config + local state for common security foot-guns"))
-    .option("--deep", t("Attempt live Gateway probe (best-effort)"), false)
-    .option("--fix", t("Apply safe fixes (tighten defaults + chmod state/config)"), false)
-    .option("--json", t("Print JSON"), false)
+    .option("--deep", "Attempt live Gateway probe (best-effort)", false)
+    .option("--fix", "Apply safe fixes (tighten defaults + chmod state/config)", false)
+    .option("--json", "Print JSON", false)
     .action(async (opts: SecurityAuditOptions) => {
       const fixResult = opts.fix ? await fixSecurityFootguns().catch((_err) => null) : null;
 
@@ -66,20 +72,20 @@ export function registerSecurityCli(program: Command) {
       const muted = (text: string) => (rich ? theme.muted(text) : text);
 
       const lines: string[] = [];
-      lines.push(heading(t("OpenClaw security audit")));
+      lines.push(heading("OpenClaw security audit"));
       lines.push(muted(`Summary: ${formatSummary(report.summary)}`));
-      lines.push(muted(`Run deeper: ${formatCliCommand(t("openclaw security audit --deep"))}`));
+      lines.push(muted(`Run deeper: ${formatCliCommand("openclaw security audit --deep")}`));
 
       if (opts.fix) {
-        lines.push(muted(`Fix: ${formatCliCommand(t("openclaw security audit --fix"))}`));
+        lines.push(muted(`Fix: ${formatCliCommand("openclaw security audit --fix")}`));
         if (!fixResult) {
-          lines.push(muted(t("Fixes: failed to apply (unexpected error)")));
+          lines.push(muted("Fixes: failed to apply (unexpected error)"));
         } else if (
           fixResult.errors.length === 0 &&
           fixResult.changes.length === 0 &&
           fixResult.actions.every((a) => !a.ok)
         ) {
-          lines.push(muted(t("Fixes: no changes applied")));
+          lines.push(muted("Fixes: no changes applied"));
         } else {
           lines.push("");
           lines.push(heading("FIX"));
@@ -130,11 +136,11 @@ export function registerSecurityCli(program: Command) {
         const label =
           sev === "critical"
             ? rich
-              ? theme.error(t("CRITICAL"))
+              ? theme.error("CRITICAL")
               : "CRITICAL"
             : sev === "warn"
               ? rich
-                ? theme.warn(t("WARN"))
+                ? theme.warn("WARN")
                 : "WARN"
               : rich
                 ? theme.muted("INFO")

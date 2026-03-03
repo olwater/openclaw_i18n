@@ -3,10 +3,10 @@
  */
 
 import type { SandboxBrowserInfo, SandboxContainerInfo } from "../agents/sandbox.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { t } from "../i18n/index.js";
 import { formatDurationCompact } from "../infra/format-time/format-duration.ts";
+import type { RuntimeEnv } from "../runtime.js";
 import { formatImageMatch, formatSimpleStatus, formatStatus } from "./sandbox-formatters.js";
 
 type DisplayConfig<T> = {

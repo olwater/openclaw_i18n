@@ -1,16 +1,17 @@
 import { cancel, multiselect as clackMultiselect, isCancel } from "@clack/prompts";
-import type { RuntimeEnv } from "../../runtime.js";
 import { resolveApiKeyForProvider } from "../../agents/model-auth.js";
 import { type ModelScanResult, scanOpenRouterModels } from "../../agents/model-scan.js";
 import { withProgressTotals } from "../../cli/progress.js";
-import { loadConfig } from "../../config/config.js";
 import { logConfigUpdated } from "../../config/logging.js";
-import { t } from "../../i18n/index.js";
+import { toAgentModelListLike } from "../../config/model-input.js";
+import type { RuntimeEnv } from "../../runtime.js";
 import {
   stylePromptHint,
   stylePromptMessage,
   stylePromptTitle,
 } from "../../terminal/prompt-style.js";
+import { pad, truncate } from "./list.format.js";
+import { loadModelsConfig } from "./load-config.js";
 import { formatMs, formatTokenK, updateConfig } from "./shared.js";
 
 const MODEL_PAD = 42;
@@ -25,17 +26,14 @@ const multiselect = <T>(params: Parameters<typeof clackMultiselect<T>>[0]) =>
     ),
   });
 
-const pad = (value: string, size: number) => value.padEnd(size);
-
-const truncate = (value: string, max: number) => {
-  if (value.length <= max) {
-    return value;
+function guardPromptCancel<T>(value: T | symbol, runtime: RuntimeEnv): T {
+  if (isCancel(value)) {
+    cancel(stylePromptTitle("Model scan cancelled.") ?? "Model scan cancelled.");
+    runtime.exit(0);
+    throw new Error("unreachable");
   }
-  if (max <= 3) {
-    return value.slice(0, max);
-  }
-  return `${value.slice(0, max - 3)}...`;
-};
+  return value;
+}
 
 function sortScanResults(results: ModelScanResult[]): ModelScanResult[] {
   return results.slice().toSorted((a, b) => {
@@ -51,19 +49,7 @@ function sortScanResults(results: ModelScanResult[]): ModelScanResult[] {
       return aToolLatency - bToolLatency;
     }
 
-    const aCtx = a.contextLength ?? 0;
-    const bCtx = b.contextLength ?? 0;
-    if (aCtx !== bCtx) {
-      return bCtx - aCtx;
-    }
-
-    const aParams = a.inferredParamB ?? 0;
-    const bParams = b.inferredParamB ?? 0;
-    if (aParams !== bParams) {
-      return bParams - aParams;
-    }
-
-    return a.modelRef.localeCompare(b.modelRef);
+    return compareScanMetadata(a, b);
   });
 }
 
@@ -75,32 +61,36 @@ function sortImageResults(results: ModelScanResult[]): ModelScanResult[] {
       return aLatency - bLatency;
     }
 
-    const aCtx = a.contextLength ?? 0;
-    const bCtx = b.contextLength ?? 0;
-    if (aCtx !== bCtx) {
-      return bCtx - aCtx;
-    }
-
-    const aParams = a.inferredParamB ?? 0;
-    const bParams = b.inferredParamB ?? 0;
-    if (aParams !== bParams) {
-      return bParams - aParams;
-    }
-
-    return a.modelRef.localeCompare(b.modelRef);
+    return compareScanMetadata(a, b);
   });
 }
 
+function compareScanMetadata(a: ModelScanResult, b: ModelScanResult): number {
+  const aCtx = a.contextLength ?? 0;
+  const bCtx = b.contextLength ?? 0;
+  if (aCtx !== bCtx) {
+    return bCtx - aCtx;
+  }
+
+  const aParams = a.inferredParamB ?? 0;
+  const bParams = b.inferredParamB ?? 0;
+  if (aParams !== bParams) {
+    return bParams - aParams;
+  }
+
+  return a.modelRef.localeCompare(b.modelRef);
+}
+
 function buildScanHint(result: ModelScanResult): string {
-  const toolLabel = result.tool.ok ? `tool ${formatMs(result.tool.latencyMs)}` : t("tool fail");
+  const toolLabel = result.tool.ok ? `tool ${formatMs(result.tool.latencyMs)}` : "tool fail";
   const imageLabel = result.image.skipped
-    ? t("img skip")
+    ? "img skip"
     : result.image.ok
       ? `img ${formatMs(result.image.latencyMs)}`
-      : t("img fail");
-  const ctxLabel = result.contextLength ? `ctx ${formatTokenK(result.contextLength)}` : t("ctx ?");
+      : "img fail";
+  const ctxLabel = result.contextLength ? `ctx ${formatTokenK(result.contextLength)}` : "ctx ?";
   const paramLabel = result.inferredParamB ? `${result.inferredParamB}b` : null;
-  return [toolLabel, imageLabel, ctxLabel, paramLabel].filter(Boolean).join(t(" | "));
+  return [toolLabel, imageLabel, ctxLabel, paramLabel].filter(Boolean).join(" | ");
 }
 
 function printScanSummary(results: ModelScanResult[], runtime: RuntimeEnv) {
@@ -158,26 +148,26 @@ export async function modelsScanCommand(
 ) {
   const minParams = opts.minParams ? Number(opts.minParams) : undefined;
   if (minParams !== undefined && (!Number.isFinite(minParams) || minParams < 0)) {
-    throw new Error(t("--min-params must be >= 0"));
+    throw new Error("--min-params must be >= 0");
   }
   const maxAgeDays = opts.maxAgeDays ? Number(opts.maxAgeDays) : undefined;
   if (maxAgeDays !== undefined && (!Number.isFinite(maxAgeDays) || maxAgeDays < 0)) {
-    throw new Error(t("--max-age-days must be >= 0"));
+    throw new Error("--max-age-days must be >= 0");
   }
   const maxCandidates = opts.maxCandidates ? Number(opts.maxCandidates) : 6;
   if (!Number.isFinite(maxCandidates) || maxCandidates <= 0) {
-    throw new Error(t("--max-candidates must be > 0"));
+    throw new Error("--max-candidates must be > 0");
   }
   const timeout = opts.timeout ? Number(opts.timeout) : undefined;
   if (timeout !== undefined && (!Number.isFinite(timeout) || timeout <= 0)) {
-    throw new Error(t("--timeout must be > 0"));
+    throw new Error("--timeout must be > 0");
   }
   const concurrency = opts.concurrency ? Number(opts.concurrency) : undefined;
   if (concurrency !== undefined && (!Number.isFinite(concurrency) || concurrency <= 0)) {
-    throw new Error(t("--concurrency must be > 0"));
+    throw new Error("--concurrency must be > 0");
   }
 
-  const cfg = loadConfig();
+  const cfg = await loadModelsConfig({ commandName: "models scan", runtime });
   const probe = opts.probe ?? true;
   let storedKey: string | undefined;
   if (probe) {
@@ -193,7 +183,7 @@ export async function modelsScanCommand(
   }
   const results = await withProgressTotals(
     {
-      label: t("Scanning OpenRouter models..."),
+      label: "Scanning OpenRouter models...",
       indeterminate: false,
       enabled: opts.json !== true,
     },
@@ -210,7 +200,7 @@ export async function modelsScanCommand(
           if (phase !== "probe") {
             return;
           }
-          const labelBase = probe ? t("Probing models") : t("Scanning models");
+          const labelBase = probe ? "Probing models" : "Scanning models";
           update({
             completed,
             total,
@@ -234,7 +224,7 @@ export async function modelsScanCommand(
 
   const toolOk = results.filter((entry) => entry.tool.ok);
   if (toolOk.length === 0) {
-    throw new Error(t("No tool-capable OpenRouter free models found."));
+    throw new Error("No tool-capable OpenRouter free models found.");
   }
 
   const sorted = sortScanResults(results);
@@ -262,7 +252,7 @@ export async function modelsScanCommand(
 
   if (canPrompt) {
     const selection = await multiselect({
-      message: t("Select fallback models (ordered)"),
+      message: "Select fallback models (ordered)",
       options: toolSorted.map((entry) => ({
         value: entry.modelRef,
         label: entry.modelRef,
@@ -271,15 +261,10 @@ export async function modelsScanCommand(
       initialValues: preselected,
     });
 
-    if (isCancel(selection)) {
-      cancel(stylePromptTitle(t("Model scan cancelled.")) ?? t("Model scan cancelled."));
-      runtime.exit(0);
-    }
-
-    selected = selection;
+    selected = guardPromptCancel(selection, runtime);
     if (imageSorted.length > 0) {
       const imageSelection = await multiselect({
-        message: t("Select image fallback models (ordered)"),
+        message: "Select image fallback models (ordered)",
         options: imageSorted.map((entry) => ({
           value: entry.modelRef,
           label: entry.modelRef,
@@ -288,22 +273,17 @@ export async function modelsScanCommand(
         initialValues: imagePreselected,
       });
 
-      if (isCancel(imageSelection)) {
-        cancel(stylePromptTitle(t("Model scan cancelled.")) ?? t("Model scan cancelled."));
-        runtime.exit(0);
-      }
-
-      selectedImages = imageSelection;
+      selectedImages = guardPromptCancel(imageSelection, runtime);
     }
   } else if (!process.stdin.isTTY && !opts.yes && !noInput && !opts.json) {
-    throw new Error(t("Non-interactive scan: pass --yes to apply defaults."));
+    throw new Error("Non-interactive scan: pass --yes to apply defaults.");
   }
 
   if (selected.length === 0) {
-    throw new Error(t("No models selected for fallbacks."));
+    throw new Error("No models selected for fallbacks.");
   }
   if (opts.setImage && selectedImages.length === 0) {
-    throw new Error(t("No image-capable models selected for image model."));
+    throw new Error("No image-capable models selected for image model.");
   }
 
   const _updated = await updateConfig((cfg) => {
@@ -318,9 +298,7 @@ export async function modelsScanCommand(
         nextModels[entry] = {};
       }
     }
-    const existingImageModel = cfg.agents?.defaults?.imageModel as
-      | { primary?: string; fallbacks?: string[] }
-      | undefined;
+    const existingImageModel = toAgentModelListLike(cfg.agents?.defaults?.imageModel);
     const nextImageModel =
       selectedImages.length > 0
         ? {
@@ -329,9 +307,7 @@ export async function modelsScanCommand(
             ...(opts.setImage ? { primary: selectedImages[0] } : {}),
           }
         : cfg.agents?.defaults?.imageModel;
-    const existingModel = cfg.agents?.defaults?.model as
-      | { primary?: string; fallbacks?: string[] }
-      | undefined;
+    const existingModel = toAgentModelListLike(cfg.agents?.defaults?.model);
     const defaults = {
       ...cfg.agents?.defaults,
       model: {
@@ -370,9 +346,9 @@ export async function modelsScanCommand(
   }
 
   logConfigUpdated(runtime);
-  runtime.log(`Fallbacks: ${selected.join(t(", "))}`);
+  runtime.log(`Fallbacks: ${selected.join(", ")}`);
   if (selectedImages.length > 0) {
-    runtime.log(`Image fallbacks: ${selectedImages.join(t(", "))}`);
+    runtime.log(`Image fallbacks: ${selectedImages.join(", ")}`);
   }
   if (opts.setDefault) {
     runtime.log(`Default model: ${selected[0]}`);

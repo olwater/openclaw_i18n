@@ -1,10 +1,19 @@
-import { Command, Option } from "commander";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { Command, Option } from "commander";
 import { resolveStateDir } from "../config/paths.js";
 import { t } from "../i18n/index.js";
+import { routeLogsToStderr } from "../logging/console.js";
+import { formatDocsLink } from "../terminal/links.js";
+import { theme } from "../terminal/theme.js";
 import { pathExists } from "../utils.js";
+import {
+  buildFishOptionCompletionLine,
+  buildFishSubcommandCompletionLine,
+} from "./completion-fish.js";
+import { getCoreCliCommandNames, registerCoreCliByName } from "./program/command-registry.js";
+import { getProgramContext } from "./program/program-context.js";
 import { getSubCliEntries, registerSubCliByName } from "./program/register.subclis.js";
 
 const COMPLETION_SHELLS = ["zsh", "bash", "powershell", "fish"] as const;
@@ -223,20 +232,38 @@ export async function usesSlowDynamicCompletion(
 export function registerCompletionCli(program: Command) {
   program
     .command("completion")
-    .description(t("Generate shell completion script") as unknown as string)
-    .addOption(
-      new Option("-s, --shell <shell>", t("Shell to generate completion for") as unknown as string)
-        .choices(COMPLETION_SHELLS)
-        .default("zsh"),
+    .description(t("Generate shell completion script"))
+    .addHelpText(
+      "after",
+      () =>
+        `\n${theme.muted("Docs:")} ${formatDocsLink("/cli/completion", "docs.openclaw.ai/cli/completion")}\n`,
     )
-    .option("-i, --install", t("Install completion script to shell profile") as unknown as string)
+    .addOption(
+      new Option("-s, --shell <shell>", "Shell to generate completion for (default: zsh)").choices(
+        COMPLETION_SHELLS,
+      ),
+    )
+    .option("-i, --install", "Install completion script to shell profile")
     .option(
       "--write-state",
-      t("Write completion scripts to $OPENCLAW_STATE_DIR/completions (no stdout)"),
+      "Write completion scripts to $OPENCLAW_STATE_DIR/completions (no stdout)",
     )
-    .option("-y, --yes", t("Skip confirmation (non-interactive)") as unknown as string, false)
+    .option("-y, --yes", "Skip confirmation (non-interactive)", false)
     .action(async (options) => {
+      // Route logs to stderr so plugin loading messages do not corrupt
+      // the completion script written to stdout.
+      routeLogsToStderr();
       const shell = options.shell ?? "zsh";
+
+      // Completion needs the full Commander command tree (including nested subcommands).
+      // Our CLI defaults to lazy registration for perf; force-register core commands here.
+      const ctx = getProgramContext(program);
+      if (ctx) {
+        for (const name of getCoreCliCommandNames()) {
+          await registerCoreCliByName(program, ctx, name);
+        }
+      }
+
       // Eagerly register all subcommands to build the full tree
       const entries = getSubCliEntries();
       for (const entry of entries) {
@@ -270,7 +297,7 @@ export function registerCompletionCli(program: Command) {
         throw new Error(`Unsupported shell: ${shell}`);
       }
       const script = getCompletionScript(shell, program);
-      console.log(script);
+      process.stdout.write(script + "\n");
     });
 }
 
@@ -321,9 +348,7 @@ export async function installCompletion(shell: string, yes: boolean, binName = "
       await fs.access(profilePath);
     } catch {
       if (!yes) {
-        console.warn(
-          t("Profile not found at {{profilePath}}. Created a new one.", { profilePath }),
-        );
+        console.warn(`Profile not found at ${profilePath}. Created a new one.`);
       }
       await fs.mkdir(path.dirname(profilePath), { recursive: true });
       await fs.writeFile(profilePath, "", "utf-8");
@@ -333,26 +358,22 @@ export async function installCompletion(shell: string, yes: boolean, binName = "
     const update = updateCompletionProfile(content, binName, cachePath, sourceLine);
     if (!update.changed) {
       if (!yes) {
-        console.log(t("Completion already installed in {{profilePath}}", { profilePath }));
+        console.log(`Completion already installed in ${profilePath}`);
       }
       return;
     }
 
     if (!yes) {
-      const action = update.hadExisting ? t("Updating") : t("Installing");
-      console.log(t("{{action}} completion in {{profilePath}}...", { action, profilePath }));
+      const action = update.hadExisting ? "Updating" : "Installing";
+      console.log(`${action} completion in ${profilePath}...`);
     }
 
     await fs.writeFile(profilePath, update.next, "utf-8");
     if (!yes) {
-      console.log(
-        t("Completion installed. Restart your shell or run: source {{profilePath}}", {
-          profilePath,
-        }),
-      );
+      console.log(`Completion installed. Restart your shell or run: source ${profilePath}`);
     }
   } catch (err) {
-    console.error(t("Failed to install completion: {{error}}", { error: err as string }));
+    console.error(`Failed to install completion: ${err as string}`);
   }
 }
 
@@ -373,7 +394,7 @@ _${rootCmd}_root_completion() {
   case $state in
     (args)
       case $line[1] in
-        ${program.commands.map((cmd) => `(${cmd.name()}) _${rootCmd}_${cmd.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as unknown as string)}
+        ${program.commands.map((cmd) => `(${cmd.name()}) _${rootCmd}_${cmd.name().replace(/-/g, "_")} ;;`).join("\n        ")}
       esac
       ;;
   esac
@@ -403,7 +424,7 @@ function generateZshArgs(cmd: Command): string {
       }
       return `"${name}[${desc}]"`;
     })
-    .join(t(" \\\n    ") as unknown as string);
+    .join(" \\\n    ");
 }
 
 function generateZshSubcmdList(cmd: Command): string {
@@ -445,7 +466,7 @@ ${funcName}() {
   case $state in
     (args)
       case $line[1] in
-        ${subCommands.map((sub) => `(${sub.name()}) ${funcName}_${sub.name().replace(/-/g, "_")} ;;`).join(t("\n        ") as unknown as string)}
+        ${subCommands.map((sub) => `(${sub.name()}) ${funcName}_${sub.name().replace(/-/g, "_")} ;;`).join("\n        ")}
       esac
       ;;
   esac
@@ -481,7 +502,7 @@ _${rootCmd}_completion() {
     opts="${program.commands.map((c) => c.name()).join(" ")} ${program.options.map((o) => o.flags.split(" ")[0]).join(" ")}"
     
     case "\${prev}" in
-      ${program.commands.map((cmd) => generateBashSubcommand(cmd)).join(t("\n      ") as unknown as string)}
+      ${program.commands.map((cmd) => generateBashSubcommand(cmd)).join("\n      ")}
     esac
 
     if [[ \${cur} == -* ]] ; then
@@ -589,26 +610,21 @@ function generateFishCompletion(program: Command): string {
     if (parents.length === 0) {
       // Subcommands of root
       for (const sub of cmd.commands) {
-        const desc = sub.description().replace(/'/g, "'\\''");
-        script += `complete -c ${rootCmd} -n "__fish_use_subcommand" -a "${sub.name()}" -d '${desc}'\n`;
+        script += buildFishSubcommandCompletionLine({
+          rootCmd,
+          condition: "__fish_use_subcommand",
+          name: sub.name(),
+          description: sub.description(),
+        });
       }
       // Options of root
       for (const opt of cmd.options) {
-        const flags = opt.flags.split(/[ ,|]+/);
-        const long = flags.find((f) => f.startsWith("--"))?.replace(/^--/, "");
-        const short = flags
-          .find((f) => f.startsWith("-") && !f.startsWith("--"))
-          ?.replace(/^-/, "");
-        const desc = opt.description.replace(/'/g, "'\\''");
-        let line = `complete -c ${rootCmd} -n "__fish_use_subcommand"`;
-        if (short) {
-          line += ` -s ${short}`;
-        }
-        if (long) {
-          line += ` -l ${long}`;
-        }
-        line += ` -d '${desc}'\n`;
-        script += line;
+        script += buildFishOptionCompletionLine({
+          rootCmd,
+          condition: "__fish_use_subcommand",
+          flags: opt.flags,
+          description: opt.description,
+        });
       }
     } else {
       // Nested commands
@@ -622,26 +638,21 @@ function generateFishCompletion(program: Command): string {
 
       // Subcommands
       for (const sub of cmd.commands) {
-        const desc = sub.description().replace(/'/g, "'\\''");
-        script += `complete -c ${rootCmd} -n "__fish_seen_subcommand_from ${cmdName}" -a "${sub.name()}" -d '${desc}'\n`;
+        script += buildFishSubcommandCompletionLine({
+          rootCmd,
+          condition: `__fish_seen_subcommand_from ${cmdName}`,
+          name: sub.name(),
+          description: sub.description(),
+        });
       }
       // Options
       for (const opt of cmd.options) {
-        const flags = opt.flags.split(/[ ,|]+/);
-        const long = flags.find((f) => f.startsWith("--"))?.replace(/^--/, "");
-        const short = flags
-          .find((f) => f.startsWith("-") && !f.startsWith("--"))
-          ?.replace(/^-/, "");
-        const desc = opt.description.replace(/'/g, "'\\''");
-        let line = `complete -c ${rootCmd} -n "__fish_seen_subcommand_from ${cmdName}"`;
-        if (short) {
-          line += ` -s ${short}`;
-        }
-        if (long) {
-          line += ` -l ${long}`;
-        }
-        line += ` -d '${desc}'\n`;
-        script += line;
+        script += buildFishOptionCompletionLine({
+          rootCmd,
+          condition: `__fish_seen_subcommand_from ${cmdName}`,
+          flags: opt.flags,
+          description: opt.description,
+        });
       }
     }
 

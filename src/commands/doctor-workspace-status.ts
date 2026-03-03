@@ -1,7 +1,6 @@
-import type { OpenClawConfig } from "../config/config.js";
 import { resolveAgentWorkspaceDir, resolveDefaultAgentId } from "../agents/agent-scope.js";
 import { buildWorkspaceSkillStatus } from "../agents/skills-status.js";
-import { t } from "../i18n/index.js";
+import type { OpenClawConfig } from "../config/config.js";
 import { loadOpenClawPlugins } from "../plugins/loader.js";
 import { note } from "../terminal/note.js";
 import { detectLegacyWorkspaceDirs, formatLegacyWorkspaceWarning } from "./doctor-workspace.js";
@@ -10,7 +9,7 @@ export function noteWorkspaceStatus(cfg: OpenClawConfig) {
   const workspaceDir = resolveAgentWorkspaceDir(cfg, resolveDefaultAgentId(cfg));
   const legacyWorkspace = detectLegacyWorkspaceDirs({ workspaceDir });
   if (legacyWorkspace.legacyDirs.length > 0) {
-    note(formatLegacyWorkspaceWarning(legacyWorkspace), t("Extra workspace") as unknown as string);
+    note(formatLegacyWorkspaceWarning(legacyWorkspace), "Extra workspace");
   }
 
   const skillsReport = buildWorkspaceSkillStatus(workspaceDir, { config: cfg });
@@ -23,7 +22,7 @@ export function noteWorkspaceStatus(cfg: OpenClawConfig) {
       }`,
       `Blocked by allowlist: ${skillsReport.skills.filter((s) => s.blockedByAllowlist).length}`,
     ].join("\n"),
-    t("Skills status") as unknown as string,
+    "Skills status",
   );
 
   const pluginRegistry = loadOpenClawPlugins({
@@ -49,9 +48,7 @@ export function noteWorkspaceStatus(cfg: OpenClawConfig) {
         ? `- ${errored
             .slice(0, 10)
             .map((p) => p.id)
-            .join(
-              t("\n- ") as unknown as string,
-            )}${errored.length > 10 ? (t("\n- ...") as unknown as string) : ""}`
+            .join("\n- ")}${errored.length > 10 ? "\n- ..." : ""}`
         : null,
     ].filter((line): line is string => Boolean(line));
 
@@ -64,7 +61,7 @@ export function noteWorkspaceStatus(cfg: OpenClawConfig) {
       const source = diag.source ? ` (${diag.source})` : "";
       return `- ${prefix}${plugin}: ${diag.message}${source}`;
     });
-    note(lines.join("\n"), t("Plugin diagnostics") as unknown as string);
+    note(lines.join("\n"), "Plugin diagnostics");
   }
 
   return { workspaceDir };

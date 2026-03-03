@@ -1,8 +1,8 @@
 import * as Lark from "@larksuiteoapi/node-sdk";
 import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { loadConfig } from "../config/config.js";
 import { getChildLogger } from "../logging.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { resolveFeishuAccount } from "./accounts.js";
 import { resolveFeishuConfig } from "./config.js";
 import { normalizeFeishuDomain } from "./domain.js";
@@ -52,19 +52,19 @@ export async function monitorFeishuProvider(opts: MonitorFeishuOpts = {}): Promi
     appSecret,
     ...(domain ? { domain } : {}),
     logger: {
-      debug: (msg) => {
+      debug: (msg: any) => {
         logger.debug?.(msg);
       },
-      info: (msg) => {
+      info: (msg: any) => {
         logger.info(msg);
       },
-      warn: (msg) => {
+      warn: (msg: any) => {
         logger.warn(msg);
       },
-      error: (msg) => {
+      error: (msg: any) => {
         logger.error(msg);
       },
-      trace: (msg) => {
+      trace: (msg: any) => {
         logger.silly?.(msg);
       },
     },

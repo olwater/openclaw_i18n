@@ -1,7 +1,7 @@
-import type { RuntimeEnv } from "../runtime.js";
 import { readConfigFileSnapshot, resolveGatewayPort } from "../config/config.js";
 import { t } from "../i18n/index.js";
 import { copyToClipboard } from "../infra/clipboard.js";
+import type { RuntimeEnv } from "../runtime.js";
 import { defaultRuntime } from "../runtime.js";
 import {
   detectBrowserOpenSupport,
@@ -26,9 +26,11 @@ export async function dashboardCommand(
   const customBindHost = cfg.gateway?.customBindHost;
   const token = cfg.gateway?.auth?.token ?? process.env.OPENCLAW_GATEWAY_TOKEN ?? "";
 
+  // LAN URLs fail secure-context checks in browsers.
+  // Coerce only lan->loopback and preserve other bind modes.
   const links = resolveControlUiLinks({
     port,
-    bind,
+    bind: bind === "lan" ? "loopback" : bind,
     customBindHost,
     basePath,
   });

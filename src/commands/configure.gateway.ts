@@ -1,14 +1,25 @@
 import type { OpenClawConfig } from "../config/config.js";
-import type { RuntimeEnv } from "../runtime.js";
 import { resolveGatewayPort } from "../config/config.js";
-import { t } from "../i18n/index.js";
+import {
+  maybeAddTailnetOriginToControlUiAllowedOrigins,
+  TAILSCALE_DOCS_LINES,
+  TAILSCALE_EXPOSURE_OPTIONS,
+  TAILSCALE_MISSING_BIN_NOTE_LINES,
+} from "../gateway/gateway-config-prompts.shared.js";
 import { findTailscaleBinary } from "../infra/tailscale.js";
+import type { RuntimeEnv } from "../runtime.js";
+import { validateIPv4AddressInput } from "../shared/net/ipv4.js";
 import { note } from "../terminal/note.js";
 import { buildGatewayAuthConfig } from "./configure.gateway-auth.js";
 import { confirm, select, text } from "./configure.shared.js";
-import { guardCancel, normalizeGatewayTokenInput, randomToken } from "./onboard-helpers.js";
+import {
+  guardCancel,
+  normalizeGatewayTokenInput,
+  randomToken,
+  validateGatewayPasswordInput,
+} from "./onboard-helpers.js";
 
-type GatewayAuthChoice = "token" | "password";
+type GatewayAuthChoice = "token" | "password" | "trusted-proxy";
 
 export async function promptGatewayConfig(
   cfg: OpenClawConfig,
@@ -20,9 +31,9 @@ export async function promptGatewayConfig(
 }> {
   const portRaw = guardCancel(
     await text({
-      message: t("Gateway port"),
+      message: "Gateway port",
       initialValue: String(resolveGatewayPort(cfg)),
-      validate: (value) => (Number.isFinite(Number(value)) ? undefined : t("Invalid port")),
+      validate: (value) => (Number.isFinite(Number(value)) ? undefined : "Invalid port"),
     }),
     runtime,
   );
@@ -30,32 +41,32 @@ export async function promptGatewayConfig(
 
   let bind = guardCancel(
     await select({
-      message: t("Gateway bind mode"),
+      message: "Gateway bind mode",
       options: [
         {
           value: "loopback",
-          label: t("Loopback (Local only)"),
-          hint: t("Bind to 127.0.0.1 - secure, local-only access"),
+          label: "Loopback (Local only)",
+          hint: "Bind to 127.0.0.1 - secure, local-only access",
         },
         {
           value: "tailnet",
-          label: t("Tailnet (Tailscale IP)"),
-          hint: t("Bind to your Tailscale IP only (100.x.x.x)"),
+          label: "Tailnet (Tailscale IP)",
+          hint: "Bind to your Tailscale IP only (100.x.x.x)",
         },
         {
           value: "auto",
-          label: t("Auto (Loopback → LAN)"),
-          hint: t("Prefer loopback; fall back to all interfaces if unavailable"),
+          label: "Auto (Loopback → LAN)",
+          hint: "Prefer loopback; fall back to all interfaces if unavailable",
         },
         {
           value: "lan",
-          label: t("LAN (All interfaces)"),
-          hint: t("Bind to 0.0.0.0 - accessible from anywhere on your network"),
+          label: "LAN (All interfaces)",
+          hint: "Bind to 0.0.0.0 - accessible from anywhere on your network",
         },
         {
           value: "custom",
-          label: t("Custom IP"),
-          hint: t("Specify a specific IP address, with 0.0.0.0 fallback if unavailable"),
+          label: "Custom IP",
+          hint: "Specify a specific IP address, with 0.0.0.0 fallback if unavailable",
         },
       ],
     }),
@@ -66,27 +77,9 @@ export async function promptGatewayConfig(
   if (bind === "custom") {
     const input = guardCancel(
       await text({
-        message: t("Custom IP address"),
-        placeholder: t("192.168.1.100"),
-        validate: (value) => {
-          if (!value) {
-            return t("IP address is required for custom bind mode");
-          }
-          const trimmed = value.trim();
-          const parts = trimmed.split(".");
-          if (parts.length !== 4) {
-            return t("Invalid IPv4 address (e.g., 192.168.1.100)");
-          }
-          if (
-            parts.every((part) => {
-              const n = parseInt(part, 10);
-              return !Number.isNaN(n) && n >= 0 && n <= 255 && part === String(n);
-            })
-          ) {
-            return undefined;
-          }
-          return t("Invalid IPv4 address (each octet must be 0-255)");
-        },
+        message: "Custom IP address",
+        placeholder: "192.168.1.100",
+        validate: validateIPv4AddressInput,
       }),
       runtime,
     );
@@ -95,65 +88,46 @@ export async function promptGatewayConfig(
 
   let authMode = guardCancel(
     await select({
-      message: t("Gateway auth"),
+      message: "Gateway auth",
       options: [
-        { value: "token", label: t("Token"), hint: t("Recommended default") },
-        { value: "password", label: t("Password") },
+        { value: "token", label: "Token", hint: "Recommended default" },
+        { value: "password", label: "Password" },
+        {
+          value: "trusted-proxy",
+          label: "Trusted Proxy",
+          hint: "Behind reverse proxy (Pomerium, Caddy, Traefik, etc.)",
+        },
       ],
-      initialValue: t("token"),
+      initialValue: "token",
     }),
     runtime,
   ) as GatewayAuthChoice;
 
-  const tailscaleMode = guardCancel(
+  let tailscaleMode = guardCancel(
     await select({
-      message: t("Tailscale exposure"),
-      options: [
-        { value: "off", label: t("Off"), hint: t("No Tailscale exposure") },
-        {
-          value: "serve",
-          label: t("Serve"),
-          hint: t("Private HTTPS for your tailnet (devices on Tailscale)"),
-        },
-        {
-          value: "funnel",
-          label: t("Funnel"),
-          hint: t("Public HTTPS via Tailscale Funnel (internet)"),
-        },
-      ],
+      message: "Tailscale exposure",
+      options: [...TAILSCALE_EXPOSURE_OPTIONS],
     }),
     runtime,
   );
 
   // Detect Tailscale binary before proceeding with serve/funnel setup.
+  // Persist the path so getTailnetHostname can reuse it for origin injection.
+  let tailscaleBin: string | null = null;
   if (tailscaleMode !== "off") {
-    const tailscaleBin = await findTailscaleBinary();
+    tailscaleBin = await findTailscaleBinary();
     if (!tailscaleBin) {
-      note(
-        [
-          t("Tailscale binary not found in PATH or /Applications."),
-          t("Ensure Tailscale is installed from:"),
-          t("  https://tailscale.com/download/mac"),
-          "",
-          t("You can continue setup, but serve/funnel will fail at runtime."),
-        ].join("\n"),
-        t("Tailscale Warning"),
-      );
+      note(TAILSCALE_MISSING_BIN_NOTE_LINES.join("\n"), "Tailscale Warning");
     }
   }
 
   let tailscaleResetOnExit = false;
   if (tailscaleMode !== "off") {
-    note(
-      ["Docs:", "https://docs.openclaw.ai/gateway/tailscale", "https://docs.openclaw.ai/web"].join(
-        "\n",
-      ),
-      "Tailscale",
-    );
+    note(TAILSCALE_DOCS_LINES.join("\n"), "Tailscale");
     tailscaleResetOnExit = Boolean(
       guardCancel(
         await confirm({
-          message: t("Reset Tailscale serve/funnel on exit?"),
+          message: "Reset Tailscale serve/funnel on exit?",
           initialValue: false,
         }),
         runtime,
@@ -162,23 +136,38 @@ export async function promptGatewayConfig(
   }
 
   if (tailscaleMode !== "off" && bind !== "loopback") {
-    note(t("Tailscale requires bind=loopback. Adjusting bind to loopback."), "Note");
+    note("Tailscale requires bind=loopback. Adjusting bind to loopback.", "Note");
     bind = "loopback";
   }
 
   if (tailscaleMode === "funnel" && authMode !== "password") {
-    note(t("Tailscale funnel requires password auth."), "Note");
+    note("Tailscale funnel requires password auth.", "Note");
     authMode = "password";
+  }
+
+  // trusted-proxy + loopback is valid when the reverse proxy runs on the same
+  // host (e.g. cloudflared, nginx, Caddy). trustedProxies must include 127.0.0.1.
+  if (authMode === "trusted-proxy" && tailscaleMode !== "off") {
+    note(
+      "Trusted proxy auth is incompatible with Tailscale serve/funnel. Disabling Tailscale.",
+      "Note",
+    );
+    tailscaleMode = "off";
+    tailscaleResetOnExit = false;
   }
 
   let gatewayToken: string | undefined;
   let gatewayPassword: string | undefined;
+  let trustedProxyConfig:
+    | { userHeader: string; requiredHeaders?: string[]; allowUsers?: string[] }
+    | undefined;
+  let trustedProxies: string[] | undefined;
   let next = cfg;
 
   if (authMode === "token") {
     const tokenInput = guardCancel(
       await text({
-        message: t("Gateway token (blank to generate)"),
+        message: "Gateway token (blank to generate)",
         initialValue: randomToken(),
       }),
       runtime,
@@ -189,12 +178,88 @@ export async function promptGatewayConfig(
   if (authMode === "password") {
     const password = guardCancel(
       await text({
-        message: t("Gateway password"),
-        validate: (value) => (value?.trim() ? undefined : "Required"),
+        message: "Gateway password",
+        validate: validateGatewayPasswordInput,
       }),
       runtime,
     );
-    gatewayPassword = String(password).trim();
+    gatewayPassword = String(password ?? "").trim();
+  }
+
+  if (authMode === "trusted-proxy") {
+    note(
+      [
+        "Trusted proxy mode: OpenClaw trusts user identity from a reverse proxy.",
+        "The proxy must authenticate users and pass identity via headers.",
+        "Only requests from specified proxy IPs will be trusted.",
+        "",
+        "Common use cases: Pomerium, Caddy + OAuth, Traefik + forward auth",
+        "Docs: https://docs.openclaw.ai/gateway/trusted-proxy-auth",
+      ].join("\n"),
+      "Trusted Proxy Auth",
+    );
+
+    const userHeader = guardCancel(
+      await text({
+        message: "Header containing user identity",
+        placeholder: "x-forwarded-user",
+        initialValue: "x-forwarded-user",
+        validate: (value) => (value?.trim() ? undefined : "User header is required"),
+      }),
+      runtime,
+    );
+
+    const requiredHeadersRaw = guardCancel(
+      await text({
+        message: "Required headers (comma-separated, optional)",
+        placeholder: "x-forwarded-proto,x-forwarded-host",
+      }),
+      runtime,
+    );
+    const requiredHeaders = requiredHeadersRaw
+      ? String(requiredHeadersRaw)
+          .split(",")
+          .map((h) => h.trim())
+          .filter(Boolean)
+      : [];
+
+    const allowUsersRaw = guardCancel(
+      await text({
+        message: "Allowed users (comma-separated, blank = all authenticated users)",
+        placeholder: "nick@example.com,admin@company.com",
+      }),
+      runtime,
+    );
+    const allowUsers = allowUsersRaw
+      ? String(allowUsersRaw)
+          .split(",")
+          .map((u) => u.trim())
+          .filter(Boolean)
+      : [];
+
+    const trustedProxiesRaw = guardCancel(
+      await text({
+        message: "Trusted proxy IPs (comma-separated)",
+        placeholder: "10.0.1.10,192.168.1.5",
+        validate: (value) => {
+          if (!value || String(value).trim() === "") {
+            return "At least one trusted proxy IP is required";
+          }
+          return undefined;
+        },
+      }),
+      runtime,
+    );
+    trustedProxies = String(trustedProxiesRaw)
+      .split(",")
+      .map((ip) => ip.trim())
+      .filter(Boolean);
+
+    trustedProxyConfig = {
+      userHeader: String(userHeader).trim(),
+      requiredHeaders: requiredHeaders.length > 0 ? requiredHeaders : undefined,
+      allowUsers: allowUsers.length > 0 ? allowUsers : undefined,
+    };
   }
 
   const authConfig = buildGatewayAuthConfig({
@@ -202,6 +267,7 @@ export async function promptGatewayConfig(
     mode: authMode,
     token: gatewayToken,
     password: gatewayPassword,
+    trustedProxy: trustedProxyConfig,
   });
 
   next = {
@@ -213,6 +279,7 @@ export async function promptGatewayConfig(
       bind,
       auth: authConfig,
       ...(customBindHost && { customBindHost }),
+      ...(trustedProxies && { trustedProxies }),
       tailscale: {
         ...next.gateway?.tailscale,
         mode: tailscaleMode,
@@ -220,6 +287,12 @@ export async function promptGatewayConfig(
       },
     },
   };
+
+  next = await maybeAddTailnetOriginToControlUiAllowedOrigins({
+    config: next,
+    tailscaleMode,
+    tailscaleBin,
+  });
 
   return { config: next, port, token: gatewayToken };
 }
